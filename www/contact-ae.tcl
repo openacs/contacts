@@ -68,40 +68,11 @@ ad_form -extend -name entry \
 
             if { $object_type == "organization" } {
                 set option_id_temp [lindex $contact_attribute__organization_type 0]
-                db_1row get_organization_type_id {
-                                        select organization_type_id 
-                                          from contact_attribute_options cao,
-                                               organization_types ot
-                                         where cao.option = ot.type
-                                           and cao.option_id  = :option_id_temp
-                                }
+                db_1row get_organization_type_id {}
 
-                db_1row create_org { select organization__new ( 
-                                                       null,
-                                                       :contact_attribute__organization_name,
-                                                       null,
-                                                       :party_id,
-                                                       :organization_type_id,
-                                                       null,
-                                                       null,
-                                                       null,
-                                                       :creation_user,
-                                                       :creation_ip,
-                                                       null
-                                                       ) as party_id }
+                db_1row create_org {}
             } else {
-                db_1row create_person { select person__new (
-                                                            :party_id,
-                                                            'person',
-                                                            now(),
-                                                            :creation_user,
-                                                            :creation_ip,
-                                                            null,
-                                                            null,
-                                                            :contact_attribute__first_names,
-                                                            :contact_attribute__last_name,
-                                                            null
-                                                            ) as party_id }
+                db_1row create_person {}
             }
         }
 
