@@ -16,14 +16,11 @@ ad_page_contract {
 set count 0
 
 # first we get rid of the old sort order
-db_dml delete_sort_orders { update contact_attribute_object_map set sort_order = '-1' where object_id = :object_id }
-db_foreach get_attributes { select attribute_id from contact_attribute_object_map where object_id = :object_id } {
+db_dml delete_previous_sort_orders {}
+db_foreach get_attributes {} {
     if {[info exists sort_key($attribute_id)]} {
         set sort_order_temp $sort_key($attribute_id)
-        db_dml update_attribute_object_map {
-            update contact_attribute_object_map set sort_order = :sort_order_temp where object_id = :object_id and attribute_id = :attribute_id
-        }
-    } else {
+        db_dml update_sort_order {}
     }
 }
 

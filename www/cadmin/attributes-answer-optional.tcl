@@ -13,7 +13,6 @@ ad_page_contract {
 
 foreach attribute_id $attribute_id {
     db_dml map_the_attribute {
-        update contact_attribute_object_map set required_p = 'f' where object_id = :object_id and attribute_id = :attribute_id
     }
 }
 

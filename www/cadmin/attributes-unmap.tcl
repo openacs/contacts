@@ -11,12 +11,10 @@ ad_page_contract {
 }
 
 
-db_0or1row get_latest_sort_order {select sort_order from contact_attribute_object_map order by sort_order limit 1 }
+db_0or1row get_latest_sort_order {}
 
 foreach attribute_id $attribute_id {
-    db_dml unmap_the_attribute {
-        delete from contact_attribute_object_map where object_id = :object_id and attribute_id = :attribute_id
-    }
+    db_dml unmap_attribute {}
 }
 
 ad_returnredirect "object-map?object_id=$object_id"
