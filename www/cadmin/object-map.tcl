@@ -17,7 +17,7 @@ ad_page_contract {
     {locale "en_US"}
 }
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 permission::require_permission -object_id $object_id -privilege admin
 
 set object_name [db_string get_object_name {}]
