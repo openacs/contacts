@@ -318,7 +318,7 @@ namespace eval contacts::get {
             if { ![exists_and_not_null required_p] } {
                 append widget_string ",optional"
             } else {
-                 if { !$required_p } { 
+                if { [string is false $required_p] } { 
                     append widget_string ",optional"
                 }
             }
