@@ -64,17 +64,17 @@ list::create \
         action {
             label "\#contacts.Action\#"
             display_template {
-                <a href="attributes-unmap?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@">Unmap</a>
+                <a href="attributes-unmap?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@" class="button">Unmap</a>
             }
         }
         answer {
-            label "\#contacts.Answer\#"
+            label "\#contacts.Required\#"
             display_template {
                 <if @mapped_attributes.required_p@>
-                <a href="attributes-answer-optional?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@">Required</a>
+                <a href="attributes-answer-optional?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@"><img src="/resources/checkboxchecked.gif" title="Required" border="0"></a>
                 </if>
                 <else>
-                <a href="attributes-answer-required?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@">Optional</a>
+                <a href="attributes-answer-required?object_id=$object_id&attribute_id=@mapped_attributes.attribute_id@"><img src="/resources/checkbox.gif" title="Optional" border="0"></a>
                 </else>
             }
         }
@@ -172,7 +172,7 @@ list::create \
         action {
             label "\#contacts.Action\#"
             display_template {
-                <a href="attributes-map?object_id=$object_id&attribute_id=@unmapped_attributes.attribute_id@">Map</a>
+                <a href="attributes-map?object_id=$object_id&attribute_id=@unmapped_attributes.attribute_id@" class="button">Map</a>
             }
         }
     } -filters {

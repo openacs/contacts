@@ -31,6 +31,7 @@
   <msg key="Ordering">Ordering</msg>
   <msg key="Organization">Organization</msg>
   <msg key="Person">Person</msg>
+  <msg key="Required">Required</msg>
   <msg key="Search">Search</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
   <msg key="Send_Email">Send Email</msg>
