@@ -31,7 +31,7 @@ if { ![exists_and_not_null view_id] } {
     if { [string is false $error_p] } {
         # there is no view_id but the party_id was valid, so we get the default view_id  
         set object_type [contact::get::object_type $party_id]
-        set view_id [contact::view::get::first_view_id $object_type]
+        set view_id [contacts::view::get::first_view_id $object_type]
         if { ![exists_and_not_null view_id] } {
             # there are no pages available for this contact object type
             set error_p 1

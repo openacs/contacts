@@ -12,8 +12,7 @@ ad_page_contract {
 
 
 foreach attribute_id $attribute_id {
-    db_dml map_the_attribute {
-    }
+    db_dml answer_optional {}
 }
 
 ad_returnredirect "object-map?object_id=$object_id"

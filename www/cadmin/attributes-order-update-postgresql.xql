@@ -3,7 +3,7 @@
 <queryset>
    <rdbms><type>postgresql</type><version>7.1</version></rdbms>
 
-<fullquery name="delete_previous_sort_order">
+<fullquery name="delete_previous_sort_orders">
   <querytext>
         update contact_attribute_object_map set sort_order = '-1' where object_id = :object_id
   </querytext>

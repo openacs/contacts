@@ -43,7 +43,7 @@
 </fullquery>
 
 
-<fullquery name="contacts::util::person_object_id.get_person_object_id">
+<fullquery name="contacts::util::person_object_id.get_object_id">
   <querytext>
 	select object_id from contact_object_types where object_type = 'person'
   </querytext>

@@ -72,7 +72,7 @@ ad_form -extend -name attribute_form -new_request {
     set peeraddr [ad_conn peeraddr]
     set context_id [ad_conn package_id]
     set attribute [util_text_to_url -text $name]
-    set attribute_id [db_string attribute_create {}
+    set attribute_id [db_string attribute_create {}]
     db_1row attribute_name_save {}
     if { [string is true $options_p] } {
         set sort_order "1"

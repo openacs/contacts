@@ -12,6 +12,7 @@
 <fullquery name="template::data::validate::address.validate_state">
   <querytext>
         select 1 from us_states where abbrev = upper(:region) or state_name = upper(:region)
+
   </querytext>
 </fullquery>
 

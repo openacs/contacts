@@ -161,5 +161,17 @@ namespace eval contacts::view::get:: {
         return $name
 
     }
+
+    ad_proc -public first_view_id {
+        object_type
+    } {
+        get the first object type view_id
+    } {
+
+        return [db_string get_first_view_id {}]
+
+    }
+
+
 }
 

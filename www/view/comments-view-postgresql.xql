@@ -5,7 +5,7 @@
 
 
 
-<fullquery name="">
+<fullquery name="get_comments">
   <querytext>
          select g.comment_id,
                 r.mime_type,

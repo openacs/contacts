@@ -68,7 +68,9 @@ ad_proc -public template::data::validate::address { value_ref message_ref } {
     set country_code     [lindex $address_list 4]
 
     if { $country_code == "US" } {
-        if { ![db_0or1row validate_state {} ] } {
+        if { ![db_0or1row validate_state {
+        select 1 from us_states where abbrev = upper(:region) or state_name = upper(:region)
+} ] } {
             set message "\"$region\" is not a valid US State."
             return 0
         }

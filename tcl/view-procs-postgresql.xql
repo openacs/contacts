@@ -70,11 +70,16 @@
 </fullquery>
 
 
-<fullquery name="contacts::view::get.get_view_name">
+<fullquery name="contacts::view::get::name.get_view_name">
   <querytext>
         select name from contact_view_names where view_id = :view_id and locale = :locale
   </querytext>
 </fullquery>
 
+<fullquery name="contacts::view::get::first_view_id.get_first_view_id">
+  <querytext>
+        select view_id from contact_views where contact_object_type = :object_type order by sort_order limit 1 
+  </querytext>
+</fullquery>
 
 </queryset>
