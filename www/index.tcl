@@ -60,7 +60,7 @@ if {[exists_and_not_null category_id]} {
 
 set categories_p [contacts::categories::enabled_p]
 
-if { $categories_p } {
+if { [string is true $categories_p] } {
 set category_select [contacts::categories::get_selects -export_vars $export_vars_category_form -category_id $temp_category_id] 
 }
 

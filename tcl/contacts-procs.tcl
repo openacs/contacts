@@ -323,13 +323,13 @@ namespace eval contacts::get {
                 }
             }
             if { [exists_and_not_null multiple_p] } {
-                if { $multiple_p } { 
+                if { [string is true $multiple_p] } { 
                     append widget_string ",multiple"
                 }
             }
 
             if { [exists_and_not_null nospell_p] } {
-                if { $nospell_p } { 
+                if { [string is true $nospell_p] } { 
                     append widget_string ",nospell"
                 }
             }
@@ -347,7 +347,7 @@ namespace eval contacts::get {
             }
 
             if { [exists_and_not_null help_p] } {
-                if { $help_p } {
+                if { [string is true $help_p] } {
                     lappend temp_element "help"
                 }
             }

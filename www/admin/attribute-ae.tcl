@@ -45,7 +45,7 @@ ad_form -name attribute_form -action attribute-ae -form {
     {help_text:text(textarea),optional {label "Help Text"} {html {rows 3 cols 50}} {help_text {Text entered here will assist people in filling out forms by adding extra information, useful facts, etc. Just like this scentence assists in describing what the \"Help Text\" field is}}}
 }
 
-if { $options_p && !$attr_exists_p } {
+if { [string is true $options_p] && [string is false $attr_exists_p] } {
     ad_form -extend -name attribute_form -form {
         {options:text(textarea),nospell {label "Options"} {help_text "One option per line"} {html {cols 35 rows 6 wrap virtual}}}
     }
@@ -57,7 +57,7 @@ ad_form -extend -name attribute_form -new_request {
 } -edit_request {
     db_1row select_attribute_properties { select * from contact_attributes where attribute_id = :attribute_id }
     db_1row select_attribute_properties { select * from contact_attribute_names where attribute_id = :attribute_id and locale = :locale } 
-   if { $options_p } {
+    if { [string is true $options_p] } {
         set options ""
         db_foreach get_options { select option from contact_attribute_options where attribute_id = :attribute_id } {
             append options "$option\r"
@@ -93,7 +93,7 @@ ad_form -extend -name attribute_form -new_request {
                                             :help_text
                                             );
     }
-    if { $options_p } {
+    if { [string is true $options_p] } {
         set sort_order "1"
         set options [string trim $options]
         foreach option [split $options "\n"] {

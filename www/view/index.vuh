@@ -27,10 +27,8 @@ if { ![exists_and_not_null party_id] } {
     }
 }
 
-
-
 if { ![exists_and_not_null view_id] } {
-    if { !$error_p } {
+    if { [string is false $error_p] } {
         # there is no view_id but the party_id was valid, so we get the default view_id  
         set object_type [contact::get::object_type $party_id]
         db_0or1row select_first_view_id { select view_id from contact_views where contact_object_type = :object_type order by sort_order limit 1 }
@@ -40,7 +38,7 @@ if { ![exists_and_not_null view_id] } {
         }
     }
 } else {
-    if { [string is integer $view_id] && !$error_p } {
+    if { [string is integer $view_id] && [string is false $error_p] } {
         if { ![contacts::view::exists_p -object_type [contact::get::object_type $party_id] $view_id] } {
            set error_p 1
         }
@@ -51,7 +49,7 @@ if { ![exists_and_not_null view_id] } {
 }
 
 
-if { $error_p } {
+if { [string is true $error_p] } {
      ad_returnredirect -message "The URL you specified was invalid" [apm_package_url_from_id [ad_conn package_id]]
 } else {
      rp_form_put party_id $party_id

@@ -10,7 +10,7 @@ ad_page_contract {
 }
 
 
-if { !$confirm_p } {
+if { [string is false $confirm_p] } {
     set num_entries [llength $party_id]
 
     if { $num_entries == 0 } {
