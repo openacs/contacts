@@ -1,0 +1,10 @@
+#contacts-sortbars {
+	font:70% verdana,sans-serif;
+}
+#contacts-sortbars a {
+  font-weight:bold;
+  text-decoration: none;
+}
+#contacts-sortbars a:hover {
+  text-decoration: underline;
+}
