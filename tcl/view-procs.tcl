@@ -10,6 +10,110 @@ ad_library {
 
 namespace eval contacts::view:: {
 
+    ad_proc -public create {
+        {-src}
+        {-privilege_required "read"}
+        {-privilege_object_id}
+        {-contact_object_type}
+        {-package_id ""}
+        {-sort_order ""}
+        {-creation_user ""}
+        {-creation_ip ""}
+        {-context_id ""}
+    } {
+        this code returns 1 if the view_id exists for this object_type
+    } {
+        if { ![exists_and_not_null package_id]    } { set package_id [ad_conn package_id] }
+        if { ![exists_and_not_null sort_order]    } {
+            db_0or1row select_last_sort_order_value {
+                select sort_order from contact_views where contact_object_type = :contact_object_type order by sort_order desc limit 1 
+            }
+            if { [exists_and_not_null sort_order] } {
+                incr sort_order
+            } else {
+                set sort_order "1"
+            }
+        }
+
+        db_1row create_contact_view {
+            select contact__view_create(
+                                        null,
+                                        :src,
+                                        :privilege_required,
+                                        :privilege_object_id,
+                                        :contact_object_type,
+                                        :package_id,
+                                        :sort_order,
+                                        now(),
+                                        :creation_user,
+                                        :creation_ip,
+                                        :context_id) as view_id
+        }
+        return $view_id
+
+    }
+
+    ad_proc -public name {
+        {-view_id}
+        {-locale "en_US"}
+        {-name}
+    } {
+        this code returns 1 if the view_id exists for this object_type
+    } {
+        db_1row create_contact_view {
+            select contact__view_name_save(
+                                           :view_id,
+                                           :locale,
+                                           :name
+                                           )
+        }
+
+    }
+
+    ad_proc -private init {} {
+        initialize views
+    } {
+
+        if { ![db_0or1row views_exist_p { select '1' from contact_views limit 1 } ] } {
+
+            db_1row get_package_id { select package_id from apm_packages where package_key = 'contacts' }
+
+            set view_id [contacts::view::create -src "/packages/contacts/www/view/contact-view" \
+                             -privilege_required "read" \
+                             -privilege_object_id $package_id \
+                             -contact_object_type "organization" \
+                             -package_id $package_id \
+                             -sort_order "1"]
+            contacts::view::name -view_id $view_id -name "Contact Info"
+            
+            set view_id [contacts::view::create -src "/packages/contacts/www/view/comments-view" \
+                             -privilege_required "read" \
+                             -privilege_object_id $package_id \
+                             -contact_object_type "organization" \
+                             -package_id $package_id \
+                             -sort_order "1"]
+            contacts::view::name -view_id $view_id -name "Comments"
+
+            set view_id [contacts::view::create -src "/packages/contacts/www/view/contact-view" \
+                             -privilege_required "read" \
+                             -privilege_object_id $package_id \
+                             -contact_object_type "person" \
+                             -package_id $package_id \
+                             -sort_order "1"]
+            contacts::view::name -view_id $view_id -name "Contact Info"
+
+            set view_id [contacts::view::create -src "/packages/contacts/www/view/comments-view" \
+                             -privilege_required "read" \
+                             -privilege_object_id $package_id \
+                             -contact_object_type "person" \
+                             -package_id $package_id \
+                             -sort_order "1"]
+            contacts::view::name -view_id $view_id -name "Comments"
+
+        }
+
+    }
+
     ad_proc -public exists_p {
         {-object_type ""}
         view_id
