@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <queryset>
 
+<rdbms><type>postgresql</type><version>7.2</version></rdbms>
+
 <fullquery name="contact::exists_p.exists_p">
   <querytext>
 	select 1 from contacts where party_id = :party_id

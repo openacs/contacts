@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <queryset>
 
+<rdbms><type>postgresql</type><version>7.2</version></rdbms>
+
 <fullquery name="contacts::categories::get_selects.get_categories">
   <querytext>
         SELECT
