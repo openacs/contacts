@@ -22,18 +22,7 @@ namespace eval contacts::attribute {
     } {
         set creation_user [ad_conn user_id]
         set creation_ip [ad_conn peeraddr]
-        return [db_exec_plsql create_attributes { select contact__attribute_create (
-                                                                            null,
-                                                                            :widget_id,
-                                                                            :label,
-                                                                            :help_text,
-                                                                            :help_p,
-                                                                            :html,
-                                                                            :format,
-                                                                            now(),
-                                                                            :creation_user,
-                                                                            :creation_ip
-                                                                            ) }]
+        return [db_exec_plsql create_attribute {}]
     }
 
 
@@ -42,9 +31,7 @@ namespace eval contacts::attribute {
     } {
         this code deletes an attribute
     } {
-        return [db_exec_plsql delete_attribute { select contact__attribute_delete (
-                                                                                   :attribute_id
-                                                                                   ) } ]
+        return [db_exec_plsql delete_attribute {} ]
     }
 
 
@@ -59,15 +46,11 @@ namespace eval contacts::attribute {
             set locale [lang::conn::locale -site_wide]        
         }
 
-        db_0or1row get_view_name {
-            select name from contact_attribute_names where attribute_id = :attribute_id and locale = :locale
-        }
+        db_0or1row get_attribute_name {}
 
         if { ![exists_and_not_null name] } {
             set locale "en_US"
-            db_0or1row get_view_name {
-                select name from contact_view_names where attribute_id = :attribute_id and locale = :locale
-            }
+            db_0or1row get_view_name {}
         }
         
         return $name
@@ -96,19 +79,7 @@ namespace eval contacts::attribute::value {
     } {
         set creation_user [ad_conn user_id]
         set creation_ip [ad_conn peeraddr]
-        return [db_exec_plsql create_attributes { select contact__attribute_value_save (
-                                                                            :party_id,
-                                                                            :attribute_id,
-                                                                            :option_map_id,
-                                                                            :address_id,
-                                                                            :number_id,
-                                                                            :time,
-                                                                            :value,
-                                                                            :deleted_p,
-                                                                            now(),
-                                                                            :creation_user,
-                                                                            :creation_ip
-                                                                            ) }]
+        return [db_exec_plsql attribute_value_save {}]
     }
 
 
@@ -131,20 +102,7 @@ namespace eval contacts::postal_address {
         set creation_user [ad_conn user_id]
         set creation_ip [ad_conn peeraddr]
 
-        return [db_exec_plsql save_address { select postal_address__new (
-                                                                         :additional_text,
-                                                                         null,
-                                                                         :country_code,
-                                                                         :delivery_address,
-                                                                         :municipality,
-                                                                         null,
-                                                                         :postal_code,
-                                                                         :postal_type,
-                                                                         :region,
-                                                                         :creation_user,
-                                                                         :creation_ip,
-                                                                         null
-                                                                         ) }]
+        return [db_exec_plsql postal_address_new {}]
     }
 
     ad_proc -public get {
@@ -155,7 +113,7 @@ namespace eval contacts::postal_address {
     } {
         upvar $array row
 
-        db_1row select_address_info { select * from postal_addresses where address_id = :address_id } -column_array row
+        db_1row select_address_info {} -column_array row
     }
 
 }
@@ -180,22 +138,7 @@ namespace eval contacts::telecom_number {
         set creation_user [ad_conn user_id]
         set creation_ip [ad_conn peeraddr]
 
-        return [db_exec_plsql save_telecom_number { select telecom_number__new (
-                             :area_city_code,
-                             :best_contact_time,
-                             :extension,
-                             :itu_id,
-                             :location,
-                             :national_number,
-                             null,
-                             null,
-                             null,
-                             :sms_enabled_p,
-                             :subscriber_number,
-                             :creation_user,
-                             :creation_ip,
-                             null
-                             ) }]
+        return [db_exec_plsql telecom_number_new {}]
     }
 
 
@@ -207,7 +150,7 @@ namespace eval contacts::telecom_number {
         get the variables from phone_numbers
     } {
         upvar $array row
-        db_0or1row select_phone_info { select * from telecom_numbers where number_id = :number_id } -column_array row
+        db_0or1row select_telecom_number_info {} -column_array row
     }
 
 }

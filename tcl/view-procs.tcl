@@ -26,9 +26,7 @@ namespace eval contacts::view:: {
     } {
         if { ![exists_and_not_null package_id]    } { set package_id [ad_conn package_id] }
         if { ![exists_and_not_null sort_order]    } {
-            db_0or1row select_last_sort_order_value {
-                select sort_order from contact_views where contact_object_type = :contact_object_type order by sort_order desc limit 1 
-            }
+            db_0or1row select_last_sort_order_value {}
             if { [exists_and_not_null sort_order] } {
                 incr sort_order
             } else {
@@ -36,20 +34,7 @@ namespace eval contacts::view:: {
             }
         }
 
-        db_1row create_contact_view {
-            select contact__view_create(
-                                        null,
-                                        :src,
-                                        :privilege_required,
-                                        :privilege_object_id,
-                                        :contact_object_type,
-                                        :package_id,
-                                        :sort_order,
-                                        now(),
-                                        :creation_user,
-                                        :creation_ip,
-                                        :context_id) as view_id
-        }
+        db_1row create_contact_view {}
         return $view_id
 
     }
@@ -61,13 +46,7 @@ namespace eval contacts::view:: {
     } {
         this code returns 1 if the view_id exists for this object_type
     } {
-        db_1row create_contact_view {
-            select contact__view_name_save(
-                                           :view_id,
-                                           :locale,
-                                           :name
-                                           )
-        }
+        db_1row save_view_name {}
 
     }
 
@@ -75,9 +54,9 @@ namespace eval contacts::view:: {
         initialize views
     } {
 
-        if { [string is false [db_0or1row views_exist_p { select '1' from contact_views limit 1 } ]] } {
+        if { [string is false [db_0or1row views_exist_p {} ]] } {
 
-            db_1row get_package_id { select package_id from apm_packages where package_key = 'contacts' }
+            db_1row get_package_id {}
 
             set view_id [contacts::view::create -src "/packages/contacts/www/view/contact-view" \
                              -privilege_required "read" \
@@ -121,7 +100,7 @@ namespace eval contacts::view:: {
     } {
         this code returns 1 if the view_id exists for this object_type
     } {
-        return [db_0or1row exists_p_select { select 1 from contact_views where view_id = :view_id and contact_object_type = :object_type }]
+        return [db_0or1row exists_p_select {}]
     }
 
     ad_proc -public get {
@@ -131,11 +110,7 @@ namespace eval contacts::view:: {
         get the info on the view
     } {
 
-	db_0or1row get_view_info { 
-            select *
-              from contact_views
-             where view_id = :view_id
-        }
+	db_0or1row get_view_info {}
 
         if { ![exists_and_not_null locale] } {
             set locale [lang::conn::locale -site_wide]        
@@ -174,9 +149,7 @@ namespace eval contacts::view::get:: {
             set locale [lang::conn::locale -site_wide]        
         }
 
-        db_0or1row get_view_name {
-            select name from contact_view_names where view_id = :view_id and locale = :locale
-        }
+        db_0or1row get_view_name {}
 
         if { ![exists_and_not_null name] } {
             set locale "en_US"

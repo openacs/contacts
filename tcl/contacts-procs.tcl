@@ -18,70 +18,12 @@ namespace eval contact:: {
         return [contact::get::name $party_id]
     }
 
-    ad_proc -public create {
-        {-party_id ""}
-        {-email ""}
-        {-url ""}
-        {-deleted_p "f"}
-        {-deleted_user ""}
-        {-deleted_time ""}
-        {-deleted_reason ""}
-    } {
-        this code creates a new contact and returns the newly created party_id
-    } {
-
-        v_organization_id := organization__new (
-                                                p_legal_name,
-                                                p_name, -- UNIQUE
-                                                p_notes,
-                                                p_organization_id,
-                                                p_organization_type_id,
-                                                p_reg_number,
-                                                p_email,
-                                                p_url,
-                                                p_creation_user,
-                                                p_creation_ip,
-                                                p_context_id,
-                                                );
-        
-        v_person_id := person__new (
-                                    p_party_id,
-                                    p_object_type, -- default person (could be user or contact)
-                                    p_creation_date,
-                                    p_creation_user,
-                                    p_creation_ip,
-                                    p_email,
-                                    p_url,
-                                    p_first_names,
-                                    p_last_name,
-                                    p_context_id
-                                    );
-        
-
-        set creation_user [ad_conn user_id]
-        set creation_ip [ad_conn peeraddr]
-        set context_id [ad_conn package_id]
-        return [db_exec_plsql get_party_id { select contact__create (:party_id,
-                                                                       :email,
-                                                                       :url,
-                                                                       :deleted_p,
-                                                                       :deleted_user,
-                                                                       :deleted_time,
-                                                                       :deleted_reason,
-                                                                       now(),
-                                                                       :creation_user,
-                                                                       :creation_ip,
-                                                                       :context_id
-                                                                       )}]
-    }
-
-
     ad_proc -public exists_p {
         party_id
     } {
         this code returns 1 if the party_id exists
     } {
-        return [db_0or1row exists_p_select { select 1 from contacts where party_id = :party_id }]
+        return [db_0or1row exists_p {}]
     }
 
     ad_proc -public get {
@@ -90,7 +32,7 @@ namespace eval contact:: {
         get the info on the contact
     } {
 
-	db_0or1row get_contact_info { select * from contacts where party_id = :party_id }
+	db_0or1row get_contact_info {}
 
         set contact_info [ns_set create]
         ns_set put $contact_info party_id         $party_id         
@@ -125,7 +67,7 @@ namespace eval contact::get:: {
         get the info from addresses
     } {
         upvar $array row
-        db_0or1row select_address_info { select * from contacts where party_id = :party_id } -column_array row
+        db_0or1row select_address_info {} -column_array row
     }
 
 
@@ -178,7 +120,7 @@ namespace eval contacts::util:: {
     } {
         returns 1 if the party is a user and 0 if not
     } {
-        return [db_0or1row get_party_is_user_p { select '1' from users where user_id = :party_id } ]
+        return [db_0or1row get_party_is_user_p {} ]
     }
 
 
@@ -186,7 +128,7 @@ namespace eval contacts::util:: {
     } {
         returns the next available object_id
     } {
-        db_1row get_next_object_id { select nextval from acs_object_id_seq }
+        db_1row get_next_object_id {}
         return $nextval
     }
     
@@ -195,7 +137,7 @@ namespace eval contacts::util:: {
     } {
         returns the object_id of the organization contact_object_type
     } {
-        db_1row get_object_id { select object_id from contact_object_types where object_type = 'organization' }
+        db_1row get_organization_object_id {}
         return $object_id
     }
 
@@ -203,10 +145,9 @@ namespace eval contacts::util:: {
     } {
         returns the object_id of the organization contact_object_type
     } {
-        db_1row get_object_id { select object_id from contact_object_types where object_type = 'person' }
+        db_1row get_object_id {}
         return $object_id
     }
-
     
     # some of this codes was borrowed from the directory module
     ad_proc -public letter_bar {
@@ -273,22 +214,6 @@ namespace eval contacts::get {
         set locale [lang::conn::locale -site_wide]
         set user_id [ad_conn user_id]
 
-        set query {
-           select * 
-             from contact_attributes ca,
-                  contact_widgets cw,
-                  contact_attribute_object_map caom,
-                  contact_attribute_names can
-            where caom.object_id = :object_id
-              and ca.attribute_id = can.attribute_id
-              and can.locale = :locale
-              and caom.attribute_id = ca.attribute_id
-              and ca.widget_id = cw.widget_id
-              and not ca.depreciated_p
-              and acs_permission__permission_p(ca.attribute_id,:user_id,'write')
-            order by caom.sort_order
-        }
-
         set active_group_id ""
 
         set element_list ""
@@ -304,7 +229,7 @@ namespace eval contacts::get {
                 set object_type "person"
             }
         }
-        db_foreach select_attributes $query {
+        db_foreach select_attributes {} {
 
             if { [lsearch [list first_names last_name email url] $attribute] >= 0 } {
                 if { [contacts::util::party_is_user_p $party_id] } {
@@ -534,13 +459,7 @@ namespace eval contacts::get::values:: {
                   if { $storage_column == "option_map_id" && [exists_and_not_null option_map_id] } {
                       set pretty_value {}
                       set ad_form_value [list]
-                      db_foreach select_options_from_map {
-                          select cao.option, cao.option_id
-                            from contact_attribute_options cao,
-                                 contact_attribute_option_map caom
-                           where caom.option_id = cao.option_id
-                             and caom.option_map_id = :option_map_id
-                      } {
+                      db_foreach select_options_from_map {} {
                           if { [llength $ad_form_value] > 0 } {
                               # we know there has been a previous entry so we can put in a comma
                               append pretty_value "\n"
@@ -587,7 +506,7 @@ namespace eval contacts::save::ad_form {
         set user_id [ad_conn user_id]
 
         if { [exists_and_not_null party_id] } {
-            if { ![db_0or1row select_contact_p { select 1 from contacts where party_id = :party_id }] } {
+            if { ![contact::exists_p $party_id] } {
                 set party_id [contacts::contact::create -party_id $party_id]
             }
         } else {
@@ -597,28 +516,11 @@ namespace eval contacts::save::ad_form {
 
         set locale [lang::conn::locale -site_wide]
 
-        set query {
-           select * 
-             from contact_attributes ca,
-                  contact_widgets cw,
-                  contact_attribute_object_map caom,
-                  contact_attribute_names can
-            where caom.object_id = :object_id
-              and ca.attribute_id = can.attribute_id
-              and can.locale = :locale
-              and caom.attribute_id = ca.attribute_id
-              and ca.widget_id = cw.widget_id
-              and not ca.depreciated_p
-              and acs_permission__permission_p(ca.attribute_id,:user_id,'write')
-            order by caom.sort_order
-        }
-
-
         set object_type [contact::get::object_type $party_id]
 
         set attr_value_temp ""
 
-        db_foreach select_attributes $query {
+        db_foreach select_attributes {} {
     
             set attribute_value_temp [string trim [template::element::get_value entry "contact_attribute__$attribute"]]
             
@@ -634,20 +536,7 @@ namespace eval contacts::save::ad_form {
     
     
                 set old_address_id ""
-                db_0or1row select_old_address_id {
-                    select cav.address_id as old_address_id
-                      from contact_attribute_values cav,
-                           postal_addresses pa
-                     where cav.party_id = :party_id
-                       and cav.attribute_id = :attribute_id
-                       and not cav.deleted_p
-                       and cav.address_id = pa.address_id
-                       and pa.delivery_address = :delivery_address
-                       and pa.municipality = :municipality
-                       and pa.region = :region
-                       and pa.postal_code = :postal_code
-                       and pa.country_code = :country_code
-                }
+                db_0or1row select_old_address_id {}
                 if { [exists_and_not_null old_address_id] } {
                     # the address in the database is the same
                     set address_id $old_address_id
@@ -674,16 +563,7 @@ namespace eval contacts::save::ad_form {
             if { $storage_column == "number_id" } {
     
                 set old_number_id ""
-                db_0or1row select_old_number_id {
-                    select cav.number_id as old_number_id
-                      from contact_attribute_values cav,
-                           telecom_numbers tn
-                     where cav.party_id = :party_id
-                       and cav.attribute_id = :attribute_id
-                       and not cav.deleted_p
-                       and cav.number_id = tn.number_id
-                       and tn.subscriber_number = :attribute_value_temp
-                }
+                db_0or1row select_old_number_id {}
                 if { [exists_and_not_null old_number_id] } {
                     # the number in the database is the same
                     set number_id $old_number_id
@@ -708,13 +588,13 @@ namespace eval contacts::save::ad_form {
                 if { [exists_and_not_null attribute_value_temp] } {
     
                     # first we verify that the address has changed. otherwise we pass on the old option_map_id
-                    db_0or1row get_option_map_id { select option_map_id from contact_attribute_values where party_id = :party_id and attribute_id = :attribute_id and not deleted_p }
-    
+                    db_0or1row get_option_map_id {}
+
                     if { [exists_and_not_null option_map_id] } {
                         # we know that a previous entry exists
     
                         set old_option_ids ""
-                        db_foreach get_old_options { select option_id from contact_attribute_option_map where option_map_id  = :option_map_id } {
+                        db_foreach get_old_options {} {
                             lappend old_option_ids $option_id
                         }
                         set new_option_ids $attribute_value_temp
@@ -731,26 +611,21 @@ namespace eval contacts::save::ad_form {
                             # the lists have the same values - do nothing
                         } else {
                             # the lists are different 
-                            db_1row get_new_option_map_id { select nextval('contact_attribute_option_map_id_seq') as option_map_id }
-    
+                            db_1row get_new_option_map_id {}
+
                             foreach option_id $attribute_value_temp {
                                 if {![empty_string_p $option_id]} {
-                                    db_dml insert_options_map { 
-                                        insert into contact_attribute_option_map
-                                        (option_map_id,party_id,option_id)
-                                        values
-                                        (:option_map_id,:party_id,:option_id)
-                                    }
+                                    db_dml insert_options_map {}
                                 }
                             }
                         }
                     } else {
                         # there is no previous entry in the database         
                         db_1row get_new_option_map_id { select nextval('contact_attribute_option_map_id_seq') as option_map_id }
-    
+
                         foreach option_id $attribute_value_temp {
                             if {![empty_string_p $option_id]} {
-                                db_dml insert_options_map { 
+                                db_dml insert_options_map {
                                     insert into contact_attribute_option_map
                                     (option_map_id,party_id,option_id)
                                     values
@@ -789,49 +664,31 @@ namespace eval contacts::save::ad_form {
 
             if { [lsearch $custom_fields $attribute] >= 0 } {
                 if { $attribute == "email" } {
-                    db_dml update_parties {
-                        update parties set email = :attribute_value_temp where party_id = :party_id
-                    }
+                    db_dml update_parties_email {}
                 }
                 if { $attribute == "url" } {
-                    db_dml update_parties {
-                        update parties set url = :attribute_value_temp where party_id = :party_id
-                    }
+                    db_dml update_parties_url {}
                 }
                 if { $object_type == "organization" } {
                     # [list organization_name legal_name reg_number organization_type]
                     if { $attribute == "organization_name" } {
-                        db_dml update_parties {
-                            update organizations set name = :attribute_value_temp where organization_id = :party_id
-                        }
+                        db_dml update_organizations_name {}
                     }
                     if { $attribute == "legal_name" } {
-                        db_dml update_parties {
-                            update organizations set legal_name = :attribute_value_temp where organization_id = :party_id
-                        }
+                        db_dml update_organizations_legal_name {}
                     }
                     if { $attribute == "reg_number" } {
-                        db_dml update_parties {
-                            update organizations set reg_number = :attribute_value_temp where organization_id = :party_id
-                        }
+                        db_dml update_organizations_reg_number {}
                     }
                     if { $attribute == "organization_type" } {
-                        db_dml delete_object_map { delete from organization_type_map where organization_id = :party_id }
+                        db_dml delete_org_type_maps {}
                         set attribute_value_temp [string trim [template::element::get_values entry "contact_attribute__$attribute"]]
                         foreach option_id $attribute_value_temp {
                             if {![empty_string_p $option_id]} {
-                                db_1row get_organization_type_id {
-                                        select organization_type_id 
-                                          from contact_attribute_options cao,
-                                               organization_types ot
-                                         where cao.option = ot.type
-                                           and cao.option_id  = :option_id
-                                }
+                                db_1row get_organization_type_id {}
 
 
-                                db_dml insert_maping { insert into organization_type_map 
-	                                                      (organization_id, organization_type_id) values
-                                                              (:party_id, :organization_type_id) }
+                                db_dml insert_mapping {}
                             }
                         }
                     }
@@ -839,14 +696,10 @@ namespace eval contacts::save::ad_form {
                 if { $object_type == "person" } {
                     # [list first_names last_name]
                     if { $attribute == "first_names" } {
-                        db_dml update_parties {
-                            update persons set first_names = :attribute_value_temp where person_id = :party_id
-                        }
+                        db_dml update_persons_first_names {}
                     }
                     if { $attribute == "last_name" } {
-                        db_dml update_parties {
-                            update persons set last_name = :attribute_value_temp where person_id = :party_id
-                        }
+                        db_dml update_persons_last_name {}
                     }
 
                     

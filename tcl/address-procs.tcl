@@ -39,6 +39,7 @@ ad_proc -public template::util::address::acquire { type { value "" } } {
 ad_proc -public template::util::address::formats {} {
     Returns a list of valid address formats
 } {
+# MGEDDERT NOTE: there needs to be a way to implement a way to portray addresses differently by country
     return { US CA DE }
 }
 
@@ -46,19 +47,14 @@ ad_proc -public template::util::address::country_options {} {
     Returns the country list
 
 
-    MGEDDERT NOTE: This should be pulled from the db and cached on restart
 
 
 } {
 
-    set countries_list [db_list_of_lists get_countries { select default_name, iso from countries order by default_name }]
+#    MGEDDERT NOTE: This should be pulled from the db and cached on restart
+    set countries_list [db_list_of_lists get_countries {}]
     return $countries_list
 
-#    return { 
-#        {"United States" US}
-#        {"Canada" CA}
-#        {"Germany" DE}
-#    }
 }
 
 ad_proc -public template::data::validate::address { value_ref message_ref } {
@@ -72,7 +68,7 @@ ad_proc -public template::data::validate::address { value_ref message_ref } {
     set country_code     [lindex $address_list 4]
 
     if { $country_code == "US" } {
-        if { ![db_0or1row validate_state { select 1 from us_states where abbrev = upper(:region) or state_name = upper(:region) } ] } {
+        if { ![db_0or1row validate_state {} ] } {
             set message "\"$region\" is not a valid US State."
             return 0
         }
