@@ -28,13 +28,7 @@ set object_type [contact::get::object_type $party_id]
 set selected_view_id $view_id
 set user_id [ad_conn user_id]
 
-db_multirow -extend { name url selected_p } views select_views {
-    select view_id
-      from contact_views
-     where contact_object_type = :object_type
-       and acs_permission__permission_p(privilege_object_id,:user_id,privilege_required)
-     order by sort_order
-} {
+db_multirow -extend { name url selected_p } views select_views {} {
     if { $selected_view_id == $view_id } {
         set selected_p 1
     } else {

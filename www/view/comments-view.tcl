@@ -79,41 +79,11 @@ list::create \
 template::multirow create comments comment_id author author_url pretty_timestamp content content_html
 
 set package_id [ad_conn package_id]
-db_foreach get_comments "
-         select g.comment_id,
-                r.mime_type,
-                o.creation_user,
-                acs_object__name(o.creation_user) as author,
-                to_char(o.creation_date, 'MM-DD-YYYY') as pretty_date,
-                to_char(o.creation_date, 'YYYY-MM-DD HH24:MI') as pretty_timestamp,
-                r.content
-           from general_comments g,
-                cr_revisions r,
-                acs_objects o
-          where g.object_id = :party_id and
-                r.revision_id = content_item__get_live_revision(g.comment_id) and
-                o.object_id = g.comment_id
-                and o.context_id = :package_id
-          [template::list::orderby_clause -orderby -name comments]
-" {
+db_foreach get_comments "" {
     set author_url "[apm_package_url_from_id [ad_conn package_id]]view/$creation_user"
     set content_html [ad_html_text_convert -from $mime_type -to "text/html" $content]
     template::multirow append comments $comment_id $author $author_url $pretty_timestamp $content $content_html
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
