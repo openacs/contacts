@@ -74,7 +74,7 @@ namespace eval contacts::view:: {
         initialize views
     } {
 
-        if { ![db_0or1row views_exist_p { select '1' from contact_views limit 1 } ] } {
+        if { [string is false [db_0or1row views_exist_p { select '1' from contact_views limit 1 } ]] } {
 
             db_1row get_package_id { select package_id from apm_packages where package_key = 'contacts' }
 

@@ -12,7 +12,7 @@ ad_page_contract {
 set user_id [auth::require_login]
 permission::require_write_permission -object_id [ad_conn package_id] -action "write"
 
-if { [contact::exists_p $party_id] } {
+if { [string is true [contact::exists_p $party_id]] } {
     set context [list "\#acs-kernel.common_Edit\#"]
     set title "\#acs-kernel.common_Edit\# [contact::get::name $party_id]"
     set object_type [contact::get::object_type $party_id]
@@ -44,7 +44,7 @@ ad_form -name entry -action contact-ae -form {
 
 ad_form -extend -name entry -form [contacts::get::ad_form_elements $object_id $party_id]
 
-if { [contacts::categories::enabled_p]} {
+if { [string is true [contacts::categories::enabled_p]]} {
     ad_form -extend -name entry -form {
         {category_ids:integer(category),multiple,optional {label "Categories"}
             {html {size 7}} {value {$party_id [ad_conn package_id]}}}
