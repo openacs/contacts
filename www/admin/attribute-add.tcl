@@ -58,7 +58,7 @@ list::create \
 
 # This query will override the ad_page_contract value entry_id
 
-db_multirow -extend { attribute_add_url } -unclobber entries select_widgets {select description, widget_id from contact_widgets order by description } {
+db_multirow -extend { attribute_add_url } -unclobber entries select_widgets {} {
     set attribute_add_url "attribute-ae?widget_id=$widget_id"
 }
 

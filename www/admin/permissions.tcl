@@ -8,7 +8,7 @@ ad_page_contract {
 } {
     object_id:integer
 }
-db_1row get_object_name { select acs_object__name(:object_id) as object_name }
+set object_name [db_string get_object_name {}]
 set title "Permissions for $object_name"
 set context [list $title]
 

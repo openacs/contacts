@@ -28,9 +28,7 @@ if { [string is false $confirm_p] } {
 } else {
 
 foreach party_id $party_id {
-    db_dml make_current_contact {
-        delete from contact_archives where party_id = :party_id
-    }
+    db_dml unarchive_contact {}
 }
 
 ad_returnredirect "./"

@@ -62,6 +62,8 @@ ad_form -extend -name entry \
     } -on_submit {
 
 
+        # this should probably be moved into a proc...
+
         if { ![contact::exists_p $party_id] } {
             set creation_user [ad_conn user_id]
             set creation_ip [ad_conn peeraddr]

@@ -14,7 +14,6 @@ set context {}
 set package_id [ad_conn package_id]
 
 
-# db_multirow categories select_categories { select * from contact_categories where parent_id is null }
 
 
 set organization_object_id [contacts::util::organization_object_id]

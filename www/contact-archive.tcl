@@ -31,9 +31,7 @@ set archived_user [ad_conn user_id]
 set archived_reason "This contact is no longer needed"
 
 foreach party_id $party_id {
-    db_dml archive_contact {
-        insert into contact_archives (party_id) values (:party_id)
-    }
+    db_dml archive_contact {}
 }
 
 ad_returnredirect "./"

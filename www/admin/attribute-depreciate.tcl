@@ -10,9 +10,7 @@ ad_page_contract {
 
 
 foreach attribute_id $attribute_id {
-    db_dml depreciate_the_attribute {
-        update contact_attributes set depreciated_p = 't' where attribute_id = :attribute_id
-    }
+    db_dml depreciate_attribute {}
 }
 
 ad_returnredirect "attributes"

@@ -73,14 +73,7 @@ list::create \
 
 
 
-
-
-# This query will override the ad_page_contract value entry_id
-
-
-db_multirow -unclobber entries get_courses "
-    select * from contact_widgets order by storage_column, description
-"
+db_multirow -unclobber entries get_widgets ""
 
 
 ad_return_template

@@ -113,32 +113,8 @@ list::create \
 
 
 
-# This query will override the ad_page_contract value entry_id
 
-set myquery "
-    select ca.widget_id,
-           ca.attribute_id,
-           ca.attribute,
-           can.name,
-           can.help_text,
-           ca.depreciated_p,
-           cw.description as widget_description
-      from contact_attributes ca left join contact_attribute_names can on (can.attribute_id = ca.attribute_id),
-           contact_widgets cw
-     where cw.widget_id = ca.widget_id
-       and can.locale = :locale
-  [list::filter_where_clauses -and -name "entries"]
-  [template::list::orderby_clause -orderby -name "entries"]
-"
-ns_log warning "
-
-
-$myquery
-
-
-"
-
-db_multirow -unclobber entries get_attributes $myquery
+db_multirow -unclobber entries get_attributes {}
 
 
 
