@@ -2,6 +2,9 @@
 --
 -- @author Matthew Geddert openacs@geddert.com
 -- @creation-date 2004-07-28
+-- @cvs-id $Id$
+--
+--
 
 drop table contact_view_names;
 drop table contact_views;
