@@ -621,7 +621,7 @@ namespace eval contacts::save::ad_form {
                         }
                     } else {
                         # there is no previous entry in the database         
-                        db_1row get_new_option_map_id { select nextval('contact_attribute_option_map_id_seq') as option_map_id }
+                        db_1row get_new_option_map_id {}
 
                         foreach option_id $attribute_value_temp {
                             if {![empty_string_p $option_id]} {
