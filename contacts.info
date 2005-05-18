@@ -13,7 +13,7 @@
         <release-date>2004-07-28</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing, grouping, relating and doing advanced searches for contacts. It also provides emailing and letter mail merge functionality. Each contact can have an arbitrary number of attributes associated with it via the AMS package (Attribute Management System).
         </description>
-        <provides url="contacts" version="0.1d"/>
+        <provides url="contacts" version="1.0d"/>
         <requires url="ams" version="1.0d"/>
         <requires url="general-comments" version="4.1"/>
         <requires url="organizations" version="0.3d"/>
