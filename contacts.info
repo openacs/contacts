@@ -5,25 +5,18 @@
     <package-name>Contacts</package-name>
     <pretty-plural>Contacts</pretty-plural>
     <initial-install-p>f</initial-install-p>
-    <singleton-p>t</singleton-p>
-    <auto-mount>contacts</auto-mount>
-
-    <version name="0.1d" url="http://openacs.org/repository/download/apm/contacts-0.1d.apm">
+    <singleton-p>f</singleton-p>
+    
+    <version name="1.0d" url="http://openacs.org/repository/download/apm/contacts-1.0d.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
         <release-date>2004-07-28</release-date>
-        <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
-
+        <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing, grouping, relating and doing advanced searches for contacts. It also provides emailing and letter mail merge functionality. Each contact can have an arbitrary number of attributes associated with it via the AMS package (Attribute Management System).
+        </description>
         <provides url="contacts" version="0.1d"/>
-        <requires url="categories" version="1.0d3"/>
+        <requires url="ams" version="1.0d"/>
         <requires url="general-comments" version="4.1"/>
         <requires url="organizations" version="0.3d"/>
-        <requires url="postal-address" version="0.1d"/>
-        <requires url="ref-countries" version="0.1d"/>
-        <requires url="ref-us-counties" version="0.1d"/>
-        <requires url="ref-us-states" version="0.1d"/>
-        <requires url="ref-us-zipcodes" version="0.1d"/>
-        <requires url="telecom-number" version="0.1d"/>
 
         <callbacks>
         </callbacks>

@@ -1,0 +1,26 @@
+@page {
+	margin-top: 1in;
+        margin-right: 1in;
+        margin-bottom: 1in;
+        margin-left: 3in;
+}
+body {
+   background: white;
+   font-size: 12pt;
+   }
+div.letter {
+	page-break-after: always;
+}
+a:link, a:visited {
+   color: #520;
+   background: transparent;
+   font-weight: bold;
+   text-decoration: underline;
+   }
+#content a:link:after, #content a:visited:after {
+   content: " (" attr(href) ") ";
+   font-size: 90%;
+   }
+#content a[href^="/"]:after {
+   content: " (http://www.mbseminary.edu" attr(href) ") ";
+   }

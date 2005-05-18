@@ -1,357 +1,323 @@
 ad_page_contract {
-
+    List and manage contacts.
 
     @author Matthew Geddert openacs@geddert.com
     @creation-date 2004-07-28
     @cvs-id $Id$
-
 } {
-    {searchterm ""}
-    {letter ""}
-    {num_rows "20"}
-    {start_row:naturalnum "0"}
-    {category_id:multiple,optional}
-    {groupby:optional}
-    {orderby:optional}
-    {sortby "first_names"}
+    {rel_type:optional}
+    {orderby "first_names,asc"}
     {format "normal"}
-    {status "current"}
-    {object_type ""}
+    {query_id:integer ""}
+    {query ""}
+    {page:optional}
+    {page_size:integer "25"}
+    {tasks_interval:integer "7"}
 }
 
-set admin_p [ad_permission_p [ad_conn package_id] admin]
 
 set title "Contacts"
 set context {}
 
-set valid_numrows [list 10 20 50 100 ALL]
-if { [lsearch $valid_numrows $num_rows] < 0 } {
-    set num_rows 50
-}
-
-
-
-if { $num_rows == "ALL" } {
-    set start_row 0
-}
-
-
-
-
-
-set export_vars_page_nav      [export_vars -url  { category_id format letter num_rows object_type orderby searchterm sortby status }]
-set export_vars_search_form   [export_vars -form { category_id format        num_rows object_type orderby            sortby status }]
-set export_vars_search_url    [export_vars -url  { category_id format        num_rows object_type orderby            sortby status }]
-set export_vars_letter_url    [export_vars -url  { category_id format        num_rows object_type orderby            sortby status }]
-set export_vars_sortby_url    [export_vars -url  { category_id format letter num_rows object_type orderby searchterm        status }]
-set export_vars_num_rows_url  [export_vars -url  { category_id format letter          object_type orderby searchterm sortby status }]
-set export_vars_category_form [export_vars -form {             format letter num_rows object_type orderby searchterm sortby status }]
-set export_vars_category_url  [export_vars -url  {             format letter num_rows object_type orderby searchterm sortby status }]
-
-
-
-
-if {[exists_and_not_null category_id]} {
-    set category_id_filter "party_id in ( select object_id from category_object_map where category_id = $category_id )"
-    set temp_category_id $category_id
+if { [exists_and_not_null query_id] } {
+    if { [contact::search::exists_p -search_id $query_id] } {
+        set search_id $query_id
+        set query_type "search"
+    } else {
+        set group_id $query_id
+        set query_type "group"
+    }
 } else {
-    set category_id_filter ""
-    set temp_category_id ""
+#    set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
+    set group_id [contacts::default_group]
+    set query_id $group_id
+    set query_type "group"
+    if { ![exists_and_not_null group_id] } {
+        ad_return_error "Not Configured" "Your administrator must map and add a default group in the <a href=\"admin\">admin pages</a>"
+    }
 }
 
-set categories_p [contacts::categories::enabled_p]
 
-if { [string is true $categories_p] } {
-set category_select [contacts::categories::get_selects -export_vars $export_vars_category_form -category_id $temp_category_id] 
-}
-
-
-set searchterm_filter "upper(sort_$sortby) like upper('%$searchterm%')"
-set letter_filter "upper(sort_$sortby) like upper('$letter%')"
-
-if { [lsearch [list organization person] $object_type] < 0 } {
-    set object_type_filter ""
+if { $orderby == "first_names,asc" } {
+    set name_order 0
+    set name_label "Sort by: First Names | <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {last_name,asc}}}]\">Last Name</a>"
 } else {
-    set object_type_filter "object_type = '$object_type'"
+    set name_order 1
+    set name_label "Sort by: <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {first_names,asc}}}]\">First Names</a> | Last Name"
 }
-
-if { [lsearch [list current archived] $status] < 0 } {
-    set status_filter ""
-} else {
-    set status_filter "status = '$status'"
+append name_label " &nbsp;&nbsp; Show: "
+set first_p 1
+foreach page_s [list 25 50 100 500] {
+    if { [string is false $first_p] } {
+        append name_label " | "
+    }
+    if { $page_size == $page_s } {
+        append name_label $page_s
+    } else {
+        append name_label "<a href=\"[export_vars -base . -url {rel_type format query_id query page orderby {page_size $page_s}}]\">$page_s</a>"
+    }
+    set first_p 0
 }
+append name_label "&nbsp;&nbsp;&nbsp;Get: <a href=\"[export_vars -base . -url {rel_type {format csv} query_id query page orderby page_size}]\">CSV</a>"
+
+set tasks_url [export_vars -base "/tasks/query" -url {query_id query rel_type}]
 
 
-if { $status == "archived" } {
-set bulk_actions [list \
-        "\#contacts.Make_Current\#" "contact-current" "\#contacts.Make_the_checked_contacts_current\#"]
-} else {
-set bulk_actions [list \
-        "\#contacts.Archive\#" "contact-archive" "\#contacts.Archive_the_checked_contacts\#"]
-}
-#        "\#contacts.Add_to_Category\#" "contacts-category-add" "\#contacts.Add_the_selected_contacts_to_a_category\#" 
-#        "\#contacts.Send_Email\#" "bulk-email" "\#contacts.Send_an_email_message_to_the_selected_contacts\#" \
 
+# SEARCH CLAUSE
 
-list::create \
-    -html { width 100% } \
-    -name entries \
-    -multirow entries \
-    -key party_id \
-    -row_pretty_plural "Contacts" \
-    -checkbox_name checkbox \
-    -selected_format $format \
-    -class "list" \
-    -main_class "list" \
-    -sub_class "narrow" \
-    -pass_properties {
-        variable
-    } -actions {
-        "\#contacts.Add_a_Person\#" "contact-ae?object_type=person" "\#contacts.Add_a_Person\#"
-        "\#contacts.Add_an_Organization\#" "contact-ae?object_type=organization" "\#contacts.Add_an_Organization\#"
-    } -bulk_actions $bulk_actions \
-    -elements {
-        edit {
-            label {}
-            display_template {
-                <a href="contact-ae?party_id=@entries.party_id@" title="\#acs-kernel.common_Edit\# @entries.sort_first_names@"><img src="/shared/images/Edit16.gif" height="16" width="16" alt="Edit" border="0"></a>
+set search_clause [list]
+
+if { $query_type == "group" } {
+    if { $group_id != "-2" } {
+        lappend search_clause "and party_id in ( select member_id from group_distinct_member_map where group_id = '$group_id' )"
+    }
+    if { [exists_and_not_null rel_type] } {
+        set rel_valid_p 0
+        db_foreach get_rels {} {
+            if { $rel_type == $relation_type } {
+                set rel_valid_p 1
             }
+        }
+        if { $rel_valid_p } {
+            lappend search_clause "and party_id in ( select member_id from group_member_map where rel_type = '$rel_type' )"
+        } else {
+            set rel_type ""
+        }
+    }
+} elseif { $query_type == "search" } {
+    lappend search_clause [contact::search::where_clauses -and -search_id $search_id -party_id "parties.party_id" -revision_id "revision_id"]
+}
 
+
+if { [exists_and_not_null query] } {
+    set search [string trim $query]
+    foreach term $query {
+	if { [string is integer $query] } {
+	    lappend search_clause "and party_id = $term"
+	} else {
+	    lappend search_clause "and upper(contact__name(party_id)) like upper('%${term}%')"
+	}
+    }
+}
+set search_clause [join $search_clause "\n"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# LIST CODE
+
+#set actions [list \
+#		  "Add Person" "contact-add?object_type=person" "Add a Person" \
+#		  "Add Organization" "contact-add?object_type=organization" "Add an Organization" \
+#		  "Advanced Search" "search" "Advanced Search" \
+#		  "Settings" "settings" "Modify Settings" \
+#		  "Admin" "admin" "Administration"]
+set actions ""
+set bulk_actions [list \
+		  "Add to Group" "group-parties-add" "Add to group" \
+		  "Remove From Group" "group-parties-remove" "Remove from this Group" \
+		  "Delete" "delete" "Delete the selected Contacts" \
+		  "Mail Merge" "message" "E-mail or Mail the selected contacts" \
+		  ]
+
+template::list::create \
+    -html {width 100%} \
+    -name "contacts" \
+    -multirow "contacts" \
+    -row_pretty_plural "contacts" \
+    -checkbox_name checkbox \
+    -selected_format ${format} \
+    -key party_id \
+    -page_size $page_size \
+    -page_flush_p t \
+    -page_query_name contacts_pagination \
+    -actions $actions \
+    -bulk_actions $bulk_actions \
+    -bulk_action_method post \
+    -bulk_action_export_vars { group_id } \
+    -elements {
+        rownum {
+	    label {}
+	    display_col rownum
+	}
+        type {
+	    label {}
+	    display_template {
+		<img src="/resources/contacts/Group16.gif" height="16" width="16" border="0"></img>
+	    }
+	}
+        contact {
+	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
+            display_template {
+		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="contact-edit?party_id=@contacts.party_id@">Edit</a>\]</span>
+                <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
+	    }
         }
-        contact_name {
-            display_col contact_name
-            link_url_eval $contact_url
-            label "\#contacts.Contact\#"
-        }
+        contact_id {
+            display_col party_id
+	}
         first_names {
-            display_col first_names
-            label "First Names"
+	    display_col first_names
+	}
+        last_name {
+	    display_col last_name
+	}
+        organization {
+	    display_col organization
+	}
+        email {
+	    display_col email
+	}
+    } -filters {
+    } -orderby {
+        first_names {
+            label "First Name"
+            orderby_asc  "lower(contact__name(party_id,'f')) asc"
+            orderby_desc "lower(contact__name(party_id,'f')) asc"
         }
         last_name {
-            display_col last_name
             label "Last Name"
+            orderby_asc  "lower(contact__name(party_id,'t')) asc"
+            orderby_desc "lower(contact__name(party_id,'t')) asc"
         }
-        organization_name {
-            display_col name
-            label "Organization"
-        }
-        email {
-            display_template {
-                @entries.email_url;noquote@
-            }
-            label "\#contacts.Email_Address\#"
-        }
-        contact_type {
-            display_template {
-                <if @entries.object_type@ eq organization>\#contacts.Organization\#</if>
-                <else>\#contacts.Person\#</else>
-            }
-            label "\#contacts.Contact_Type\#"
-        }
-    } -filters {
-        sortby {
-            label "\#contacts.Sort_By\#"
-            values {
-                {{\#contacts.First_Names\#} first_names}
-                {{\#contacts.Last_Name\#} last_name}
-            }
-            where_clause {}            
-        }
-        start_row {}
-        category_id {
-            label Categories
-            where_clause {$category_id_filter}
-        }
-        letter {
-            label "Letter"
-            where_clause {$letter_filter}
-        }
-        object_type {
-            label "\#contacts.Contact_Type\#"
-            values {
-                {{\#contacts.Organization\#} organization}
-                {{\#contacts.Person\#} person}
-            }
-            where_clause {$object_type_filter}
-        }
-        searchterm {
-            label "Search"
-            where_clause {$searchterm_filter}
-        }
-        status {
-            label "\#contacts.Status\#"
-            values {
-                {{\#contacts.Current\#} current}
-                {{\#contacts.Archived\#} archived}
-            }
-            where_clause {$status_filter}
-        }
-        num_rows {
-            label "\#contacts.Number_of_Rows\#"
-            values {
-                {10 10}
-                {20 20}
-                {50 50}
-                {100 100}
-                {500 500}
-                {All ALL}
-            }
-        }
-    } -groupby {
-    } -orderby {
-        default_value contact_name,asc
-        contact_name {
-            label "\#contacts.Contact\#"
-            orderby_desc "contacts.sort_$sortby desc, contacts.object_type desc, contacts.email desc"
-            orderby_asc  "contacts.sort_$sortby asc, contacts.object_type desc, contacts.email desc"
-            default_direction asc
-        }
-        email {
-            label "\#contacts.Email_Address\#"
-            orderby_desc "contacts.email desc, contacts.sort_$sortby desc, contacts.object_type desc"
-            orderby_asc  "contacts.email asc, contacts.sort_$sortby desc, contacts.object_type desc"
-            default_direction asc
-        }
-        contact_type {
-            label "\#contacts.Contact_Type\#"
-            orderby_desc "contacts.object_type desc, contacts.sort_$sortby desc, contacts.email desc"
-            orderby_asc  "contacts.object_type asc, contacts.sort_$sortby desc, contacts.email desc"
-            default_direction asc
-        }
+        default_value first_names,asc
     } -formats {
-        normal {
-            label "Table"
-            layout table
+	normal {
+	    label "Table"
+	    layout table
+	    row {
+ 		checkbox {}
+		contact {}
+	    }
+	}
+	tasks {
+	    label "Table"
+	    layout table
+	    row {
+ 		checkbox {}
+		contact {}
+	    }
+	}
+	csv {
+	    label "CSV"
+	    output csv
+            page_size 0
             row {
-                checkbox {}
-                edit {}
-                contact_name {}
-                email {}
-                contact_type {}
-            }
-        }
-        csv {
-            label "CSV"
-            output csv
-            row {
-                contact_name {}
+		contact_id {}
                 first_names {}
                 last_name {}
-                organization_name {}
+                organization {}
                 email {}
-                contact_type {}
-            }
+	    }
+	}
+    }
+
+db_multirow -unclobber contacts contacts_select {}
+
+# TOTAL COUNT CODE
+set contacts_total_count [db_string contacts_total_count {}]
+
+if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
+    if { $query_type == "group" } {
+        set query_name [db_string get_it { select group_name from groups where group_id = :group_id }]
+    } else {
+        set query_name [db_string get_it { select title from contact_searches where search_id = :search_id }]
+    }
+
+    ad_returnredirect -message "in '$query_name' only this contact matched your query of '$query'" [contact::url -party_id [template::multirow get contacts 1 party_id]]
+    ad_script_abort
+}
+
+
+
+
+if { $query_type == "group" } {
+
+    # roles
+    set rel_options [list]
+    lappend rel_options [list "All" "" ""]
+    db_foreach get_rels {} {
+        if { $relation_type == "membership_rel" } { 
+            set pretty_plural "People"
         }
+        lappend rel_options [list \
+                                 [lang::util::localize $pretty_plural] \
+                                 ${relation_type} \
+                                 ${member_count}]
     }
 
-# This query will override the ad_page_contract value entry_id
+}
 
-#  left join category_object_map c on (contact_attrs.party_id = c.object_id)
-set multirow_query "
-"
-#        [template::list::sortby_clause -sortby -name entries]
 
-db_multirow -extend { contact_url email_url object_type_pretty } -unclobber entries get_contact_info {} {
-    set contact_url "view/$party_id"
-    if { [exists_and_not_null email] } {
-        set email_url "<a href=\"mailto:$email\">$email</a>"
+set owner_id [ad_conn user_id]
+set group_options [list [list "-- Groups --------------------------" ""]]
+append group_options  " [contact::groups -expand "all"]"
+lappend group_options   [list "" ""]
+lappend group_options   [list "-- My Searches ---------------------" ""]
+append group_options  " [db_list_of_lists get_my_searches {}]"
+
+
+
+
+append form_elements {
+    {query_id:integer(select),optional {label ""} {options $group_options} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+}
+
+
+if { [exists_and_not_null rel_options] && $query_type == "group" } {
+    append form_elements {
+        {rel_type:text(select),optional {label ""} {options $rel_options} {html {onClick "javascript:acs_FormRefresh('search')"}}}
     }
-    if { $object_type == "organization" } {
-        set object_type_pretty "\#contacts.Organization\#"
-    } else {
-        set object_type_pretty "\#contacts.Person\#"
+}
+
+append form_elements {
+    {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
+    {save:text(submit) {label {Go}} {value "go"}}
+}
+#     {format:text(select),optional {label "&nbsp;&nbsp;&nbsp;Output"} {options {{Default normal} {CSV csv}}} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+
+switch $format {
+    normal {
+	append form_elements {
+	    {tasks_interval:integer(hidden),optional}
+	}
+	if { $contacts_total_count > 0 } {
+	    append form_elements {
+		{result_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">Results:</span>"} {value "$contacts_total_count"}}
+	    }
+	}
+
+    }
+    tasks {
+	append form_elements {
+	    {tasks_interval:integer(text),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">View next</span>"} {after_html "<span style=\"font-size: smaller;\">days</span>"} {html {size 2 maxlength 3 onChange "javascript:acs_FormRefresh('search')"}}}
+	}
+    }
+    csv {
+	# This spits out the CSV if we happen to be in CSV layout
+	list::write_output -name contacts
+	ad_script_abort
+    }
+    default {
     }
 }
 
 
-set initial_list_query "
-select distinct upper(substr(sort_$sortby,1,1))
-  from contacts
- where party_id is not null
-"
-
-if { [exists_and_not_null category_id_filter  ] } {
-    append initial_list_query "and $category_id_filter\n"
-}
-# we cannot use the letter filter because it defeats the purpose
-#if { [exists_and_not_null letter_filter       ] } {
-#    append initial_list_query "and $category_id_filter"
-#
-#}
-if { [exists_and_not_null object_type_filter  ] } {
-    append initial_list_query "and $object_type_filter\n"
-}
-if { [exists_and_not_null searchterm_filter   ] } {
-    append initial_list_query "and $searchterm_filter\n"
-}
-if { [exists_and_not_null status_filter       ] } {
-    append initial_list_query "and $status_filter\n"
-}
-
-set initial_list [db_list_of_lists get_list_of_starting_letters $initial_list_query]
-
-
-
-set letter_bar [contacts::util::letter_bar -letter $letter -export_vars $export_vars_letter_url -initial_list $initial_list]
-
-
-# pagination - hopefully once list builder has pagination documenation
-# this can be built into list builder
-
-
-db_1row get_total_rows "
-select count(*) as total_rows
-  from contacts
- where party_id is not null
-       [template::list::filter_where_clauses -and -name entries]
-"
-
-if { $num_rows != "ALL" } {
-
-    set first_row                [expr $start_row + 1]
-    set last_row                 [expr $start_row + $num_rows]
-
-    if { $num_rows >= $total_rows } {
-        set first_row 1
-        set last_row $total_rows
-        set start_row 0
+ad_form -name "search" -method "GET" -export {orderby page_size page format} -form $form_elements \
+    -on_request {
+    } -edit_request {
+    } -on_refresh {
+    } -on_submit {
+    } -after_submit {
     }
-
-
-    if { $last_row >= $total_rows } {
-        set next_link_p 0
-        set last_row $total_rows
-    } else {
-        set next_link_p 1
-        set next_link_url "?start_row=$last_row&$export_vars_page_nav"
-    }
-    if { $start_row == "0" } {
-        set prev_link_p 0
-    } else {
-        set prev_link_p 1
-        set prev_link_start_row [expr $start_row - $num_rows]
-        if { $prev_link_start_row < "0" } {
-            set prev_link_start_row "0"
-        }
-        set prev_link_url "?start_row=$prev_link_start_row&$export_vars_page_nav"    
-    }
-
-} else {
-    set next_link_p 0
-    set prev_link_p 0
-    set first_row 1
-    set last_row $total_rows
-}
-template::list::write_output -name entries
-
-
-
-
-
-
-
-
-
-ad_return_template
-
-

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <queryset>
 
-<rdbms><type>postgresql</type><version>7.2</version></rdbms>
-
 <fullquery name="contacts::view::create.select_last_sort_order_value">
   <querytext>
         select sort_order 

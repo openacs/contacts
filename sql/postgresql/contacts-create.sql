@@ -7,70 +7,175 @@
 --
 
 
-create table contact_archives (
-        party_id        integer
-                        constraint contact_archives_party_id_fk references parties(party_id)
-                        constraint contact_archives_party_id_pk primary key     
+-- all contacts are parties. we are making parties content repository items,
+-- so we need party revisions
+
+create table contact_party_revisions (
+        party_revision_id       integer
+                                constraint contact_party_revisions_id_fk references cr_revisions(revision_id)
+                                constraint contact_party_revisions_id_pk primary key
 );
 
--- this is used to create forms for orgs and persons (since they need object_ids) to map to.
-create table contact_object_types (
-        object_id               integer not null
-                                constraint contact_object_type_object_id_fk references acs_objects(object_id)
-                                constraint contact_object_type_object_id_pk primary key,
-        object_type             varchar(100) not null,
-        UNIQUE(object_type)
+-- create the content type
+select content_type__create_type (
+   'contact_party_revision',      -- content_type
+   'content_revision',            -- supertype    
+   'Party Revision',              -- pretty_name 
+   'Party Revisions',             -- pretty_plural
+   'contact_party_revisions',     -- table_name (should this be pm_task?)
+   'party_revision_id',           -- id_column 
+   'contact_party_revision__name' -- name_method
+);
+
+-- i need to create the content_folder contact_parties, it is not bound to a package_id
+-- since the package_id is not used by contacts - which uses the groups system for package
+-- maintenance.
+
+
+-- contrary to "most" packages that use the content repository, we will not be 
+-- specifying new item_ids. Since all contacts are parties, we are going to set
+-- all parties that use the contacts system to have an content_items(item_id)
+-- that is equal to the parties(party_id).
+
+
+
+-- since all contacts are parties we already have good "group" mechanisms built into the core
+-- however, we do not want people to view all groups at once, so the calendar instance
+-- administrator can selectively give certain calendar instances access to certain groups
+-- 
+-- by default each new contacts instance will be given access to its subsite's group. For
+-- example: all users on a default openacs install are memembers of the "Main Site Members"
+-- group. If a calendar instance were mounted under that subsite, all "Main Site Members"
+-- would be accessible to that calendar instance.
+--
+-- just as is the case with the calendar package all "users" of contacts (i.e. users that
+-- have write access to at least one contacts instance will be assigned a private calendar)
+--
+-- which calendars can be viewed by which calendar instance is handled via parameters - unlike
+-- many packages. This allows for more flexable instance and sharing management - where
+-- one instances shared calendar can also be accesible to another instance.
+
+create table contact_groups (
+        group_id                integer
+                                constraint contact_groups_id_fk references groups(group_id)
+                                constraint contact_groups_id_nn not null,
+        default_p               boolean default 'f'
+                                constraint contact_groups_default_p_nn not null,
+        package_id              integer
+                                constraint contact_groups_package_id_fk references apm_packages(package_id)
+                                constraint contact_groups_package_id_nn not null,
+        unique(group_id,package_id)
+);
+
+create table contact_groups_allowed_rels (
+        group_id                integer
+                                constraint contact_groups_id_fk references groups(group_id)
+                                constraint contact_groups_id_nn not null,
+        rel_type                varchar(100)
+                                constraint contact_groups_allowed_rels_type_fk references acs_rel_types(rel_type),
+        package_id              integer
+                                constraint contact_groups_package_id_fk references apm_packages(package_id)
+                                constraint contact_groups_package_id_nn not null,
+        unique(group_id,package_id)
 );
 
 
+create table contact_signatures (
+        signature_id            integer
+                                constraint contact_signatures_id_pk primary key,
+        title                   varchar(255)
+                                constraint contact_signatures_title_nn not null,
+        signature               varchar(1000)
+                                constraint contact_signatures_signature_nn not null,
+        default_p               boolean default 'f'
+                                constraint contact_signatures_default_p_nn not null,
+        party_id                integer
+                                constraint contact_signatures_party_id_fk references parties(party_id)
+                                constraint contact_signatures_party_id_nn not null,
+        unique(party_id,title,signature)
+);
 
-
-\i contacts-package-create.sql
-
-
-
-create view contacts as
-  select organization_id as party_id,
-         'organization' as object_type,
-         name,
-         name as organization_name,
-         legal_name,
-         reg_number,
-         null as first_names,
-         null as last_name,
-         name as sort_first_names,
-         name as sort_last_name,
-         contact__party_email(organization_id) as email,
-         contact__party_url(organization_id) as url,
-         'f' as user_p,
-         contact__status(organization_id) as status
-    from organizations
-union
-  select person_id as party_id,
-         'person' as object_type,
-         first_names || ' ' || last_name as name,
-         null as organization_name,
-         null as legal_name,
-         null as reg_number,
-         first_names as first_names,
-         last_name as last_name,
-         first_names || ' ' || last_name as sort_first_names,
-         last_name || ', ' || first_names as sort_last_name,
-         contact__party_email(person_id) as email,
-         contact__party_url(person_id) as url,
-         contact__person_is_user_p(person_id) as user_p,
-         contact__status(person_id) as status
-    from persons
-   where person_id != '0'
+-- this view greatly simplifies getting available roles for various contact types
+create view contact_rel_types as 
+(    select rel_type,
+            object_type_one as primary_object_type,
+            role_one as primary_role,
+            object_type_two as secondary_object_type,
+            role_two as secondary_role
+       from acs_rel_types
+      where rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
+)
+UNION
+(    select rel_type,
+            object_type_two as primary_object_type,
+            role_two as primary_role,
+            object_type_one as secondary_object_type,
+            role_one as secondary_role
+       from acs_rel_types
+      where rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
+)
 ;
 
+create table contact_rels (
+        rel_id           integer
+                         constraint contact_rels_rel_id_fk references acs_rels(rel_id) on delete cascade
+                         constraint contact_rels_rel_id_pk primary key,
+        comment          text,
+        comment_format   varchar(50) default 'text/plain'
+);
 
--- The attribute structure.
-\i attributes-create.sql
-\i attributes-package-create.sql
+select acs_rel_type__create_type (
+  'contact_rel',
+  'Contact Relationship',
+  'Contact Relationships',
+  'relationship',
+  'contact_rels',
+  'rel_id',
+  'contact_rel',
+  NULL,
+  'party',
+  0,
+  null::integer,
+  'party',
+  0,
+  null::integer
+);
 
-\i attributes-populate.sql
+create table organization_rels (
+        rel_id           integer
+                         constraint organization_rels_rel_id_fk references membership_rels(rel_id) on delete cascade
+                         constraint organization_rels_rel_id_pk primary key
+);
 
-\i views-create.sql
+select acs_rel_type__create_role (
+  'organization',
+  'Organization',
+  'Organizations'
+);
 
-\i telecom-number-missing-plsql.sql
+select acs_rel_type__create_type (
+  'organization_rel',
+  'Organization Relationship',
+  'Organization Relationships',
+  'membership_rel',
+  'organization_rels',
+  'rel_id',
+  'organization_rel',
+  NULL,
+  'group',
+  0,
+  null::integer,
+  'organization',
+  0,
+  null::integer
+);
+
+
+-- create table contact_groups_package_map (
+--        group_id 
+-- );
+\i contacts-package-create.sql
+\i contacts-search-create.sql
+
+
+

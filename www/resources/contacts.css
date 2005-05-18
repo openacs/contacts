@@ -1,3 +1,90 @@
+/* Comments
+----------------------------------------------- */
+
+#tasks dt {
+        display: block;
+        float: left;	
+	margin: 0px;
+        width: 120px;
+        padding-top: 2px;
+}
+#tasks dl {
+	margin: 5px 0px 0px 0px;
+}
+#tasks ul {
+        margin: 0px 0px 0px -10px;
+        clear: both;
+}
+#tasks li {
+        margin: 0px;
+}
+#comments {
+  padding: 0px;
+  margin: 0px;
+  }
+#comments dl {
+  font-size: 85%;
+  margin: 0px;
+  padding: 0px;
+  }
+#comments dt {
+  padding: 5px;
+  margin: 5px 0px 0px 0px;
+  background: #EEE;
+  font-weight: normal;
+  font-size: 75%;
+  }
+#comments dd {
+  padding: 5px;
+  margin: 0 0px 5px 0px;
+  background: #EEE;
+  }
+#comments dt.odd, #comments dd.odd {
+  background: #DDD;
+  }
+#comments dt.mine-odd, #comments dd.mine-odd {
+  background: #ECD;
+  }
+#comments dt.mine-even, #comments dd.mine-even {
+  background: #FDE;
+  }
+#comments .number {
+  padding: 0px 5px 0px 0px;
+  margin: 0px 2px 0px 0px;
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+  border-color: #CCC;
+  font: 160% Georgia,Serif;
+  }
+#comments textarea {
+  padding: 5px;
+  margin: 0px;
+  background-color: #FFF;
+  border-style: solid;
+  border-color: #AAA;
+  border-width: 1px 1px 1px 1px;
+}
+#comments form {
+  margin: 0px;
+  padding: 0px;
+}
+#comments .comment-button {
+  padding: 1px 30px 1px 30px;
+  margin: 0px;
+  font: 85% arial;
+  border: solid 1px #AAA;
+  border-top: 0px;
+  background-color: #e1e1e1;
+  color: black;
+  text-decoration: none;
+  white-space: nowrap;
+  text-align: center; 
+  display: block;
+}
+#comments .comment-button:hover { 
+  background-color: #ccc;
+}
+
 #contacts-sortbars {
 	font:70% verdana,sans-serif;
 }
@@ -8,3 +95,205 @@
 #contacts-sortbars a:hover {
   text-decoration: underline;
 }
+
+div.letter {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #AAA;
+}
+form label {
+     float: left;
+     width: 25%;
+     text-align: right;
+     font-size: 90%;
+     padding-bottom: 5px;
+}
+form span.element {
+     float: right;
+     width: 72%;
+     text-align: left;
+     padding-bottom: 5px;
+}
+form fieldset {
+     border-color: #CCC;
+     border-style: dotted;
+     border-width: 2px 0px 0px 0px;
+     margin: 0px 5px 0px 0px;
+     clear: both;
+}
+
+form legend {
+     color: #AAA;
+     margin: 0px 5px 0px 5px;
+}
+form div.element {
+     clear: both;
+}
+form span.element input, form span.element textarea {
+     border-style: solid;
+     border-color: #AAA;
+     background-color: #EEE;
+     border-width: 0px 0px 1px 0px;
+     padding: 1px;
+     -moz-border-radius-topright: 0px;
+}
+form span.element select {
+     background-color: #EEE;
+     }
+form table.selector {
+     width: 100%;
+}
+form table.selector td.widget {
+     width: 1%;
+}
+form table.selector td.label {
+     width: 99%;
+}
+form table.selector label {
+     text-align: left;
+}
+.address-widget {
+     width: 300px;
+}    
+.address-widget-country-code {
+     width: 100%;
+}
+
+
+.hidden {
+        display: none;
+}
+
+span.overdue {
+	color: red;
+}
+
+
+.summaries * {
+        padding: 0;
+        margin: 0;
+}
+.summaries div {
+        clear: both;
+}
+.summaries div.groups h3 {
+        float: left;
+        width: 39%;
+        padding-bottom: 15px;
+}       
+.summaries div.groups ul {
+        font-size: small;
+        float: right;
+        width: 59%;
+        list-style: none;
+        padding-bottom: 15px;
+}
+.summaries div.groups li {
+        padding-left: 2em;
+        text-indent: -2em;
+
+}
+.summaries div.relationships dl {
+        font-size: small;
+        list-style: none;
+        padding-bottom: 15px;
+}
+.summaries div.relationships dt {
+        text-align: right;
+        width: 39%;
+        clear: both;
+        float: left;
+       padding-bottom: 3px;
+}
+.summaries div.relationships dd {
+        text-align: left;
+        width: 59%;
+        float: right;
+        padding-bottom: 3px;
+}
+
+.summaries #comments h3 {
+	padding-top: 10px;
+}
+
+div.tasks * {
+	margin: 0;
+	padding: 0;
+}
+div.tasks h3 {
+	padding-bottom: 5px;
+}
+div.tasks ul {
+	padding-left: 1em;
+	list-style: square;
+}
+div.tasks li {
+	padding-bottom: .5em;
+}
+div.tasks dt {
+	clear: both;
+	float: left;
+	width: 25%;
+}
+div.tasks dd {
+	float: right;
+	width: 73%;
+	padding-bottom: .75em;
+}
+
+#section {
+  margin: 0px 0px 0px 0px;
+}
+
+#section ul {
+  border-left: 1px solid #333;
+  margin: 0px 0px 10px 0px;
+  padding: 0px;
+  text-transform: lowercase;
+  background: #CCC;
+}
+
+#section ul li {
+  display:inline;
+  margin:0;
+  padding:0;
+  background-image:none;
+}
+
+#section ul a {
+  float:left;
+  display:block;
+  padding: 0px 5px 2px 5px;
+  border-width:0;
+  border-style:none;
+  border-top: 4px solid #CCC;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #CCC;
+  text-decoration:none;
+  color:#000;
+}
+#section ul a:hover {
+  border-top: 4px solid #000;
+}
+#section ul strong {
+  border-top: 4px solid #000; 
+  margin: 0px -5px 0px -5px;
+  padding: 0px 5px 2px 5px;
+  background-color: #FFF;
+  border-bottom: 1px solid #FFF;
+}
+
+#section ul a:hover {
+  color: red;
+}
+
+
+
+#section ul em {
+  float:none;
+  display:block;
+  padding: 4px 5px 2px 5px;
+  border-right-width:0;
+  border-bottom: 1px solid #CCC;
+  }
+

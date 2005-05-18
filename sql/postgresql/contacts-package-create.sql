@@ -7,130 +7,234 @@
 --
 
 
-create function inline_1 ()
-returns integer as '
-begin
-
-  PERFORM acs_object_type__create_type (
-    ''contact_object_type'',
-    ''Contact Object Type'',
-    ''Contact Object Types'',
-    ''acs_object'',
-    ''contact_object_types'',
-    ''object_id'',
-    null,
-    ''f'',
-    null,
-    ''contact__object_type_name''
-  );
-
-  return 0;
-
-end;' language 'plpgsql';
-select inline_1 ();
-drop function inline_1 ();
+select define_function_args('contact_party_revision__new', 'party_id,party_revision_id,creation_date;now(),creation_user,creation_ip');
 
 
-
-
-create or replace function contact__object_type_create (integer,varchar,timestamptz,integer,varchar,integer)
-returns integer as '
+create or replace function contact_party_revision__new (
+        integer,                -- party_id
+        integer,                -- party_revision_id
+        timestamptz,            -- creation_date
+        integer,                -- creation_user
+        varchar                 -- creation_ip
+) returns integer
+as '
 declare
-        p_object_id       alias for $1;
-        p_object_type     alias for $2;
-        p_creation_date   alias for $3;
-        p_creation_user   alias for $4;
-        p_creation_ip     alias for $5;
-        p_context_id      alias for $6;
-        v_object_id       integer;
+        p_party_id              alias for $1;
+        p_party_revision_id     alias for $2;
+        p_creation_date         alias for $3;
+        p_creation_user         alias for $4;
+        p_creation_ip           alias for $5;
+        v_party_revision_id     cr_revisions.revision_id%TYPE;
+        v_party_id              cr_items.item_id%TYPE;
 begin
 
-        v_object_id := acs_object__new (
-                p_object_id,
-                ''contact_object_type'',
+        v_party_id := contact_party_revision__item_id (
+                p_party_id,
                 p_creation_date,
                 p_creation_user,
-                P_creation_ip,
-                p_context_id
+                p_creation_ip
         );
 
+        v_party_revision_id := content_revision__new (
+                NULL,                   -- title
+                NULL,                   -- description
+                now(),                  -- publish_date
+                NULL,                   -- mime_type
+                NULL,                   -- nls_language
+                NULL,                   -- data
+                v_party_id,             -- item_id
+                p_party_revision_id,    -- revision_id
+                p_creation_date,        -- creation_date
+                p_creation_user,        -- creation_user
+                p_creation_ip           -- creation_ip
+        );
 
-        insert into contact_object_types
-               (object_id,object_type)
-        values
-               (v_object_id,p_object_type);
+        PERFORM content_item__set_live_revision (v_party_revision_id);
 
-        return v_object_id;
+        insert into contact_party_revisions ( party_revision_id ) values ( v_party_revision_id );
+
+        return v_party_revision_id;
 end;' language 'plpgsql';
 
-
-
-create or replace function contact__object_type_name (integer)
-returns varchar as '
+create or replace function contact_party_revision__item_id (
+        integer,                -- party_id
+        timestamptz,            -- creation_date
+        integer,                -- creation_user
+        varchar                 -- creation_ip
+) returns integer
+as '
 declare
-        p_object_id   alias for $1;
-        v_name        varchar;
+        p_party_id              alias for $1;
+        p_creation_date         alias for $2;
+        p_creation_user         alias for $3;
+        p_creation_ip           alias for $4;
+        v_exists_p              boolean;
 begin
-        v_name := object_type from contact_object_types where object_id = p_object_id;
+
+        v_exists_p := ''1'' from cr_items where item_id = p_party_id;
+
+        if v_exists_p is not true then
+                insert into cr_items
+                (item_id,parent_id,name,content_type)
+                values
+                (p_party_id,contact_party_revision__folder_id(),p_party_id::varchar,''contact_party_revision'');
+        end if;
+
+        return p_party_id;
+end;' language 'plpgsql';
+
+create or replace function contact_party_revision__name (
+        integer                 -- revision_id
+) returns varchar 
+as '
+declare
+        p_revision_id           alias for $1;
+        v_first_names           varchar;
+        v_last_name             varchar;
+        v_organization          varchar;
+        v_name                  varchar;
+begin
+
+        v_name := contact__name(item_id) || '' revision '' || to_char(revision_id,''FM9999999999999999999'') from cr_revisions where item_id = p_revision_id;
         return v_name;
 end;' language 'plpgsql';
 
 
 
-
-
-
-create or replace function contact__party_email (integer)
-returns varchar as '
+create or replace function contact_party_revision__folder_id () returns integer
+as '
 declare
-  email__party_id        alias for $1;
+        v_folder_id              integer;
 begin
 
-  return email from parties where party_id = email__party_id;
+        v_folder_id := cf.folder_id from cr_items ci, cr_folders cf
+                            where ci.item_id = cf.folder_id
+                              and ci.parent_id = ''0''
+                              and ci.name = ''contacts'';
 
-end;' language 'plpgsql' stable strict;
+        if v_folder_id is null then
+                v_folder_id := content_folder__new (
+                                  ''contacts'',
+                                  ''Contacts'',
+                                  NULL,
+                                  ''0''
+                );
+        end if;
 
-create or replace function contact__party_url (integer)
-returns varchar as '
+        return v_folder_id;
+end;' language 'plpgsql';
+
+create or replace function contact__name (
+        varchar,                -- first_names
+        varchar,                -- last_name
+        varchar,                -- organization
+        boolean                 -- recursive_p
+) returns varchar 
+as '
 declare
-  url__party_id          alias for $1;
+        p_first_names           alias for $1;
+        p_last_name             alias for $2;
+        p_organization          alias for $3;
+        p_recursive_p           alias for $4;
+        v_name                  varchar;
 begin
 
-  return url from parties where party_id = url__party_id;
+        if p_recursive_p then
+           if p_first_names is null and p_last_name is null then
+              v_name := p_organization;
+           else
+              v_name := p_last_name;
+              if p_first_names is not null and p_last_name is not null then
+                 v_name := v_name || '', '';
+              end if;
+              v_name := v_name || p_first_names;
+          end if;
+        else 
+           if p_first_names is null and p_last_name is null then
+              v_name := p_organization;
+           else
+              v_name := p_first_names;
+              if p_first_names is not null and p_last_name is not null then
+                 v_name := v_name || '' '';
+              end if;
+              v_name := v_name || p_last_name;
+          end if;
+        end if;
 
-end;' language 'plpgsql' stable strict;
+        return v_name;
+end;' language 'plpgsql';
 
-create or replace function contact__status (integer)
-returns varchar as '
+create or replace function contact__name (
+        integer                 -- party_id
+) returns varchar 
+as '
 declare
-  p_party_id           alias for $1;
-  v_archived_p         boolean;
+        p_party_id              alias for $1;
+        v_name                  varchar;
+begin
+        v_name := contact__name(p_party_id,''f'');
+
+        return v_name;
+end;' language 'plpgsql';
+
+create or replace function contact__name (
+        integer,                -- party_id
+        boolean                 -- recursive_p  
+) returns varchar 
+as '
+declare
+        p_party_id              alias for $1;
+        p_recursive_p           alias for $2;
+        v_first_names           varchar;
+        v_last_name             varchar;
+        v_organization          varchar;
+        v_name                  varchar;
 begin
 
-  v_archived_p := ''1'' from contact_archives where party_id = p_party_id;
+        select first_names, last_name
+          into v_first_names, v_last_name 
+          from persons where person_id = p_party_id;
 
-  if v_archived_p then
-        return ''archived'';
-  else
-        return ''current'';
-  end if;
+        select name
+          into v_organization
+          from organizations where organization_id = p_party_id;
 
-end;' language 'plpgsql' stable strict;
+        v_name := contact__name(v_first_names,v_last_name,v_organization,p_recursive_p);
+
+        return v_name;
+end;' language 'plpgsql';
 
 
-create or replace function contact__person_is_user_p (integer)
-returns boolean as '
+create or replace function contact_group__member_count (
+        integer                 -- group_id
+) returns integer 
+as '
 declare
-  p_person_id          alias for $1;
-  v_result             boolean;
+        p_group_id              alias for $1;
+        v_member_count          integer;
+begin
+        v_member_count := count(*) from group_distinct_member_map where group_id = p_group_id ;
+
+        return v_member_count;
+end;' language 'plpgsql';
+
+
+create or replace function contact_group__member_p (integer,integer) returns boolean 
+as '
+declare
+        p_group_id              alias for $1;
+        p_member_id             alias for $2;
+        v_member_p              boolean;
 begin
 
-  v_result := ''1'' from users where user_id = p_person_id;
+        v_member_p := ''1'' from group_distinct_member_map where group_id = p_group_id and member_id = p_member_id;
 
-  if v_result then
-        return ''t'';
-  else
-        return ''f'';
-  end if;
+        if v_member_p is true then
+           v_member_p := ''1'';
+        else
+           v_member_p := ''0'';
+        end if;
 
-end;' language 'plpgsql' stable strict;
+        return v_member_p;
+end;' language 'plpgsql';
+
