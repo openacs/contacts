@@ -38,14 +38,16 @@ if { [ad_conn user_id] != 0} {
     lappend link_list "/contacts/comments"
     lappend link_list "Comments"
 
-    lappend link_list "/tasks/"
-    lappend link_list "Tasks"
+    if { [site_node::get_package_url -package_key "tasks"] != "" } {
+	lappend link_list "/tasks/contact"
+	lappend link_list "Tasks"
+    }
 
     lappend link_list "/contacts/message"
     lappend link_list "Mail"
 }
-#    lappend link_list "/tasks/contact"
-#    lappend link_list "Tasks"
+
+# not yet implemented
 #    lappend link_list "/contacts/contact-files"
 #    lappend link_list "Files"
 #    lappend link_list "/contacts/contact-history"
@@ -53,9 +55,6 @@ if { [ad_conn user_id] != 0} {
 
 
 
-if { $admin_p } {
-
-}
 
 
 # Convert the list to a multirow and add the selected_p attribute
@@ -65,13 +64,10 @@ foreach {url label} $link_list {
     set selected_p 0
 
     if {[string equal $page_url $url]} {
-
-
         set selected_p 1
         if { $url != "/contacts/contact" } {
             set context [list [list [contact::url -party_id $party_id] $name] $label]
         }
-
     }
 
     multirow append links $label [export_vars -base $url -url {party_id}] $selected_p
@@ -81,8 +77,9 @@ foreach {url label} $link_list {
 
 
 
-
-
+if { [contact::type -party_id $party_id] == "person" } {
+    set public_url [acs_community_member_url -user_id $party_id]
+}
 
 
 

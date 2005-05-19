@@ -15,17 +15,9 @@ ad_page_contract {
     }
 }
 
-#set attach_url [attachments::add_attachment_url \
-#                      -object_id $party_id \
-#                      -return_url [contact::url -party_id $party_id] \
-#                     -pretty_name [contact::name -party_id $party_id]]
-
-set admin_url [acs_community_member_admin_link -user_id $party_id -label "Admin Page"]
 set object_type [contact::type -party_id $party_id]
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
-
-# set form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name "${object_type}_[ad_conn package_id]" -key party_id]
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 if { [lsearch $groups_belonging_to -2] < 0 } {
@@ -47,7 +39,7 @@ foreach form $ams_forms {
     append form_elements " "
     append form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form]
 }
-#ad_return_error "ERROR" $form_elements
+
 ad_form -name party_ae \
     -mode "display" \
     -form $form_elements \
@@ -119,7 +111,6 @@ foreach element [template::form::get_elements party_ae] {
         }
     }
     set sec [template::element::get_property party_ae $element section]
-    ns_log notice "mgeddert: $element section $sec"
 }
 
 
@@ -133,9 +124,11 @@ if { [exists_and_not_null live_revision] } {
 }
 
 
-
-
-
+if { [site_node::get_package_url -package_key "tasks"] != "" } {
+    set tasks_enabled_p 1
+} else {
+    set tasks_enabled_p 0
+}
 
 
 

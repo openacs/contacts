@@ -7,7 +7,9 @@
 
       <formtemplate id="party_ae" style="proper"></formtemplate>
 
-<!--      <include src="/packages/tasks/lib/tasks" party_id="@party_id@" hide_form_p="t"> -->
+<if @tasks_enabled_p@>
+	     <include src="/packages/tasks/lib/tasks" party_id="@party_id@" hide_form_p="t">
+</if>
 
     </td>
     <td valign="top" width="30%" style="padding: 0px 0px 0px 15px;" class="summaries">
@@ -24,6 +26,3 @@
 <if @update_date@ not nil><p style="padding-top: 0px; margin-top: 0px;"><small>Last updated: @update_date@</small></p></if>
 
 
-<if @admin_url@ not nil>
-@admin_url;noquote@
-</if>
