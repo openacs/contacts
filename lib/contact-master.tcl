@@ -1,3 +1,7 @@
+#    @author Matthew Geddert openacs@geddert.com
+#    @creation-date 2005-05-09
+#    @cvs-id $Id$
+
 if { ![contact::exists_p -party_id $party_id] } {
     ad_complain "The contact specified does not exist"
 }

@@ -1,3 +1,7 @@
+#    @author Matthew Geddert openacs@geddert.com
+#    @creation-date 2005-05-09
+#    @cvs-id $Id$
+
 if { [string is false [contact::exists_p -party_id $party_id]] } {
     error "The party_id specified does not exist"
 }
