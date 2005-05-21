@@ -11,6 +11,7 @@ ad_page_contract {
     {buttonsearch:optional}
     {buttonme:optional}
     {query ""}
+    {orderby "role,asc"}
 } -validate {
     contact_one_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
@@ -35,9 +36,8 @@ set contact_url  [contact::url  -party_id $party_id]
 
 
 set pretty_plural_list_name "contacts"
-# create rel_type if the role requires a certain object_type
 if { [exists_and_not_null role_two] } {
-    set valid_object_types [db_list valid_object_types { select primary_object_type from contact_rel_types where primary_role = :role_two }]
+    set valid_object_types [db_list get_valid_object_types {}]
     set person_valid_p 0
     set org_valid_p 0
     foreach type $valid_object_types {
@@ -79,16 +79,8 @@ if { [exists_and_not_null role_two] } {
 
 
 
-if { [exists_and_not_null orderby] } {
-    if { $orderby == "first_names,asc" } {
-	set name_order 0
-    } else {
-	set name_order 1
-    }
-} else {
-    set name_order 0
-}
 
+set name_order 0
 set member_state "approved"
 set format "normal"
 
@@ -140,6 +132,7 @@ template::list::create \
     -row_pretty_plural "$pretty_plural_list_name found in search, please try again or add a new contact" \
     -checkbox_name checkbox \
     -selected_format ${format} \
+    -orderby_name "order_search" \
     -key party_id \
     -elements {
         type {
@@ -193,10 +186,8 @@ template::list::create \
 	}
     }
 
-#ns_log notice [db_map contacts_select]
 set original_party_id $party_id
 
-#ad_return_error "ERROR" [db_map dbqd.contacts.www.index.contacts_select]
 db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
     set map_url [export_vars -base "relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
 }
@@ -205,13 +196,7 @@ db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contac
 
 
 
-set rel_options [db_list_of_lists get_rels {
-    select acs_rel_type__role_pretty_name(primary_role),
-           primary_role
-      from contact_rel_types
-     where secondary_object_type in ( :contact_type, 'party' )
-     order by upper(acs_rel_type__role_pretty_name(primary_role))
-}]
+set rel_options [db_list_of_lists get_rels {}]
 
 set rel_options "{{-Select One-} {}} $rel_options"
 
@@ -229,4 +214,78 @@ ad_form -name "search" -method "GET" -export {party_id} -form {
 } -on_refresh {
 } -on_submit {
 } -after_submit {
+}
+
+
+
+
+
+
+
+
+
+
+template::list::create \
+    -html {width 100%} \
+    -name "relationships" \
+    -multirow "relationships" \
+    -row_pretty_plural "relationships" \
+    -selected_format "normal" \
+    -elements {
+        role {
+            label "Role"
+            display_col role_singular
+        }
+        other_name {
+            label "Contact"
+            display_col other_name
+            link_url_eval $contact_url
+        }
+        details {
+            label "Details"
+        }
+        actions {
+            label "Actions"
+            display_template {
+                <a href="@relationships.rel_delete_url@" class="button">Delete</a></if>
+                <if @relationships.rel_add_edit_url@ not nil><a href="@relationships.rel_add_edit_url@" class="button">Edit Details</a></if>
+            }
+        }
+    } -filters {
+        party_id {}
+    } -orderby {
+        other_name {
+            label "Contact"
+            orderby_asc  "CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc, upper(role_singular) asc"
+            orderby_desc "CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END desc, upper(role_singular) asc"
+        }
+        role {
+            label "Role"
+            orderby_asc  "upper(role_singular) asc, CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc"
+            orderby_desc "upper(role_singular) desc, CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc"
+        }
+        default_value role,asc
+    } -formats {
+	normal {
+	    label "Table"
+	    layout table
+	    row {
+                role {}
+                other_name {}
+                details {}
+                actions {}
+	    }
+	}
+    }
+
+
+set package_id [ad_conn package_id]
+set return_url [export_vars -base "[ad_conn package_url]contact-rels" -url {party_id}]
+db_multirow -unclobber -extend {contact_url rel_add_edit_url rel_delete_url details} relationships get_relationships "" {
+     set contact_url [contact::url -party_id $other_party_id]
+     set list_exists_p [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}]
+     if { $list_exists_p } {
+         set rel_add_edit_url [export_vars -base "relationship-ae" -url {rel_type object_id_one object_id_two party_id}]
+     }
+     set rel_delete_url [export_vars -base "relationship-delete" -url {rel_id party_id return_url}]
 }

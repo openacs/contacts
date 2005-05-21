@@ -9,6 +9,8 @@
 
 <if @query@ not nil>
 <listtemplate name="contacts"></listtemplate>
-</if>
 
-<include src="/packages/contacts/lib/relationships" party_id="@party_id@">
+<h3>Existing Relationships</h3>
+</if>
+<listtemplate name="relationships"></listtemplate>
+

@@ -10,9 +10,9 @@
     <version name="1.0d" url="http://openacs.org/repository/download/apm/contacts-1.0d.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2004-07-28</release-date>
-        <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing, grouping, relating and doing advanced searches for contacts. It also provides emailing and letter mail merge functionality. Each contact can have an arbitrary number of attributes associated with it via the AMS package (Attribute Management System).
-        </description>
+        <release-date>2005-05-21</release-date>
+        <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
+
         <provides url="contacts" version="1.0d"/>
         <requires url="ams" version="1.0d"/>
         <requires url="general-comments" version="4.1"/>
@@ -21,7 +21,7 @@
         <callbacks>
         </callbacks>
         <parameters>
-        <!-- No version parameters -->
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DefaultViewAttributes"  default="{email} {home_phone} {(h)} {work_phone} {(w)} {mobile_phone} {(m)}" description="The default attributes to view on the main contact page. This should be a list of attribute_name display_code to show for the attribute, the display code will only show up if the person/contact has a value for that attribute."/>
         </parameters>
 
     </version>

@@ -24,7 +24,7 @@
     <dl>
       <ul>
         <group column=sort_two>
-        <li>@rel_types.primary_role_pretty@ -> @rel_types.secondary_role_pretty@</li>
+        <li>@rel_types.primary_role_pretty@ -> @rel_types.secondary_role_pretty@ <a href="@rel_types.rel_form_url@" class="button">Attributes</a></li>
         </group>
       </ul>
     </dl>
