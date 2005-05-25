@@ -187,9 +187,9 @@ template::list::create \
     }
 
 set original_party_id $party_id
-
+set package_url [ad_conn package_url]
 db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
-    set map_url [export_vars -base "relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
+    set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
 }
 
 
@@ -280,12 +280,12 @@ template::list::create \
 
 
 set package_id [ad_conn package_id]
-set return_url [export_vars -base "[ad_conn package_url]contact-rels" -url {party_id}]
+set return_url "[ad_conn package_url]${party_id}/relationships"
 db_multirow -unclobber -extend {contact_url rel_add_edit_url rel_delete_url details} relationships get_relationships "" {
      set contact_url [contact::url -party_id $other_party_id]
      set list_exists_p [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}]
      if { $list_exists_p } {
-         set rel_add_edit_url [export_vars -base "relationship-ae" -url {rel_type object_id_one object_id_two party_id}]
+         set rel_add_edit_url [export_vars -base "${package_url}relationship-ae" -url {rel_type object_id_one object_id_two party_id}]
      }
-     set rel_delete_url [export_vars -base "relationship-delete" -url {rel_id party_id return_url}]
+    set rel_delete_url [export_vars -base "${package_url}relationship-delete" -url {rel_id party_id return_url}]
 }

@@ -124,7 +124,7 @@ ad_proc -public contact::url {
 } {
     create a contact revision
 } {
-    return [export_vars -url -base contact {party_id}]
+    return "[ad_conn package_url]$party_id/"
 }
 
 ad_proc -public contact::revision::new {

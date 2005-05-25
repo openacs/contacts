@@ -76,7 +76,7 @@ if { [exists_and_not_null rel_type] } {
         set object_id_two $party_one
     }
     if { ![exists_and_not_null return_url] } {
-        set return_url [export_vars -base "contact-rels" -url {{party_id $party_one}}]
+        set return_url "${party_id}/relationships"
     }
     ad_returnredirect [export_vars -base "relationship-ae" -url {object_id_one object_id_two rel_type return_url {party_id $party_one}}]
     ad_script_abort

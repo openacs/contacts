@@ -14,7 +14,7 @@
 <if @comments:rowcount@ gt 0>
   <dl>
 <multiple name="comments">
-    <dt id="@comments.comment_id@" class="<if @comments.creation_user@ eq @user_id@>mine-</if><if @comments.rownum@ odd>odd</if><else>even</else>"><a href="comments?party_id=@party_id@#@comments.comment_id@" class="number">@comments.comment_number@.</a> @comments.pretty_date@ at @comments.pretty_time@ - <a href="contact?party_id=@comments.creation_user@">@comments.author@</a></dd>
+    <dt id="@comments.comment_id@" class="<if @comments.creation_user@ eq @user_id@>mine-</if><if @comments.rownum@ odd>odd</if><else>even</else>"><a href="comments#@comments.comment_id@" class="number">@comments.comment_number@.</a> @comments.pretty_date@ at @comments.pretty_time@ - <a href="contact?party_id=@comments.creation_user@">@comments.author@</a></dd>
       <dd class="<if @comments.creation_user@ eq @user_id@>mine-</if><if @comments.rownum@ odd>odd</if><else>even</else>">@comments.comment_html;noquote@</dd>
 </multiple>
   </dl>

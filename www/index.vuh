@@ -1,0 +1,56 @@
+# 
+# Provide pretty urls for the contacts package
+# 
+# @author Matthew Geddert (openacs@geddert.com)
+# @creation-date 2005-05-24
+# @cvs-id $Id$
+
+set package_url [ad_conn package_url]
+set file_url   [ad_conn path_info]
+set file_list  [split $file_url "/"]
+
+set party_id [lindex $file_list 0]
+if { [string is integer $party_id] } {
+   set party_is_contact_p [contact::exists_p -party_id $party_id]
+} else {
+   set party_is_contact_p 0
+}
+set action [lindex $file_list 1]
+
+if { $party_is_contact_p } {
+        if { [llength $file_list] == "1" } {
+                # we need to redirect the user to their "correct" summary page otherwise
+                # sub links will not work correctly
+                ad_returnredirect "[ad_conn package_url]${party_id}/"
+                ad_script_abort
+        }
+        set valid_pages [list "" edit files groups relationships comments message]
+        if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
+           switch $action {
+               edit          { set file "contact-edit" }
+               files         { set file "contact-files" }
+               groups        { set file "contact-groups" }
+               relationships { set file "contact-rels" }
+               comments      { set file "comments" }
+               message       { set file "message" }
+               default       { set file "contact" }
+           }
+           set form_supplied_party_id [ns_queryget party_id] 
+           if { [exists_and_not_null form_supplied_party_id] } {
+                if { $form_supplied_party_id != $party_id } {
+                     ns_returnnotfound
+                     ad_script_abort
+                }
+           } else {
+               rp_form_put party_id $party_id
+           }
+           rp_internal_redirect $file
+        } else {
+           ns_returnnotfound
+           ad_script_abort
+        }
+} else {
+        ns_returnnotfound
+        ad_script_abort
+}
+

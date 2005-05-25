@@ -20,7 +20,7 @@ ams::object_delete -object_id $rel_id
 db_1row delete_rel {}
 
 if { ![exists_and_not_null return_url] } {
-    set return_url [export_vars -base "contact-rels" -url {party_id}]
+    set return_url "$party_id/relationships"
 }
 ad_returnredirect -message "Relationship Deleted" $return_url
 ad_script_abort

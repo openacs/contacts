@@ -20,30 +20,30 @@ set admin_p [permission::permission_p -object_id [ad_conn package_id] -privilege
 set name [contact::name -party_id $party_id]
 set title $name
 set context [list $name]
-
+set prefix "${package_url}${party_id}/"
 set link_list [list]
 if { [ad_conn user_id] != 0} {
-    lappend link_list "/contacts/contact-edit"
+    lappend link_list "${prefix}edit"
     lappend link_list "All / Edit"
 
-    lappend link_list "/contacts/contact"
+    lappend link_list "${prefix}"
     lappend link_list "Summary View"
 
-    lappend link_list "/contacts/contact-groups"
+    lappend link_list "${prefix}groups"
     lappend link_list "Groups"
 
-    lappend link_list "/contacts/contact-rels"
+    lappend link_list "${prefix}relationships"
     lappend link_list "Relationships"
 
-    lappend link_list "/contacts/comments"
+    lappend link_list "${prefix}comments"
     lappend link_list "Comments"
 
     if { [site_node::get_package_url -package_key "tasks"] != "" } {
-	lappend link_list "/tasks/contact"
+	lappend link_list "/tasks/contact?party_id=$party_id"
 	lappend link_list "Tasks"
     }
 
-    lappend link_list "/contacts/message"
+    lappend link_list "${prefix}message"
     lappend link_list "Mail"
 }
 
@@ -70,7 +70,7 @@ foreach {url label} $link_list {
         }
     }
 
-    multirow append links $label [export_vars -base $url -url {party_id}] $selected_p
+    multirow append links $label [subst $url] $selected_p
 }
 
 

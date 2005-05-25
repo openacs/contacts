@@ -1,6 +1,6 @@
 <if @hide_form_p@ false>
 <if @addable_groups:rowcount@ gt 0>
-<form name="add_to_group" method="post" action="group-party-add">
+<form name="add_to_group" method="post" action="@package_url@group-party-add">
 <input type="hidden" name="party_id" value="@party_id@" />
 <table cellpadding="0" cellspacing="0" border="0">
 <tr><td>

@@ -10,6 +10,7 @@ if { [string is false [exists_and_not_null hide_form_p]] } {
 }
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
+set package_url [ad_conn package_url]
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 

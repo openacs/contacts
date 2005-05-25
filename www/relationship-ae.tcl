@@ -95,7 +95,7 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
             -object_id $rel_id
     }
     if { ![exists_and_not_null return_url] } {
-        set return_url [export_vars -base "contact-rels" -url {{party_id $party_id}}]
+        set return_url "$party_id/relationships"
     }
     ad_returnredirect $return_url
     ad_script_abort
