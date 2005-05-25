@@ -5,7 +5,7 @@
   <tr>
     <td valign="top" width="70%">
 
-      <formtemplate id="party_ae" style="proper"></formtemplate>
+      <formtemplate id="party_ae"></formtemplate>
 
 <if @tasks_enabled_p@>
 	     <include src="/packages/tasks/lib/tasks" party_id="@party_id@" hide_form_p="t">

@@ -12,5 +12,5 @@
 </else>
 <property name="focus">comment_add.comment</property>
 
-<formtemplate id="message" style="proper"></formtemplate>
+<formtemplate id="message"></formtemplate>
 

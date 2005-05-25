@@ -7,7 +7,7 @@
 </property>
 
 <p><a href="my-searches" class="button">My Searches</a></p>
-<formtemplate id="advanced_search" style="proper-inline"></formtemplate>
+<formtemplate id="advanced_search" style="../../../contacts/resources/forms/inline"></formtemplate>
 
 <if @query_code@ not nil and @sw_admin_p@>
 <h3>Debugging Code - Only SW Admins See This</h3>

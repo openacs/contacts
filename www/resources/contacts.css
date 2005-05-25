@@ -106,57 +106,6 @@ div.letter {
   padding-bottom: 10px;
   border-bottom: 1px solid #AAA;
 }
-form label {
-     float: left;
-     width: 25%;
-     text-align: right;
-     font-size: 90%;
-     padding-bottom: 5px;
-}
-form span.element {
-     float: right;
-     width: 72%;
-     text-align: left;
-     padding-bottom: 5px;
-}
-form fieldset {
-     border-color: #CCC;
-     border-style: dotted;
-     border-width: 2px 0px 0px 0px;
-     margin: 0px 5px 0px 0px;
-     clear: both;
-}
-
-form legend {
-     color: #AAA;
-     margin: 0px 5px 0px 5px;
-}
-form div.element {
-     clear: both;
-}
-form span.element input, form span.element textarea {
-     border-style: solid;
-     border-color: #AAA;
-     background-color: #EEE;
-     border-width: 0px 0px 1px 0px;
-     padding: 1px;
-     -moz-border-radius-topright: 0px;
-}
-form span.element select {
-     background-color: #EEE;
-     }
-form table.selector {
-     width: 100%;
-}
-form table.selector td.widget {
-     width: 1%;
-}
-form table.selector td.label {
-     width: 99%;
-}
-form table.selector label {
-     text-align: left;
-}
 .address-widget {
      width: 300px;
 }    

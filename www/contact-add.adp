@@ -6,4 +6,4 @@
 </property>
 <property name="focus">party_ae.first_names</property>
 
-<formtemplate id="party_ae" style="proper"></formtemplate>
+<formtemplate id="party_ae"></formtemplate>

@@ -4,7 +4,7 @@
 
 
 <p>
-<formtemplate id="search" style="proper-inline"></formtemplate>
+<formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate>
 </p>
 
 <if @query@ not nil>

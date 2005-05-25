@@ -16,7 +16,7 @@
   </ul>
 </div>
 
-<p><formtemplate id="search" style="proper-inline"></formtemplate></p>
+<p><formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 
 <listtemplate name="contacts"></listtemplate>
         
