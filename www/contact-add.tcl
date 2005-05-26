@@ -15,26 +15,32 @@ ad_page_contract {
     }
 }
 
+set package_id [ad_conn package_id]
+set form "$package_id\__[contacts::default_group]"
+
+set form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form -key party_id]
+lappend form_elements {object_type:text(hidden)}
+
 if { $object_type == "person" } {
     set title "Add a Person"
 } else {
     set title "Add an Organization"
 }
+
 set user_id [ad_conn user_id]
 set context [list $title]
 
-set form "[ad_conn package_id]__[contacts::default_group]"
-
-set form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form -key party_id]
-
-lappend form_elements {object_type:text(hidden)}
 
 ad_form -name party_ae \
     -mode "edit" \
     -cancel_label "Cancel" \
     -cancel_url [export_vars -base contact -url {party_id}] \
     -edit_buttons [list [list Save save] [list "Save and Add Another" save_add_another]] \
-    -form $form_elements \
+    -form $form_elements
+
+callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
+
+ad_form -extend -name party_ae \
     -on_request {
 
 	if { $object_type == "person" }	{
@@ -132,10 +138,10 @@ ad_form -name party_ae \
 		}
 	    }
 	    set peeraddr [ad_conn peeraddr]
-	    set package_id [ad_conn package_id]
+
             db_transaction {
-	    set party_id [db_exec_plsql do_insert_org {
-		select organization__new ( 
+		set party_id [db_exec_plsql do_insert_org {
+			select organization__new ( 
 					  :legal_name,
 					  :name,
 					  :notes,
@@ -148,12 +154,10 @@ ad_form -name party_ae \
 					  :peeraddr,
 					  :package_id
 					  )
-	    }]
-
-
-                set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
+		    }]
+		set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
                 set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,'organization_rel',:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
-#            db_1row insert_member { select acs_rel__new (NULL::integer,'membership_rel',:group_id,:party_id,NULL,:user_id,:peeraddr) }
+		#            db_1row insert_member { select acs_rel__new (NULL::integer,'membership_rel',:group_id,:party_id,NULL,:user_id,:peeraddr) }
                 db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
             }
 	}
@@ -165,6 +169,8 @@ ad_form -name party_ae \
 	    -form_name "party_ae" \
 	    -object_id [contact::revision::new -party_id $party_id]
 
+	callback contact::contact_new_form -package_id $package_id -contact_id $party_id -form party_ae -object_type $object_type
+
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {
@@ -175,12 +181,6 @@ ad_form -name party_ae \
         }
 	ad_script_abort
     }
-
-
-
-
-
-
 
 
 
