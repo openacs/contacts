@@ -4,7 +4,6 @@ ad_library {
     
     @author Matthew Geddert (openacs@geddert.com)
     @creation-date 2004-08-16
-    @cvs-id $Id$
 }
 
 set attribute_id [attribute::new \
