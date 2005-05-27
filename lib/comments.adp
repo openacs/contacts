@@ -12,7 +12,6 @@
       <dd class="<if @comments.creation_user@ eq @user_id@>mine-</if><if @comments.rownum@ odd>odd</if><else>even</else>">@comments.comment_html;noquote@</dd>
 </multiple>
   </dl>
-</div>
 </if>
 
 <if @form@ eq bottom>
