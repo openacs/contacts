@@ -5,6 +5,9 @@
     @cvs-id $Id$
 
 ----------------------------------------------- */
+div#contact-info {
+  clear: both;	
+}
 #contact-info div.primary {
   width: 48%;
   float: left;
