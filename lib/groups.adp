@@ -1,19 +1,6 @@
 <if @hide_form_p@ false>
-<if @addable_groups:rowcount@ gt 0>
-<form name="add_to_group" method="post" action="@package_url@group-party-add">
-<input type="hidden" name="party_id" value="@party_id@" />
-<table cellpadding="0" cellspacing="0" border="0">
-<tr><td>
-<select name="group_id" >
- <option value="">-- select a group --</option>
-<multiple name="addable_groups">
-  <option value="@addable_groups.group_id@">@addable_groups.group@</option>
-</multiple>
-</select>
-</td>
-<td><input type="submit" name="formbutton:create" value="Add to Group" class="button" /></td>
-</tr>
-</table>
+<if @no_more_available_p@ nil>
+<formtemplate id="add_to_group" style="../../../contacts/resources/forms/inline"></formtemplate>
 </if>
 <else>
 <p>You cannot add this contact to more groups.</p>

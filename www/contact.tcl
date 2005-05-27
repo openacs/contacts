@@ -22,7 +22,7 @@ set package_id [ad_conn package_id]
 if { $object_type == "person" } {
     set hidden_attributes [list first_names last_name]
 } elseif { $object_type == "organization" } {
-    set hide_attributes [list name]
+    set hidden_attributes [list name]
 }
 
 

@@ -14,14 +14,35 @@ set package_url [ad_conn package_url]
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 
-multirow create addable_groups group_id group top_level
-set active_top_level ""
-foreach group [contact::groups -expand "all" -privilege_required "create"] {
-    if { [lindex $group 2] == "1" } { set active_top_level [lindex $group 0] }
-    if { [lsearch $groups_belonging_to [lindex $group 1]] < 0 } {
-        multirow append addable_groups [lindex $group 1] [lindex $group 0] $active_top_level
+
+if { [string is false $hide_form_p] } {
+    set group_options [list]
+    set active_top_level ""
+    foreach group [contact::groups -expand "all" -privilege_required "create"] {
+        if { [lindex $group 2] == "1" } { set active_top_level [lindex $group 0] }
+        if { [lsearch $groups_belonging_to [lindex $group 1]] < 0 } {
+            lappend group_options [list [lindex $group 0] [lindex $group 1]]
+        }
+    }
+    if { [llength $group_options] > 0 } {
+        set group_options [concat [list [list "- [_ ams.select_one] -" ""]] $group_options]
+        set package_url [ad_conn package_url]
+        ad_form -name add_to_group -action "${package_url}group-party-add" \
+            -form {
+                    party_id:integer(hidden)
+                    return_url:text(hidden),optional
+                    {group_id:integer(select) {label {}} {options $group_options}}
+                    {save:text(submit),optional {label {Add to Group}}}
+            } -on_request {
+            } -after_submit {
+            }
+
+    } else {
+        set no_more_available_p 1
     }
 }
+
+
 
 multirow create groups group_id group sub_p
 set sub_p "0"
