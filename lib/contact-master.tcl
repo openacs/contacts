@@ -2,11 +2,12 @@
 #    @creation-date 2005-05-09
 #    @cvs-id $Id$
 
-if { ![contact::exists_p -party_id $party_id] } {
-    ad_complain "The contact specified does not exist"
-}
 
 # Set up links in the navbar that the user has access to
+set name [contact::name -party_id $party_id]
+if { ![exists_and_not_null name] } {
+    ad_complain "The contact specified does not exist"
+}
 
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
@@ -14,10 +15,6 @@ set package_url [ad_conn package_url]
 set page_url [ad_conn url]
 set page_query [ad_conn query]
 
-set admin_p [permission::permission_p -object_id [ad_conn package_id] -privilege admin]
-
-
-set name [contact::name -party_id $party_id]
 set title $name
 set context [list $name]
 set prefix "${package_url}${party_id}/"

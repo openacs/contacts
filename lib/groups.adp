@@ -20,8 +20,7 @@
 </else>
 </if>
 <if @groups:rowcount@ gt 0>
-<div class="groups">
-<h3>Groups</h3>
+<h3 class="contact-title">Groups</h3>
 <ul>
 <multiple name="groups">
 <if @groups.sub_p@>(</if><else><li></else>
@@ -29,7 +28,6 @@
 <if @groups.sub_p@>)</if>
 </multiple>
 </ul>
-</div>
 </if>
 <else>
 <strong>This contact is not part of any groups - this is a problem.</strong>

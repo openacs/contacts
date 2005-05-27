@@ -243,6 +243,7 @@ template::list::create \
         }
         details {
             label "Details"
+            display_col details;noquote
         }
         actions {
             label "Actions"
@@ -282,10 +283,19 @@ template::list::create \
 set package_id [ad_conn package_id]
 set return_url "[ad_conn package_url]${party_id}/relationships"
 db_multirow -unclobber -extend {contact_url rel_add_edit_url rel_delete_url details} relationships get_relationships "" {
-     set contact_url [contact::url -party_id $other_party_id]
-     set list_exists_p [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}]
-     if { $list_exists_p } {
-         set rel_add_edit_url [export_vars -base "${package_url}relationship-ae" -url {rel_type object_id_one object_id_two party_id}]
-     }
+    set contact_url [contact::url -party_id $other_party_id]
+    set details ""
+    if { [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}] } {
+        set rel_add_edit_url [export_vars -base "${package_url}relationship-ae" -url {rel_type object_id_one object_id_two party_id}]
+        set details_list [ams::values -package_key "contacts" -object_type $rel_type -list_name $package_id -object_id $rel_id -format "text"]
+        if { [llength $details_list] > 0 } {
+            append details "<dl class=\"attribute-values\">\n"
+            foreach {section attribute_name pretty_name value} $details_list {
+                append details "<dt class=\"attribute-name\">${pretty_name}:</dt>\n"
+                append details "<dd class=\"attribute-value\">${value}</dd>\n"
+            }
+            append details "</dl>\n"
+        }
+    }
     set rel_delete_url [export_vars -base "${package_url}relationship-delete" -url {rel_id party_id return_url}]
 }

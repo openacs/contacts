@@ -13,7 +13,6 @@ if { [string is false [exists_and_not_null recent_on_top_p]] } {
 if { [string is false [exists_and_not_null recent_on_top_p]] } {
     error "The parameter RecentOnTopP is not set correctly for the General Comments package, please enter either a '0' or a '1'"
 } else {
-
     if { $recent_on_top_p } {
         set orderby_clause "creation_date desc"
     } else {
@@ -24,12 +23,15 @@ if { [string is false [exists_and_not_null size]] } {
     set size "normal"
 }
 switch $size {
-    normal  { set textarea_size "cols=\"50\" rows=\"6\"" }
-    small   { set textarea_size "cols=\"35\" rows=\"3\"" }
+    normal  {
+        set textarea_size "cols 50 rows 6"
+    }
+    small   {
+        set textarea_size "cols 35 rows 3"
+    }
     default { error "You have specified an invalid size for the textarea" }
 }
 
-set package_url [ad_conn package_url]
 if { [string is false [exists_and_not_null form]] } {
     if { $recent_on_top_p } {
         set form "top"
@@ -98,5 +100,27 @@ db_multirow -extend { comment_html comment_number } comments get_comments "
     }
     incr result_number
 }
+
+
+
+ad_form -name comment_add \
+    -action "[ad_conn package_url]comment-add" \
+    -form "
+        party_id:integer(hidden)
+        return_url:text(hidden),optional
+        {comment:text(textarea),nospell {label {}} {html {$textarea_size}} {after_html {<br />}}}
+        {save:text(submit),optional {label {Add Comment}}}
+    " -on_request {
+    } -after_submit {
+    }
+
+
+
+
+
+
+
+
+
 
 set user_id [ad_conn user_id]
