@@ -5,55 +5,46 @@
     @cvs-id $Id$
 
 ----------------------------------------------- */
-
-#tasks dt {
-        display: block;
-        float: left;	
-	margin: 0px;
-        width: 120px;
-        padding-top: 2px;
+#contact-info div.primary {
+  width: 48%;
+  float: left;
 }
-#tasks dl {
-	margin: 5px 0px 0px 0px;
+#contact-info div.secondary {
+  width: 48%;
+  float: right;
 }
-#tasks ul {
-        margin: 0px 0px 0px -10px;
-        clear: both;
+p.last-updated {
+  clear: both;
+  font-size: small;
+  text-align: right;
 }
-#tasks li {
-        margin: 0px;
-}
-#comments {
-  padding: 0px;
-  margin: 0px;
-  }
-#comments dl {
+dl.comments {
   font-size: 85%;
   margin: 0px;
   padding: 0px;
   }
-#comments dt {
+dl.comments dt {
   padding: 5px;
   margin: 5px 0px 0px 0px;
   background: #EEE;
   font-weight: normal;
   font-size: 75%;
   }
-#comments dd {
+dl.comments dd {
   padding: 5px;
   margin: 0 0px 5px 0px;
   background: #EEE;
   }
-#comments dt.odd, #comments dd.odd {
+dl.comments dt.odd, dl.comments dd.odd {
   background: #DDD;
   }
-#comments dt.mine-odd, #comments dd.mine-odd {
+dl.comments dt.mine-odd, dl.comments dd.mine-odd {
   background: #ECD;
   }
-#comments dt.mine-even, #comments dd.mine-even {
+dl.comments dt.mine-even, dl.comments dd.mine-even {
   background: #FDE;
   }
-#comments .number {
+dl.comments .number {
   padding: 0px 5px 0px 0px;
   margin: 0px 2px 0px 0px;
   border-style: solid;
@@ -61,34 +52,6 @@
   border-color: #CCC;
   font: 160% Georgia,Serif;
   }
-#comments textarea {
-  padding: 5px;
-  margin: 0px;
-  background-color: #FFF;
-  border-style: solid;
-  border-color: #AAA;
-  border-width: 1px 1px 1px 1px;
-}
-#comments form {
-  margin: 0px;
-  padding: 0px;
-}
-#comments .comment-button {
-  padding: 1px 30px 1px 30px;
-  margin: 0px;
-  font: 85% arial;
-  border: solid 1px #AAA;
-  border-top: 0px;
-  background-color: #e1e1e1;
-  color: black;
-  text-decoration: none;
-  white-space: nowrap;
-  text-align: center; 
-  display: block;
-}
-#comments .comment-button:hover { 
-  background-color: #ccc;
-}
 
 #contacts-sortbars {
 	font:70% verdana,sans-serif;
@@ -120,79 +83,6 @@ div.letter {
 
 span.overdue {
 	color: red;
-}
-
-
-.summaries * {
-        padding: 0;
-        margin: 0;
-}
-.summaries div {
-        clear: both;
-}
-.summaries div.groups h3 {
-        float: left;
-        width: 39%;
-        padding-bottom: 15px;
-}       
-.summaries div.groups ul {
-        font-size: small;
-        float: right;
-        width: 59%;
-        list-style: none;
-        padding-bottom: 15px;
-}
-.summaries div.groups li {
-        padding-left: 2em;
-        text-indent: -2em;
-
-}
-.summaries div.relationships dl {
-        font-size: small;
-        list-style: none;
-        padding-bottom: 15px;
-}
-.summaries div.relationships dt {
-        text-align: right;
-        width: 39%;
-        clear: both;
-        float: left;
-       padding-bottom: 3px;
-}
-.summaries div.relationships dd {
-        text-align: left;
-        width: 59%;
-        float: right;
-        padding-bottom: 3px;
-}
-
-.summaries #comments h3 {
-	padding-top: 10px;
-}
-
-div.tasks * {
-	margin: 0;
-	padding: 0;
-}
-div.tasks h3 {
-	padding-bottom: 5px;
-}
-div.tasks ul {
-	padding-left: 1em;
-	list-style: square;
-}
-div.tasks li {
-	padding-bottom: .5em;
-}
-div.tasks dt {
-	clear: both;
-	float: left;
-	width: 25%;
-}
-div.tasks dd {
-	float: right;
-	width: 73%;
-	padding-bottom: .75em;
 }
 
 #section {
@@ -251,3 +141,82 @@ div.tasks dd {
   border-bottom: 1px solid #CCC;
   }
 
+h3.contact-title {
+  margin: 0;
+  padding: 0;
+  clear: both;
+  line-height: 2em;
+}
+
+dt.attribute-name {
+  margin: 0;
+  padding: 0;
+  font-size: smaller;
+  text-align: right;
+  line-height: 1.5em;
+  border-width: 0;
+  width: 33%;
+  float: left;
+  clear: both;
+}
+
+dd.attribute-value {
+  margin: 0;
+  padding: 0 0 .5em 0;
+  text-align: left;
+  line-height: 1.2em;
+  border-width: 0;
+  width: 65%;
+  float: right;
+}
+dl.attribute-values {
+  margin: 0;
+  padding: 0;
+}
+
+
+
+
+/* Tasks */
+div.tasks * {
+	margin: 0;
+	padding: 0;
+}
+div.tasks h3 {
+	padding-bottom: 5px;
+}
+div.tasks ul {
+	padding-left: 1em;
+	list-style: square;
+}
+div.tasks li {
+	padding-bottom: .5em;
+}
+div.tasks dt {
+	clear: both;
+	float: left;
+	width: 25%;
+}
+div.tasks dd {
+	float: right;
+	width: 73%;
+	padding-bottom: .75em;
+}
+
+#tasks dt {
+        display: block;
+        float: left;	
+	margin: 0px;
+        width: 120px;
+        padding-top: 2px;
+}
+#tasks dl {
+	margin: 5px 0px 0px 0px;
+}
+#tasks ul {
+        margin: 0px 0px 0px -10px;
+        clear: both;
+}
+#tasks li {
+        margin: 0px;
+}
