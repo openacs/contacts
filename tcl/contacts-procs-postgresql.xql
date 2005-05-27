@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="contact::util::generate_filename.get_parties_existing_filenames">
+  <querytext>
+    select name
+      from cr_items
+     where parent_id = :party_id
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::groups.get_groups">
   <querytext>
     select groups.group_id,

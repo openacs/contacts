@@ -38,6 +38,9 @@ if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}comments"
     lappend link_list "Comments"
 
+    lappend link_list "${prefix}files"
+    lappend link_list "Files"
+
     if { [site_node::get_package_url -package_key "tasks"] != "" } {
 	lappend link_list "/tasks/contact?party_id=$party_id"
 	lappend link_list "Tasks"

@@ -1,6 +1,6 @@
 ad_library {
 
-  Support procs for the contacts package
+    Support procs for the contacts package
 
     @author Matthew Geddert openacs@geddert.com
     @creation-date 2004-07-28
@@ -46,6 +46,42 @@ ad_proc -private contact::util::interpolate {
     }
     return $text
 }
+
+
+ad_proc -private contact::util::generate_filename {
+    {-title:required}
+    {-extension:required}
+    {-existing_filenames ""}
+    {-party_id ""}
+} {
+    Generate a pretty filename that relates to the title supplied
+
+    @param party_id if supplied the filenames associated with this party will be used as existing_filenames if existing filenames is not provided
+  
+    @param existing_filenames a list of filenames that the generated filename must not be equal to
+} {
+    if { [exists_and_not_null party_id] && [string is integer $party_id] && ![exists_and_not_null existing_filenames] } {
+	set existing_filenames [db_list get_parties_existing_filenames {}]
+    }
+    set filename [util_text_to_url -text ${title} -replacement "_"]
+    set output_filename "${filename}.${extension}"
+    set num 1
+    while { [lsearch $existing_filenames $output_filename] >= 0 } {
+	set output_filename "${filename}${num}.${extension}"
+	incr num
+    }
+    return $output_filename
+}
+
+ad_proc -private contact::util::get_file_extension {
+    {-filename:required}
+} {
+    get the file extension from a file
+} {
+    return [lindex [split $filename "."] end]
+}
+
+
 
 
 ad_proc -public contact::name {

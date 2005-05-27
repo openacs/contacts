@@ -17,6 +17,8 @@ if { [string is integer $party_id] } {
 }
 set action [lindex $file_list 1]
 
+
+
 if { $party_is_contact_p } {
         if { [llength $file_list] == "1" } {
                 # we need to redirect the user to their "correct" summary page otherwise
@@ -28,7 +30,7 @@ if { $party_is_contact_p } {
         if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
            switch $action {
                edit          { set file "contact-edit" }
-               files         { set file "contact-files" }
+               files         { set file "files" }
                groups        { set file "contact-groups" }
                relationships { set file "contact-rels" }
                comments      { set file "comments" }
@@ -45,9 +47,19 @@ if { $party_is_contact_p } {
                rp_form_put party_id $party_id
            }
            rp_internal_redirect $file
-        } else {
+        } elseif { $action == "files" && [llength $file_list] == "3" } {
+	   # we may have a valid file request
+	   set item_id [content::item::get_id -root_folder_id $party_id -item_path [lindex $file_list 2]]
+	   set revision_id [content::item::get_live_revision -item_id $item_id]
+           if { [exists_and_not_null revision_id] } {
+                cr_write_content -revision_id $revision_id
+           } else {
+              ns_returnnotfound
+              ad_script_abort
+           }
+	} else {
            ns_returnnotfound
-           ad_script_abort
+       	   ad_script_abort
         }
 } else {
         ns_returnnotfound
