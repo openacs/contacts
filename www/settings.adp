@@ -3,10 +3,11 @@
 <property name="context">@context@</property>
 
 <p>
-<a href="signature" class="button">Add Signature</a></if>
-<if @admin_p@><a href="admin/" class="button">Administer Contacts</a></if>
+<a href="signature" class="button">#contacts.Add_Signature#</a></if>
+<if @admin_p@><a href="admin/" class="button">#contacts.Administer_Contacts#</a></if>
 </p>
-<h3>My Signatures</h3>
+<h3>#contacts.My_Signatures#</h3>
 <listtemplate name="signatures"></listtemplate>
+
 
 

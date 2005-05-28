@@ -8,11 +8,11 @@
 <property name="focus">search.query</property>
 <div id="section">
   <ul>
-    <li><a href="contact-add?object_type=person" title="Add a Person">Add Person</a>
-    <li><a href="contact-add?object_type=organization" title="Add an Organization">Add Organization</a>
-    <li><a href="search" title="Advanced Search">Advanced Search</a>
-    <li><a href="settings" title="Modify My Settings">Settings</a>
-    <li><a href="admin" title="Admin">Admin</a><em>&nbsp;</em> </li>
+    <li><a href="contact-add?object_type=person" title="Add a Person">#contacts.Add_Person#</a>
+    <li><a href="contact-add?object_type=organization" title="Add an Organization">#contacts.Add_Organization#</a>
+    <li><a href="search" title="Advanced Search">#contacts.Advanced_Search#</a>
+    <li><a href="settings" title="Modify My Settings">#contacts.Settings#</a>
+    <li><a href="admin" title="Admin">#contacts.Admin#</a><em>&nbsp;</em> </li>
   </ul>
 </div>
 
@@ -20,4 +20,5 @@
 
 <listtemplate name="contacts"></listtemplate>
         
+
 

@@ -3,15 +3,16 @@
 <property name="context">@context@</property>
 
 <p>
-<a href="relationships" class="button">Relationships</a>
-<a href="group-ae" class="button">Add Group</a>
-<a href="permissions" class="button">Instance Permissions - Not done yet</a>
+<a href="relationships" class="button">#contacts.Relationships#</a>
+<a href="group-ae" class="button">#contacts.Add_Group#</a>
+<a href="permissions" class="button">#contacts.lt_Instance_Permissions_#</a>
 </p>
-<h1>READ THESE</h1>
+<h1>#contacts.READ_THESE#</h1>
 <ul>
-  <li>Make sure you do not add the same attribute to multiple groups</li>
-  <li>The default group must have first_names and last_name for person objects and name for organization objects, both of them need email</li>
+  <li>#contacts.lt_Make_sure_you_do_not_#</li>
+  <li>#contacts.lt_The_default_group_mus#</li>
 </ul>
-<p>Once ready for release this will be taken care of in code</p>
+<p>#contacts.lt_Once_ready_for_releas#</p>
 <listtemplate name="groups"></listtemplate>
+
 

@@ -10,7 +10,8 @@
 <if @query@ not nil>
 <listtemplate name="contacts"></listtemplate>
 
-<h3>Existing Relationships</h3>
+<h3>#contacts.lt_Existing_Relationship#</h3>
 </if>
 <listtemplate name="relationships"></listtemplate>
+
 

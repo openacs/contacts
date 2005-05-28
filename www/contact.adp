@@ -40,10 +40,26 @@
 
       <include src="/packages/contacts/lib/groups" party_id="@party_id@" hide_form_p="t">
 
+      <include src="/packages/contacts/lib/relationships" party_id="@party_id@">
+
+      <include src="/packages/contacts/lib/comments"
+      party_id="@party_id@" limit="3" truncate_len="100" size="small"
+      recent_on_top_p="1"> 
+      <br />
+      @project_id@
+      @base_url@
+      <h3><a href="@project_url@">#contacts.PROJECT#</a>
+      <if @project_url@ ne "">
+          <include src="/packages/project-manager/lib/subprojects" project_item_id="@project_id@">
+      </if>
+    </td>
+  </tr>
+</table>
+<if @update_date@ not nil><p style="padding-top: 0px; margin-top: 0px;"><small>#contacts.lt_Last_updated_update_d#</small></p></if>
+
 <if @tasks_enabled_p@>
 	     <include src="/packages/tasks/lib/tasks" party_id="@party_id@" hide_form_p="t">
 </if>
-
       <include src="/packages/contacts/lib/comments" party_id="@party_id@" limit="3" truncate_len="150" size="small" recent_on_top_p="1">
 
 </div>

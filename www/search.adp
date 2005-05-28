@@ -6,11 +6,12 @@
     <link href="/resources/contacts/contacts.css" rel="stylesheet" type="text/css">
 </property>
 
-<p><a href="my-searches" class="button">My Searches</a></p>
+<p><a href="my-searches" class="button">#contacts.My_Searches#</a></p>
 <formtemplate id="advanced_search" style="../../../contacts/resources/forms/inline"></formtemplate>
 
 <if @query_code@ not nil and @sw_admin_p@>
-<h3>Debugging Code - Only SW Admins See This</h3>
+<h3>#contacts.lt_Debugging_Code_-_Only#</h3>
 
 @query_code;noquote@
 </if>
+

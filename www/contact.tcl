@@ -77,11 +77,6 @@ db_foreach get_relationships {} {
 
 
 
-
-
-
-
-
 set live_revision [contact::live_revision -party_id $party_id]
 if { [exists_and_not_null live_revision] } {
     set update_date [db_string get_update_date { select to_char(publish_date,'Mon FMDD, YYYY at FMHH12:MIam') from cr_revisions where revision_id = :live_revision } -default {}]
@@ -94,6 +89,17 @@ if { [site_node::get_package_url -package_key "tasks"] != "" } {
     set tasks_enabled_p 0
 }
 
+# Get the linked projekt_id to display the subprojects
+
+set project_id [application_data_link::get_linked -from_object_id $party_id -to_object_type "content_item"]
+
+if {$project_id > 0} {
+    set package_id [acs_object::get_element -object_id $project_id -element package_id]
+    set base_url [apm_package_url_from_id $package_id]
+    set project_url [export_vars -base $base_url {{project_item_id $project_id}}]
+} else {
+    set project_url ""
+}
 
 
 

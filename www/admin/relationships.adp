@@ -4,17 +4,17 @@
 
 
 <p>
-<a href="relationship-ae" class="button">Define a new relationship type</a>
-<a href="roles" class="button">View all roles</a>
+<a href="relationship-ae" class="button">#contacts.lt_Define_a_new_relation#</a>
+<a href="roles" class="button">#contacts.View_all_roles#</a>
 </p>
-<p>Currently, the system is able to handle the following types of relationships: </p>
+<p>#contacts.lt_Currently_the_system_# </p>
 
 
 
 <dl>
 
   <if @rel_types:rowcount@ eq 0>
-    <dt><em>(none)</em></dt>
+    <dt><em>#contacts.none#</em></dt>
       
   </if>
   <else>
@@ -24,7 +24,7 @@
     <dl>
       <ul>
         <group column=sort_two>
-        <li>@rel_types.primary_role_pretty@ -> @rel_types.secondary_role_pretty@ <a href="@rel_types.rel_form_url@" class="button">Attributes</a></li>
+        <li>@rel_types.primary_role_pretty@ -> @rel_types.secondary_role_pretty@ <a href="@rel_types.rel_form_url@" class="button">#contacts.Attributes#</a></li>
         </group>
       </ul>
     </dl>
@@ -33,5 +33,6 @@
   </else>
 
 </dl>
+
 
 

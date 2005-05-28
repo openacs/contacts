@@ -1,13 +1,13 @@
 <html>
 <head>
-<title>Mail Merge Results</title>
+<title>#contacts.Mail_Merge_Results#</title>
 <link href="/resources/contacts/contacts.css" rel="stylesheet" media="screen" type="text/css">
 <link href="/resources/contacts/contacts-print.css" rel="stylesheet" media="print" type="text/css">
 </head>
 <body>
 <multiple name="messages">
 <if @messages.message_type@ eq letter>
-<div class="<if @messages.rownum@ eq @messages:rowcount@>last</if>letter">
+<div class="<if @messages.rownum@ eq @messages:rowcount@>#contacts.last#</if>letter">
 @messages.content;noquote@
 </div>
 </if>	
@@ -23,3 +23,4 @@ Subject: @messages.subject@
 </if>
 </multiple>
 </body>
+
