@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="contacts" package_version="1.0d" locale="en_US" charset="ISO-8859-1">
+
+  <msg key="Action">Action</msg>
+  <msg key="Add_a_Person">Add a Person</msg>
+  <msg key="Add_an_Organization">Add an Organization</msg>
+  <msg key="Add_Organization">Add Organization</msg>
+  <msg key="Add_Person">Add Person</msg>
+  <msg key="Add_the_selected_contacts_to_a_category">Add the selected contacts to a category</msg>
+  <msg key="Add_to_Category">Add to Category</msg>
+  <msg key="Admin">Admin</msg>
+  <msg key="Advanced_Search">Advanced Search</msg>
+  <msg key="All">All</msg>
+  <msg key="Answer">Answer</msg>
+  <msg key="Archive">Archive</msg>
+  <msg key="Archive_the_checked_contacts">Archive the checked contacts</msg>
+  <msg key="Archived">Archived</msg>
+  <msg key="Attribute">Attribute</msg>
+  <msg key="Attributes">Attributes</msg>
+  <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
+  <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
+  <msg key="Comments">Comments</msg>
+  <msg key="Contact">Contact</msg>
+  <msg key="Contact_Type">Contact Type</msg>
+  <msg key="Current">Current</msg>
+  <msg key="Email_Address">Email Address</msg>
+  <msg key="First_Names">First Names</msg>
+  <msg key="Groups">Groups</msg>
+  <msg key="Help_Text">Help Text</msg>
+  <msg key="Last_Name">Last Name</msg>
+  <msg key="Limit_Contacts_to">Limit Contacts to</msg>
+  <msg key="Make_Current">Make Current</msg>
+  <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
+  <msg key="My_Searches">My Searches</msg>
+  <msg key="Name">Name</msg>
+  <msg key="Number_of_Rows">Number of Rows</msg>
+  <msg key="of">of</msg>
+  <msg key="Ordering">Ordering</msg>
+  <msg key="Organization">Organization</msg>
+  <msg key="Person">Person</msg>
+  <msg key="Public_Page">Public Page</msg>
+  <msg key="Required">Required</msg>
+  <msg key="Search">Search</msg>
+  <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
+  <msg key="Send_Email">Send Email</msg>
+  <msg key="Settings">Settings</msg>
+  <msg key="Showing">Showing</msg>
+  <msg key="Sort_By">Sort By</msg>
+  <msg key="Status">Status</msg>
+  <msg key="Widget">Widget</msg>
+</message_catalog>
