@@ -101,8 +101,6 @@ db_multirow -extend { comment_html comment_number } comments get_comments "
     incr result_number
 }
 
-
-
 ad_form -name comment_add \
     -action "[ad_conn package_url]comment-add" \
     -form "
@@ -113,9 +111,6 @@ ad_form -name comment_add \
     " -on_request {
     } -after_submit {
     }
-
-
-
 
 
 
