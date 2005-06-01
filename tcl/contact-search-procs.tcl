@@ -181,11 +181,11 @@ ad_proc -public contact::search::translate {
             switch $operand {
                 set {
                     set output_pretty "$attribute_pretty is set"
-                    set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'"
+                    set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' )"
                 }
                 not_set {
                     set output_pretty "$attribute_pretty is not set"
-                    set output_code "$revision_id not in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'"
+                    set output_code "$revision_id not in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' )"
                 }
                 default {
                     ams::attribute::get -attribute_id $attribute_id -array "attr_info"
