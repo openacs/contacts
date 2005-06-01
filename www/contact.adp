@@ -45,8 +45,6 @@
       recent_on_top_p="1"> 
 <if @projects_enabled_p@>
       <br />
-      @project_id@
-      @base_url@
       <h3><a href="@project_url@">#contacts.PROJECT#</a>
       <if @project_url@ ne "">
           <include src="/packages/project-manager/lib/subprojects" project_item_id="@project_id@">
