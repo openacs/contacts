@@ -26,6 +26,36 @@ ad_proc -public -callback contact::contact_new_form {
 } {
 }
 
+ad_proc -public -callback pm::project_new -impl contacts {
+    {-package_id:required}
+    {-project_id:required}
+    {-data:required}
+} {
+    map selected organization to new project
+} {
+    array set callback_data $data
+    set project_rev_id [pm::project::get_project_id -project_item_id $project_id]
+
+    if {[exists_and_not_null callback_data(organization_id)]} {
+	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
+    }
+}
+
+ad_proc -public -callback pm::project_edit -impl contacts {
+    {-package_id:required}
+    {-project_id:required}
+    {-data:required}
+} {
+    map selected organization to updated project
+} {
+    array set callback_data $data
+    set project_rev_id [pm::project::get_project_id -project_item_id $project_id]
+
+    if {[exists_and_not_null callback_data(organization_id)]} {
+	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
+    }
+}
+
 ad_proc -public contacts::install::package_instantiate {
     {-package_id:required}
 } {
