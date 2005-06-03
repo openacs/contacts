@@ -47,7 +47,7 @@
       <br />
       <h3><a href="@project_url@">#contacts.PROJECT#</a>
       <if @project_url@ ne "">
-          <include src="/packages/project-manager/lib/subprojects" project_item_id="@project_id@">
+          <include src="/packages/project-manager/lib/subprojects" project_item_id="@project_id@" base_url="@base_url@">
       </if>
       <if @update_date@ not nil><p style="padding-top: 0px; margin-top: 0px;"><small>#contacts.lt_Last_updated_update_d#</small></p></if>
 </if>
