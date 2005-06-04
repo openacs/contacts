@@ -20,6 +20,7 @@
         <requires url="organizations" version="0.3d"/>
 
         <callbacks>
+            <callback type="after-install"  proc="contacts::install::package_install"/>
             <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
         </callbacks>
         <parameters>

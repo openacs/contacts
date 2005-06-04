@@ -15,34 +15,41 @@ ad_page_contract {
 } -validate {
     type_exists -requires {rel_type} {
 	if { ![db_0or1row get_it { select 1 from contact_rel_types where rel_type = :rel_type}] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }
-set title "Add relationship type"
-set context [list [list "[ad_conn package_url]admin/relationships" "Relationship types"] $title]
+set title "[_ contacts.lt_Add_relationship_type]"
+set context [list [list "[ad_conn package_url]admin/relationships" "[_ contacts.Relationship_types]"] $title]
 
-set object_types_list {
-    {{Person or Organization} party}
-    {{Person} person}
-    {{Organization} organization}
-}
+set object_types_list [list [list [_ contacts.lt_Person_or_Organizatio] party] \
+			   [list [_ contacts.Person] person] \
+			   [list [_ contacts.Organization] organization]
+		       ]
 
+set locale [ad_conn locale]
 
-set roles_list {{{--select one--} {}}}
-append roles_list " [db_list_of_lists select_roles {
+set roles_list [list [list "[_ contacts.--select_one--]" ""]]
+
+db_foreach select_roles {
     select r.pretty_name, r.role
-      from acs_rel_roles r
-     order by lower(r.role)
-}]"
+    from acs_rel_roles r
+    order by lower(r.role)} {
+	regsub -all {(\#([-a-zA-Z0-9_:\.]+)\#)} $pretty_name {[template::expand_percentage_signs [lang::message::lookup [ad_conn locale] {\2} {TRANSLATION MISSING} {} -1]]} pretty_name
+	
+	lappend roles_list [list [subst $pretty_name] $role]
+    }
+
+
+# replace the list with I18N
 
 ad_form -name "rel_type" \
     -form {
         {return_url:text(hidden),optional}
-        {object_type_one:text(select) {label "Contact Type One"} {options $object_types_list}}
-        {role_one:text(select) {label "Role One"} {options $roles_list}}
-        {object_type_two:text(select) {label "Contact Type Two"} {options $object_types_list}}
-        {role_two:text(select) {label "Role Two"} {options $roles_list}}
+        {object_type_one:text(select) {label "[_ contacts.Contact_Type_One]"} {options $object_types_list}}
+        {role_one:text(select) {label "[_ contacts.Role_One]"} {options $roles_list}}
+        {object_type_two:text(select) {label "[_ contacts.Contact_Type_Two]"} {options $object_types_list}}
+        {role_two:text(select) {label "[_ contacts.Role_Two]"} {options $roles_list}}
     } -on_request {
 #        if { [exists_and_not_null rel_type] } {
 #            db_1row get_them { select * from acs_rel_types where rel_type=:rel_type }
@@ -64,26 +71,16 @@ ad_form -name "rel_type" \
         set table_name "contact_rel_${next_object_id}"
         set package_name "contact_rel__${next_object_id}"
 
-        db_1row create_rel {
-            select acs_rel_type__create_type (
-                                              :rel_type,
-                                              :pretty_name,
-                                              :pretty_plural,
-                                              'contact_rel',
-                                              :table_name,
-                                              'rel_id',
-                                              :package_name,
-                                              :object_type_one,
-                                              :role_one,
-                                              0,
-                                              NULL,
-                                              :object_type_two,
-                                              :role_two,
-                                              0,
-                                              NULL
-                                              )
-        }
-
+	rel_types::new -table_name "$table_name" -create_table_p "t" -supertype "contact_rel" -role_one $role_one -role_two $role_two \
+	    "$rel_type" \
+	    "$pretty_name" \
+	    "$pretty_plural" \
+	    "$object_type_one" \
+	    "0" \
+	    "" \
+	    "$object_type_two" \
+	    "0" \
+	    ""
     
     } -after_submit {
     ad_returnredirect $return_url

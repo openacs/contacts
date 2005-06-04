@@ -26,6 +26,56 @@ ad_proc -public -callback contact::contact_new_form {
 } {
 }
 
+ad_proc -public contacts::install::package_install {
+} {
+    @author Malte Sussdorff (sussdorff@sussdorff.de)
+    @creation-date 2005-06-04
+
+    @return
+
+    @error
+} {
+
+    # Register Relationships
+
+    rel_types::new -table_name "contact_rels" -create_table_p "f" \
+	"contact_rel" \
+	"Contact Relationship" \
+	"Contact Relationships" \
+	"party" \
+	"0" \
+	"" \
+	"party" \
+	"0" \
+	""
+
+    rel_types::create_role -role "organization" -pretty_name "Organization" -pretty_plural "Organizations"
+
+    rel_types::new -table_name "organization_rels" -create_table_p "f" \
+	"organization_rel" \
+	"Organization Relationship" \
+	"Organization Relationships" \
+	"group" \
+	"0" \
+	"" \
+	"organization" \
+	"0" \
+	""
+
+    rel_types::create_role -role "employee" -pretty_name "Employee" -pretty_plural "Employees"
+    rel_types::create_role -role "employer" -pretty_name "Employer" -pretty_plural "Employers"
+    rel_types::new -table_name "contact_rel_employment" -create_table_p "t" -supertype "contact_rel" -role_one "employee" -role_two "employer" \
+	"contact_rels_employment" \
+	"Contact Rel Employment" \
+	"Contact Rels Employment" \
+	"person" \
+	"0" \
+	"" \
+	"organization" \
+	"0" \
+	""
+}
+
 ad_proc -public -callback pm::project_new -impl contacts {
     {-package_id:required}
     {-project_id:required}
@@ -34,7 +84,8 @@ ad_proc -public -callback pm::project_new -impl contacts {
     map selected organization to new project
 } {
     array set callback_data $data
-    set project_rev_id [pm::project::get_project_id -project_item_id $project_id]
+    set project_rev_id [pm::project::get_project_id \
+			    -project_item_id $project_id]
 
     if {[exists_and_not_null callback_data(organization_id)]} {
 	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
@@ -49,7 +100,8 @@ ad_proc -public -callback pm::project_edit -impl contacts {
     map selected organization to updated project
 } {
     array set callback_data $data
-    set project_rev_id [pm::project::get_project_id -project_item_id $project_id]
+    set project_rev_id [pm::project::get_project_id \
+			    -project_item_id $project_id]
 
     if {[exists_and_not_null callback_data(organization_id)]} {
 	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
@@ -61,8 +113,8 @@ ad_proc -public contacts::install::package_instantiate {
 } {
 
     # We want to instantiate the contacts package so that registered
-    # users have some attributes mapped by default. This could be
-    # extended in custom packages.
+
+    # users have some attributes mapped by default. This could be extended in custom packages.
 
     ams::widgets_init
     set list_id [ams::list::new \
@@ -73,13 +125,12 @@ ad_proc -public contacts::install::package_instantiate {
 		     -description "" \
 		     -description_mime_type ""]
 
-
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "first_names" \
 			  -datatype "string" \
-			  -pretty_name "#ams.person_first_names#" \
-			  -pretty_plural "#ams.person_first_names_plural#" \
+			  -pretty_name "#acs-translations.person_first_names#" \
+			  -pretty_plural "#acs-translations.person_first_names_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -90,8 +141,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams person_last_name "First Names"
-    lang::message::register en_US ams person_last_name_plural "First Names"
+    lang::message::register en_US acs-translations person_last_name "First Names"
+    lang::message::register en_US acs-translations person_last_name_plural "First Names"
 
     ams::attribute::new -attribute_id $attribute_id -widget "textbox" -dynamic_p "f"
 
@@ -106,8 +157,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "person" \
 			  -attribute_name "last_name" \
 			  -datatype "string" \
-			  -pretty_name "#ams.person_last_name#" \
-			  -pretty_plural "#ams.person_last_name_plural#" \
+			  -pretty_name "#acs-translations.person_last_name#" \
+			  -pretty_plural "#acs-translations.person_last_name_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -118,8 +169,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams person_first_names "Last Name"
-    lang::message::register en_US ams person_first_names_plural "Last Names"
+    lang::message::register en_US acs-translations person_first_names "Last Name"
+    lang::message::register en_US acs-translations person_first_names_plural "Last Names"
 
     ams::attribute::new -attribute_id $attribute_id -widget "textbox" -dynamic_p "f"
 
@@ -130,13 +181,12 @@ ad_proc -public contacts::install::package_instantiate {
 	-required_p "f" \
 	-section_heading ""
 
-
     set attribute_id [attribute::new \
 			  -object_type "party" \
 			  -attribute_name "email" \
 			  -datatype "string" \
-			  -pretty_name "#ams.party_email#" \
-			  -pretty_plural "#ams.party_email_plural#" \
+			  -pretty_name "#acs-translations.party_email#" \
+			  -pretty_plural "#acs-translations.party_email_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -147,10 +197,10 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams party_email "Email Address"
-    lang::message::register en_US ams party_email_plural "Email Addresses"
+    lang::message::register en_US acs-translations party_email "Email Address"
+    lang::message::register en_US acs-translations party_email_plural "Email Addresses"
 
-    ams::attribute::new	-attribute_id $attribute_id -widget "email" -dynamic_p "f"
+    ams::attribute::new -attribute_id $attribute_id -widget "email" -dynamic_p "f"
 
     ams::list::attribute::map \
 	-list_id $list_id \
@@ -163,8 +213,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "person" \
 			  -attribute_name "home_address" \
 			  -datatype "string" \
-			  -pretty_name "#ams.person_address#" \
-			  -pretty_plural "#ams.person_address_plural#" \
+			  -pretty_name "#acs-translations.person_address#" \
+			  -pretty_plural "#acs-translations.person_address_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -175,10 +225,10 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams person_address "Home Address"
-    lang::message::register en_US ams person_address_plural "Home Address"
+    lang::message::register en_US acs-translations person_address "Home Address"
+    lang::message::register en_US acs-translations person_address_plural "Home Address"
 
-    ams::attribute::new	-attribute_id $attribute_id -widget "postal_address" -dynamic_p "t"
+    ams::attribute::new -attribute_id $attribute_id -widget "postal_address" -dynamic_p "t"
 
     ams::list::attribute::map \
 	-list_id $list_id \
@@ -191,8 +241,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "person" \
 			  -attribute_name "home_phone" \
 			  -datatype "string" \
-			  -pretty_name "#ams.home_phone#" \
-			  -pretty_plural "#ams.home_phone_plural#" \
+			  -pretty_name "#acs-translations.home_phone#" \
+			  -pretty_plural "#acs-translations.home_phone_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -203,8 +253,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams home_phone "Home Phone"
-    lang::message::register en_US ams home_phone_plural "Home Phone"
+    lang::message::register en_US acs-translations home_phone "Home Phone"
+    lang::message::register en_US acs-translations home_phone_plural "Home Phone"
 
     ams::attribute::new	-attribute_id $attribute_id -widget "telecom_number" -dynamic_p "t"
 
@@ -219,8 +269,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "person" \
 			  -attribute_name "mobile_phone" \
 			  -datatype "string" \
-			  -pretty_name "#ams.mobile_phone#" \
-			  -pretty_plural "#ams.mobile_phone_plural#" \
+			  -pretty_name "#acs-translations.mobile_phone#" \
+			  -pretty_plural "#acs-translations.mobile_phone_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -231,8 +281,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams mobile_phone "Mobile Phone"
-    lang::message::register en_US ams mobile_phone_plural "Mobile Phone"
+    lang::message::register en_US acs-translations mobile_phone "Mobile Phone" 
+    lang::message::register en_US acs-translations mobile_phone_plural "Mobile Phone"
 
     ams::attribute::new	-attribute_id $attribute_id -widget "telecom_number" -dynamic_p "t"
 
@@ -243,11 +293,7 @@ ad_proc -public contacts::install::package_instantiate {
 	-required_p "f" \
 	-section_heading ""
 
-    ###################
-    #
     # ORGANIZATIONS
-    #
-    ###################
 
     set list_id [ams::list::new \
 		     -package_key "contacts" \
@@ -261,8 +307,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "organization" \
 			  -attribute_name "name" \
 			  -datatype "string" \
-			  -pretty_name "#ams.organization_name#" \
-			  -pretty_plural "#ams.organization_name_plural#" \
+			  -pretty_name "#acs-translations.organization_name#" \
+			  -pretty_plural "#acs-translations.organization_name_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -273,24 +319,24 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams organization_name "Organization Name"
-    lang::message::register en_US ams organization_name_plural "Organization Names"
+    lang::message::register en_US acs-translations organization_name "Organization Name"
+    lang::message::register en_US acs-translations organization_name_plural "Organization Names"
 
     ams::attribute::new -attribute_id $attribute_id -widget "textbox" -dynamic_p "t"
 
     ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "1" \
-	-required_p "f" \
-	-section_heading ""
+ 	-list_id $list_id \
+ 	-attribute_id $attribute_id \
+ 	-sort_order "1" \
+ 	-required_p "f" \
+ 	-section_heading ""
 
     set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "organization_address" \
-			  -datatype "string" \
-			  -pretty_name "#ams.organization_address#" \
-			  -pretty_plural "#ams.organization_address_plural#" \
+ 			  -object_type "person" \
+ 			  -attribute_name "organization_address" \
+ 			  -datatype "string" \
+ 			  -pretty_name "#acs-translations.organization_address#" \
+			  -pretty_plural "#acs-translations.organization_address_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -301,8 +347,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams organization_address "Address"
-    lang::message::register en_US ams organization_address_plural "Address"
+    lang::message::register en_US acs-translations organization_address "Address"
+    lang::message::register en_US acs-translations organization_address_plural "Address"
 
     ams::attribute::new	-attribute_id $attribute_id -widget "postal_address" -dynamic_p "t"
 
@@ -317,8 +363,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -object_type "person" \
 			  -attribute_name "organization_url" \
 			  -datatype "string" \
-			  -pretty_name "#ams.organization_url#" \
-			  -pretty_plural "#ams.organization_url_plural#" \
+			  -pretty_name "#acs-translations.organization_url#" \
+			  -pretty_plural "#acs-translations.organization_url_plural#" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -329,8 +375,8 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US ams organization_url "Website"
-    lang::message::register en_US ams organization_url_plural "Website"
+    lang::message::register en_US acs-translations organization_url "Website"
+    lang::message::register en_US acs-translations organization_url_plural "Website"
 
     ams::attribute::new	-attribute_id $attribute_id -widget "url" -dynamic_p "t"
 
@@ -340,8 +386,11 @@ ad_proc -public contacts::install::package_instantiate {
 	-sort_order "3" \
 	-required_p "f" \
 	-section_heading ""
-    
-    # Make the registered users group mapped by default 
+
+    # Relationships
+
+    # Make the registered users group mapped by default
+
     contacts::insert_map -group_id "-2" -default_p "t" -package_id $package_id
 }
 
@@ -350,25 +399,22 @@ ad_proc -public contacts::insert_map {
     {-default_p:required}
     {-package_id:required}
 } {
-    
     @author Malte Sussdorff (sussdorff@sussdorff.de)
     @creation-date 2005-06-03
-    
+
     @param group_id
 
     @param default_p
 
     @param package_id
 
-    @return 
-    
-    @error 
+    @return
+
+    @error
 } {
-    
     db_dml insert_map {
         insert into contact_groups
         (group_id,default_p,package_id)
         values
-        (:group_id,:default_p,:package_id)
-    }
+        (:group_id,:default_p,:package_id)}
 }

@@ -20,8 +20,8 @@ create table contact_party_revisions (
 select content_type__create_type (
    'contact_party_revision',      -- content_type
    'content_revision',            -- supertype    
-   'Party Revision',              -- pretty_name 
-   'Party Revisions',             -- pretty_plural
+   '#contacts.Party_Revision#',              -- pretty_name 
+   '#contacts.Party_Revisions#',             -- pretty_plural
    'contact_party_revisions',     -- table_name (should this be pm_task?)
    'party_revision_id',           -- id_column 
    'contact_party_revision__name' -- name_method
@@ -124,56 +124,12 @@ create table contact_rels (
         comment_format   varchar(50) default 'text/plain'
 );
 
-select acs_rel_type__create_type (
-  'contact_rel',
-  'Contact Relationship',
-  'Contact Relationships',
-  'relationship',
-  'contact_rels',
-  'rel_id',
-  'contact_rel',
-  NULL,
-  'party',
-  0,
-  null::integer,
-  'party',
-  0,
-  null::integer
-);
-
 create table organization_rels (
         rel_id           integer
                          constraint organization_rels_rel_id_fk references membership_rels(rel_id) on delete cascade
                          constraint organization_rels_rel_id_pk primary key
 );
 
-select acs_rel_type__create_role (
-  'organization',
-  'Organization',
-  'Organizations'
-);
-
-select acs_rel_type__create_type (
-  'organization_rel',
-  'Organization Relationship',
-  'Organization Relationships',
-  'membership_rel',
-  'organization_rels',
-  'rel_id',
-  'organization_rel',
-  NULL,
-  'group',
-  0,
-  null::integer,
-  'organization',
-  0,
-  null::integer
-);
-
-
--- create table contact_groups_package_map (
---        group_id 
--- );
 \i contacts-package-create.sql
 \i contacts-search-create.sql
 

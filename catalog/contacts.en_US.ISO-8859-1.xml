@@ -2,6 +2,7 @@
 <message_catalog package_key="contacts" package_version="1.1d1" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
+  <msg key="--select_one--">--select one--</msg>
   <msg key="Action">Action</msg>
   <msg key="Add_a_Person">Add a Person</msg>
   <msg key="Add_an_Organization">Add an Organization</msg>
@@ -27,7 +28,10 @@
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
   <msg key="Comments">Comments</msg>
   <msg key="Contact">Contact</msg>
+  <msg key="Contact_Relationship">Contact Relationship</msg>
   <msg key="Contact_Type">Contact Type</msg>
+  <msg key="Contact_Type_One">Contact Type One</msg>
+  <msg key="Contact_Type_Two">Contact Type Two</msg>
   <msg key="Contacts">Contacts</msg>
   <msg key="Create_a_role">Create a role</msg>
   <msg key="create_project">Create project</msg>
@@ -41,9 +45,11 @@
   <msg key="last">last</msg>
   <msg key="Last_Name">Last Name</msg>
   <msg key="Limit_Contacts_to">Limit Contacts to</msg>
+  <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_commentspretty_date_a">%comments.pretty_date% at %comments.pretty_time% -</msg>
+  <msg key="lt_Contact_Relationships">Contact Relationships</msg>
   <msg key="lt_Currently_the_system_">Currently, the system is able to handle the following types of relationships:</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>
   <msg key="lt_Define_a_new_relation">Define a new relationship type</msg>
@@ -58,7 +64,11 @@
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
   <msg key="lt_Once_ready_for_releas">Once ready for release this will be taken care of in code</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; contains &quot;Search_Word&quot; or</msg>
+  <msg key="lt_Organization_Relation">Organization Relationship</msg>
+  <msg key="lt_Organization_Relation_1">Organization Relationships</msg>
   <msg key="lt_Party_ID_equals_Searc">&quot;Party ID&quot; equals &quot;Search_Word&quot;</msg>
+  <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
+  <msg key="lt_The_contact_specified">The contact specified does not exist</msg>
   <msg key="lt_The_default_group_mus">The default group must have first_names and last_name for person objects and name for organization objects, both of them need email</msg>
   <msg key="lt_This_contact_is_not_p">This contact is not part of any groups - this is a problem.</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
@@ -77,12 +87,18 @@
   <msg key="of">of</msg>
   <msg key="Ordering">Ordering</msg>
   <msg key="Organization">Organization</msg>
+  <msg key="Organizations">Organizations</msg>
+  <msg key="Party_Revision">Party Revision</msg>
+  <msg key="Party_Revisions">Party Revisions</msg>
   <msg key="Person">Person</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Public_Page">Public Page</msg>
   <msg key="READ_THESE">READ THESE</msg>
+  <msg key="Relationship_types">Relationship types</msg>
   <msg key="Relationships">Relationships</msg>
   <msg key="Required">Required</msg>
+  <msg key="Role_One">Role One</msg>
+  <msg key="Role_Two">Role Two</msg>
   <msg key="Roles">Roles</msg>
   <msg key="Search">Search</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>

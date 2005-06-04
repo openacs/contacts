@@ -63,15 +63,6 @@ if { $list_exists_p } {
 
 }
 
-
-
-
-
-
-
-
-
-
 if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 
     set existing_rel_id [db_string rel_exists_p {} -default {}]

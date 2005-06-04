@@ -192,17 +192,13 @@ db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contac
     set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
 }
 
+set rel_options [list [list "[_ contacts.--select_one--]" ""]]
 
-
-
-
-set rel_options [db_list_of_lists get_rels {}]
-
-set rel_options "{{-Select One-} {}} $rel_options"
-
-
-
-
+db_foreach get_rels {} {
+	regsub -all {(\#([-a-zA-Z0-9_:\.]+)\#)} $pretty_name {[template::expand_percentage_signs [lang::message::lookup [ad_conn locale] {\2} {TRANSLATION MISSING} {} -1]]} pretty_name
+	
+	lappend rel_options [list [subst $pretty_name] $role]
+    }
 
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
@@ -215,15 +211,6 @@ ad_form -name "search" -method "GET" -export {party_id} -form {
 } -on_submit {
 } -after_submit {
 }
-
-
-
-
-
-
-
-
-
 
 template::list::create \
     -html {width 100%} \

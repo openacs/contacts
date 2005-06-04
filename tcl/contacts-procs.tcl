@@ -5,7 +5,6 @@ ad_library {
     @author Matthew Geddert openacs@geddert.com
     @creation-date 2004-07-28
     @cvs-id $Id$
-
 }
 
 namespace eval contacts:: {}
@@ -14,20 +13,18 @@ namespace eval contact::util:: {}
 namespace eval contact::group:: {}
 namespace eval contact::revision:: {}
 namespace eval contact::special_attributes:: {}
-
+namespace eval contact::rels:: {}
 
 ad_proc -public contacts::default_group {
     {-package_id ""}
 } {
     returns the group_id for which this group is a component, if none then it return null
 } {
-    if { [string is false [exists_and_not_null package_id]] } {
+    if {[string is false [exists_and_not_null package_id]]} {
         set package_id [ad_conn package_id]
     }
-    return [db_string get_default_group { select group_id from contact_groups where package_id =:package_id and default_p } -default {}]
+    return [db_string get_default_group {select group_id from contact_groups where package_id =:package_id and default_p} -default {}]
 }
-
-
 
 ad_proc -private contact::util::interpolate {
     {-values:required}
@@ -36,7 +33,7 @@ ad_proc -private contact::util::interpolate {
     Interpolates a set of values into a string. This is directly copied from the bulk mail package
 
     @param values a list of key, value pairs, each one consisting of a
-                  target string and the value it is to be replaced with.
+    target string and the value it is to be replaced with.
     @param text the string that is to be interpolated
 
     @return the interpolated string
@@ -47,7 +44,6 @@ ad_proc -private contact::util::interpolate {
     return $text
 }
 
-
 ad_proc -private contact::util::generate_filename {
     {-title:required}
     {-extension:required}
@@ -57,16 +53,18 @@ ad_proc -private contact::util::generate_filename {
     Generate a pretty filename that relates to the title supplied
 
     @param party_id if supplied the filenames associated with this party will be used as existing_filenames if existing filenames is not provided
-  
+
     @param existing_filenames a list of filenames that the generated filename must not be equal to
 } {
-    if { [exists_and_not_null party_id] && [string is integer $party_id] && ![exists_and_not_null existing_filenames] } {
+    if {[exists_and_not_null party_id] 
+	&& [string is integer $party_id] && ![exists_and_not_null existing_filenames]} {
 	set existing_filenames [db_list get_parties_existing_filenames {}]
     }
-    set filename [util_text_to_url -text ${title} -replacement "_"]
+    set filename [util_text_to_url \
+		      -text ${title} -replacement "_"]
     set output_filename "${filename}.${extension}"
     set num 1
-    while { [lsearch $existing_filenames $output_filename] >= 0 } {
+    while {[lsearch $existing_filenames $output_filename] >= 0} {
 	set output_filename "${filename}${num}.${extension}"
 	incr num
     }
@@ -81,19 +79,21 @@ ad_proc -private contact::util::get_file_extension {
     return [lindex [split $filename "."] end]
 }
 
-
-
-
 ad_proc -public contact::name {
     {-party_id:required}
 } {
     this returns the contact's name
 } {
-    if { [contact::person_p -party_id $party_id] } {
-	return [person::name -person_id $party_id]
+    if {[contact::person_p \
+	     -party_id $party_id]} {
+	return [person::name \
+		    -person_id $party_id]
     } else {
-	# if there is an org the name is returned otherwise null is returned
-        return [db_string get_org_name { select name from organizations where organization_id = :party_id } -default {}]
+
+	# if there is an org the name is returned otherwise null is
+	# returned
+
+        return [db_string get_org_name {select name from organizations where organization_id = :party_id} -default {}]
     }
 }
 
@@ -102,9 +102,11 @@ ad_proc -public contact::type {
 } {
     this returns the contact's name
 } {
-    if { [contact::person_p -party_id $party_id] } {
+    if {[contact::person_p \
+	     -party_id $party_id]} {
 	return "person"
-    } elseif { [contact::organization_p -party_id $party_id] } {
+    } elseif {[contact::organization_p \
+		   -party_id $party_id]} {
 	return "organization"
     } else {
 	return ""
@@ -116,10 +118,14 @@ ad_proc -public contact::exists_p {
 } {
     does this contact exist?
 } {
+
     # persons can be organizations so we need to do the check this way
-    if { [contact::person_p -party_id $party_id] } {
+
+    if {[contact::person_p \
+	     -party_id $party_id]} {
 	return 1
-    } elseif { [contact::organization_p -party_id $party_id] } {
+    } elseif {[contact::organization_p \
+		   -party_id $party_id]} {
 	return 1
     } else {
 	return 0
@@ -131,11 +137,10 @@ ad_proc -public contact::person_p {
 } {
     this returns the contact's name
 } {
-    if { [db_0or1row contact_person_exists_p { select '1' from persons where person_id = :party_id }] } {
-	return 1
-    } else {
-	return 0
-    }
+    if {[db_0or1row contact_person_exists_p {select '1' from persons where person_id = :party_id}]} {
+	return 1} else {
+	    return 0
+	}
 }
 
 ad_proc -public contact::organization_p {
@@ -143,17 +148,16 @@ ad_proc -public contact::organization_p {
 } {
     this returns the contact's name
 } {
-    if { [contact::person_p -party_id $party_id] } {
+    if {[contact::person_p \
+	     -party_id $party_id]} {
 	return 0
     } else {
-	if { [db_0or1row contact_org_exists_p { select '1' from organizations where organization_id = :party_id }] } {
-	    return 1
-	} else {
-	    return 0
-	}
+	if {[db_0or1row contact_org_exists_p {select '1' from organizations where organization_id = :party_id}]} {
+	    return 1} else {
+		return 0
+	    }
     }
 }
-
 
 ad_proc -public contact::url {
     {-party_id:required}
@@ -170,20 +174,20 @@ ad_proc -public contact::revision::new {
     create a contact revision
 } {
     set extra_vars [ns_set create]
-    oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list { party_id party_revision_id }
-    return [package_instantiate_object -extra_vars $extra_vars contact_party_revision]
+    oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {party_id party_revision_id}
+    return [package_instantiate_object \
+		-extra_vars $extra_vars contact_party_revision]
 }
-    
+
 ad_proc -public contact::live_revision {
     {-party_id:required}
 } {
     create a contact revision
 } {
-    if { [db_0or1row revision_exists_p { select 1 from cr_items where item_id = :party_id }] } {
-	return [item::get_live_revision $party_id]
-    } else {
-	return ""
-    }
+    if {[db_0or1row revision_exists_p {select 1 from cr_items where item_id = :party_id}]} {
+	return [item::get_live_revision $party_id]} else {
+	    return ""
+	}
 }
 
 ad_proc -public contact::subsite_user_group {
@@ -191,13 +195,11 @@ ad_proc -public contact::subsite_user_group {
 } {
     create a contact revision
 } {
-    if { [db_0or1row revision_exists_p { select 1 from cr_items where item_id = :party_id }] } {
-	return [item::get_live_revision $party_id]
-    } else {
-	return ""
-    }
+    if {[db_0or1row revision_exists_p {select 1 from cr_items where item_id = :party_id}]} {
+	return [item::get_live_revision $party_id]} else {
+	    return ""
+	}
 }
-
 
 ad_proc -private contact::group::new {
     {-group_id ""}
@@ -222,15 +224,14 @@ ad_proc -public contact::group::map {
 } {
     this creates a new group for use with contacts (and the permissions system)
 } {
-    if { [exists_and_not_null owner_id] } {
+    if {[exists_and_not_null owner_id]} {
 	set owner_id [ad_conn user_id]
     }
-    if { [exists_and_not_null package_id] } {
+    if {[exists_and_not_null package_id]} {
 	set package_id [ad_conn package_id]
     }
     db_dml map_group {}
 }
-
 
 ad_proc -public contact::group::parent {
     -group_id:required
@@ -251,12 +252,13 @@ ad_proc -public contact::groups {
     set user_id [ad_conn user_id]
     set group_list [list]
     db_foreach get_groups {} {
-        if { $mapped_p || $all_p } {
+        if {$mapped_p 
+	    || $all_p} {
             lappend group_list [list $group_name $group_id $member_count "1" $mapped_p $default_p]
-            if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
+            if {$component_count > 0 
+		&& ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
-                    lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]
-                }
+                    lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]}
             }
         }
     }
@@ -273,7 +275,7 @@ ad_proc -public contact::groups {
             foreach group $group_list {
                 lappend ad_form_output [list [lindex $group 0] [lindex $group 1]]
             }
-                return $ad_form_output
+	    return $ad_form_output
         }
         default {
             return $group_list
@@ -281,43 +283,40 @@ ad_proc -public contact::groups {
     }
 }
 
-
 ad_proc -public contact::special_attributes::ad_form_values {
     -party_id:required
     -form:required
 } {
 } {
-    set object_type [contact::type -party_id $party_id] 
+    set object_type [contact::type \
+			 -party_id $party_id]
 
     db_1row get_extra_info {
 	select email, url
 	from parties
-	where party_id = :party_id
-    }
+	where party_id = :party_id}
     set element_list [list email url]
 
-    if { $object_type == "person" } {
+    if {$object_type == "person" } {
 
-	array set person [person::get -person_id $party_id]
+	array set person [person::get \
+			      -person_id $party_id]
 	set first_names $person(first_names)
 	set last_name $person(last_name)
 
 	lappend element_list first_names last_name
-
-    } elseif { $object_type == "organization" } {
+    } elseif {$object_type == "organization" } {
 
 	db_0or1row get_org_info {
             select name, legal_name, reg_number, notes
-              from organizations
-	     where organization_id = :party_id
-	}
+	    from organizations
+	    where organization_id = :party_id}
 	lappend element_list name legal_name reg_number notes
-
     }
 
     foreach element $element_list {
-	if { [exists_and_not_null $element] } {
-	    if { [template::element::exists $form $element] } {
+	if {[exists_and_not_null $element]} {
+	    if {[template::element::exists $form $element]} {
 		template::element::set_value $form $element [set $element]
 	    }
 	}
@@ -329,30 +328,31 @@ ad_proc -public contact::special_attributes::ad_form_save {
     -form:required
 } {
 } {
-    set object_type [contact::type -party_id $party_id]
+    set object_type [contact::type \
+			 -party_id $party_id]
     set element_list [list email url]
-    if { $object_type == "person" } {
+    if {$object_type == "person" } {
 	lappend element_list first_names last_name
-    } elseif { $object_type == "organization" } {
+    } elseif {$object_type == "organization" } {
 	lappend element_list name legal_name reg_number notes
     }
     foreach element $element_list {
-	if { [template::element::exists $form $element] } {
+	if {[template::element::exists $form $element]} {
 	    set value [template::element::get_value $form $element]
 	    switch $element {
 		email {
-		    if { [db_0or1row party_is_user_p { select '1' from users where user_id = :party_id }] } {
-			if { [exists_and_not_null value] } {
+		    if {[db_0or1row party_is_user_p {select '1' from users where user_id = :party_id}]} {
+			if {[exists_and_not_null value]} {
 			    set username $value
 			} else {
 			    set username $party_id
 			}
 			acs_user::update -user_id $party_id -username $username
 		    }
-		    party::update -party_id $party_id -email $value -url [db_string get_url { select url from parties where party_id = :party_id } -default {}]
+		    party::update -party_id $party_id -email $value -url [db_string get_url {select url from parties where party_id = :party_id} -default {}]
 		}
 		url {
-		    party::update -party_id $party_id -email [db_string get_email { select email from parties where party_id = :party_id } -default {}] -url $value
+		    party::update -party_id $party_id -email [db_string get_email {select email from parties where party_id = :party_id} -default {}] -url $value
 		}
 		default {
 		    set $element $value
@@ -360,35 +360,38 @@ ad_proc -public contact::special_attributes::ad_form_save {
 	    }
         }
     }
-    if { $object_type == "person" } {
+    if {$object_type == "person" } {
+
 	# first_names and last_name are required
-	if { [exists_and_not_null first_names] && [exists_and_not_null last_name] } {
+
+	if {[exists_and_not_null first_names] 
+	    && [exists_and_not_null last_name]} {
 	    person::update -person_id $party_id -first_names $first_names -last_name $last_name
 	} else {
-	    if { ![exists_and_not_null first_names] } {
+	    if {![exists_and_not_null first_names]} {
 		error "The object type was person but first_names (a required element) did not exist"
 	    }
-	    if { ![exists_and_not_null last_name] } {
+	    if {![exists_and_not_null last_name]} {
 	        error "The object type was person but first_names (a required element) did not exist"
 	    }
 	}
-    } elseif { $object_type == "organization" } {
+    } elseif {$object_type == "organization" } {
+
 	# name is required
-	if { [exists_and_not_null name] } {
-	    if { ![exists_and_not_null legal_name] } { set legal_name "" }
-	    if { ![exists_and_not_null reg_number] } { set reg_number "" }
-	    if { ![exists_and_not_null notes] } { set notes "" }
+
+	if {[exists_and_not_null name]} {
+	    if {![exists_and_not_null legal_name]} {set legal_name "" }
+	    if {![exists_and_not_null reg_number]} {set reg_number "" }
+	    if {![exists_and_not_null notes]} {set notes "" }
 	    db_dml update_org {
 		update organizations
-		   set name = :name,
-		       legal_name = :legal_name,
-		       reg_number = :reg_number,
-		       notes = :notes
-		 where organization_id = :party_id
-	    }
+		set name = :name,
+		legal_name = :legal_name,
+		reg_number = :reg_number,
+		notes = :notes
+		where organization_id = :party_id}
 	} else {
 	    error "The object type was organization but name (a required element) did not exist"
 	}
     }
-
 }

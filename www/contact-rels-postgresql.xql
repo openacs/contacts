@@ -11,8 +11,8 @@ select primary_object_type
 
 <fullquery name="get_rels">
       <querytext>
-select acs_rel_type__role_pretty_name(primary_role),
-       primary_role
+select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
+       primary_role as role
   from contact_rel_types
  where secondary_object_type in ( :contact_type, 'party' )
  group by primary_role
