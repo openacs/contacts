@@ -1,53 +1,43 @@
 # /packages/mbryzek-subsite/www/admin/rel-types/role-new.tcl
 
 ad_page_contract {
-
     Form to create a new role
 
     @author mbryzek@arsdigita.com
     @creation-date Mon Dec 11 10:52:35 2000
     @cvs-id $Id$
-
 } {
-    { role:trim "" }
-    { pretty_name "" }
-    { pretty_plural "" }
-    { return_url "roles" }
+    {role:trim "" }
+    {pretty_name "" }
+    {pretty_plural "" }
+    {return_url "roles" }
 } -properties {
     context:onevalue
-    
 }
 
-set context [list [list "relationships" "Relationship types"] [list "roles" "Roles"] "Create role"]
+set context [list [list "relationships" "[_ contacts.Relationship_types]"] [list "roles" "[_ contacts.Roles]"] "[_ contacts.Create_role]"]
 
-template::form create role_form
+ad_form -name "role_form" \
+    -form {
+	{return_url:text(hidden),optional}
+	{role:text {label "[_ contacts.Role_Name]"}}
+        {pretty_name:text {label "[_ contacts.Role_Singular]"}}
+        {pretty_plural:text {label "[_ contacts.Role_Plural]"}}
+    } -on_submit {
 
-template::element create role_form return_url \
-	-optional \
-	-value $return_url \
-	-datatype text \
-	-widget hidden
+	if {[db_string role_exists_with_same_names_p {
+	    select count(r.role) from acs_rel_roles r where r.role = :role}]} {
+	    ad_return_complaint 1 "[_ contacts.lt_li_The_role_you_enter]"
+	    return
+	}
+	if {[empty_string_p $role]} {
+	    rel_types::create_role -pretty_name $pretty_name -pretty_plural $pretty_plural
+	} else {
+	    rel_types::create_role -pretty_name $pretty_name -pretty_plural $pretty_plural -role $role
+	}
 
-template::element create role_form pretty_name \
-	-label "Role Singular" \
-	-datatype text \
-	-html {maxlength 100}
-
-template::element create role_form pretty_plural \
-	-label "Role Plural" \
-	-datatype text \
-	-html {maxlength 100}
-
-if { [template::form is_valid role_form] } {
-    if { [db_string role_exists_with_same_names_p {
-	select count(r.role) from acs_rel_roles r where r.pretty_name = :pretty_name or r.pretty_plural = :pretty_plural
-    }] } {
-	ad_return_complaint 1 "<li> The role you entered \"$pretty_name\" or the plural \"$pretty_plural\" already exists."
-	return
+    } -after_submit {
+	ad_returnredirect $return_url
+	ad_script_abort
     }
 
-    rel_types::create_role -pretty_name $pretty_name -pretty_plural $pretty_plural
-
-    ad_returnredirect $return_url
-    ad_script_abort
-}
