@@ -25,7 +25,7 @@ ad_page_contract {
 } -validate {
 }
 
-set page_title "Advanced Search"
+set page_title "[_ contacts.Advanced_Search]"
 set context [list $page_title]
 set sw_admin_p [acs_user::site_wide_admin_p]
 
@@ -52,22 +52,18 @@ if { [exists_and_not_null search_id] } {
     }
 }
 
-
-
-
-
 if { [exists_and_not_null add] } {
     set action "add"
 } else {
     set action "next"
 }
 switch $object_type {
-    party        { set object_type_pretty "People or Organizations" }
-    person       { set object_type_pretty "People" }
-    organization { set object_type_pretty "Organizations" }
+    party        { set object_type_pretty "[_ contacts.lt_People_or_Organizatio]" }
+    person       { set object_type_pretty "[_ contacts.People]" }
+    organization { set object_type_pretty "[_ contacts.Organizations]" }
     default      {
         if { [exists_and_not_null object_type] } {
-            ad_return_error "Invalid Object Type" "You have specified an invalid Object Type"
+            ad_return_error "[_ contacts.Invalid_Object_Type]" "[_ contacts.lt_You_have_specified_an]"
         }
     }
 }
@@ -85,8 +81,8 @@ set form_elements {
 if { [exists_and_not_null object_type] } {
     append form_elements {
         {object_type:text(hidden) {value $object_type}}
-        {object_type_pretty:text(inform) {label {Search for}} {value "<strong>$object_type_pretty</strong>"} {after_html " which match"}}
-        {all_or_any:text(select),optional {label ""} {options {{All all} {Any any}}} {after_html "of the following conditions:<br>"}}
+        {object_type_pretty:text(inform) {label {Search for}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
+        {all_or_any:text(select),optional {label ""} {options {{All all} {Any any}}} {after_html "[_ contacts.lt_of_the_following_cond]"}}
     }
 } else {
 #            {{People or Organizations} party}
@@ -131,26 +127,13 @@ select contact__name(party_id), party_id, revision_id
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 if { [exists_and_not_null object_type] } {
 
     # QUERY TYPE
     set type_options [list \
-                          [list "Attribute ->" "attribute"] \
-                          [list "Contact ->" "contact"] \
-                          [list "Group ->" "group"] \
+                          [list "[_ contacts.Attribute_-]" "attribute"] \
+                          [list "[_ contacts.Contact_-]" "contact"] \
+                          [list "[_ contacts.Group_-]" "group"] \
                          ]
 
 #    [list "Tasks ->" "tasks"]
@@ -167,13 +150,16 @@ switch $type {
     attribute {
 
 
-        set attribute_options [db_list_of_lists get_attributes {
-            select pretty_name || ' ->' , attribute_id
-            from ams_attributes
+        db_foreach get_attributes {
+            select pretty_name, attribute_id
+            from ams_attributes	
             where object_type in ('organization','party','person','user') 
             and ams_attribute_id is not null
             order by upper (pretty_name) 
-        }]
+        } {
+	    set pretty_name [lang::util::convert_from_hash -hashed_key $pretty_name]
+	    lappend attribute_options [list "$pretty_name ->" $attribute_id]
+	}
 
         append form_elements {
             {var1:text(select),optional {label {}} {options $attribute_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
@@ -187,10 +173,10 @@ switch $type {
             switch $value_method {
                 ams_value__options {
                     set operand_options [list \
-                                             [list "is ->" "selected"] \
-                                             [list "is not ->" "not_selected"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.is_-]" "selected"] \
+                                             [list "[_ contacts.is_not_-]" "not_selected"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
 
                     append form_elements {
@@ -211,12 +197,12 @@ switch $type {
                 }
                 ams_value__telecom_number {
                     set operand_options [list \
-                                             [list "area code is ->" "area_code_equals"] \
-                                             [list "area code is not ->" "not_area_code_equals"] \
-                                             [list "country code is ->" "country_code_equals"] \
-                                             [list "country code is not ->" "not_country_code_equals"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.area_code_is_-]" "area_code_equals"] \
+                                             [list "[_ contacts.area_code_is_not_-]" "not_area_code_equals"] \
+                                             [list "[_ contacts.country_code_is_-]" "country_code_equals"] \
+                                             [list "[_ contacts.lt_country_code_is_not_-]" "not_country_code_equals"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
 
                     append form_elements {
@@ -236,10 +222,10 @@ switch $type {
                 }
                 ams_value__text {
                     set operand_options [list \
-                                             [list "contains ->" "contains"] \
-                                             [list "does not contain ->" "not_contains"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.contains_-]" "contains"] \
+                                             [list "[_ contacts.does_not_contain_-]" "not_contains"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
 
                     append form_elements {
@@ -259,14 +245,14 @@ switch $type {
                 }
                 ams_value__postal_address {
                     set operand_options [list \
-                                             [list "country is ->" "country_is"] \
-                                             [list "country is not ->" "country_is_not"] \
-                                             [list "state/province is ->" "state_is"] \
-                                             [list "state/province is not ->" "state_is_not"] \
-                                             [list "zip/postal starts with ->" "zip_is"] \
-                                             [list "zip/postal does not start with ->" "zip_is_not"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.country_is_-]" "country_is"] \
+                                             [list "[_ contacts.country_is_not_-]" "country_is_not"] \
+                                             [list "[_ contacts.stateprovince_is_-]" "state_is"] \
+                                             [list "[_ contacts.lt_stateprovince_is_not_]" "state_is_not"] \
+                                             [list "[_ contacts.lt_zippostal_starts_with]" "zip_is"] \
+                                             [list "[_ contacts.lt_zippostal_does_not_st]" "zip_is_not"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
 
                     append form_elements {
@@ -295,11 +281,11 @@ switch $type {
                 }
                 ams_value__number {
                     set operand_options [list \
-                                             [list "is ->" "is"] \
-                                             [list "is greater than ->" "greater_than"] \
-                                             [list "is less than ->" "less_than"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.is_-]" "is"] \
+                                             [list "[_ contacts.is_greater_than_-]" "greater_than"] \
+                                             [list "[_ contacts.is_less_than_-]" "less_than"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
 
                     append form_elements {
@@ -319,12 +305,12 @@ switch $type {
                 }
                 ams_value__time {
                     set operand_options [list \
-                                             [list "is less than ->" "less_than"] \
-                                             [list "is more than ->" "more_than"] \
-                                             [list "is after ->" "after"] \
-                                             [list "is before ->" "before"] \
-                                             [list "is set" "set"] \
-                                             [list "is not set" "not_set"] \
+                                             [list "[_ contacts.is_less_than_-]" "less_than"] \
+                                             [list "[_ contacts.is_more_than_-]" "more_than"] \
+                                             [list "[_ contacts.is_after_-]" "after"] \
+                                             [list "[_ contacts.is_before_-]" "before"] \
+                                             [list "[_ contacts.is_set]" "set"] \
+                                             [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
                     append form_elements {
                         {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
@@ -360,18 +346,18 @@ switch $type {
     }
     contact {
         set contact_options [list \
-                                 [list "updated in the last ->" "update"] \
-                                 [list "not updated in the last ->" "not_update"] \
-                                 [list "commented on in last ->" "comment"] \
-                                 [list "not commented on in last ->" "not_comment"] \
-                                 [list "created in the last ->" "created"] \
-                                 [list "not created in the last ->" "not_created"] \
+                                 [list "[_ contacts.lt_updated_in_the_last_-]" "update"] \
+                                 [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
+                                 [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
+                                 [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"] \
+                                 [list "[_ contacts.lt_created_in_the_last_-]" "created"] \
+                                 [list "[_ contacts.lt_not_created_in_the_la]" "not_created"] \
                                 ]
         if { $object_type == "person" } {
-            lappend contact_options [list "has logged in" "login"]
-            lappend contact_options [list "has never logged in" "not_login"]
-            lappend contact_options [list "has logged in within ->" "login_time"]
-            lappend contact_options [list "has not logged in within ->" "not_login_time"]
+            lappend contact_options [list "[_ contacts.has_logged_in]" "login"]
+            lappend contact_options [list "[_ contacts.has_never_logged_in]" "not_login"]
+            lappend contact_options [list "[_ contacts.lt_has_logged_in_within_]" "login_time"]
+            lappend contact_options [list "[_ contacts.lt_has_not_logged_in_wit]" "not_login_time"]
         }
         append form_elements {
             {var1:text(select) {label {}} {options $contact_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
@@ -396,8 +382,8 @@ switch $type {
     }
     group {
         set operand_options [list \
-                                 [list "contact is in ->" "in"] \
-                                 [list "contact is not in ->" "not_in"] \
+                                 [list "[_ contacts.contact_is_in_-]" "in"] \
+                                 [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
                                 ]
 
         set group_options [contact::groups -expand "all" -privilege_required "read"]
@@ -420,68 +406,23 @@ switch $type {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if { $add_p } {
     append form_elements {
-        {add:text(submit) {label "Add Condition"} {value "add"}}
+        {add:text(submit) {label "[_ contacts.Add_Condition]"} {value "add"}}
     }
 } else {
     append form_elements {
-        {next:text(submit) {label "Next"} {value "next"}}
+        {next:text(submit) {label "[_ contacts.Next]"} {value "next"}}
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if { $search_exists_p } {
     append form_elements {
-        {title:text(text),optional {label "<br><br>save this search as"} {html {size 40 maxlength 255}}}
-        {save:text(submit) {label {Save}} {value "save"}}
-        {search:text(submit) {label {Search}} {value "search"}}
-        {clear:text(submit) {label {Clear}} {value "clear"}}
-        {delete:text(submit) {label {Delete}} {value "delete"}}
+        {title:text(text),optional {label "[_ contacts.lt_brbrsave_this_search_]"} {html {size 40 maxlength 255}}}
+        {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
+        {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
+        {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}
+        {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"}}
     }
 }
 ad_form -name "advanced_search" -method "GET" -form $form_elements \
