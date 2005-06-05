@@ -35,7 +35,7 @@ db_foreach select_roles {
     select r.pretty_name, r.role
     from acs_rel_roles r
     order by lower(r.role)} {
-	set pretty_name [lang::util::convert_from_hash -hashed_key $pretty_name]
+	set pretty_name [lang::util::localize $pretty_name]
 	lappend roles_list [list $pretty_name $role]
     }
 
