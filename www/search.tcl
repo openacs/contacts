@@ -157,7 +157,7 @@ switch $type {
             and ams_attribute_id is not null
             order by upper (pretty_name) 
         } {
-	    set pretty_name [lang::util::convert_from_hash -hashed_key $pretty_name]
+	    set pretty_name [lang::util::localize $pretty_name]
 	    lappend attribute_options [list "$pretty_name ->" $attribute_id]
 	}
 
