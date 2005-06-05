@@ -35,13 +35,9 @@ db_foreach select_roles {
     select r.pretty_name, r.role
     from acs_rel_roles r
     order by lower(r.role)} {
-	regsub -all {(\#([-a-zA-Z0-9_:\.]+)\#)} $pretty_name {[template::expand_percentage_signs [lang::message::lookup [ad_conn locale] {\2} {TRANSLATION MISSING} {} -1]]} pretty_name
-	
-	lappend roles_list [list [subst $pretty_name] $role]
+	set pretty_name [lang::util::convert_from_hash -hashed_key $pretty_name]
+	lappend roles_list [list $pretty_name $role]
     }
-
-
-# replace the list with I18N
 
 ad_form -name "rel_type" \
     -form {
