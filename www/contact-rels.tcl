@@ -195,9 +195,8 @@ db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contac
 set rel_options [list [list "[_ contacts.--select_one--]" ""]]
 
 db_foreach get_rels {} {
-	regsub -all {(\#([-a-zA-Z0-9_:\.]+)\#)} $pretty_name {[template::expand_percentage_signs [lang::message::lookup [ad_conn locale] {\2} {TRANSLATION MISSING} {} -1]]} pretty_name
-	
-	lappend rel_options [list [subst $pretty_name] $role]
+	set pretty_name [lang::util::convert_from_hash -hashed_key $pretty_name]
+	lappend rel_options [list $pretty_name $role]
     }
 
 
