@@ -55,6 +55,7 @@
       truncate_len="100"
       size="small"
       recent_on_top_p="1" />
+    <if @projects_enabled_p@>
     <if @project_url@ ne "">
       <br />
       <h3>
@@ -63,6 +64,7 @@
 	  src="/packages/project-manager/lib/subprojects"
 	  project_item_id="@project_id@"
 	  base_url="@base_url@" />
+    </if>
     </if>
     <if @update_date@ not nil>
       <p class="last-updated">#contacts.Last_updated# @update_date@</p>

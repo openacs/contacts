@@ -36,6 +36,18 @@ ad_proc -public contact::search::new {
     return [package_instantiate_object -var_list $var_list contact_search]
 }
 
+ad_proc -public contact::search::results_count {
+    {-search_id ""}
+    {-rel_type ""}
+    {-object_type}
+} {
+    create a contact search
+} {
+
+    return [db_string get_total_count {}]
+
+}
+
 ad_proc -public contact::search::update {
     {-search_id ""}
     {-title ""}
@@ -334,11 +346,11 @@ ad_proc -public contact::search::translate {
                 }
                 created {
                     set output_pretty "Contact created in the last: <strong>$interval</strong>"
-                    set output_code   "CASE WHEN ( select scrr.creation_date from acs_objects where object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
+                    set output_code   "CASE WHEN ( select acs_objects.creation_date from acs_objects where acs_objects.object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_created {
                     set output_pretty "Contact not created in the last: <strong>$interval</strong>"
-                    set output_code   "CASE WHEN ( select scrr.creation_date from acs_objects where object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
+                    set output_code   "CASE WHEN ( select acs_objects.creation_date from acs_objects where acs_objects.object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 login {
                     set output_pretty "Contact has logged in"

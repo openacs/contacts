@@ -82,7 +82,7 @@ if { [exists_and_not_null object_type] } {
     append form_elements {
         {object_type:text(hidden) {value $object_type}}
         {object_type_pretty:text(inform) {label {Search for}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
-        {all_or_any:text(select),optional {label ""} {options {{All all} {Any any}}} {after_html "[_ contacts.lt_of_the_following_cond]"}}
+        {all_or_any:text(select),optional {label ""} {options {{All all} {Any any}}} {after_html "[_ contacts.lt_of_the_following_cond]<br>"}}
     }
 } else {
 #            {{People or Organizations} party}
@@ -418,7 +418,7 @@ if { $add_p } {
 
 if { $search_exists_p } {
     append form_elements {
-        {title:text(text),optional {label "[_ contacts.lt_brbrsave_this_search_]"} {html {size 40 maxlength 255}}}
+        {title:text(text),optional {label "<br><br>[_ contacts.save_this_search_]"} {html {size 40 maxlength 255}}}
         {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
         {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
         {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}

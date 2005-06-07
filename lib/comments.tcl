@@ -70,7 +70,7 @@ if { [exists_and_not_null limit] } {
 
 set result_number 1
 
-db_multirow -extend { comment_html comment_number } comments get_comments "
+db_multirow -extend { comment_html comment_number contact_url } comments get_comments "
          select g.comment_id,
                 r.title,
                 r.mime_type,
@@ -99,6 +99,7 @@ db_multirow -extend { comment_html comment_number } comments get_comments "
         set comment_number $result_number
     }
     incr result_number
+    set contact_url [contact::url -party_id $creation_user]
 }
 
 ad_form -name comment_add \

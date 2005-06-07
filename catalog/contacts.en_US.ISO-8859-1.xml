@@ -1,345 +1,134 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d1" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
-  <msg key="--select_one--">--select one--</msg>
   <msg key="Action">Action</msg>
-  <msg key="Actions">Actions</msg>
-  <msg key="Add">Add:</msg>
-  <msg key="Add_a_Group">Add a Group</msg>
   <msg key="Add_a_Person">Add a Person</msg>
   <msg key="Add_an_Organization">Add an Organization</msg>
-  <msg key="Add_Comment">Add Comment</msg>
   <msg key="Add_Condition">Add Condition</msg>
   <msg key="Add_Group">Add Group</msg>
   <msg key="Add_Organization">Add Organization</msg>
   <msg key="Add_Person">Add Person</msg>
-  <msg key="Add_Search">Add Search</msg>
   <msg key="Add_Signature">Add Signature</msg>
   <msg key="Add_the_selected_contacts_to_a_category">Add the selected contacts to a category</msg>
   <msg key="Add_to_Category">Add to Category</msg>
   <msg key="Add_to_Group">Add to Group</msg>
-  <msg key="Add_to_group">Add to group</msg>
-  <msg key="Add_to_Groups">Add to Group(s)</msg>
-  <msg key="Add_User">Add User</msg>
-  <msg key="Address">Address</msg>
+  <msg key="Add_to_group">Add to Group</msg>
   <msg key="Admin">Admin</msg>
   <msg key="Administer_Contacts">Administer Contacts</msg>
   <msg key="Advanced_Search">Advanced Search</msg>
   <msg key="Advanced_Searches">Advanced Searches</msg>
   <msg key="All">All</msg>
-  <msg key="All__Edit">All / Edit</msg>
+  <msg key="All__Edit">All/Edit</msg>
   <msg key="Answer">Answer</msg>
   <msg key="Archive">Archive</msg>
   <msg key="Archive_the_checked_contacts">Archive the checked contacts</msg>
   <msg key="Archived">Archived</msg>
-  <msg key="area_code_is_-">area code is -&gt;</msg>
-  <msg key="area_code_is_not_-">area code is not -&gt;</msg>
   <msg key="at">at</msg>
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
   <msg key="Attributes">Attributes</msg>
-  <msg key="Cancel">Cancel</msg>
   <msg key="Clear">Clear</msg>
   <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
-  <msg key="Comment_Added">Comment Added</msg>
   <msg key="Comments">Comments</msg>
-  <msg key="Configuration_Error">Configuration Error</msg>
   <msg key="Contact">Contact</msg>
   <msg key="Contact_-">Contact -&gt;</msg>
-  <msg key="contact_is_in_-">contact is in -&gt;</msg>
-  <msg key="contact_is_not_in_-">contact is not in -&gt;</msg>
-  <msg key="Contact_Relationship">Contact Relationship</msg>
   <msg key="Contact_Type">Contact Type</msg>
-  <msg key="Contact_Type_One">Contact Type One</msg>
-  <msg key="Contact_Type_Two">Contact Type Two</msg>
   <msg key="Contacts">Contacts</msg>
-  <msg key="contacts">contacts</msg>
-  <msg key="contains_-">contains -&gt;</msg>
-  <msg key="country_code_is_-">country code is -&gt;</msg>
-  <msg key="country_is_-">country is -&gt;</msg>
-  <msg key="country_is_not_-">country is not -&gt;</msg>
-  <msg key="Create">Create</msg>
   <msg key="Create_a_role">Create a role</msg>
-  <msg key="Create_a_Signature">Create a Signature</msg>
   <msg key="create_project">Create project</msg>
   <msg key="Create_role">Create role</msg>
-  <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
-  <msg key="Date">Date</msg>
-  <msg key="days">days</msg>
   <msg key="Delete">Delete</msg>
-  <msg key="Details">Details</msg>
-  <msg key="does_not_contain_-">does not contain -&gt;</msg>
-  <msg key="Done">Done</msg>
   <msg key="Edit">Edit</msg>
-  <msg key="Edit_a_Signature">Edit a Signature</msg>
-  <msg key="Edit_Details">Edit Details</msg>
-  <msg key="Edit_group_name">Edit ${group_name}</msg>
   <msg key="Email_Address">Email Address</msg>
-  <msg key="Error">Error</msg>
   <msg key="even">even</msg>
-  <msg key="False">False</msg>
-  <msg key="File">File</msg>
   <msg key="Files">Files</msg>
-  <msg key="files">files</msg>
-  <msg key="First_Name">First Name</msg>
   <msg key="First_Names">First Names</msg>
   <msg key="Go">Go</msg>
   <msg key="Group_-">Group -&gt;</msg>
-  <msg key="Group_Name">Group Name</msg>
   <msg key="Groups">Groups</msg>
-  <msg key="groups">groups</msg>
-  <msg key="has_logged_in">has logged in</msg>
-  <msg key="has_never_logged_in">has never logged in</msg>
   <msg key="Help_Text">Help Text</msg>
-  <msg key="Invalid_Object_Type">Invalid Object Type</msg>
-  <msg key="is_-">is -&gt;</msg>
   <msg key="is_after_-">is after -&gt;</msg>
   <msg key="is_before_-">is before -&gt;</msg>
-  <msg key="is_greater_than_-">is greater than -&gt;</msg>
   <msg key="is_less_than_-">is less than -&gt;</msg>
   <msg key="is_more_than_-">is more than -&gt;</msg>
-  <msg key="is_not_-">is not -&gt;</msg>
   <msg key="is_not_set">is not set</msg>
   <msg key="is_set">is set</msg>
   <msg key="last">last</msg>
   <msg key="Last_Name">Last Name</msg>
   <msg key="Limit_Contacts_to">Limit Contacts to</msg>
-  <msg key="lt_--_Groups_-----------">-- Groups --------------------------</msg>
-  <msg key="lt_--_My_Searches_------">-- My Searches ---------------------</msg>
-  <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
-  <msg key="lt_--_top_level_group_--">-- top level group --</msg>
-  <msg key="lt_Add_relationship_type">Add relationship type</msg>
-  <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
+  <msg key="lt_--_Groups_-----------">-- Groups --</msg>
+  <msg key="lt_--_My_Searches_------">-- My Searches --</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
-  <msg key="lt_brbrsave_this_search_">&lt;br&gt;&lt;br&gt;save this search as</msg>
-  <msg key="lt_commented_on_in_last_">commented on in last -&gt;</msg>
   <msg key="lt_commentspretty_date_a">%comments.pretty_date% at %comments.pretty_time% -</msg>
-  <msg key="lt_Contact_Administratio">Contact Administration</msg>
-  <msg key="lt_Contact_Relationships">Contact Relationships</msg>
-  <msg key="lt_Contactsset_context_i">Contacts&quot;
-set context {}
-
-if { [exists_and_not_null query_id] } {
-    if { [contact::search::exists_p -search_id $query_id] } {
-        set search_id $query_id
-        set query_type &quot;search&quot;
-    } else {
-        set group_id $query_id
-        set query_type &quot;group&quot;
-    }
-} else {
-#    set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
-    set group_id [contacts::default_group]
-    set query_id $group_id
-    set query_type &quot;group&quot;
-    if { ![exists_and_not_null group_id] } {
-        ad_return_error &quot;&lt;#_  Not Configured&quot; &quot;&lt;#_  Your administrator must map and add a default group in the &lt;a href=\&quot;admin\&quot;&gt;admin pages&lt;/a&gt;&quot;
-    }
-}
-
-
-if { $orderby == &quot;first_names,asc&quot; } {
-    set name_order 0
-    set name_label &quot;&lt;#_ Sort by: First Names</msg>
-  <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
-  <msg key="lt_created_in_the_last_-">created in the last -&gt;</msg>
   <msg key="lt_Currently_the_system_">Currently, the system is able to handle the following types of relationships:</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>
   <msg key="lt_Define_a_new_relation">Define a new relationship type</msg>
   <msg key="lt_Delete_the_selected_C">Delete the selected Contacts</msg>
-  <msg key="lt_Delete_the_selectted_">Delete the selectted files</msg>
-  <msg key="lt_E-mail_or_Mail_the_se">E-mail or Mail the selected contacts</msg>
-  <msg key="lt_Edita____________grou">Edit&quot;&gt;&lt;/a&gt;
-	    }
-	}
-        group_name {
-            label {&lt;#_ Group</msg>
+  <msg key="lt_E-mail_or_Mail_the_se">E-mail or Mail the selected Contacts</msg>
   <msg key="lt_Entering_a_string_in_">Entering a string in the normal search box means that a search will be performed where:</msg>
   <msg key="lt_Existing_Relationship">Existing Relationships</msg>
   <msg key="lt_First_Names_contains_">&quot;First Names&quot; contains &quot;Search_Word&quot; or</msg>
-  <msg key="lt_First_Names_is_requir">First Names is required</msg>
-  <msg key="lt_Group_group_name_Crea">Group '${group_name}' Created</msg>
-  <msg key="lt_Group_group_name_Upda">Group '${group_name}' Updated</msg>
-  <msg key="lt_Group_Information_Sav">Group Information Saved.</msg>
-  <msg key="lt_has_logged_in_within_">has logged in within -&gt;</msg>
-  <msg key="lt_has_not_logged_in_wit">has not logged in within -&gt;</msg>
   <msg key="lt_If_in_a_normal_search">If in a normal search we search for &quot;D Jane&quot;. The first Search_Word (&quot;D&quot;) matches contacts 123 (via &quot;Doe&quot;), 234 (via &quot;Doe&quot;), and 345 (via &quot;Alfred&quot;). And the second Search_Word (&quot;Jane&quot;) matches only contact 123. Thus only one contact meets both requirements and &quot;Jane Doe&quot; (contact 123) is returned.</msg>
   <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above critera. So, for example if our contacts database contains these entries:</msg>
   <msg key="lt_Instance_Permissions_">Instance Permissions - Not done yet</msg>
-  <msg key="lt_Insufficient_Permissi">Insufficient Permissions</msg>
-  <msg key="lt_Invalid_input_you_spe">Invalid input, you specified form as '$form' but should only specify: top, bottom, none</msg>
-  <msg key="lt_labels_are_not_implem">labels are not implemented yet</msg>
   <msg key="lt_Last_Name_contains_Se">&quot;Last Name&quot; contains &quot;Search_Word&quot; or</msg>
-  <msg key="lt_Last_Name_is_required">Last Name is required</msg>
   <msg key="lt_Last_updated_update_d">Last updated: %update_date%</msg>
-  <msg key="lt_li_The_role_you_enter">&lt;li&gt; The role you entered \&quot;$pretty_name\&quot; or the plural \&quot;$pretty_plural\&quot; already exists.</msg>
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
-  <msg key="lt_nbspnbsp_Show_set_fir">&amp;nbsp;&amp;nbsp; Show: &quot;
-set first_p 1
-foreach page_s [list 25 50 100 500] {
-    if { [string is false $first_p] } {
-        append name_label &quot; | &quot;
-    }
-    if { $page_size == $page_s } {
-        append name_label $page_s
-    } else {
-        append name_label &quot;&lt;a href=\&quot;[export_vars -base . -url {rel_type format query_id query page orderby {page_size $page_s}}]\&quot;&gt;$page_s&lt;/a&gt;&quot;
-    }
-    set first_p 0
-}
-append name_label &quot;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;#_ Get</msg>
-  <msg key="lt_neither_person_nor_or">neither person nor org type is valid, what happened admin?</msg>
-  <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
-  <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
-  <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>
-  <msg key="lt_of_the_following_cond">of the following conditions:&lt;br&gt;</msg>
+  <msg key="lt_of_the_following_cond">of the following conditions</msg>
   <msg key="lt_Once_ready_for_releas">Once ready for release this will be taken care of in code</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; contains &quot;Search_Word&quot; or</msg>
-  <msg key="lt_Organization_Relation">Organization Relationship</msg>
-  <msg key="lt_Organization_Relation_1">Organization Relationships</msg>
   <msg key="lt_Party_ID_equals_Searc">&quot;Party ID&quot; equals &quot;Search_Word&quot;</msg>
-  <msg key="lt_People_or_Organizatio">People or Organizations</msg>
-  <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
-  <msg key="lt_pretty_plural_list_na">$pretty_plural_list_name found in search, please try again or add a new contact</msg>
-  <msg key="lt_remember_that_you_can">remember that you can use &lt;a href=&quot;message-help&quot;&gt;mail merge substitutions&lt;/a&gt;. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}</msg>
-  <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
-  <msg key="lt_Some_of_the_required_">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:&lt;ul&gt;&lt;li&gt;[join $missing_elements</msg>
-  <msg key="lt_Some_of_the_required__1">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:&lt;ul&gt;&lt;li&gt;[join $missing_elements</msg>
-  <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
-  <msg key="lt_the_action_supplied_i">the action supplied is not valid</msg>
-  <msg key="lt_The_contact_specified">The contact specified does not exist</msg>
-  <msg key="lt_The_contact_specified_1">The contact specified is not one of the contacts in this relationship</msg>
   <msg key="lt_The_default_group_mus">The default group must have first_names and last_name for person objects and name for organization objects, both of them need email</msg>
-  <msg key="lt_The_file_lindex_messa">The file [lindex $message 0] was successfully uploaded</msg>
-  <msg key="lt_The_files_join_messag">The files [join $message &quot;, &quot;] were successfully uploaded</msg>
-  <msg key="lt_The_first_contact_spe">The first contact specified does not exist</msg>
-  <msg key="lt_The_first_role_specif">The first role specified does not exist</msg>
-  <msg key="lt_The_parameter_RecentO">The parameter RecentOnTopP is not set correctly for the General Comments package, please enter either a '0' or a '1'</msg>
-  <msg key="lt_The_party_id_specifie">The party_id specified does not exist</msg>
-  <msg key="lt_The_second_contact_sp">The second contact specified does not exist</msg>
-  <msg key="lt_The_second_role_speci">The second role specified does not exist</msg>
-  <msg key="lt_There_was_a_problem_w">There was a problem with your input. this type of relationship cannot exist.</msg>
-  <msg key="lt_This_action_cannot_be">This action cannot be taken for unmapped groups</msg>
   <msg key="lt_This_contact_is_not_p">This contact is not part of any groups - this is a problem.</msg>
-  <msg key="lt_This_group_is_already">This group is already the default</msg>
-  <msg key="lt_This_group_is_already_1">This group is already mapped</msg>
-  <msg key="lt_this_is_my_default_si">this is my default signature</msg>
-  <msg key="lt_This_signature_specif">This signature specified either does not exist or does not belong to you</msg>
-  <msg key="lt_This_user_is_awaiting">This user is awaiting administrator approval</msg>
-  <msg key="lt_This_users_has_not_be">This users has not been approved</msg>
-  <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">You cannot add this contact to more groups.</msg>
-  <msg key="lt_You_cannot_make_sub_g">You cannot make sub groups the default group</msg>
-  <msg key="lt_You_cannot_map_groups">You cannot map groups whose parent groups are not mapped</msg>
-  <msg key="lt_You_cannot_unmap_the_">You cannot unmap the default group</msg>
-  <msg key="lt_You_do_not_have_permi">You do not have permission to add users to groups</msg>
-  <msg key="lt_You_have_not_specifie">You have not specified a valid contact type</msg>
-  <msg key="lt_You_have_specified_an">You have specified an invalid Object Type</msg>
-  <msg key="lt_You_have_specified_an_1">You have specified an invalid size for the textarea</msg>
-  <msg key="lt_Your_administrator_mu">Your administrator must map and add a default group in the &lt;a href=\&quot;admin\&quot;&gt;admin pages&lt;/a&gt;</msg>
-  <msg key="lt_Your_need_to_provide_">Your need to provide some contacts to send a message</msg>
-  <msg key="lt_Your_provided_an_inva">Your provided an invalid Message Type</msg>
-  <msg key="lt_zippostal_does_not_st">zip/postal does not start with -&gt;</msg>
-  <msg key="lt_zippostal_starts_with">zip/postal starts with -&gt;</msg>
   <msg key="Mail">Mail</msg>
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
   <msg key="Make_Current">Make Current</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
-  <msg key="Message">Message</msg>
-  <msg key="Message_is_required">Message is required</msg>
-  <msg key="Messages">Messages</msg>
   <msg key="mine-">mine-</msg>
   <msg key="My_Searches">My Searches</msg>
   <msg key="My_Signatures">My Signatures</msg>
   <msg key="Name">Name</msg>
-  <msg key="Name_is_required">Name is required</msg>
   <msg key="Next">Next</msg>
   <msg key="none">(none)</msg>
   <msg key="Normal_Searches">Normal Searches</msg>
-  <msg key="Not_Configured">Not Configured</msg>
   <msg key="Number_of_Rows">Number of Rows</msg>
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
   <msg key="Ordering">Ordering</msg>
   <msg key="Organization">Organization</msg>
-  <msg key="Organization_Form">Organization Form</msg>
-  <msg key="Organizations">Organizations</msg>
-  <msg key="organizations">organizations</msg>
-  <msg key="Output">Output</msg>
-  <msg key="Paper_Type">Paper Type</msg>
-  <msg key="Parent_Group">Parent Group</msg>
-  <msg key="Party_Revision">Party Revision</msg>
-  <msg key="Party_Revisions">Party Revisions</msg>
   <msg key="People">People</msg>
-  <msg key="people">people</msg>
-  <msg key="Permissions">Permissions</msg>
   <msg key="Person">Person</msg>
-  <msg key="Person_Form">Person Form</msg>
-  <msg key="Preview">Preview</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Public_Page">Public Page</msg>
   <msg key="READ_THESE">READ THESE</msg>
-  <msg key="Recipients">Recipients</msg>
-  <msg key="Relationship_Added">Relationship Added</msg>
-  <msg key="Relationship_Deleted">Relationship Deleted</msg>
-  <msg key="Relationship_types">Relationship types</msg>
-  <msg key="Relationship_Updated">Relationship Updated</msg>
   <msg key="Relationships">Relationships</msg>
-  <msg key="relationships">relationships</msg>
-  <msg key="Remove_From_Group">Remove From Group</msg>
-  <msg key="Remove_From_to_Group">Remove From to Group</msg>
+  <msg key="Remove_From_Group">Remove from Group</msg>
   <msg key="Required">Required</msg>
   <msg key="Results">Results:</msg>
-  <msg key="Return_to_title">Return to \&quot;$title\&quot;</msg>
-  <msg key="Role">Role</msg>
-  <msg key="Role_Name">Role Name</msg>
-  <msg key="Role_One">Role One</msg>
-  <msg key="Role_Plural">Role Plural</msg>
-  <msg key="Role_Singular">Role Singular</msg>
-  <msg key="Role_Two">Role Two</msg>
   <msg key="Roles">Roles</msg>
   <msg key="Save">Save</msg>
-  <msg key="Save_and_Add_Another">Save and Add Another</msg>
-  <msg key="Save_As">Save As</msg>
-  <msg key="Save_Message_As">Save Message As</msg>
+  <msg key="save_this_search_">Save this searc as</msg>
   <msg key="Search">Search</msg>
-  <msg key="Search_Help">Search Help</msg>
-  <msg key="searches">searches</msg>
-  <msg key="Select">Select</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
   <msg key="Send_Email">Send Email</msg>
   <msg key="Settings">Settings</msg>
   <msg key="Show">Show:</msg>
   <msg key="Showing">Showing</msg>
-  <msg key="Signature">Signature</msg>
   <msg key="signatures">signatures</msg>
   <msg key="Sort_By">Sort By</msg>
-  <msg key="Sort_by">Sort by:</msg>
-  <msg key="stateprovince_is_-">state/province is -&gt;</msg>
+  <msg key="Sort_by">Sort by</msg>
   <msg key="Status">Status</msg>
-  <msg key="Subject">Subject</msg>
-  <msg key="Subject_is_required">Subject is required</msg>
   <msg key="Summary_View">Summary View</msg>
-  <msg key="Table">Table</msg>
   <msg key="Tasks">Tasks</msg>
-  <msg key="The_error_was_errmsg">The error was: $errmsg</msg>
-  <msg key="True">True</msg>
-  <msg key="Type">Type</msg>
-  <msg key="Update">Update</msg>
-  <msg key="Update_filenames">Update filenames</msg>
-  <msg key="Updated_By">Updated By</msg>
-  <msg key="Updated_On">Updated On</msg>
-  <msg key="Upload_More">Upload More</msg>
   <msg key="View_all_roles">View all roles</msg>
-  <msg key="View_next">View next</msg>
   <msg key="which_match">which match</msg>
   <msg key="Widget">Widget</msg>
-  <msg key="your_signatures">your signatures</msg>
 </message_catalog>
