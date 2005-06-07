@@ -167,6 +167,10 @@ template::list::create \
 	    display_col email
 	}
     } -filters {
+	rel_type {}
+	query_id {}
+	page_size {}
+	tasks_interval {}
     } -orderby {
         first_names {
             label "[_ contacts.First_Name]"
@@ -211,6 +215,7 @@ template::list::create \
     }
 
 db_multirow -unclobber contacts contacts_select {}
+
 
 # TOTAL COUNT CODE
 set contacts_total_count [db_string contacts_total_count {}]
@@ -281,7 +286,7 @@ switch $format {
 	}
 	if { $contacts_total_count > 0 } {
 	    append form_elements {
-		{result_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value "$contacts_total_count"}}
+		{results_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> $contacts_total_count"}}
 	    }
 	}
 
