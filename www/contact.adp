@@ -42,6 +42,12 @@
       src="/packages/contacts/lib/groups"
       party_id="@party_id@"
       hide_form_p="t" />
+    <if @tasks_enabled_p@>
+      <include
+	src="/packages/tasks/lib/tasks"
+	party_id="@party_id@"
+	hide_form_p="t" />
+    </if>
     <include
       src="/packages/contacts/lib/comments"
       party_id="@party_id@"
@@ -58,19 +64,10 @@
 	  project_item_id="@project_id@"
 	  base_url="@base_url@" />
     </if>
-    <if @tasks_enabled_p@>
-      <include
-	src="/packages/tasks/lib/tasks"
-	party_id="@party_id@"
-	hide_form_p="t" />
-    </if>
     <if @update_date@ not nil>
-      <p style="padding-top: 0px; margin-top: 0px;">
-	<small>#contacts.lt_Last_updated_update_d#</small>
-      </p>
+      <p class="last-updated">#contacts.Last_updated# @update_date@</p>
     </if>
   </div>
 </div>
-<if @update_date@ not nil>
-  <p class="last-updated">Last updated: @update_date@</p>
-</if>
+
+
