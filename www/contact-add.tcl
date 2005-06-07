@@ -38,7 +38,7 @@ ad_form -name party_ae \
     -edit_buttons [list [list Save save] [list "[_ contacts.Save_and_Add_Another]" save_add_another]] \
     -form $form_elements
 
-callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
+#callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
 
 ad_form -extend -name party_ae \
     -on_request {
@@ -169,7 +169,7 @@ ad_form -extend -name party_ae \
 	    -form_name "party_ae" \
 	    -object_id [contact::revision::new -party_id $party_id]
 
-	callback contact::contact_new_form -package_id $package_id -contact_id $party_id -form party_ae -object_type $object_type
+#	callback contact::contact_new_form -package_id $package_id -contact_id $party_id -form party_ae -object_type $object_type
 
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
