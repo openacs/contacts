@@ -88,37 +88,90 @@ set admin_p [ad_permission_p [ad_conn package_id] admin]
 #set default_group_id [contacts::default_group_id]
 set title "Contacts"
 set context {}
-
-
-
-set search_clause [list]
-lappend search_clause "and party_id in ( select member_id from group_distinct_member_map where group_id = '-2' )"
-if { [exists_and_not_null rel_type] } {
-    set rel_valid_p 0
-    set group_id "-2"
-    db_foreach dbqd.contacts.www.index.get_rels {} {
-	if { $rel_type == $relation_type } {
-	    set rel_valid_p 1
-	}
-    }
-    if { $rel_valid_p } {
-	lappend search_clause "and party_id in ( select member_id from group_member_map where rel_type = '$rel_type' )"
-    } else {
-	set rel_type ""
-    }
-}
+set package_url [ad_conn package_url]
 
 if { [exists_and_not_null query] } {
-    set search [string trim $query]
-    foreach term $query {
-	if { [string is integer $query] } {
-	    lappend search_clause "and party_id = $term"
+
+    set search_clause [list]
+    lappend search_clause "and party_id in ( select member_id from group_distinct_member_map where group_id = '-2' )"
+    if { [exists_and_not_null rel_type] } {
+	set rel_valid_p 0
+	set group_id "-2"
+	db_foreach dbqd.contacts.www.index.get_rels {} {
+	    if { $rel_type == $relation_type } {
+		set rel_valid_p 1
+	    }
+	}
+	if { $rel_valid_p } {
+	    lappend search_clause "and party_id in ( select member_id from group_member_map where rel_type = '$rel_type' )"
 	} else {
-	    lappend search_clause "and upper(contact__name(party_id)) like upper('%${term}%')"
+	    set rel_type ""
 	}
     }
-}
 
+    if { [exists_and_not_null query] } {
+	set search [string trim $query]
+	foreach term $query {
+	    if { [string is integer $query] } {
+		lappend search_clause "and party_id = $term"
+	    } else {
+		lappend search_clause "and upper(contact__name(party_id)) like upper('%${term}%')"
+	    }
+	}
+    }
+
+<<<<<<< contact-rels.tcl
+    set search_clause [join $search_clause "\n"]
+    #ad_return_error "Error" $search_clause
+    
+
+    set primary_party $party_id
+    
+    template::list::create \
+	-html {width 100%} \
+	-name "contacts" \
+	-multirow "contacts" \
+	-row_pretty_plural "$pretty_plural_list_name found in search, please try again or add a new contact" \
+	-checkbox_name checkbox \
+	-selected_format ${format} \
+	-orderby_name "order_search" \
+	-key party_id \
+	-elements {
+	    type {
+		label {}
+		display_template {
+		    <img src="/resources/contacts/Group16.gif" height="16" width="16" border="0"></img>
+		}
+	    }
+	    contact {
+		label {}
+		display_template {
+		    <a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">Select</a>\]</span>
+		    <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
+		}
+	    }
+	    contact_id {
+		display_col party_id
+	    }
+	    first_names {
+		display_col first_names
+	    }
+	    last_name {
+		display_col last_name
+	    }
+	    organization {
+		display_col organization
+	    }
+	    email {
+		display_col email
+	    }
+	} -filters {
+	} -orderby {
+	    first_names {
+		label "First Name"
+		orderby_asc  "lower(contact__name(party_id,'f')) asc"
+		orderby_desc "lower(contact__name(party_id,'f')) asc"
+=======
 set search_clause [join $search_clause "\n"]
 #ad_return_error "Error" $search_clause
 
@@ -139,14 +192,32 @@ template::list::create \
 	    label {}
 	    display_template {
 		<img src="/resources/contacts/Group16.gif" height="16" width="16" border="0"></img>
+>>>>>>> 1.8
 	    }
+<<<<<<< contact-rels.tcl
+	    last_name {
+		label "Last Name"
+		orderby_asc  "lower(contact__name(party_id,'t')) asc"
+		orderby_desc "lower(contact__name(party_id,'t')) asc"
+=======
 	}
         contact {
 	    label {}
             display_template {
 		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">[_ contacts.Select]</a>\]</span>
                 <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
+>>>>>>> 1.8
 	    }
+<<<<<<< contact-rels.tcl
+	    default_value first_names,asc
+	} -formats {
+	    normal {
+		label "Table"
+		layout table
+		row {
+		    contact {}
+		}
+=======
         }
         contact_id {
             display_col party_id
@@ -182,22 +253,34 @@ template::list::create \
 	    layout table
 	    row {
 		contact {}
+>>>>>>> 1.8
 	    }
 	}
+    
+    set original_party_id $party_id
+    db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
+	set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
     }
 
-set original_party_id $party_id
-set package_url [ad_conn package_url]
-db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
-    set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
+
 }
 
 set rel_options [list [list "[_ contacts.--select_one--]" ""]]
 
+<<<<<<< contact-rels.tcl
+set rel_options [db_list_of_lists get_rels {}]
+
+set rel_options "{{-Select One-} {}} $rel_options"
+
+
+
+
+=======
 db_foreach get_rels {} {
 	set pretty_name [lang::util::localize $pretty_name]
 	lappend rel_options [list $pretty_name $role]
     }
+>>>>>>> 1.8
 
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
