@@ -120,7 +120,6 @@ if { [exists_and_not_null query] } {
 	}
     }
 
-<<<<<<< contact-rels.tcl
     set search_clause [join $search_clause "\n"]
     #ad_return_error "Error" $search_clause
     
@@ -168,106 +167,36 @@ if { [exists_and_not_null query] } {
 	} -filters {
 	} -orderby {
 	    first_names {
-		label "First Name"
+		label "[_ contacts.First_Name]"
 		orderby_asc  "lower(contact__name(party_id,'f')) asc"
 		orderby_desc "lower(contact__name(party_id,'f')) asc"
-=======
-set search_clause [join $search_clause "\n"]
-#ad_return_error "Error" $search_clause
-
-
-set primary_party $party_id
-
-template::list::create \
-    -html {width 100%} \
-    -name "contacts" \
-    -multirow "contacts" \
-    -row_pretty_plural "[_ contacts.lt_pretty_plural_list_na]" \
-    -checkbox_name checkbox \
-    -selected_format ${format} \
-    -orderby_name "order_search" \
-    -key party_id \
-    -elements {
-        type {
-	    label {}
-	    display_template {
-		<img src="/resources/contacts/Group16.gif" height="16" width="16" border="0"></img>
->>>>>>> 1.8
 	    }
-<<<<<<< contact-rels.tcl
 	    last_name {
-		label "Last Name"
+		label "[_ contacts.Last_Name]"
 		orderby_asc  "lower(contact__name(party_id,'t')) asc"
 		orderby_desc "lower(contact__name(party_id,'t')) asc"
-=======
-	}
-        contact {
-	    label {}
-            display_template {
-		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">[_ contacts.Select]</a>\]</span>
-                <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
->>>>>>> 1.8
 	    }
-<<<<<<< contact-rels.tcl
 	    default_value first_names,asc
 	} -formats {
 	    normal {
-		label "Table"
+		label "[_ contacts.Table]"
 		layout table
 		row {
 		    contact {}
 		}
-=======
-        }
-        contact_id {
-            display_col party_id
-	}
-        first_names {
-	    display_col first_names
-	}
-        last_name {
-	    display_col last_name
-	}
-        organization {
-	    display_col organization
-	}
-        email {
-	    display_col email
-	}
-    } -filters {
-    } -orderby {
-        first_names {
-            label "[_ contacts.First_Name]"
-            orderby_asc  "lower(contact__name(party_id,'f')) asc"
-            orderby_desc "lower(contact__name(party_id,'f')) asc"
-        }
-        last_name {
-            label "[_ contacts.Last_Name]"
-            orderby_asc  "lower(contact__name(party_id,'t')) asc"
-            orderby_desc "lower(contact__name(party_id,'t')) asc"
-        }
-        default_value first_names,asc
-    } -formats {
-	normal {
-	    label "[_ contacts.Table]"
-	    layout table
-	    row {
-		contact {}
->>>>>>> 1.8
 	    }
 	}
-    
+
     set original_party_id $party_id
     db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
 	set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
     }
-
+    
 
 }
 
 set rel_options [list [list "[_ contacts.--select_one--]" ""]]
 
-<<<<<<< contact-rels.tcl
 set rel_options [db_list_of_lists get_rels {}]
 
 set rel_options "{{-Select One-} {}} $rel_options"
@@ -275,12 +204,10 @@ set rel_options "{{-Select One-} {}} $rel_options"
 
 
 
-=======
 db_foreach get_rels {} {
 	set pretty_name [lang::util::localize $pretty_name]
 	lappend rel_options [list $pretty_name $role]
     }
->>>>>>> 1.8
 
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
