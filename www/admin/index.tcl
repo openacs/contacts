@@ -10,19 +10,19 @@ ad_page_contract {
 
 
 set orderby "name"
-set title "Contact Administration"
+set title "[_ contacts.lt_Contact_Administratio]"
 set context {}
 set package_id [ad_conn package_id]
 
 template::list::create \
     -name "groups" \
     -multirow "groups" \
-    -row_pretty_plural "groups" \
+    -row_pretty_plural "[_ contacts.groups]" \
     -elements {
         edit {
 	    label {}
 	    display_template {
-		<a href="group-ae?group_id=@groups.group_id@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="Edit"></a>
+		<a href="group-ae?group_id=@groups.group_id@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a>
 	    }
 	}
         group_name {
@@ -30,7 +30,7 @@ template::list::create \
 	    display_col group_name
         }
         member_count {
-            label {\# Contacts}
+            label {[_ contacts.Contacts]}
 	    display_col member_count
             link_url_eval $group_url
         }
@@ -38,10 +38,10 @@ template::list::create \
             label {Mapped}
             display_template {
                 <if @groups.mapped_p@>
-                  <a href="group-map?action=unmap&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="True"></a>
+                  <a href="group-map?action=unmap&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
                 </if>
                 <else>
-                  <a href="group-map?action=map&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="False"></a>
+                  <a href="group-map?action=map&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
                 </else>
             }
         }
@@ -49,11 +49,11 @@ template::list::create \
             label {Default}
             display_template {
                 <if @groups.default_p@>
-                  <img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="True">
+                  <img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]">
                 </if>
                 <else>
                   <if @groups.mapped_p@ and @groups.level@ eq 1>
-                  <a href="group-map?action=makedefault&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="False"></a>
+                  <a href="group-map?action=makedefault&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
                   </if>
                   <else>
                   </else>
@@ -62,17 +62,17 @@ template::list::create \
         }
         person_form {
             display_template {
-                <a href="@groups.ams_person_url@" class="button">Person Form</a>
+                <a href="@groups.ams_person_url@" class="button">[_ contacts.Person_Form]</a>
             }
         }
         org_form {
             display_template {
-                <a href="@groups.ams_org_url@" class="button">Organization Form</a>
+                <a href="@groups.ams_org_url@" class="button">[_ contacts.Organization_Form]</a>
             }
         }
 	actions {
 	    display_template {
-		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">Permissions</a></if>
+		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">[_ contacts.Permissions]</a></if>
 	    }
         }
     } -filters {
@@ -96,14 +96,14 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
                           -list_name "${package_id}__${group_id}" \
                           -pretty_name "${package_id}__${group_id}" \
                           -return_url [ad_conn url] \
-                          -return_url_label "Return to \"$title\""]
+                          -return_url_label "[_ contacts.Return_to_title]"]
     set ams_org_url [ams::list::url \
                           -package_key "contacts" \
                           -object_type "organization" \
                           -list_name "${package_id}__${group_id}" \
                           -pretty_name "${package_id}__${group_id}" \
                           -return_url [ad_conn url] \
-                          -return_url_label "Return to \"$title\""]
+                          -return_url_label "[_ contacts.Return_to_title]"]
     multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p
 
 

@@ -3,7 +3,7 @@
 #    @cvs-id $Id$
 
 if { [string is false [contact::exists_p -party_id $party_id]] } {
-    error "The party_id specified does not exist"
+    error "[_ contacts.lt_The_party_id_specifie]"
 }
 if { [string is false [exists_and_not_null hide_form_p]] } {
     set hide_form_p 0

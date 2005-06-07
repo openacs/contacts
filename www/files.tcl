@@ -12,7 +12,7 @@ ad_page_contract {
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }
@@ -31,9 +31,9 @@ while { $upload_number <= $upload_count } {
     lappend form_elements [list "upload_title${upload_number}:text(text),optional" [list html "size 45 maxlength 100"] [list label ""]]
     incr upload_number
 }
-if { $upload_count == 1 } { set upload_label "Upload" } else { set upload_label "Done" }
+if { $upload_count == 1 } { set upload_label "Upload" } else { set upload_label "[_ contacts.Done]" }
 lappend form_elements [list "upload:text(submit),optional" [list "label" $upload_label]]
-lappend form_elements [list "upload_more:text(submit),optional" [list "label" "Upload More"]]
+lappend form_elements [list "upload_more:text(submit),optional" [list "label" "[_ contacts.Upload_More]"]]
 
 ad_form -name upload_files -html {enctype multipart/form-data} -form $form_elements -on_request {
 } -on_submit {
@@ -66,9 +66,9 @@ ad_form -name upload_files -html {enctype multipart/form-data} -form $form_eleme
         incr upload_number
     }
     if { [llength $message] == 1 } {
-	util_user_message -html -message "The file [lindex $message 0] was successfully uploaded"
+	util_user_message -html -message "[_ contacts.lt_The_file_lindex_messa]"
     } elseif { [llength $message] > 1 } {
-	util_user_message -html -message "The files [join $message ", "] were successfully uploaded"
+	util_user_message -html -message "[_ contacts.lt_The_files_join_messag]"
     }
 
 } -after_submit {
@@ -87,12 +87,12 @@ template::list::create \
     -html {width 100%} \
     -name "files" \
     -multirow "files" \
-    -row_pretty_plural "files" \
+    -row_pretty_plural "[_ contacts.files]" \
     -checkbox_name checkbox \
     -bulk_action_export_vars [list party_id orderby] \
     -bulk_actions {
-        "Delete" "../files-delete" "Delete the selectted files"
-	"Update" "../files-update" "Update filenames"
+        "[_ contacts.Delete]" "../files-delete" "[_ contacts.lt_Delete_the_selectted_]"
+	"[_ contacts.Update]" "../files-update" "[_ contacts.Update_filenames]"
     } -selected_format "normal" \
     -key item_id \
     -elements {
@@ -108,33 +108,33 @@ template::list::create \
 	    }
 	}
         type {
-	    label "Type"
+	    label "[_ contacts.Type]"
 	    display_col extension
 	}
         creation_date {
-	    label "Updated On"
+	    label "[_ contacts.Updated_On]"
 	    display_col creation_date_pretty
 	}
         creation_user {
-	    label "Updated By"
+	    label "[_ contacts.Updated_By]"
 	    display_col creation_user_pretty
 	}
     } -filters {
     } -orderby {
         file {
-            label "File"
+            label "[_ contacts.File]"
             orderby_asc  "upper(cr.title) asc,  ao.creation_date desc"
             orderby_desc "upper(cr.title) desc, ao.creation_date desc"
             default_direction asc
         }
         creation_date {
-            label "Updated On"
+            label "[_ contacts.Updated_On]"
             orderby_asc  "ao.creation_date asc"
             orderby_desc "ao.creation_date desc"
 	    default_direction desc
 	}
         creation_user {
-            label "Updated By"
+            label "[_ contacts.Updated_By]"
             orderby_asc  "upper(contact__name(ao.creation_user)) asc, upper(cr.title) asc"
             orderby_desc "upper(contact__name(ao.creation_user)) desc, upper(cr.title) asc"
 	    default_direction desc
@@ -142,7 +142,7 @@ template::list::create \
         default_value file,asc
     } -formats {
 	normal {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
 	    }

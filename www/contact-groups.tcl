@@ -22,7 +22,7 @@ set group_options [contact::groups -expand "all" -privilege_required "create"]
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 
-set groups_to_add [list [list "-- select a group --" ""]]
+set groups_to_add [list [list "[_ contacts.--_select_a_group_--]" ""]]
 foreach group $group_options {
     if { [lsearch "$groups_belonging_to" [lindex $group 1]] >= 0 } {
         # the party is part of this group
@@ -33,6 +33,6 @@ foreach group $group_options {
 }
 
 if { [llength $group_options] == "0" } {
-    ad_return_error "Insufficient Permissions" "You do not have permission to add users to groups"
+    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 

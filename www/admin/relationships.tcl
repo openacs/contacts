@@ -15,7 +15,7 @@ ad_page_contract {
     rel_types:multirow
 }
 
-set title "Relationship types"
+set title "[_ contacts.Relationship_types]"
 set context [list $title]
 
 set package_id [ad_conn package_id]
@@ -36,14 +36,14 @@ order by sort_one, sort_two, primary_role_pretty
 
 } {
     switch $primary_object_type {
-        party           { set primary_type_pretty "Person or Organization" }
-        organization    { set primary_type_pretty "Organization" }
-        person          { set primary_type_pretty "Person" }
+        party           { set primary_type_pretty "[_ contacts.lt_Person_or_Organizatio]" }
+        organization    { set primary_type_pretty "[_ contacts.Organization]" }
+        person          { set primary_type_pretty "[_ contacts.Person]" }
     }
     switch $secondary_object_type {
-        party           { set secondary_type_pretty "Person or Organization" }
-        organization    { set secondary_type_pretty "Organization" }
-        person          { set secondary_type_pretty "Person" }
+        party           { set secondary_type_pretty "[_ contacts.lt_Person_or_Organizatio]" }
+        organization    { set secondary_type_pretty "[_ contacts.Organization]" }
+        person          { set secondary_type_pretty "[_ contacts.Person]" }
     }
     set rel_form_url [ams::list::url \
                           -package_key "contacts" \
@@ -51,7 +51,7 @@ order by sort_one, sort_two, primary_role_pretty
                           -list_name ${package_id} \
                           -pretty_name ${pretty_name} \
                           -return_url ${url} \
-                          -return_url_label "Return to \"$title\""]
+                          -return_url_label "[_ contacts.Return_to_title]"]
 
 }
 ad_return_template

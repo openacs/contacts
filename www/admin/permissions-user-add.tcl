@@ -8,7 +8,7 @@ ad_page_contract {
     object_id:integer
 }
 
-set page_title "Add User"
+set page_title "[_ contacts.Add_User]"
 
-set context [list [list [export_vars -base permissions { object_id }] "Permissions"] $page_title]
+set context [list [list [export_vars -base permissions { object_id }] "[_ contacts.Permissions]"] $page_title]
 

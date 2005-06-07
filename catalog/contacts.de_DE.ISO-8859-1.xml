@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="contacts" package_version="1.1d1" locale="de_DE" charset="ISO-8859-1">
+
+  <msg key="Add_a_Group">Eine Gruppe hinzufügen</msg>
+  <msg key="Add_an_Organization">Eine Organisation hinzufügen</msg>
+  <msg key="Add_Group">Gruppe hinzufügen</msg>
+  <msg key="Add_Organization">Organisation hinzufügen</msg>
+  <msg key="Add_Person">Person hinzufügen</msg>
+  <msg key="Admin">Verwaltung</msg>
+  <msg key="Advanced_Search">Expertensuche</msg>
+  <msg key="Attributes">Attribute</msg>
+  <msg key="Cancel">Abbrechen</msg>
+  <msg key="Contacts">Kontakte</msg>
+  <msg key="False">falsch</msg>
+  <msg key="First_Names">Vornamen</msg>
+  <msg key="Group_Name">Gruppenname</msg>
+  <msg key="Last_Name">Nachnamen</msg>
+  <msg key="lt_--_top_level_group_--">-- Gruppe erste Ebene --</msg>
+  <msg key="lt_Contact_Administratio">Verwaltung der Kontakte</msg>
+  <msg key="lt_Currently_the_system_">Zurzeit beherrscht das System folgenden Typen an Beziehungen:</msg>
+  <msg key="lt_Define_a_new_relation">Definition eines neuen Beziehungstyps</msg>
+  <msg key="lt_Instance_Permissions_">Instanz Berechtigungen - noch unfertig</msg>
+  <msg key="lt_Make_sure_you_do_not_">Gehen Sie sicher, dass Sie nicht die gleichen Attribute zu mehreren Gruppen hinzufügen</msg>
+  <msg key="lt_The_default_group_mus">Die Standardgruppe muss den Vornamen und den Nachnamen für ein Personenformblatt enthalten sowie einen Organisationsnamen für ein Organisationsformblatt, beide benötigen eine E-Mail Adresse.</msg>
+  <msg key="Organization">Organisation</msg>
+  <msg key="Organization_Form">Organisationen Formblatt</msg>
+  <msg key="Parent_Group">Übergeordnete Gruppe</msg>
+  <msg key="Permissions">Berechtigungen</msg>
+  <msg key="Person">Person</msg>
+  <msg key="Person_Form">Personen Formblatt</msg>
+  <msg key="READ_THESE">LESEN SIE DIESES BITTE</msg>
+  <msg key="Relationship_types">Beziehungstypen</msg>
+  <msg key="Relationships">Beziehungen</msg>
+  <msg key="Save_and_Add_Another">Speichern und Weiteren hinzufügen</msg>
+  <msg key="Settings">Einstellungen</msg>
+  <msg key="Show">Anzeigen:</msg>
+  <msg key="Sort_by">Sortieren nach:</msg>
+  <msg key="True">richtig</msg>
+  <msg key="View_all_roles">Alle Rollen ansehen</msg>
+</message_catalog>

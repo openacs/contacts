@@ -15,12 +15,12 @@ ad_page_contract {
 } -validate {
     contact_one_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
-	    ad_complain "The first contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_first_contact_spe]"
 	}
     }
     contact_two_exists -requires {party_two} {
 	if { ![contact::exists_p -party_id $party_two] } {
-	    ad_complain "The second contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_second_contact_sp]"
 	}
     }
 
@@ -59,12 +59,12 @@ if { [exists_and_not_null role_two] } {
     } else {
         if { $org_valid_p } {
             set rel_type "organization_rel"
-            set pretty_plural_list_name "organizations"
+            set pretty_plural_list_name "[_ contacts.organizations]"
         } elseif { $person_valid_p } {
             set rel_type "membership_rel"
-            set pretty_plural_list_name "people"
+            set pretty_plural_list_name "[_ contacts.people]"
         } else {
-            error "neither person nor org type is valid, what happened admin?"
+            error "[_ contacts.lt_neither_person_nor_or]"
         }
     }
 }
@@ -129,7 +129,7 @@ template::list::create \
     -html {width 100%} \
     -name "contacts" \
     -multirow "contacts" \
-    -row_pretty_plural "$pretty_plural_list_name found in search, please try again or add a new contact" \
+    -row_pretty_plural "[_ contacts.lt_pretty_plural_list_na]" \
     -checkbox_name checkbox \
     -selected_format ${format} \
     -orderby_name "order_search" \
@@ -144,7 +144,7 @@ template::list::create \
         contact {
 	    label {}
             display_template {
-		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">Select</a>\]</span>
+		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">[_ contacts.Select]</a>\]</span>
                 <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
 	    }
         }
@@ -166,19 +166,19 @@ template::list::create \
     } -filters {
     } -orderby {
         first_names {
-            label "First Name"
+            label "[_ contacts.First_Name]"
             orderby_asc  "lower(contact__name(party_id,'f')) asc"
             orderby_desc "lower(contact__name(party_id,'f')) asc"
         }
         last_name {
-            label "Last Name"
+            label "[_ contacts.Last_Name]"
             orderby_asc  "lower(contact__name(party_id,'t')) asc"
             orderby_desc "lower(contact__name(party_id,'t')) asc"
         }
         default_value first_names,asc
     } -formats {
 	normal {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
 		contact {}
@@ -201,9 +201,9 @@ db_foreach get_rels {} {
 
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
-    {role_two:text(select) {label "Add: "} {options $rel_options}}
+    {role_two:text(select) {label "[_ contacts.Add]"} {options $rel_options}}
     {query:text(text) {label ""} {html {size 24}}}
-    {search:text(submit) {label "Search"}}
+    {search:text(submit) {label "[_ contacts.Search]"}}
 } -on_request {
 } -edit_request {
 } -on_refresh {
@@ -215,46 +215,46 @@ template::list::create \
     -html {width 100%} \
     -name "relationships" \
     -multirow "relationships" \
-    -row_pretty_plural "relationships" \
+    -row_pretty_plural "[_ contacts.relationships]" \
     -selected_format "normal" \
     -elements {
         role {
-            label "Role"
+            label "[_ contacts.Role]"
             display_col role_singular
         }
         other_name {
-            label "Contact"
+            label "[_ contacts.Contact]"
             display_col other_name
             link_url_eval $contact_url
         }
         details {
-            label "Details"
+            label "[_ contacts.Details]"
             display_col details;noquote
         }
         actions {
-            label "Actions"
+            label "[_ contacts.Actions]"
             display_template {
-                <a href="@relationships.rel_delete_url@" class="button">Delete</a></if>
-                <if @relationships.rel_add_edit_url@ not nil><a href="@relationships.rel_add_edit_url@" class="button">Edit Details</a></if>
+                <a href="@relationships.rel_delete_url@" class="button">[_ contacts.Delete]</a></if>
+                <if @relationships.rel_add_edit_url@ not nil><a href="@relationships.rel_add_edit_url@" class="button">[_ contacts.Edit_Details]</a></if>
             }
         }
     } -filters {
         party_id {}
     } -orderby {
         other_name {
-            label "Contact"
+            label "[_ contacts.Contact]"
             orderby_asc  "CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc, upper(role_singular) asc"
             orderby_desc "CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END desc, upper(role_singular) asc"
         }
         role {
-            label "Role"
+            label "[_ contacts.Role]"
             orderby_asc  "upper(role_singular) asc, CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc"
             orderby_desc "upper(role_singular) desc, CASE WHEN object_id_one = :party_id THEN upper(contact__name(object_id_two)) ELSE upper(contact__name(object_id_one)) END asc"
         }
         default_value role,asc
     } -formats {
 	normal {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
                 role {}

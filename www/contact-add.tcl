@@ -10,7 +10,7 @@ ad_page_contract {
 } -validate {
     valid_type -requires {object_type} {
 	if { [lsearch [list organization person] $object_type] < 0 } {
-	    ad_complain "You have not specified a valid contact type"
+	    ad_complain "[_ contacts.lt_You_have_not_specifie]"
 	}
     }
 }
@@ -22,9 +22,9 @@ set form_elements [ams::ad_form::elements -package_key "contacts" -object_type $
 lappend form_elements {object_type:text(hidden)}
 
 if { $object_type == "person" } {
-    set title "Add a Person"
+    set title "[_ contacts.Add_a_Person]"
 } else {
-    set title "Add an Organization"
+    set title "[_ contacts.Add_an_Organization]"
 }
 
 set user_id [ad_conn user_id]
@@ -33,9 +33,9 @@ set context [list $title]
 
 ad_form -name party_ae \
     -mode "edit" \
-    -cancel_label "Cancel" \
+    -cancel_label "[_ contacts.Cancel]" \
     -cancel_url [export_vars -base contact -url {party_id}] \
-    -edit_buttons [list [list Save save] [list "Save and Add Another" save_add_another]] \
+    -edit_buttons [list [list Save save] [list "[_ contacts.Save_and_Add_Another]" save_add_another]] \
     -form $form_elements
 
 callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
@@ -57,7 +57,7 @@ ad_form -extend -name party_ae \
 	}
 	# make the error message multiple item aware
 	if { [llength $missing_elements] > 0 } {
-	    ad_return_error "Configuration Error" "Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:<ul><li>[join $missing_elements "</li><li>"]</li></ul>" 
+            ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required_]<ul><li>[join $missing_elements "</li><li>"]</li></ul>"
 	}
     } -edit_request {
     } -on_submit {
@@ -69,14 +69,14 @@ ad_form -extend -name party_ae \
 
 	if { $object_type == "person" } {
 	    if { ![exists_and_not_null first_names] } {
-		template::element::set_error party_ae first_names "First Names is required"
+		template::element::set_error party_ae first_names "[_ contacts.lt_First_Names_is_requir]"
 	    }
 	    if { ![exists_and_not_null last_name] } {
-		template::element::set_error party_ae last_name "Last Name is required"
+		template::element::set_error party_ae last_name "[_ contacts.lt_Last_Name_is_required]"
 	    }
 	} else {
 	    if { ![exists_and_not_null name] } {
-		template::element::set_error party_ae name "Name is required"
+		template::element::set_error party_ae name "[_ contacts.Name_is_required]"
 	    }
 	}
 	if { ![template::form::is_valid party_ae] } {
@@ -127,7 +127,7 @@ ad_form -extend -name party_ae \
 		    error $creation_info(creation_status)
 		}
 	    } on_error {
-		ad_return_error "Error" "The error was: $errmsg"
+		ad_return_error "[_ contacts.Error]" "[_ contacts.The_error_was_errmsg]"
 	    }
 	} else {
 	    # name is not included in this list because its required and checked for above

@@ -9,6 +9,6 @@ ad_page_contract {
 }
 set admin_p [ad_permission_p [ad_conn package_id] admin]
 #set default_group_id [contacts::default_group_id]
-set title "Search Help"
+set title "[_ contacts.Search_Help]"
 set context [list $title]
 

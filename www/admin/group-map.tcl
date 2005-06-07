@@ -12,7 +12,7 @@ ad_page_contract {
 } -validate {
     action_valid -requires {action} {
         if { [lsearch [list map unmap makedefault] $action] < 0 } {
-            ad_complain "the action supplied is not valid"
+            ad_complain "[_ contacts.lt_the_action_supplied_i]"
         }
     }
     action_appropriate -requires {action} {
@@ -23,24 +23,24 @@ ad_page_contract {
         if { [exists_and_not_null default_p] } {
             # the group is mapped
             if { $default_p && $action == "makedefault" } {
-                ad_complain "This group is already the default"
+                ad_complain "[_ contacts.lt_This_group_is_already]"
             }
             if { [exists_and_not_null parent_id] && $action == "makedefault" } {
-                ad_complain "You cannot make sub groups the default group"
+                ad_complain "[_ contacts.lt_You_cannot_make_sub_g]"
             }
             if { $default_p && $action == "unmap" } {
-                ad_complain "You cannot unmap the default group"
+                ad_complain "[_ contacts.lt_You_cannot_unmap_the_]"
             }
             if { $action == "map" } {
-                ad_complain "This group is already mapped"
+                ad_complain "[_ contacts.lt_This_group_is_already_1]"
             }
         } else {
             if { $action != "map" } {
-                ad_complain "This action cannot be taken for unmapped groups"
+                ad_complain "[_ contacts.lt_This_action_cannot_be]"
             }
             if { [exists_and_not_null parent_id] } {
                 if { ![db_0or1row parent_mapped { select 1 from contact_groups where group_id = :parent_id and package_id = :package_id }] } {
-                    ad_complain "You cannot map groups whose parent groups are not mapped"
+                    ad_complain "[_ contacts.lt_You_cannot_map_groups]"
                 }
             }
         }

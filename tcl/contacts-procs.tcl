@@ -218,16 +218,12 @@ ad_proc -private contact::group::new {
 
 ad_proc -public contact::group::map {
     -group_id:required
-    {-owner_id ""}
-    {-group_type "private"}
     {-package_id ""}
+    {-default_p "f"}
 } {
     this creates a new group for use with contacts (and the permissions system)
 } {
-    if {[exists_and_not_null owner_id]} {
-	set owner_id [ad_conn user_id]
-    }
-    if {[exists_and_not_null package_id]} {
+    if {[empty_string_p $package_id]} {
 	set package_id [ad_conn package_id]
     }
     db_dml map_group {}

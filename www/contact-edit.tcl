@@ -10,7 +10,7 @@ ad_page_contract {
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] && ![ad_form_new_p -key party_id] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }
@@ -69,7 +69,7 @@ ad_form -name party_ae \
 	}
 	# make the error message multiple item aware
 	if { [llength $missing_elements] > 0 } {
-	    ad_return_error "Configuration Error" "Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:<ul><li>[join $missing_elements "</li><li>"]</li></ul>" 
+	    ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required__1]"</li><li>"]</li></ul>" 
 	}
 
     } -edit_request {
@@ -92,14 +92,14 @@ ad_form -name party_ae \
 
 	if { $object_type == "person" } {
 	    if { ![exists_and_not_null first_names] } {
-		template::element::set_error party_ae first_names "First Names is required"
+		template::element::set_error party_ae first_names "[_ contacts.lt_First_Names_is_requir]"
 	    }
 	    if { ![exists_and_not_null last_name] } {
-		template::element::set_error party_ae last_name "Last Name is required"
+		template::element::set_error party_ae last_name "[_ contacts.lt_Last_Name_is_required]"
 	    }
 	} else {
 	    if { ![exists_and_not_null name] } {
-		template::element::set_error party_ae name "Name is required"
+		template::element::set_error party_ae name "[_ contacts.Name_is_required]"
 	    }
 	}
 	if { ![template::form::is_valid party_ae] } {

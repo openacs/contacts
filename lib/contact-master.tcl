@@ -6,7 +6,7 @@
 # Set up links in the navbar that the user has access to
 set name [contact::name -party_id $party_id]
 if { ![exists_and_not_null name] } {
-    ad_complain "The contact specified does not exist"
+    ad_complain "[_ contacts.lt_The_contact_specified]"
 }
 
 set user_id [ad_conn user_id]
@@ -25,30 +25,30 @@ if { [site_node::get_package_url -package_key "tasks"] != "" } {
 set link_list [list]
 if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}edit"
-    lappend link_list "All / Edit"
+    lappend link_list "[_ contacts.All__Edit]"
 
     lappend link_list "${prefix}"
-    lappend link_list "Summary View"
+    lappend link_list "[_ contacts.Summary_View]"
 
     lappend link_list "${prefix}groups"
-    lappend link_list "Groups"
+    lappend link_list "[_ contacts.Groups]"
 
     lappend link_list "${prefix}relationships"
-    lappend link_list "Relationships"
+    lappend link_list "[_ contacts.Relationships]"
 
     lappend link_list "${prefix}comments"
-    lappend link_list "Comments"
+    lappend link_list "[_ contacts.Comments]"
 
     lappend link_list "${prefix}files"
-    lappend link_list "Files"
+    lappend link_list "[_ contacts.Files]"
 
     if { [site_node::get_package_url -package_key "tasks"] != "" } {
 	lappend link_list "/tasks/contact?party_id=$party_id"
-	lappend link_list "Tasks"
+	lappend link_list "[_ contacts.Tasks]"
     }
 
     lappend link_list "${prefix}message"
-    lappend link_list "Mail"
+    lappend link_list "[_ contacts.Mail]"
 }
 
 # not yet implemented

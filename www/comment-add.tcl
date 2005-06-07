@@ -13,7 +13,7 @@ ad_page_contract {
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] && ![ad_form_new_p -key party_id] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }
@@ -65,14 +65,14 @@ if { [string trim $comment] != "" } {
 	}
     
     } on_error {
-	ad_return_error "Error" $errmsg
+	ad_return_error "[_ contacts.Error]" $errmsg
     }
 }
 if { [string is false [exists_and_not_null return_url]] } {
     set return_url [contact::url -party_id $party_id]
 }
 
-ad_returnredirect -message "Comment Added" $return_url
+ad_returnredirect -message "[_ contacts.Comment_Added]" $return_url
 ad_script_abort
 
 

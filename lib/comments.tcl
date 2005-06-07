@@ -3,7 +3,7 @@
 #    @cvs-id $Id$
 
 if { [string is false [contact::exists_p -party_id $party_id]] } {
-    error "The party_id specified does not exist"
+    error "[_ contacts.lt_The_party_id_specifie]"
 }
 
 if { [string is false [exists_and_not_null recent_on_top_p]] } {
@@ -11,7 +11,7 @@ if { [string is false [exists_and_not_null recent_on_top_p]] } {
 }
 
 if { [string is false [exists_and_not_null recent_on_top_p]] } {
-    error "The parameter RecentOnTopP is not set correctly for the General Comments package, please enter either a '0' or a '1'"
+    error "[_ contacts.lt_The_parameter_RecentO]"
 } else {
     if { $recent_on_top_p } {
         set orderby_clause "creation_date desc"
@@ -29,7 +29,7 @@ switch $size {
     small   {
         set textarea_size "cols 35 rows 3"
     }
-    default { error "You have specified an invalid size for the textarea" }
+    default { error "[_ contacts.lt_You_have_specified_an_1]" }
 }
 
 if { [string is false [exists_and_not_null form]] } {
@@ -40,7 +40,7 @@ if { [string is false [exists_and_not_null form]] } {
     }
 }
 if { [lsearch [list top bottom none] $form] < 0 } {
-    error "Invalid input, you specified form as '$form' but should only specify: top, bottom, none"
+    error "[_ contacts.lt_Invalid_input_you_spe]"
 }
 
 
@@ -102,20 +102,14 @@ db_multirow -extend { comment_html comment_number } comments get_comments "
 }
 
 ad_form -name comment_add \
-    -action "[ad_conn package_url]comment-add" \
+   -action "[ad_conn package_url]comment-add" \
     -form "
         party_id:integer(hidden)
         return_url:text(hidden),optional
         {comment:text(textarea),nospell {label {}} {html {$textarea_size}} {after_html {<br />}}}
-        {save:text(submit),optional {label {Add Comment}}}
+        {save:text(submit),optional {label {[_ contacts.Add_Comment]}}}
     " -on_request {
     } -after_submit {
     }
-
-
-
-
-
-
 
 set user_id [ad_conn user_id]

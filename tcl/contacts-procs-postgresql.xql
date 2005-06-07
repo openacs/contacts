@@ -68,9 +68,9 @@
 <fullquery name="contact::group::map.map_group">
   <querytext>
         insert into contact_groups
-        (group_id,owner_id,group_type,deprecated_p,package_id)
+        (group_id,default_p,package_id)
         values
-        (:group_id,:owner_id,:group_type,:deprecated_p,:package_id)
+        (:group_id,:default_p,:package_id)
   </querytext>
 </fullquery>
 

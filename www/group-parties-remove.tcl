@@ -12,7 +12,7 @@ ad_page_contract {
 } -validate {
     valid_party_submission {
 	if { ![exists_and_not_null party_id] && ![exists_and_not_null party_ids] } { 
-	    ad_complain "Your need to provide some contacts to send a message"
+	    ad_complain "[_ contacts.lt_Your_need_to_provide_]"
 	}
     }
 }
@@ -25,7 +25,7 @@ if { [exists_and_not_null party_id] } {
 
 
 
-set title "Remove From to Group"
+set title "[_ contacts.Remove_From_to_Group]"
 set user_id [ad_conn user_id]
 set context [list $title]
 set package_id [ad_conn package_id]
@@ -38,25 +38,25 @@ set recipients [join $recipients ", "]
 set form_elements {
     party_ids:text(hidden)
     return_url:text(hidden)
-    {recipients:text(inform),optional {label "Contacts"}}
+    {recipients:text(inform),optional {label "[_ contacts.Contacts]"}}
 }
 
 set group_options [contact::groups -expand "all" -privilege_required "create"]
 if { [llength $group_options] == "0" } {
-    ad_return_error "Insufficient Permissions" "You do not have permission to add users to groups"
+    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 
 append form_elements {
-    {group_ids:text(checkbox),multiple {label "Add to Group(s)"} {options $group_options}}
+    {group_ids:text(checkbox),multiple {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
 }
-set edit_buttons [list [list "Remove from Selected Group(s)" create]]
+set edit_buttons [list [list "[_ contacts.lt_Remove_from_Selected_]" create]]
 
 
 
 
 ad_form -action group-parties-remove \
     -name remove_from_group \
-    -cancel_label "Cancel" \
+    -cancel_label "[_ contacts.Cancel]" \
     -cancel_url $return_url \
     -edit_buttons $edit_buttons \
     -form $form_elements \

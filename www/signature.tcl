@@ -11,7 +11,7 @@ ad_page_contract {
 	set party_id [ad_conn user_id]
 	if { ![ad_form_new_p -key signature_id] } {
 	    if { [string is false [db_0or1row sig_is_mine_p {select '1' from contact_signatures where signature_id = :signature_id and party_id = :party_id}]] } {
-		ad_complain "This signature specified either does not exist or does not belong to you"
+		ad_complain "[_ contacts.lt_This_signature_specif]"
 	    }
 	}
     }
@@ -19,26 +19,26 @@ ad_page_contract {
 
 
 if { [ad_form_new_p -key signature_id] } {
-    set page_title "Create a Signature"
-    set edit_buttons [list [list "Create" save]]
+    set page_title "[_ contacts.Create_a_Signature]"
+    set edit_buttons [list [list "[_ contacts.Create]" save]]
 } else {
-    set page_title "Edit a Signature"
-    set edit_buttons [list [list "Save" save] [list "Delete" delete]]
+    set page_title "[_ contacts.Edit_a_Signature]"
+    set edit_buttons [list [list "[_ contacts.Save]" save] [list "[_ contacts.Delete]" delete]]
 }
 
 set context [list $page_title]
 set party_id [ad_conn user_id]
 set form_elements {
     signature_id:key
-    {title:text(text) {label "Save As"} {html {size 35 maxlength 35}}}
-    {signature:text(textarea) {label "Signature"} {html {cols 45 rows 5}}}
-    {default_p:boolean(checkbox),optional {label ""} {options {{{this is my default signature} 1}}}}
+    {title:text(text) {label "[_ contacts.Save_As]"} {html {size 35 maxlength 35}}}
+    {signature:text(textarea) {label "[_ contacts.Signature]"} {html {cols 45 rows 5}}}
+    {default_p:boolean(checkbox),optional {label ""} {options {{{[_ contacts.lt_this_is_my_default_si]} 1}}}}
 }
 
 
 ad_form -action signature \
     -name signature \
-    -cancel_label "Cancel" \
+    -cancel_label "[_ contacts.Cancel]" \
     -cancel_url "settings" \
     -edit_buttons $edit_buttons \
     -form $form_elements \

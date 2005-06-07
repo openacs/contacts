@@ -23,7 +23,7 @@ set object_type "person"
 set package_key "contacts"
 
 if { [ad_form_new_p -key person_id] } {
-    set title "Add a Person"
+    set title "[_ contacts.Add_a_Person]"
     set mode "edit"
 } else {
     set title [person::name -person_id $person_id]
@@ -43,7 +43,7 @@ ad_form -name groups_ae \
     -mode "display" \
     -has_edit "t" \
     -actions {
-        {"Add to Group" "formbutton:edit"}
+        {"[_ contacts.Add_to_Group]" "formbutton:edit"}
     } -form {
         {person_id:key}
     }
@@ -69,13 +69,13 @@ set groups_available [db_list_of_lists get_groups {
      where groups.group_id != '-1'
 }]
 ad_form -extend -name groups_ae -form {
-	{group_id:integer(checkbox),multiple {label "Groups"} {options $group_options}}
+	{group_id:integer(checkbox),multiple {label "[_ contacts.Groups]"} {options $group_options}}
     } -edit_request {
 	set group_id [db_list get_them { select distinct group_id from group_member_map where member_id = :person_id }]
         #ad_return_error $group_id $group_id
     } -on_submit {
     } -after_submit {
-        ad_returnredirect -message "Group Information Saved." [export_vars -base "person-ae" -url {person_id}]
+        ad_returnredirect -message "[_ contacts.lt_Group_Information_Sav]" [export_vars -base "person-ae" -url {person_id}]
     }
 
 

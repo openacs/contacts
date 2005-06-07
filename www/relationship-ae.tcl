@@ -13,17 +13,17 @@ ad_page_contract {
 } -validate {
     contact_one_exists -requires {object_id_one} {
 	if { ![contact::exists_p -party_id $object_id_one] } {
-	    ad_complain "The first contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_first_contact_spe]"
 	}
     }
     contact_two_exists -requires {object_id_two} {
 	if { ![contact::exists_p -party_id $object_id_two] } {
-	    ad_complain "The second contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_second_contact_sp]"
 	}
     }
     party_id_valid -requires {object_id_one object_id_two party_id} {
 	if { $party_id != $object_id_one && $party_id != $object_id_two } {
-	    ad_complain "The contact specified is not one of the contacts in this relationship"
+	    ad_complain "[_ contacts.lt_The_contact_specified_1]"
 	}
     }
 }
@@ -74,9 +74,9 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 	set creation_ip [ad_conn peeraddr]
 	set rel_id [db_exec_plsql create_rel {}]
         db_dml insert_contact_rel {}
-        util_user_message -message "Relationship Added"
+        util_user_message -message "[_ contacts.Relationship_Added]"
     } else {
-        util_user_message -message "Relationship Updated"
+        util_user_message -message "[_ contacts.Relationship_Updated]"
     }
     if { $list_exists_p } {
         ams::ad_form::save -package_key "contacts" \

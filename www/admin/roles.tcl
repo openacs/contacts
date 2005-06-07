@@ -14,7 +14,7 @@ ad_page_contract {
     
 }
 
-set context [list [list "relationships" "Relationship types"] "Roles"]
+set context [list [list "relationships" "[_ contacts.Relationship_types]"] "[_ contacts.Roles]"]
 
 db_multirow roles select_roles {
     select r.role, r.pretty_name, coalesce(num1.number_rels,0) + coalesce(num2.number_rels,0) as number_rel_types

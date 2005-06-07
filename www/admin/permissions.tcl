@@ -10,7 +10,7 @@ ad_page_contract {
 
 set object_id $group_id
 
-set page_title "Permissions"
+set page_title "[_ contacts.Permissions]"
 
 set context [list $page_title]
 

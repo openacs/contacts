@@ -8,7 +8,7 @@ ad_page_contract {
 } {
 }
 
-set title "Settings"
+set title "[_ contacts.Settings]"
 set context [list $title]
 set package_id [ad_conn package_id]
 set party_id [ad_conn user_id]
@@ -17,7 +17,7 @@ set admin_p [ad_permission_p [ad_conn package_id] admin]
 template::list::create \
     -name "signatures" \
     -multirow "signatures" \
-    -row_pretty_plural "signatures" \
+    -row_pretty_plural "[_ contacts.signatures]" \
     -elements {
 	default_p {
 	    label ""

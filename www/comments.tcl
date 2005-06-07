@@ -11,7 +11,7 @@ ad_page_contract {
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }

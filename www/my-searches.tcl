@@ -9,17 +9,17 @@ ad_page_contract {
 } -validate {
 }
 
-set title "My Searches"
-set context [list [list "search" "Advanced Search"] $title]
+set title "[_ contacts.My_Searches]"
+set context [list [list "search" "[_ contacts.Advanced_Search]"] $title]
 
 template::list::create \
     -name "searches" \
     -multirow "searches" \
-    -row_pretty_plural "searches" \
+    -row_pretty_plural "[_ contacts.searches]" \
     -selected_format "normal" \
     -key party_id \
     -actions [list \
-		  "Add Search" "search" "Add Search"] \
+		  "[_ contacts.Add_Search]" "search" "[_ contacts.Add_Search]"] \
     -elements {
         object_type {
             label {Type}
@@ -38,7 +38,7 @@ template::list::create \
     } -orderby {
     } -formats {
 	normal {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
 	    }

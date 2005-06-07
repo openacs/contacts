@@ -10,7 +10,7 @@ ad_page_contract {
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
-	    ad_complain "The contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_contact_specified]"
 	}
     }
 }
@@ -28,7 +28,7 @@ if { $object_type == "person" } {
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 if { [lsearch $groups_belonging_to -2] < 0 } {
-    ad_return_error "This users has not been approved" "This user is awaiting administrator approval"
+    ad_return_error "[_ contacts.lt_This_users_has_not_be]" "[_ contacts.lt_This_user_is_awaiting]"
 }
 set ams_forms [list]
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
@@ -68,14 +68,6 @@ db_foreach get_relationships {} {
         }
     }
 }
-
-
-
-
-
-
-
-
 
 set live_revision [contact::live_revision -party_id $party_id]
 if { [exists_and_not_null live_revision] } {

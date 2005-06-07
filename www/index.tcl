@@ -16,7 +16,7 @@ ad_page_contract {
 }
 
 
-set title "Contacts"
+set title "[_ contacts.Contacts]"
 set context {}
 
 if { [exists_and_not_null query_id] } {
@@ -33,19 +33,19 @@ if { [exists_and_not_null query_id] } {
     set query_id $group_id
     set query_type "group"
     if { ![exists_and_not_null group_id] } {
-        ad_return_error "Not Configured" "Your administrator must map and add a default group in the <a href=\"admin\">admin pages</a>"
+        ad_return_error "[_ contacts.Not_Configured]" "[_ contacts.lt_Your_administrator_mu]"
     }
 }
 
 
 if { $orderby == "first_names,asc" } {
     set name_order 0
-    set name_label "Sort by: First Names | <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {last_name,asc}}}]\">Last Name</a>"
+    set name_label "[_ contacts.Sort_by] [_ contacts.First_Names] | <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a>"
 } else {
     set name_order 1
-    set name_label "Sort by: <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {first_names,asc}}}]\">First Names</a> | Last Name"
+    set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base . -url {rel_type format query_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name]"
 }
-append name_label " &nbsp;&nbsp; Show: "
+append name_label " &nbsp;&nbsp; [_ contacts.Show]"
 set first_p 1
 foreach page_s [list 25 50 100 500] {
     if { [string is false $first_p] } {
@@ -61,7 +61,6 @@ foreach page_s [list 25 50 100 500] {
 append name_label "&nbsp;&nbsp;&nbsp;Get: <a href=\"[export_vars -base . -url {rel_type {format csv} query_id query page orderby page_size}]\">CSV</a>"
 
 set tasks_url [export_vars -base "/tasks/query" -url {query_id query rel_type}]
-
 
 
 # SEARCH CLAUSE
@@ -103,18 +102,6 @@ if { [exists_and_not_null query] } {
 set search_clause [join $search_clause "\n"]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 # LIST CODE
 
 #set actions [list \
@@ -125,17 +112,17 @@ set search_clause [join $search_clause "\n"]
 #		  "Admin" "admin" "Administration"]
 set actions ""
 set bulk_actions [list \
-		  "Add to Group" "group-parties-add" "Add to group" \
-		  "Remove From Group" "group-parties-remove" "Remove from this Group" \
-		  "Delete" "delete" "Delete the selected Contacts" \
-		  "Mail Merge" "message" "E-mail or Mail the selected contacts" \
+		  "[_ contacts.Add_to_Group]" "group-parties-add" "[_ contacts.Add_to_group]" \
+		  "[_ contacts.Remove_From_Group]" "group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]" \
+		  "[_ contacts.Delete]" "delete" "[_ contacts.lt_Delete_the_selected_C]" \
+		  "[_ contacts.Mail_Merge]" "message" "[_ contacts.lt_E-mail_or_Mail_the_se]" \
 		  ]
 
 template::list::create \
     -html {width 100%} \
     -name "contacts" \
     -multirow "contacts" \
-    -row_pretty_plural "contacts" \
+    -row_pretty_plural "[_ contacts.contacts]" \
     -checkbox_name checkbox \
     -selected_format ${format} \
     -key party_id \
@@ -160,7 +147,7 @@ template::list::create \
         contact {
 	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
             display_template {
-		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="contact-edit?party_id=@contacts.party_id@">Edit</a>\]</span>
+		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
                 <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
 	    }
         }
@@ -182,19 +169,19 @@ template::list::create \
     } -filters {
     } -orderby {
         first_names {
-            label "First Name"
+            label "[_ contacts.First_Name]"
             orderby_asc  "lower(contact__name(party_id,'f')) asc"
             orderby_desc "lower(contact__name(party_id,'f')) asc"
         }
         last_name {
-            label "Last Name"
+            label "[_ contacts.Last_Name]"
             orderby_asc  "lower(contact__name(party_id,'t')) asc"
             orderby_desc "lower(contact__name(party_id,'t')) asc"
         }
         default_value first_names,asc
     } -formats {
 	normal {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
  		checkbox {}
@@ -202,7 +189,7 @@ template::list::create \
 	    }
 	}
 	tasks {
-	    label "Table"
+	    label "[_ contacts.Table]"
 	    layout table
 	    row {
  		checkbox {}
@@ -210,7 +197,7 @@ template::list::create \
 	    }
 	}
 	csv {
-	    label "CSV"
+	    label "[_ contacts.CSV]"
 	    output csv
             page_size 0
             row {
@@ -246,10 +233,10 @@ if { $query_type == "group" } {
 
     # roles
     set rel_options [list]
-    lappend rel_options [list "All" "" ""]
+    lappend rel_options [list "[_ contacts.All]" "" ""]
     db_foreach get_rels {} {
         if { $relation_type == "membership_rel" } { 
-            set pretty_plural "People"
+            set pretty_plural "[_ contacts.People]"
         }
         lappend rel_options [list \
                                  [lang::util::localize $pretty_plural] \
@@ -261,10 +248,10 @@ if { $query_type == "group" } {
 
 
 set owner_id [ad_conn user_id]
-set group_options [list [list "-- Groups --------------------------" ""]]
+set group_options [list [list "[_ contacts.lt_--_Groups_-----------]" ""]]
 append group_options  " [contact::groups -expand "all"]"
 lappend group_options   [list "" ""]
-lappend group_options   [list "-- My Searches ---------------------" ""]
+lappend group_options   [list "[_ contacts.lt_--_My_Searches_------]" ""]
 append group_options  " [db_list_of_lists get_my_searches {}]"
 
 
@@ -283,9 +270,9 @@ if { [exists_and_not_null rel_options] && $query_type == "group" } {
 
 append form_elements {
     {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
-    {save:text(submit) {label {Go}} {value "go"}}
+    {save:text(submit) {label {[_ contacts.Go]}} {value "go"}}
 }
-#     {format:text(select),optional {label "&nbsp;&nbsp;&nbsp;Output"} {options {{Default normal} {CSV csv}}} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+#     {format:text(select),optional {label "&nbsp;&nbsp;&nbsp;[_ contacts.Output]"} {options {{Default normal} {CSV csv}}} {html {onClick "javascript:acs_FormRefresh('search')"}}}
 
 switch $format {
     normal {
@@ -294,14 +281,14 @@ switch $format {
 	}
 	if { $contacts_total_count > 0 } {
 	    append form_elements {
-		{result_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">Results:</span>"} {value "$contacts_total_count"}}
+		{result_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value "$contacts_total_count"}}
 	    }
 	}
 
     }
     tasks {
 	append form_elements {
-	    {tasks_interval:integer(text),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">View next</span>"} {after_html "<span style=\"font-size: smaller;\">days</span>"} {html {size 2 maxlength 3 onChange "javascript:acs_FormRefresh('search')"}}}
+	    {tasks_interval:integer(text),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.View_next]</span>"} {after_html "<span style=\"font-size: smaller;\">[_ contacts.days]</span>"} {html {size 2 maxlength 3 onChange "javascript:acs_FormRefresh('search')"}}}
 	}
     }
     csv {

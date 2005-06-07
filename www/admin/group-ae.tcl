@@ -20,16 +20,16 @@ set form_elements {
 }
 
 if { [ad_form_new_p -key group_id] } {
-    set parents "{{-- top level group --} {}} [contact::groups -expand "none" -output "ad_form" -privilege_required "admin"]"
+    set parents "{{[_ contacts.lt_--_top_level_group_--]} {}} [contact::groups -expand "none" -output "ad_form" -privilege_required "admin"]"
     append form_elements {
-        {parent:integer(select),optional {label "Parent Group"} {options $parents}}
+        {parent:integer(select),optional {label "[_ contacts.Parent_Group]"} {options $parents}}
     }
 } else {
     set parent_id [contact::group::parent -group_id $group_id]
     if { [exists_and_not_null parent_id] } {
         set parent [acs_object_name $parent_id]
         append form_elements {
-            {parent:text(inform),optional {label "Parent Group"}}
+            {parent:text(inform),optional {label "[_ contacts.Parent_Group]"}}
         }
     }
 }
@@ -39,14 +39,14 @@ if { [ad_form_new_p -key group_id] } {
 #}
 
 append form_elements {
-    {group_name:text(text) {label "Group Name"}}
+    {group_name:text(text) {label "[_ contacts.Group_Name]"}}
     join_policy:text(hidden)
     url:text(hidden),optional
     email:text(hidden),optional
 }
 ad_form -name group_ae -action group-ae -form $form_elements \
 -new_request {
-    set title "Add a Group"
+    set title "[_ contacts.Add_a_Group]"
     set context [list $title]
     set join_policy "open"
 } -edit_request {
@@ -60,8 +60,8 @@ ad_form -name group_ae -action group-ae -form $form_elements \
            and groups.group_id = :group_id 
     }
 
-    set title "Edit ${group_name}"
-    set context [list [list groups "Groups"] $title]
+    set title "[_ contacts.Edit_group_name]"
+    set context [list [list groups "[_ contacts.Groups]"] $title]
 
 } -validate {
 } -new_data {
@@ -79,7 +79,7 @@ ad_form -name group_ae -action group-ae -form $form_elements \
 	    relation_add -member_state "approved" "composition_rel" $parent $group_id
 	}
     }
-    set message "Group '${group_name}' Created"
+    set message "[_ contacts.lt_Group_group_name_Crea]"
 
 } -edit_data {
 
@@ -97,7 +97,7 @@ ad_form -name group_ae -action group-ae -form $form_elements \
          where party_id = :group_id
     }
 
-    set message "Group '${group_name}' Updated"
+    set message "[_ contacts.lt_Group_group_name_Upda]"
 
 } -after_submit {
 

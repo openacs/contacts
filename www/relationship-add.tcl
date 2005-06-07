@@ -14,24 +14,24 @@ ad_page_contract {
 } -validate {
     contact_one_exists -requires {party_one} {
 	if { ![contact::exists_p -party_id $party_one] } {
-	    ad_complain "The first contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_first_contact_spe]"
 	}
     }
     contact_two_exists -requires {party_two} {
 	if { ![contact::exists_p -party_id $party_two] } {
-	    ad_complain "The second contact specified does not exist"
+	    ad_complain "[_ contacts.lt_The_second_contact_sp]"
 	}
     }
     role_one_exists -requires {role_one} {
         set role $role_one
 	if { ![db_0or1row role_exists_p {}] } {
-	    ad_complain "The first role specified does not exist"
+	    ad_complain "[_ contacts.lt_The_first_role_specif]"
 	}
     }
     role_two_exists -requires {role_two} {
         set role $role_two
 	if { ![db_0or1row role_exists_p {}] } {
-	    ad_complain "The second role specified does not exist"
+	    ad_complain "[_ contacts.lt_The_second_role_speci]"
 	}
     }
 }
@@ -46,7 +46,7 @@ if { ![exists_and_not_null rel_type] } {
     set options_list [db_list_of_lists get_rel_types {}]
     set options_length [llength $options_list]
     if { $options_length == "0" } {
-        ad_return_error "Error" "There was a problem with your input. this type of relationship cannot exist."
+        ad_return_error "[_ contacts.Error]" "[_ contacts.lt_There_was_a_problem_w]"
     } elseif { $options_length == "1" } {
         set rel_type [lindex [lindex $options_list 0] 0]
         set role_one [lindex [lindex $options_list 0] 1]
