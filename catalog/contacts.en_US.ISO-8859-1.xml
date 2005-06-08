@@ -65,6 +65,7 @@
   <msg key="Create_a_Signature">Create a Signature</msg>
   <msg key="create_project">Create project</msg>
   <msg key="Create_role">Create role</msg>
+  <msg key="Create_user">Create User</msg>
   <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
   <msg key="Date">Date</msg>
@@ -253,7 +254,7 @@
   <msg key="Remove_From_to_Group">Remove From to Group</msg>
   <msg key="Required">Required</msg>
   <msg key="Results">Results:</msg>
-  <msg key="Return_to_title">Return to \&quot;$title\&quot;</msg>
+  <msg key="Return_to_title">Return to %title%</msg>
   <msg key="Role">Role</msg>
   <msg key="Role_Name">Role Name</msg>
   <msg key="Role_One">Role One</msg>
@@ -266,6 +267,7 @@
   <msg key="Save_As">Save As</msg>
   <msg key="Save_Message_As">Save Message As</msg>
   <msg key="Search">Search</msg>
+  <msg key="Search_for">Search for</msg>
   <msg key="Search_Help">Search Help</msg>
   <msg key="searches">searches</msg>
   <msg key="Select">Select</msg>
