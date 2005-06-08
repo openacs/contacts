@@ -213,6 +213,8 @@ ad_proc -private contact::group::new {
 } {
     set creation_user [ad_conn user_id]
     set creation_ip [ad_conn peeraddr]
+    set group_name [lang::util::convert_to_i18n -prefix "group" -text "$group_name"]
+
     return [db_string create_group {}]
 }
 
