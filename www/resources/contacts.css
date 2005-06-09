@@ -226,3 +226,6 @@ div.tasks dd {
 #tasks li {
         margin: 0px;
 }
+.done {
+	color: #BBB;
+}
