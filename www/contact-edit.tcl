@@ -48,7 +48,7 @@ foreach form $ams_forms {
     append form_elements " "
     append form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form]
 }
-#ad_return_error "ERROR" $form_elements
+
 ad_form -name party_ae \
     -mode "edit" \
     -form $form_elements \
@@ -69,7 +69,7 @@ ad_form -name party_ae \
 	}
 	# make the error message multiple item aware
 	if { [llength $missing_elements] > 0 } {
-	    ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required__1]"</li><li>"]</li></ul>" 
+	    ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required__1]<ul><li>[join $missing_elements "</li><li>"]</li></ul>" 
 	}
 
     } -edit_request {
