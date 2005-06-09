@@ -393,3 +393,54 @@ ad_proc -public contact::special_attributes::ad_form_save {
 	}
     }
 }
+
+ad_proc -public contacts::get_values {
+    {-attribute_name ""}
+    {-group_name ""}
+    {-group_id ""}
+    {-package_id ""}
+    {-party_id:required}
+    {-object_type:required}
+} {
+    If attribute_name is provided return the value of the attribute for the party, otherwise return an array with all elements for this party
+    
+    @author Malte Sussdorff (sussdorff@sussdorff.de)
+    @creation-date 2005-06-09
+    
+    @param attribute_name If attribute name is provided 
+
+    @param list_name
+
+    @param package_id
+
+    @return 
+    
+    @error 
+} {
+    
+    if {[empty_string_p $package_id]} {
+	set package_id [ad_conn package_id]
+    }
+
+    if {[empty_string_p $group_id]} {
+	if {![string match "#*#" $group_name]} {
+	    set group_name [lang::util::convert_to_i18n -prefix "group" $group_name]
+	}
+	if {![db_0or1row get_group_id "select group_id from groups where group_name = :group_name"]} {
+	    ad_return_error "ERROR" "<#_ Unable to retrieve group_id#>"
+	}
+    }
+    
+    set list_name "${package_id}__${group_id}"
+    set revision_id [contact::live_revision -party_id $party_id]
+    set values [ams::values -package_key "contacts" -object_type $object_type -list_name $list_name -object_id $revision_id]
+    array set return_array [list]
+    foreach {section attribute pretty_name value} $values {
+	set return_array($attribute) $value 
+    }
+    if {![empty_string_p $attribute_name]} {
+	return $return_array($attribute_name) 
+    } else {
+	return [array get return_array]
+    }
+}
