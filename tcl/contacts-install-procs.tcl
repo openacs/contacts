@@ -76,38 +76,6 @@ ad_proc -public contacts::install::package_install {
 	""
 }
 
-ad_proc -public -callback pm::project_new -impl contacts {
-    {-package_id:required}
-    {-project_id:required}
-    {-data:required}
-} {
-    map selected organization to new project
-} {
-    array set callback_data $data
-    set project_rev_id [pm::project::get_project_id \
-			    -project_item_id $project_id]
-
-    if {[exists_and_not_null callback_data(organization_id)]} {
-	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
-    }
-}
-
-ad_proc -public -callback pm::project_edit -impl contacts {
-    {-package_id:required}
-    {-project_id:required}
-    {-data:required}
-} {
-    map selected organization to updated project
-} {
-    array set callback_data $data
-    set project_rev_id [pm::project::get_project_id \
-			    -project_item_id $project_id]
-
-    if {[exists_and_not_null callback_data(organization_id)]} {
-	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
-    }
-}
-
 ad_proc -public contacts::install::package_instantiate {
     {-package_id:required}
 } {
@@ -209,90 +177,6 @@ ad_proc -public contacts::install::package_instantiate {
 	-required_p "f" \
 	-section_heading ""
 
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "home_address" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_address#" \
-			  -pretty_plural "#acs-translations.person_address_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_address "Home Address"
-    lang::message::register en_US acs-translations person_address_plural "Home Address"
-
-    ams::attribute::new -attribute_id $attribute_id -widget "postal_address" -dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "4" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "home_phone" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.home_phone#" \
-			  -pretty_plural "#acs-translations.home_phone_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations home_phone "Home Phone"
-    lang::message::register en_US acs-translations home_phone_plural "Home Phone"
-
-    ams::attribute::new	-attribute_id $attribute_id -widget "telecom_number" -dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "5" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "mobile_phone" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.mobile_phone#" \
-			  -pretty_plural "#acs-translations.mobile_phone_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations mobile_phone "Mobile Phone" 
-    lang::message::register en_US acs-translations mobile_phone_plural "Mobile Phone"
-
-    ams::attribute::new	-attribute_id $attribute_id -widget "telecom_number" -dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "6" \
-	-required_p "f" \
-	-section_heading ""
-
     # ORGANIZATIONS
 
     set list_id [ams::list::new \
@@ -331,67 +215,27 @@ ad_proc -public contacts::install::package_instantiate {
  	-required_p "f" \
  	-section_heading ""
 
-    set attribute_id [attribute::new \
- 			  -object_type "person" \
- 			  -attribute_name "organization_address" \
- 			  -datatype "string" \
- 			  -pretty_name "#acs-translations.organization_address#" \
-			  -pretty_plural "#acs-translations.organization_address_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_address "Address"
-    lang::message::register en_US acs-translations organization_address_plural "Address"
-
-    ams::attribute::new	-attribute_id $attribute_id -widget "postal_address" -dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "2" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "organization_url" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_url#" \
-			  -pretty_plural "#acs-translations.organization_url_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_url "Website"
-    lang::message::register en_US acs-translations organization_url_plural "Website"
-
-    ams::attribute::new	-attribute_id $attribute_id -widget "url" -dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "3" \
-	-required_p "f" \
-	-section_heading ""
-
-    # Relationships
-
     # Make the registered users group mapped by default
 
     contacts::insert_map -group_id "-2" -default_p "t" -package_id $package_id
+}
+
+ad_proc -public contacts::install::package_mount {
+    -package_id
+    -node_id
+} {
+    
+    Actions to be executed after mounting the contacts package
+
+    @author Malte Sussdorff (sussdorff@sussdorff.de)
+    @creation-date 2005-06-04
+
+    @return
+
+    @error
+} {
+    contacts::populate::crm -package_id $package_id
+    contacts::populate::wieners -package_id $package_id
 }
 
 ad_proc -public contacts::insert_map {
@@ -418,3 +262,36 @@ ad_proc -public contacts::insert_map {
         values
         (:group_id,:default_p,:package_id)}
 }
+
+ad_proc -public -callback pm::project_new -impl contacts {
+    {-package_id:required}
+    {-project_id:required}
+    {-data:required}
+} {
+    map selected organization to new project
+} {
+    array set callback_data $data
+    set project_rev_id [pm::project::get_project_id \
+			    -project_item_id $project_id]
+
+    if {[exists_and_not_null callback_data(organization_id)]} {
+	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
+    }
+}
+
+ad_proc -public -callback pm::project_edit -impl contacts {
+    {-package_id:required}
+    {-project_id:required}
+    {-data:required}
+} {
+    map selected organization to updated project
+} {
+    array set callback_data $data
+    set project_rev_id [pm::project::get_project_id \
+			    -project_item_id $project_id]
+
+    if {[exists_and_not_null callback_data(organization_id)]} {
+	application_data_link::new -this_object_id $project_rev_id -target_object_id $callback_data(organization_id)
+    }
+}
+

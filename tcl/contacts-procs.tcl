@@ -252,7 +252,7 @@ ad_proc -public contact::groups {
     db_foreach get_groups {} {
         if {$mapped_p 
 	    || $all_p} {
-            lappend group_list [list $group_name $group_id $member_count "1" $mapped_p $default_p]
+            lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p]
             if {$component_count > 0 
 		&& ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
