@@ -398,7 +398,7 @@ ad_proc -public contacts::get_values {
     {-attribute_name ""}
     {-group_name ""}
     {-group_id ""}
-    {-package_id ""}
+    {-contacts_package_id ""}
     {-party_id:required}
     {-object_type:required}
 } {
@@ -407,19 +407,21 @@ ad_proc -public contacts::get_values {
     @author Malte Sussdorff (sussdorff@sussdorff.de)
     @creation-date 2005-06-09
     
-    @param attribute_name If attribute name is provided 
+    @param attribute_name If attribute name is provided, return the value of the attribute for the user. Otherwise return an array with all attributes.
 
-    @param list_name
+    @param group_name Name of the group that contains the value of the attribute (e.g. #acs-kernel.Registered_Users)
 
-    @param package_id
+    @param group_id Instead of group_name you can specify the group_id directly
+
+    @param contacts_package_id The package_id of the contacts package that contains the element. 
 
     @return 
     
     @error 
 } {
     
-    if {[empty_string_p $package_id]} {
-	set package_id [ad_conn package_id]
+    if {[empty_string_p $contacts_package_id]} {
+	set contacts_package_id [ad_conn contacts_package_id]
     }
 
     if {[empty_string_p $group_id]} {
@@ -431,7 +433,7 @@ ad_proc -public contacts::get_values {
 	}
     }
     
-    set list_name "${package_id}__${group_id}"
+    set list_name "${contacts_package_id}__${group_id}"
     set revision_id [contact::live_revision -party_id $party_id]
     set values [ams::values -package_key "contacts" -object_type $object_type -list_name $list_name -object_id $revision_id]
     array set return_array [list]
