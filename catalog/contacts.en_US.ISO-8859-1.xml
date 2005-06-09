@@ -107,6 +107,7 @@
   <msg key="is_set">is set</msg>
   <msg key="last">last</msg>
   <msg key="Last_Name">Last Name</msg>
+  <msg key="Last_updated">Last updated</msg>
   <msg key="Limit_Contacts_to">Limit Contacts to</msg>
   <msg key="lt_--_Groups_-----------">-- Groups --------------------------</msg>
   <msg key="lt_--_My_Searches_------">-- My Searches ---------------------</msg>
