@@ -23,7 +23,13 @@ ad_page_contract {
     {title ""}
     {owner_id ""}
 } -validate {
+    valid_object_type -requires {object_type} {
+        if { [lsearch [list party person organization] $object_type] < 0 } {
+            ad_complain "[_ contacts.You_have_specified_an_invalid_object_type]"
+        }
+    }
 }
+
 
 set page_title "[_ contacts.Advanced_Search]"
 set context [list $page_title]
@@ -57,16 +63,11 @@ if { [exists_and_not_null add] } {
 } else {
     set action "next"
 }
-switch $object_type {
-    party        { set object_type_pretty "[_ contacts.lt_People_or_Organizatio]" }
-    person       { set object_type_pretty "[_ contacts.People]" }
-    organization { set object_type_pretty "[_ contacts.Organizations]" }
-    default      {
-        if { [exists_and_not_null object_type] } {
-            ad_return_error "[_ contacts.Invalid_Object_Type]" "[_ contacts.lt_You_have_specified_an]"
-        }
-    }
-}
+
+
+set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
+set object_type_pretty_name(person)       [_ contacts.People]
+set object_type_pretty_name(organization) [_ contacts.Organizations]
 
 if { ![exists_and_not_null owner_id] } {
     set owner_id [ad_conn user_id]
@@ -79,18 +80,19 @@ set form_elements {
     {owner_id:integer(hidden)}
 }
 if { [exists_and_not_null object_type] } {
+    set object_type_pretty $object_type_pretty_name($object_type)
     append form_elements {
         {object_type:text(hidden) {value $object_type}}
         {object_type_pretty:text(inform) {label {Search for}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
         {all_or_any:text(select),optional {label ""} {options {{All all} {Any any}}} {after_html "[_ contacts.lt_of_the_following_cond]<br>"}}
     }
 } else {
-#            {{People or Organizations} party}
+    set object_type_options [list]
+    foreach object_type_temp [list party person organization] {
+        lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
+    }
     append form_elements {
-        {object_type:text(select) {label {Search for}} {options {
-            {{People} person}
-            {{Organizations} organization}
-        }} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+        {object_type:text(select) {label {Search for}} {options $object_type_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 
@@ -118,7 +120,7 @@ select contact__name(party_id), party_id, revision_id
   from parties, cr_items, cr_revisions
  where party_id = cr_items.item_id
    and cr_items.latest_revision = cr_revisions.revision_id
-[contact::search::where_clauses -and -search_id $search_id -party_id "party_id" -revision_id "cr.revisions.revision_id"]
+[contact::search::where_clause -and -search_id $search_id -party_id "party_id" -revision_id "cr.revisions.revision_id"]
 
 
 </pre>
@@ -417,12 +419,15 @@ if { $add_p } {
 }
 
 if { $search_exists_p } {
+    set results_count [contact::search::results_count -search_id $search_id]
+
     append form_elements {
         {title:text(text),optional {label "<br><br>[_ contacts.save_this_search_]"} {html {size 40 maxlength 255}}}
         {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
         {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
         {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}
         {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"}}
+        {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {{query_id $search_id}}]">$results_count</a>}}}
     }
 }
 ad_form -name "advanced_search" -method "GET" -form $form_elements \

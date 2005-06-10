@@ -12,16 +12,6 @@ $search_clause
       </querytext>
 </fullquery>
 
-<fullquery name="contacts_total_count">
-      <querytext>
-select count(*)
-  from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
- where parties.party_id = group_distinct_member_map.member_id
-   and group_distinct_member_map.group_id = '-2'
-$search_clause
-      </querytext>
-</fullquery>
-
 <fullquery name="pretty_roles">
       <querytext>
 
@@ -71,7 +61,6 @@ select contact__name(parties.party_id),
   from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
  where parties.party_id = group_distinct_member_map.member_id
    and group_distinct_member_map.group_id = '-2'
-$search_clause
 [template::list::page_where_clause -and -name "contacts" -key "party_id"]
 [template::list::orderby_clause -orderby -name "contacts"]
       </querytext>

@@ -17,9 +17,7 @@ template::list::create \
     -multirow "searches" \
     -row_pretty_plural "[_ contacts.searches]" \
     -selected_format "normal" \
-    -key party_id \
-    -actions [list \
-		  "[_ contacts.Add_Search]" "search" "[_ contacts.Add_Search]"] \
+    -key search_id \
     -elements {
         object_type {
             label {Type}
@@ -33,6 +31,18 @@ template::list::create \
         query {
 	    label {Query}
             display_col query;noquote
+        }
+        results {
+	    label {Results}
+            display_col results
+            link_url_eval $search_url
+        }
+        action {
+            label ""
+            display_template {
+                <a href="@searches.search_url@" class="button">#contacts.Search#</a>
+                <a href="@searches.make_public_url@" class="button">#contacts.Make_Public#</a>
+            }
         }
     } -filters {
     } -orderby {
@@ -50,7 +60,8 @@ template::list::create \
 
 set owner_id [ad_conn user_id]
 
-db_multirow -extend {query} -unclobber searches get_searches {
+set search_ids [list]
+db_multirow -extend {query search_url make_public_url results} -unclobber searches get_searches {
 (    select search_id, title, upper(title) as order_title, all_or_any, object_type
        from contact_searches
       where owner_id = :owner_id
@@ -65,6 +76,10 @@ db_multirow -extend {query} -unclobber searches get_searches {
 )
       order by order_title
 } {
+    lappend search_ids $search_id
+    set search_url [export_vars -base ./ -url {{query_id $search_id}}]
+    set make_public_url [export_vars -base search-public-toggle -url {search_id}]
+
     db_foreach selectqueries {
         select type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
     } {
@@ -73,5 +88,12 @@ db_multirow -extend {query} -unclobber searches get_searches {
         }
         append query "[contact::search::translate -type $query_type -var_list $query_var_list -to pretty -party_id "party_id" -revision_id "cr.revisions.revision_id"]</li>"
     }
+
 }
 
+# Since contact::search::results_count can if not cached required two db queries
+# when this is included in the multirow code block above it can hang due to a lack
+# of db pools. So it has to be done here.
+template::multirow foreach searches {
+    set results [contact::search::results_count -search_id $search_id]
+}

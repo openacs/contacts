@@ -36,18 +36,6 @@ ad_proc -public contact::search::new {
     return [package_instantiate_object -var_list $var_list contact_search]
 }
 
-ad_proc -public contact::search::results_count {
-    {-search_id ""}
-    {-rel_type ""}
-    {-object_type}
-} {
-    create a contact search
-} {
-
-    return [db_string get_total_count {}]
-
-}
-
 ad_proc -public contact::search::update {
     {-search_id ""}
     {-title ""}
@@ -87,6 +75,99 @@ ad_proc -public contact::search::exists_p {
     }
 }
 
+ad_proc -public contact::search::results_count {
+    {-search_id}
+    {-query ""}
+} {
+    Get the total number of results from a search. Cached.
+} {
+    return [util_memoize [list ::contact::search::results_count_not_cached -search_id $search_id -query $query]]
+}
+
+
+ad_proc -public contact::search::results_count_not_cached {
+    {-search_id}
+    {-query ""}
+} {
+    Get the total number of results from a search
+} {
+    return [db_string select_results_count {}]
+}
+
+
+
+
+ad_proc -public contact::search_clause {
+    {-and:boolean}
+    {-search_id}
+    {-query ""}
+    {-party_id "party_id"} 
+    {-revision_id "revision_id"}
+} {
+    Get the search clause for a search_id
+
+    @param and Set this flag if you want the result to start with an 'and' if the list of where clauses returned is non-empty.
+} {
+    set query [string trim $query]
+    set search_clauses [list]
+    set where_clause [contact::search::where_clause -search_id $search_id -party_id $party_id -revision_id $revision_id]
+
+    if { [exists_and_not_null where_clause] } {
+        lappend search_clauses $where_clause
+    }
+    if { [exists_and_not_null query] } {
+        lappend search_clauses [contact::search::query_clause -query $query -party_id $party_id]
+    }
+
+    set result {}
+    if { [llength $search_clauses] > 0 } {
+        if { $and_p } {
+            append result "and "
+        }
+        if { [llength $search_clauses] > 1 } {
+            append result "( [join $search_clauses "\n and "] )"
+        } else {
+            append result [join $search_clauses "\n and "]
+        }
+    }
+    return $result
+}
+
+ad_proc -public contact::search::query_clause {
+    {-and:boolean}
+    {-query ""}
+    {-party_id "party_id"}
+} {
+    create a contact search query. If the query supplied is an integer
+    it searches for the party_id otherwise the search is for contacts
+    that match all 
+
+    @param and Set this flag if you want the result to start with an 'and' if the list of where clauses returned is non-empty.
+} {
+    set query [string trim $query]
+    set query_clauses [list]
+
+    if { [string is integer $query] } {
+        lappend query_clauses "$party_id = $query"
+    } elseif { [exists_and_not_null query] } {
+        foreach term $query {
+            lappend query_clauses "upper(contact__name($party_id)) like upper('%${term}%')"
+        }
+    }
+
+    set result {}
+    if { [llength $query_clauses] > 0 } {
+        if { $and_p } {
+            append result "and "
+        }
+        if { [llength $query_clauses] > 1 } {
+            append result "( [join $query_clauses "\n and "] )"
+        } else {
+            append result [join $query_clauses "\n and "]
+        }
+    }
+    return $result
+}
 
 ad_proc -public contact::search::condition::new {
     {-search_id}
@@ -132,40 +213,69 @@ ad_proc -public contact::search::condition::exists_p {
 
 
 
-ad_proc -public contact::search::where_clauses {
+ad_proc -public contact::search::where_clause {
     {-search_id}
     {-and:boolean}
     {-party_id}
     {-revision_id}
 } {
 } {
-    db_1row get_em { select title, owner_id, all_or_any, object_type from contact_searches where search_id = :search_id }
-    if { $all_or_any == "any" } {
-        set operator "or"
+    if { $and_p } {
+        return [util_memoize [list ::contact::search::where_clause_not_cached \
+                                  -search_id $search_id \
+                                  -and \
+                                  -party_id $party_id \
+                                  -revision_id $revision_id]]
+    } else {
+        return [util_memoize [list ::contact::search::where_clause_not_cached \
+                                  -search_id $search_id \
+                                  -party_id $party_id \
+                                  -revision_id $revision_id]]
+    }
+}
+
+ad_proc -public contact::search::where_clause_not_cached {
+    {-search_id}
+    {-and:boolean}
+    {-party_id}
+    {-revision_id}
+} {
+} {
+    db_0or1row get_search_info {}
+    set where_clauses [list]
+
+    if { [exists_and_not_null all_or_any] } {
+        if { $all_or_any == "any" } {
+            set operator "or"
+        } else {
+            set operator "and"
+        }
+        if { $object_type == "person" } {
+            lappend where_clauses "$party_id in ( select person_id from persons )"
+        } elseif { $object_type == "organization" } {
+            lappend where_clauses "$party_id in ( select organization_id from organizations )"
+        }
+        db_foreach select_queries {} {
+            lappend where_clauses [contact::search::translate -type $type -var_list $var_list -to code -revision_id $revision_id -party_id $party_id]
+        }
     } else {
         set operator "and"
     }
-    set where_clause ""
-    set first_condition_p 1
-    db_foreach selectqueries {
-       select type, var_list from contact_search_conditions where search_id = :search_id
-    } {
-        if { [string is false $first_condition_p] } {
-            append where_clause "\n${operator} "
-        }
-        append where_clause [contact::search::translate -type $type -var_list $var_list -to code -revision_id $revision_id -party_id $party_id]
-        set first_condition_p 0
-    }
-    if { [exists_and_not_null where_clause] } {
-        if { $and_p } {
-            set where_clause "\n and ( $where_clause )"
-        } else {
-            set where_clause "\n ( $where_clause )"
-        }
-    }
-    return $where_clause
 
+    set result {}
+    if { [llength $where_clauses] > 0 } {
+        if { $and_p } {
+            append result "and "
+        }
+        if { [llength $where_clauses] > 1 } {
+            append result "( [join $where_clauses "\n $operator "] )"
+        } else {
+            append result [join $where_clauses "\n $operator "]
+        }
+    }
+    return $result
 }
+
 
 ad_proc -public contact::search::translate {
     {-type}

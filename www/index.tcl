@@ -85,7 +85,7 @@ if { $query_type == "group" } {
         }
     }
 } elseif { $query_type == "search" } {
-    lappend search_clause [contact::search::where_clauses -and -search_id $search_id -party_id "parties.party_id" -revision_id "revision_id"]
+    lappend search_clause [contact::search::where_clause -and -search_id $search_id -party_id "parties.party_id" -revision_id "revision_id"]
 }
 
 
@@ -214,11 +214,14 @@ template::list::create \
 	}
     }
 
+# At least with openacs 5.1.5 list paginator does not use limit and offset commands.
+# this will likely be fixed in a future version, but until that is done we do not
+# need the overhead of the search clause in the multirow since the pagination proc
+# returns a list of valid party_ids the meet the search clause parameters. This
+# should increase the speed with which this query can be run
 db_multirow -unclobber contacts contacts_select {}
 
-
-# TOTAL COUNT CODE
-set contacts_total_count [db_string contacts_total_count {}]
+set contacts_total_count [contact::search::results_count -search_id $query_id -query $query]
 
 if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
     if { $query_type == "group" } {
