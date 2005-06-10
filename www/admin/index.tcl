@@ -70,6 +70,7 @@ template::list::create \
                 <a href="@groups.ams_org_url@" class="button">[_ contacts.Organization_Form]</a>
             }
         }
+	### Add a link to the categorization mapping page for a group here.
 	actions {
 	    display_template {
 		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">[_ contacts.Permissions]</a></if>
