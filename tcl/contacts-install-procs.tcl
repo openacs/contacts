@@ -89,7 +89,7 @@ ad_proc -public contacts::install::package_instantiate {
 		     -package_key "contacts" \
 		     -object_type "person" \
 		     -list_name "${package_id}__-2" \
-		     -pretty_name "Contacts-Person" \
+		     -pretty_name "Person - Registered Users" \
 		     -description "" \
 		     -description_mime_type ""]
 
@@ -183,7 +183,7 @@ ad_proc -public contacts::install::package_instantiate {
 		     -package_key "contacts" \
 		     -object_type "organization" \
 		     -list_name "${package_id}__-2" \
-		     -pretty_name "#contacts.Organization#" \
+		     -pretty_name "Organization - Registered Users" \
 		     -description "" \
 		     -description_mime_type ""]
 
@@ -235,7 +235,6 @@ ad_proc -public contacts::install::package_mount {
     @error
 } {
     contacts::populate::crm -package_id $package_id
-    contacts::populate::wieners -package_id $package_id
 }
 
 ad_proc -public contacts::insert_map {

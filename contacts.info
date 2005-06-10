@@ -5,7 +5,7 @@
     <package-name>Contacts</package-name>
     <pretty-plural>Contacts</pretty-plural>
     <initial-install-p>f</initial-install-p>
-    <singleton-p>f</singleton-p>
+    <singleton-p>t</singleton-p>
     
     <version name="1.1d1" url="http://openacs.org/repository/download/apm/contacts-1.1d1.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
@@ -22,6 +22,7 @@
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
             <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
+            <callback type="after-mount"  proc="contacts::install::package_mount"/>
         </callbacks>
         <parameters>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AcceptableFileUploadMIMETypes"  default="*" description="* for any. CSV of acceptable MIME Types for File Upload" section_name="File Upload"/>
@@ -33,6 +34,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PortraitThumbnailSize"  default="50x50" description="Max dimensions of portrait thumbnail" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SquareThumbnails"  default="1" description="0 for no, 1 for yes. If yes we crop either the top or the bottom of the image to create square thumbnails and portraits" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ThumbnailSize"  default="125x125" description="Max dimension for thumbnail image" section_name="Photos"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CreateUserP"  default="f" description="What should be the default behaviour for the creation of new Persons into the system. If set to -t- every new Person will become a user of the system by default." section_name="Default Behaviour"/>
         </parameters>
 
     </version>

@@ -13,7 +13,7 @@ ad_proc -public contacts::populate::crm {
     {-package_id ""}
 } {
     Procedure to install ams Attributes for a good CRM solution (at
-    least in our idea).
+								 least in our idea).
 
     @author Malte Sussdorff (sussdorff@sussdorff.de)
     @creation-date 2005-06-05
@@ -22,7 +22,6 @@ ad_proc -public contacts::populate::crm {
 
     @error
 } {
-
     ams::widgets_init
 
     if {[empty_string_p $package_id]} {
@@ -45,18 +44,11 @@ ad_proc -public contacts::populate::crm {
 
     # Hopefully all is now setup to map the groups accordingly.
 
+    # We already have the registered users lists setup, so we only need
+    # the list_id..  Actually we should never have to extend registered
+    # users, but what the heck...
 
-    # We already have the registered users lists setup, so we only
-    # need the list_id..
-    # Actually we should never have to extend registered users, but
-    # what the heck...
-
-
-    ############################
-    #
     # Person:: Registered Users
-    #
-    ############################
 
     set list_id [ams::list::get_list_id \
 		     -package_key "contacts" \
@@ -64,14 +56,68 @@ ad_proc -public contacts::populate::crm {
 		     -list_name "${contacts_package_id}__${registered_user_group_id}"
 		]
 
-    ns_log Notice "reg_list_id:: $list_id"
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "first_names" \
+			  -datatype "string" \
+			  -pretty_name "First Name(s)" \
+			  -pretty_plural "First Name(s)" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "0" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "type_specific" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "f"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "10" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "last_name" \
+			  -datatype "string" \
+			  -pretty_name "Last Name" \
+			  -pretty_plural "Last Names" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "0" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "type_specific" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "f"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "20" \
+	-required_p "f" \
+	-section_heading ""
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "salutation" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_salutation#" \
-			  -pretty_plural "#acs-translations.person_salutation_plural#" \
+			  -pretty_name "Salutation" \
+			  -pretty_plural "Salutations" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -81,9 +127,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_salutation "Salutation"
-    lang::message::register en_US acs-translations person_salutation_plural "Salutations"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -99,46 +142,34 @@ ad_proc -public contacts::populate::crm {
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_Mr_#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_Mr_ "Dear Mr. "
+		       -option "Dear Mr. "]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_Mrs_#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_Mrs_ "Dear Mrs. "
+		       -option "Dear Mrs. "]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_Ms_#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_Ms_ "Dear Ms. "
+		       -option "Dear Ms. "]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_ "Dear "
+		       -option "Dear "]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_Professor#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_Professor "Dear Professor"
+		       -option "Dear Professor"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_salutation_Dear_Dr#"]
-
-    lang::message::register en_US acs-translations person_salutation_Dear_Dr "Dear Dr."
+		       -option "Dear Dr."]
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "person_title" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_title#" \
-			  -pretty_plural "#acs-translations.person_title_plural#" \
+			  -pretty_name "Title" \
+			  -pretty_plural "Titles" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -148,9 +179,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_title "Title"
-    lang::message::register en_US acs-translations person_title_plural "Titles"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -168,8 +196,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "home_address" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_home_address#" \
-			  -pretty_plural "#acs-translations.person_home_address_plural#" \
+			  -pretty_name "Home Address" \
+			  -pretty_plural "Home Addresses" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -179,9 +207,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_home_address "Home Address"
-    lang::message::register en_US acs-translations person_home_address_plural "Home Addresses"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -199,8 +224,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "home_phone" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_home_phone#" \
-			  -pretty_plural "#acs-translations.person_home_phone_plural#" \
+			  -pretty_name "Home Phone" \
+			  -pretty_plural "Home Phones" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -210,9 +235,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_home_phone "Home Phone"
-    lang::message::register en_US acs-translations person_home_phone_plural "Home Phones"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -228,10 +250,10 @@ ad_proc -public contacts::populate::crm {
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
-			  -attribute_name "mobile_phone" \
+			  -attribute_name "private_fax" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_mobile_phone#" \
-			  -pretty_plural "#acs-translations.person_mobile_phone_plural#" \
+			  -pretty_name "Private Fax No." \
+			  -pretty_plural "Private Fax Numbers" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -241,9 +263,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_mobile_phone "Mobile Phone"
-    lang::message::register en_US acs-translations person_mobile_phone_plural "Mobile Phones"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -259,10 +278,10 @@ ad_proc -public contacts::populate::crm {
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
-			  -attribute_name "privateemail" \
-			  -datatype "email" \
-			  -pretty_name "#acs-translations.person_privateemail#" \
-			  -pretty_plural "#acs-translations.person_privateemail_plural#" \
+			  -attribute_name "private_mobile_phone" \
+			  -datatype "string" \
+			  -pretty_name "Private Mobile No." \
+			  -pretty_plural "Private Mobile Numbers" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -273,12 +292,9 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US acs-translations person_privateemail "Private E-Mail Address"
-    lang::message::register en_US acs-translations person_privateemail_plural "Private E-Mail Addresses"
-
     ams::attribute::new \
 	-attribute_id $attribute_id \
-	-widget "email" \
+	-widget "telecom_number" \
 	-dynamic_p "t"
 
     ams::list::attribute::map \
@@ -289,11 +305,39 @@ ad_proc -public contacts::populate::crm {
 	-section_heading ""
 
     set attribute_id [attribute::new \
+			  -object_type "party" \
+			  -attribute_name "email" \
+			  -datatype "string" \
+			  -pretty_name "Email Address" \
+			  -pretty_plural "Email Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "0" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "type_specific" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "email" \
+	-dynamic_p "f"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "84" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "birthdate" \
 			  -datatype "date" \
-			  -pretty_name "#acs-translations.person_birthdate#" \
-			  -pretty_plural "#acs-translations.person_birthdate_plural#" \
+			  -pretty_name "Birthdate" \
+			  -pretty_plural "Birthdates" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -303,9 +347,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_birthdate "Birthdate"
-    lang::message::register en_US acs-translations person_birthdate_plural "Birthdates"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -323,8 +364,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "personnotes" \
 			  -datatype "text" \
-			  -pretty_name "#acs-translations.person_personnotes#" \
-			  -pretty_plural "#acs-translations.person_personnotes_plural#" \
+			  -pretty_name "Notes About Person" \
+			  -pretty_plural "Notes About Person" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -334,9 +375,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_personnotes "Notes About Person"
-    lang::message::register en_US acs-translations person_personnotes_plural "Notes About Person"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -350,28 +388,20 @@ ad_proc -public contacts::populate::crm {
 	-required_p "f" \
 	-section_heading ""
 
-    #####################
-    #
-    # Person: Suppliers
-    #
-    #####################
+    # ORGA - REG
 
-    set list_id [ams::list::new \
+    set list_id [ams::list::get_list_id \
 		     -package_key "contacts" \
-		     -object_type "person" \
-		     -list_name "${contacts_package_id}__${supplier_id}" \
-		     -pretty_name "#${contacts_package_id}__${supplier_id}#" \
-		     -description "" \
-		     -description_mime_type ""]
-
-    ns_log Notice "reg_list_id:: $list_id"
+		     -object_type "organization" \
+		     -list_name "${contacts_package_id}__${registered_user_group_id}"
+		]
 
     set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "bankaccountnumber" \
+			  -object_type "organization" \
+			  -attribute_name "name" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_bankaccountnumber#" \
-			  -pretty_plural "#acs-translations.person_bankaccountnumber_plural#" \
+			  -pretty_name "Company Name" \
+			  -pretty_plural "Organization Names" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -382,8 +412,223 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US acs-translations person_bankaccountnumber "Bank Account Number"
-    lang::message::register en_US acs-translations person_bankaccountnumber_plural "Bank Account Numbers"
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "10" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_name_ext" \
+			  -datatype "string" \
+			  -pretty_name "Company Name Extensions" \
+			  -pretty_plural "Company Name Extensions" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "20" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_address" \
+			  -datatype "string" \
+			  -pretty_name "Company Address" \
+			  -pretty_plural "Company Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "postal_address" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "30" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_url" \
+			  -datatype "url" \
+			  -pretty_name "Company URL" \
+			  -pretty_plural "Company URLs" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "url" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "40" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_phone" \
+			  -datatype "string" \
+			  -pretty_name "Company Phone No." \
+			  -pretty_plural "Company Phone Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "50" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "industrysector" \
+			  -datatype "string" \
+			  -pretty_name "Industry Sector" \
+			  -pretty_plural "Industry Sectors" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "select" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "60" \
+	-required_p "f" \
+	-section_heading ""
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Agency - Full Service"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Agency - Special"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Agency - PR"]
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_notes" \
+			  -datatype "text" \
+			  -pretty_name "Notes on Company" \
+			  -pretty_plural "Notes on Company" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textarea" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "70" \
+	-required_p "f" \
+	-section_heading ""
+
+    # PERSON - SUPPLY
+
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "person" \
+		     -list_name "${contacts_package_id}__${supplier_id}" \
+		     -pretty_name "Person - Supplier" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "bankaccountnumber" \
+			  -datatype "string" \
+			  -pretty_name "Bank Account Number" \
+			  -pretty_plural "Bank Account Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -401,8 +646,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "bankcode" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_bankcode#" \
-			  -pretty_plural "#acs-translations.person_bankcode_plural#" \
+			  -pretty_name "Bank Code" \
+			  -pretty_plural "Bank Codes" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -412,9 +657,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_bankcode "Bank Code"
-    lang::message::register en_US acs-translations person_bankcode_plural "Bank Codes"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -432,8 +674,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "bankname" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_bankname#" \
-			  -pretty_plural "#acs-translations.person_bankname_plural#" \
+			  -pretty_name "Name of Bank" \
+			  -pretty_plural "Name of Banks" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -443,9 +685,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_bankname "Name of Bank"
-    lang::message::register en_US acs-translations person_bankname_plural "Name of Banks"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -461,41 +700,10 @@ ad_proc -public contacts::populate::crm {
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
-			  -attribute_name "accountowner" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_accountowner#" \
-			  -pretty_plural "#acs-translations.person_accountowner_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_accountowner "Owner of Account"
-    lang::message::register en_US acs-translations person_accountowner_plural "Owners of Account"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "textbox" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "40" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
 			  -attribute_name "languages" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_languages#" \
-			  -pretty_plural "#acs-translations.person_languages_plural#" \
+			  -pretty_name "Languages" \
+			  -pretty_plural "Languages" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -505,9 +713,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_languages "Languages"
-    lang::message::register en_US acs-translations person_languages_plural "Languages"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -523,40 +728,30 @@ ad_proc -public contacts::populate::crm {
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_languages_EnglishUK#"]
-
-    lang::message::register en_US acs-translations person_languages_EnglishUK "English:UK"
+		       -option "English:UK"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_languages_English_US#"]
-
-    lang::message::register en_US acs-translations person_languages_English_US "English_US"
+		       -option "English_US"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_languages_French#"]
-
-    lang::message::register en_US acs-translations person_languages_French "French"
+		       -option "French"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_languages_German#"]
-
-    lang::message::register en_US acs-translations person_languages_German "German"
+		       -option "German"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_languages_Spanish#"]
-
-    lang::message::register en_US acs-translations person_languages_Spanish "Spanish"
+		       -option "Spanish"]
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "availability" \
 			  -datatype "text" \
-			  -pretty_name "#acs-translations.person_availability#" \
-			  -pretty_plural "#acs-translations.person_availability_plural#" \
+			  -pretty_name "Availability" \
+			  -pretty_plural "Availabilities" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -566,9 +761,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_availability "Availability"
-    lang::message::register en_US acs-translations person_availability_plural "Availabilities"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -586,8 +778,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "subjectarea" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_subjectarea#" \
-			  -pretty_plural "#acs-translations.person_subjectarea_plural#" \
+			  -pretty_name "Subject Areas" \
+			  -pretty_plural "Subject Areas" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -597,9 +789,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_subjectarea "Subject Area"
-    lang::message::register en_US acs-translations person_subjectarea_plural "Subject Areas"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -615,191 +804,30 @@ ad_proc -public contacts::populate::crm {
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_subjectarea_Advertisement#"]
-
-    lang::message::register en_US acs-translations person_subjectarea_Advertisement "Advertisement"
+		       -option "Advertisement"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_subjectarea_lt_Computers_-_Webbased_#"]
-
-    lang::message::register en_US acs-translations person_subjectarea_lt_Computers_-_Webbased_ "Computers - Webbased Technologies"
+		       -option "Computers - Webbased Technologies"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_subjectarea_Engineering#"]
-
-    lang::message::register en_US acs-translations person_subjectarea_Engineering "Engineering"
+		       -option "Engineering"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_subjectarea_Law#"]
-
-    lang::message::register en_US acs-translations person_subjectarea_Law "Law"
+		       -option "Law"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.person_subjectarea_Public_Relations#"]
-
-    lang::message::register en_US acs-translations person_subjectarea_Public_Relations "Public Relations"
-
-
-    # For registered users we already setup the organizations list
-
-    set list_id [ams::list::get_list_id \
-		     -package_key "contacts" \
-		     -object_type "organization" \
-		     -list_name "${contacts_package_id}__${registered_user_group_id}"
-		]
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "company_address" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_company_address#" \
-			  -pretty_plural "#acs-translations.organization_company_address_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_company_address "Company Address"
-    lang::message::register en_US acs-translations organization_company_address_plural "Company Addresses"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "postal_address" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "20" \
-	-required_p "f" \
-	-section_heading ""
+		       -option "Public Relations"]
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
-			  -attribute_name "organization_url" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.person_organization_url#" \
-			  -pretty_plural "#acs-translations.person_organization_url_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations person_organization_url "Organization URL"
-
-    lang::message::register en_US acs-translations person_organization_url_plural "Organization URLs"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "url" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "30" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "company_phone" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_company_phone#" \
-			  -pretty_plural "#acs-translations.organization_company_phone_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_company_phone "Company Phone Number"
-    lang::message::register en_US acs-translations organization_company_phone_plural "Company Phone Numbers"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "telecom_number" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "40" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "industrysector" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_industrysector#" \
-			  -pretty_plural "#acs-translations.organization_industrysector_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_industrysector "Industry Sector"
-    lang::message::register en_US acs-translations organization_industrysector_plural "Industry Sectors"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "select" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "50" \
-	-required_p "f" \
-	-section_heading ""
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_industrysector_lt_Agency_-_Full_Service#"]
-
-    lang::message::register en_US acs-translations organization_industrysector_lt_Agency_-_Full_Service "Agency - Full Service"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_industrysector_Agency_-_Special#"]
-
-    lang::message::register en_US acs-translations organization_industrysector_Agency_-_Special "Agency - Special"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_industrysector_Agency_-_PR#"]
-
-    lang::message::register en_US acs-translations organization_industrysector_Agency_-_PR "Agency - PR"
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "company_notes" \
+			  -attribute_name "freelancernotes" \
 			  -datatype "text" \
-			  -pretty_name "#acs-translations.organization_company_notes#" \
-			  -pretty_plural "#acs-translations.organization_company_notes_plural#" \
+			  -pretty_name "Notes on Freelancer" \
+			  -pretty_plural "Notes on Freelancer" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -809,9 +837,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_company_notes "Notes on Company"
-    lang::message::register en_US acs-translations organization_company_notes_plural "Notes on Company"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -821,161 +846,17 @@ ad_proc -public contacts::populate::crm {
     ams::list::attribute::map \
 	-list_id $list_id \
 	-attribute_id $attribute_id \
-	-sort_order "51" \
+	-sort_order "71" \
 	-required_p "f" \
 	-section_heading ""
 
-    #################################
-    #
-    # Organization: Customers
-    #
-    ##################################
-    set list_id [ams::list::new \
-		     -package_key "contacts" \
-		     -object_type "organization" \
-		     -list_name "${contacts_package_id}__${customers_id}" \
-		     -pretty_name "#${contacts_package_id}__${customers_id}#" \
-		     -description "" \
-		     -description_mime_type ""]
-
-#    callback contacts::populate::customer_attributes -list_id $list_id 
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "clienttype" \
-			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_clienttype#" \
-			  -pretty_plural "#acs-translations.organization_clienttype_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-
-    lang::message::register en_US acs-translations organization_clienttype "Type of Customer"
-    lang::message::register en_US acs-translations organization_clienttype_plural "Types of Customer"
-
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "select" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "1" \
-	-required_p "f" \
-	-section_heading ""
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_clienttype_VIP_Customer#"]
-
-    lang::message::register en_US acs-translations organization_clienttype_VIP_Customer "VIP Customer"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_clienttype_Good_Customer#"]
-
-    lang::message::register en_US acs-translations organization_clienttype_Good_Customer "Good Customer"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_clienttype_Normal_Customer#"]
-
-    lang::message::register en_US acs-translations organization_clienttype_Normal_Customer "Normal Customer"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_clienttype_Sporadic_Customer#"]
-
-    lang::message::register en_US acs-translations organization_clienttype_Sporadic_Customer "Sporadic Customer"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_clienttype_Follow-up_Customer#"]
-
-    lang::message::register en_US acs-translations organization_clienttype_Follow-up_Customer "Follow-up Customer"
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "customer_since" \
-			  -datatype "date" \
-			  -pretty_name "#acs-translations.organization_customer_since#" \
-			  -pretty_plural "#acs-translations.organization_customer_since_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_customer_since "Customer Since"
-    lang::message::register en_US acs-translations organization_customer_since_plural "Customers Since"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "date" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "2" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "customernotes" \
-			  -datatype "text" \
-			  -pretty_name "#acs-translations.organization_customernotes#" \
-			  -pretty_plural "#acs-translations.organization_customernotes_plural#" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_customernotes "Notes on Customer"
-    lang::message::register en_US acs-translations organization_customernotes_plural "Notes on Customer"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "textarea" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "3" \
-	-required_p "f" \
-	-section_heading ""
-    
-    ###########################
-    #
-    # Organization: Suppliers
-    #
-    ###########################
+    #  Organization - Supplier
 
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "organization" \
 		     -list_name "${contacts_package_id}__${supplier_id}" \
-		     -pretty_name "#${contacts_package_id}__${supplier_id}#" \
+		     -pretty_name "Organization - Supplier" \
 		     -description "" \
 		     -description_mime_type ""]
 
@@ -983,8 +864,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "organization" \
 			  -attribute_name "bankaccountnumber" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_bankaccountnumber#" \
-			  -pretty_plural "#acs-translations.organization_bankaccountnumber_plural#" \
+			  -pretty_name "Bank Account No." \
+			  -pretty_plural "Bank Account Numbers*" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -994,9 +875,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_bankaccountnumber "Bank Account No.o"
-    lang::message::register en_US acs-translations organization_bankaccountnumber_plural "Bank Account Numbers*"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1014,8 +892,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "organization" \
 			  -attribute_name "bankcode" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_bankcode#" \
-			  -pretty_plural "#acs-translations.organization_bankcode_plural#" \
+			  -pretty_name "Bank Code" \
+			  -pretty_plural "Bank Codes*" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -1025,9 +903,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_bankcode "Bank Codeo"
-    lang::message::register en_US acs-translations organization_bankcode_plural "Bank Codes*"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1045,8 +920,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "organization" \
 			  -attribute_name "bankname" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_bankname#" \
-			  -pretty_plural "#acs-translations.organization_bankname_plural#" \
+			  -pretty_name "Name of Bank" \
+			  -pretty_plural "Name of Banks*" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -1056,9 +931,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_bankname "Name of Banko"
-    lang::message::register en_US acs-translations organization_bankname_plural "Name of Banks*"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1076,8 +948,8 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "organization" \
 			  -attribute_name "speciliazedlanguages" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_speciliazedlanguages#" \
-			  -pretty_plural "#acs-translations.organization_speciliazedlanguages_plural#" \
+			  -pretty_name "Specialized Languages" \
+			  -pretty_plural "Speciliazed Languages*" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -1087,9 +959,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages "Speciliazed Languageso"
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_plural "Speciliazed Languages*"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1105,40 +974,30 @@ ad_proc -public contacts::populate::crm {
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_speciliazedlanguages_English_UK#"]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_English_UK "English_UK"
+		       -option "English_UK"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_speciliazedlanguages_English_US#"]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_English_US "English_US"
+		       -option "English_US"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_speciliazedlanguages_French#"]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_French "French"
+		       -option "French"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_speciliazedlanguages_German#"]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_German "German"
+		       -option "German"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_speciliazedlanguages_Spanish#"]
-
-    lang::message::register en_US acs-translations organization_speciliazedlanguages_Spanish "Spanish"
+		       -option "Spanish"]
 
     set attribute_id [attribute::new \
 			  -object_type "organization" \
 			  -attribute_name "specializedsubjectareas" \
 			  -datatype "string" \
-			  -pretty_name "#acs-translations.organization_specializedsubjectareas#" \
-			  -pretty_plural "#acs-translations.organization_specializedsubjectareas_plural#" \
+			  -pretty_name "Specialized Subject Areas" \
+			  -pretty_plural "Specialized Subject Areas*" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -1148,9 +1007,6 @@ ad_proc -public contacts::populate::crm {
 			  -storage "generic" \
 			  -static_p "f" \
 			  -if_does_not_exist]
-
-    lang::message::register en_US acs-translations organization_specializedsubjectareas "Specialized Subject Areaso"
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_plural "Specialized Subject Areas*"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1166,33 +1022,524 @@ ad_proc -public contacts::populate::crm {
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_specializedsubjectareas_Advertisement#"]
-
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_Advertisement "Advertisement"
+		       -option "Advertisement"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_specializedsubjectareas_lt_Computers_-_Webbased_#"]
-
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_lt_Computers_-_Webbased_ "Computers - Webbased Technologies"
-
-    set option_id [ams::option::new \
-		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_specializedsubjectareas_Engineering#"]
-
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_Engineering "Engineering"
+		       -option "Computers \
+- Webbased Technologies"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_specializedsubjectareas_Law#"]
-
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_Law "Law"
+		       -option "Engineering"]
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
-		       -option "#acs-translations.organization_specializedsubjectareas_Public_Relations#"]
+		       -option "Law"]
 
-    lang::message::register en_US acs-translations organization_specializedsubjectareas_Public_Relations "Public Relations"
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Public Relations"]
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "accountmgr_supplier" \
+			  -datatype "string" \
+			  -pretty_name "Account Manager Supplier" \
+			  -pretty_plural "Account Managers Supplier" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "6" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "collaboration_notes" \
+			  -datatype "text" \
+			  -pretty_name "Notes on Collaboration" \
+			  -pretty_plural "Notes on Collaboration" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textarea" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "7" \
+	-required_p "f" \
+	-section_heading ""
+
+    #     Organization - Customer
+
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "organization" \
+		     -list_name "${contacts_package_id}__${customers_id}" \
+		     -pretty_name "Organization - Customer" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "clienttype" \
+			  -datatype "string" \
+			  -pretty_name "Type of Customer" \
+			  -pretty_plural "Types of Customer" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "select" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "10" \
+	-required_p "f" \
+	-section_heading ""
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "VIP Customer"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Good Customer"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Normal Customer"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Sporadic Customer"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "Follow-up Customer"]
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "customer_since" \
+			  -datatype "date" \
+			  -pretty_name "Customer Since" \
+			  -pretty_plural "Customers Since" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "date" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "20" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "keyaccountmanager" \
+			  -datatype "string" \
+			  -pretty_name "Key Account Manager" \
+			  -pretty_plural "Key Account Managers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "select" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "30" \
+	-required_p "f" \
+	-section_heading ""
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "GL"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "RW"]
+
+    set option_id [ams::option::new \
+		       -attribute_id $attribute_id \
+		       -option "TK"]
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "customernotes" \
+			  -datatype "text" \
+			  -pretty_name "Notes on Customer" \
+			  -pretty_plural "Notes on Customer" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textarea" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "40" \
+	-required_p "f" \
+	-section_heading ""
+
+    # Person - Customer
+
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "person" \
+		     -list_name "${contacts_package_id}__${customers_id}" \
+		     -pretty_name "1247__1264" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "department" \
+			  -datatype "string" \
+			  -pretty_name "Department" \
+			  -pretty_plural "Departments" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "10" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "jobtitle" \
+			  -datatype "string" \
+			  -pretty_name "Job Title" \
+			  -pretty_plural "Job Titles" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "20" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "directphoneno" \
+			  -datatype "string" \
+			  -pretty_name "Direct Phone No." \
+			  -pretty_plural "Direct Phone Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "30" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "telephone_other" \
+			  -datatype "string" \
+			  -pretty_name "Other Tel. No." \
+			  -pretty_plural "Other Tel. Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "40" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "directfaxno" \
+			  -datatype "string" \
+			  -pretty_name "Direct Fax No." \
+			  -pretty_plural "Direct Fax Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "50" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "mobile_phone" \
+			  -datatype "string" \
+			  -pretty_name "Mobile Phone No." \
+			  -pretty_plural "Mobile Phones" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "60" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "directemail" \
+			  -datatype "email" \
+			  -pretty_name "E-Mail Adress" \
+			  -pretty_plural "E-Mail Adresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "email" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "70" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "delivery_address" \
+			  -datatype "string" \
+			  -pretty_name "Delivery Address" \
+			  -pretty_plural "Delivery Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "postal_address" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "80" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "visitaddress" \
+			  -datatype "string" \
+			  -pretty_name "Visit Adress" \
+			  -pretty_plural "Visit Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "postal_address" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "90" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "collaboration_notes" \
+			  -datatype "text" \
+			  -pretty_name "Notes on Collboration" \
+			  -pretty_plural "Notes on Collboration" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textarea" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "100" \
+	-required_p "f" \
+	-section_heading ""
 
     # Register Relationships
 
@@ -1208,5 +1555,79 @@ ad_proc -public contacts::populate::crm {
 	"organization" \
 	"0" \
 	""
+    #   Contact Rels Employement 
 
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "contact_rels_employment" \
+		     -list_name "$contacts_package_id" \
+		     -pretty_name "Contact Rels Employement" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set attribute_id [attribute::new \
+			  -object_type "contact_rels_employment" \
+			  -attribute_name "employed_since" \
+			  -datatype "string" \
+			  -pretty_name "Employment Since" \
+			  -pretty_plural "Employments since" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "1" \
+	-required_p "f" \
+	-section_heading ""
+
+    # Contact Rels Subsidiary
+
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "contact_rels_subsidiary" \
+		     -list_name "$contacts_package_id" \
+		     -pretty_name "Contact Rels Subsidiary" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set attribute_id [attribute::new \
+			  -object_type "contact_rels_subsidiary" \
+			  -attribute_name "shares" \
+			  -datatype "integer" \
+			  -pretty_name "Shares" \
+			  -pretty_plural "Shares" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "integer" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "1" \
+	-required_p "f" \
+	-section_heading ""
 }

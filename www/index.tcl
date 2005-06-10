@@ -316,3 +316,8 @@ ad_form -name "search" -method "GET" -export {orderby page_size page format} -fo
     } -on_submit {
     } -after_submit {
     }
+
+# Make the Navigation bar context sensitive
+
+set person_add_url [export_vars -base "contact-add" -url {{object_type "person"} group_id}]
+set organization_add_url [export_vars -base "contact-add" -url {{object_type "organization"} group_id}]

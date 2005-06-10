@@ -46,7 +46,7 @@
   <msg key="lt_E-mail_or_Mail_the_se">Selektierten Kontakten eine E-mail or einen Brief schreiben</msg>
   <msg key="lt_Instance_Permissions_">Instanz Berechtigungen - !NOCH UNFERTIG!</msg>
   <msg key="lt_Make_sure_you_do_not_">Gehen Sie sicher, dass Sie nicht die gleichen Attribute zu mehreren Gruppen hinzufügen</msg>
-  <msg key="lt_of_the_following_cond">folgenden Bedingungen:&lt;br&gt;</msg>
+  <msg key="lt_of_the_following_cond">der folgenden Bedingungen:&lt;br&gt;</msg>
   <msg key="lt_Remove_from_this_Grou">Von Gruppe entfernen</msg>
   <msg key="lt_The_default_group_mus">Die Standardgruppe muss den Vornamen und den Nachnamen für ein Personenformblatt enthalten sowie einen Organisationsnamen für ein Organisationsformblatt, beide benötigen eine E-Mail Adresse.</msg>
   <msg key="lt_this_is_my_default_si">Dies ist meine Standard Signatur</msg>
@@ -56,6 +56,7 @@
   <msg key="Next">Nächster Parameter</msg>
   <msg key="Organization">Organisation</msg>
   <msg key="Organization_Form">Organisationen Formblatt</msg>
+  <msg key="Organizations">Organisationen</msg>
   <msg key="Parent_Group">Übergeordnete Gruppe</msg>
   <msg key="People">Kontakte</msg>
   <msg key="Permissions">Berechtigungen</msg>
@@ -66,10 +67,13 @@
   <msg key="Relationships">Beziehungen</msg>
   <msg key="Remove_From_Group">Von Gruppe entfernen</msg>
   <msg key="Results">Ergebnisse:</msg>
+  <msg key="Return_to_title">Zurück zu %title%</msg>
   <msg key="Save">Speichern</msg>
   <msg key="Save_and_Add_Another">Speichern und Weiteren hinzufügen</msg>
   <msg key="Save_As">Speichern als</msg>
+  <msg key="save_this_search_">Speichern dieser Suche</msg>
   <msg key="Search">Suchen</msg>
+  <msg key="Search_for">Suche nach</msg>
   <msg key="Settings">Einstellungen</msg>
   <msg key="Show">Anzeigen:</msg>
   <msg key="Signature">Signatur</msg>
