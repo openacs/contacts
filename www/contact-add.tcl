@@ -39,6 +39,9 @@ if {$default_group_id != $application_group_id} {
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
     set group_id [lindex $group 1]
     if { [lsearch $groups $group_id] >= 0 } {
+
+	# Setup CATEGORY entry widgets in here
+	set category_elements ""
         lappend ams_forms "${package_id}__${group_id}"
     }
 }
@@ -60,6 +63,13 @@ if { $object_type == "person" } {
     set title "[_ contacts.Add_a_Person]"
 } else {
     set title "[_ contacts.Add_an_Organization]"
+}
+
+# Append the category Elements at the end. In the long run we should
+# change this so you could mix/match category elements with the
+# elements in AMS, but we are not there.
+if {![empty_string_p $category_elements]} {
+    lappend form_elements $category_elements
 }
 
 set user_id [ad_conn user_id]
