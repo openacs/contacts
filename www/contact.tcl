@@ -40,6 +40,14 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
 
 set revision_id [contact::live_revision -party_id $party_id]
 
+# This is the multirow that gets the values for each attribute
+# If you map the categories you have to check for the group (which is
+# passed along in the form_name) and see the mapped categories. Then you have to
+# retrieve the values for the category and append them to the
+# attributes multirow with a section heading (e.g. the name of the
+# category tree) and the pretty_name of the category along with the
+# value.
+
 multirow create attributes section attribute value
 foreach form $ams_forms {
     set values [ams::values -package_key "contacts" -object_type $object_type -list_name $form -object_id $revision_id -format "html"]
