@@ -294,7 +294,7 @@ ad_proc -public contact::search::translate {
             if { $to == "pretty" } {
                 set attribute_pretty [attribute::pretty_name -attribute_id $attribute_id]
             } else {
-                set attribute_pretty "irrelevant"
+                set attribute_pretty "[_ contacts.irrelevant]"
             }
 
             set operand [lindex $var_list 1]
@@ -302,11 +302,11 @@ ad_proc -public contact::search::translate {
 
             switch $operand {
                 set {
-                    set output_pretty "$attribute_pretty is set"
+                    set output_pretty "[_ contacts.lt_attribute_pretty_is_s]"
                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' )"
                 }
                 not_set {
-                    set output_pretty "$attribute_pretty is not set"
+                    set output_pretty "[_ contacts.lt_attribute_pretty_is_n]"
                     set output_code "$revision_id not in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' )"
                 }
                 default {
@@ -323,11 +323,11 @@ ad_proc -public contact::search::translate {
 
                             switch $operand {
                                 selected {
-                                    set output_pretty "$attribute_pretty is: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_s_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_options ao${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = ao${attribute_id}.value_id and ao${attribute_id}.option_id = '$value' )"
                                 }
                                 not_selected {
-                                    set output_pretty "$attribute_pretty is not: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_n_1]"
                                     set output_code "$revision_id not in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_options ao${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = ao${attribute_id}.value_id and ao${attribute_id}.option_id = '$value' )"
                                 }
                             }
@@ -335,19 +335,19 @@ ad_proc -public contact::search::translate {
                         ams_value__telecom_number {
                             switch $operand {
                                 area_code_equals {
-                                    set output_pretty "$attribute_pretty area code is: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_area]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, telecom_numbers tn${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav.${attribute_id}.value_id = tn${attribute_id}.number_id and tn${attribute_id}.area_city_code = '$value' )"
                                 }
                                 not_area_code_equals {
-                                    set output_pretty "$attribute_pretty area code is not: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_area_1]"
                                     set output_code "$revision_id not in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, telecom_numbers tn${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav.${attribute_id}.value_id = tn${attribute_id}.number_id and tn${attribute_id}.area_city_code = '$value' )"
                                 }
                                 country_code_equals {
-                                    set output_pretty "$attribute_pretty country code is: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_coun]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, telecom_numbers tn${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav.${attribute_id}.value_id = tn${attribute_id}.number_id and tn${attribute_id}.country_code = '$value' )"
                                 }
                                 not_country_code_equals {
-                                    set output_pretty "$attribute_pretty country code is not: <strong>$option_pretty</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_coun_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, telecom_numbers tn${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav.${attribute_id}.value_id = tn${attribute_id}.number_id and tn${attribute_id}.area_city_code = '$value' )"
                                 }
                             }
@@ -355,11 +355,11 @@ ad_proc -public contact::search::translate {
                         ams_value__text {
                             switch $operand  {
                                 contains {
-                                    set output_pretty "$attribute_pretty contains: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_cont]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_texts at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and lower(at${attribute_id}.text) like ('\%$value\%')\n)"
                                 }
                                 not_contains {
-                                    set output_pretty "$attribute_pretty does not contain: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_does]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_texts at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and lower(at${attribute_id}.text) not like ('\%$value\%')\n)"
                                 }
                             }
@@ -368,27 +368,27 @@ ad_proc -public contact::search::translate {
                             set value [string toupper $value]
                             switch $operand {
                                 country_is {
-                                    set output_pretty "$attribute_pretty country is: <strong>[_ ams.country_${value}]</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_coun_2]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.country_code = '$value' )"
                                 }
                                 country_is_not {
-                                    set output_pretty "$attribute_pretty country is not: <strong>[_ ams.country_${value}]</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_coun_3]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.country_code = '$value' )"
                                 }
                                 state_is {
-                                    set output_pretty "$attribute_pretty state/province is: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_stat]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.region = '$value' )"
                                 }
                                 state_is_not {
-                                    set output_pretty "$attribute_pretty state/province is not: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_stat_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.region = '$value' )"
                                 }
                                 zip_is {
-                                    set output_pretty "$attribute_pretty zip/postal starts with: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_zipp]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.postal_code like ('$value\%') )"
                                 }
                                 zip_is_not {
-                                    set output_pretty "$attribute_pretty zip/postal does not start with: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_zipp_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.postal_code like ('$value\%') )"
                                 }
                             }
@@ -396,15 +396,15 @@ ad_proc -public contact::search::translate {
                         ams_value__number {
                             switch $operand {
                                 is {
-                                    set output_pretty "$attribute_pretty is: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_s_2]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_numbers an${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = an${attribute_id}.value_id\n   and an${attribute_id}.number = '$value' )"
                                 }
                                 greater_than {
-                                    set output_pretty "$attribute_pretty is greater than: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_g]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_numbers an${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = an${attribute_id}.value_id\n   and an${attribute_id}.number > '$value' )"
                                 }
                                 less_than {
-                                    set output_pretty "$attribute_pretty is less than: <strong>$value</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_l]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_numbers an${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = an${attribute_id}.value_id\n   and an${attribute_id}.number < '$value' )"
                                 }
                             }
@@ -413,19 +413,19 @@ ad_proc -public contact::search::translate {
                             set interval "$value [string tolower [lindex $var_list 3]]"
                             switch $operand {
                                 less_than {
-                                    set output_pretty "$attribute_pretty is less than <strong>$interval</strong> ago"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_l_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time > ( now() - '$interval'::interval ) )"
                                 }
                                 more_than {
-                                    set output_pretty "$attribute_pretty is less than <strong>$interval</strong> ago"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_l_1]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < ( now() - '$interval'::interval ) )"
                                 }
                                 after {
-                                    set output_pretty "$attribute_pretty is after: <strong>[lc_time_fmt $value %q]</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time > '$value'::timestamptz )"
                                 }
                                 before {
-                                    set output_pretty "$attribute_pretty is before: <strong>[lc_time_fmt $value %q]</strong>"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_b]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < '$value'::timestamptz )"
                                 }
                             }
@@ -439,43 +439,43 @@ ad_proc -public contact::search::translate {
             set interval "[lindex $var_list 1] [lindex $var_list 2]"
             switch $operand {
                 update {
-                    set output_pretty "Contact updated in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_updated_in_th]"
                     set output_code   "CASE WHEN ( select creation_date from acs_objects where object_id = $revision_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_update {
-                    set output_pretty "Contact not updated in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_not_updated_i]"
                     set output_code   "CASE WHEN ( select creation_date from acs_objects where object_id = $revision_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 comment {
-                    set output_pretty "Contact commented on in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_commented_on_]"
                     set output_code   "CASE WHEN (select creation_date from acs_objects where object_id in ( select comment_id from general_comments where object_id = $party_id ) order by creation_date desc limit 1 ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_comment {
-                    set output_pretty "Contact not commented on in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_not_commented]"
                     set output_code   "CASE WHEN (select creation_date from acs_objects where object_id in ( select comment_id from general_comments where object_id = $party_id ) order by creation_date desc limit 1 ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 created {
-                    set output_pretty "Contact created in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_created_in_th]"
                     set output_code   "CASE WHEN ( select acs_objects.creation_date from acs_objects where acs_objects.object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_created {
-                    set output_pretty "Contact not created in the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_not_created_i]"
                     set output_code   "CASE WHEN ( select acs_objects.creation_date from acs_objects where acs_objects.object_id = $party_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 login {
-                    set output_pretty "Contact has logged in"
+                    set output_pretty "[_ contacts.lt_Contact_has_logged_in]"
                     set output_code   "CASE WHEN ( select n_sessions from users where user_id = $party_id ) > 1 or ( select last_visit from users where user_id = $party_id ) is not null THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_login {
-                    set output_pretty "Contact has never logged in"
+                    set output_pretty "[_ contacts.lt_Contact_has_never_log]"
                     set output_code   "CASE WHEN ( select n_sessions from users where user_id = $party_id ) > 1 or ( select last_visit from users where user_id = $party_id ) is not null THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 login_time {
-                    set output_pretty "Contact has logged in within the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_has_logged_in_1]"
                     set output_code   "CASE WHEN ( select last_visit from users where user_id = $party_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
                 }
                 not_login_time {
-                    set output_pretty "Contact has not logged in within the last: <strong>$interval</strong>"
+                    set output_pretty "[_ contacts.lt_Contact_has_not_logge]"
                     set output_code   "CASE WHEN ( select last_visit from users where user_id = $party_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
             }
@@ -484,17 +484,17 @@ ad_proc -public contact::search::translate {
             set operand [lindex $var_list 0]
             set group_id [lindex $var_list 1]
             if { $to == "pretty" } {
-                set group_pretty [db_string select_group_name { select group_name from groups where group_id = :group_id }]
+                set group_pretty [lang::util::localize [db_string select_group_name { select group_name from groups where group_id = :group_id }]]
             } else {
                 set group_pretty ""
             }
             switch $operand {
                 in {
-                    set output_pretty "The contact is in the group: <strong>$group_pretty</strong>"
+                    set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
                     set output_code "$party_id in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
                 }
                 not_in {
-                    set output_pretty "The contact is NOT in the group: <strong>$group_pretty</strong>"
+                    set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
                     set output_code "$party_id not in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
                 }
             }
@@ -512,9 +512,9 @@ ad_proc -public contact::search::translate {
     }
     if { ![exists_and_not_null output_pretty] || ![exists_and_not_null output_code] } {
         if { [exists_and_not_null error_message] } {
-            error "The query \"$type $var_list\" is no longer valid because: $error_message"
+            error "[_ contacts.lt_The_query_type_var_li]"
         } else {
-            error "The query \"$type $var_list\" is no longer valid. Contact an admin."
+            error "[_ contacts.lt_The_query_type_var_li_1]"
         }
     } else {
         switch $to {
