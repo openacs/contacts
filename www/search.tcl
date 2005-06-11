@@ -92,7 +92,7 @@ if { [exists_and_not_null object_type] } {
         lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
     }
     append form_elements {
-        {object_type:text(select) {label {Search for}} {options $object_type_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+        {object_type:text(select) {label {Search for}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 
@@ -140,7 +140,7 @@ if { [exists_and_not_null object_type] } {
 
 #    [list "Tasks ->" "tasks"]
     append form_elements {
-        {type:text(select),optional {label {}} {options $type_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+        {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 
@@ -164,7 +164,7 @@ switch $type {
 	}
 
         append form_elements {
-            {var1:text(select),optional {label {}} {options $attribute_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+            {var1:text(select),optional {label {}} {options $attribute_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
         }
 
         if { [exists_and_not_null var1] } {
@@ -182,7 +182,7 @@ switch $type {
                                             ]
 
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -208,7 +208,7 @@ switch $type {
                                             ]
 
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -231,7 +231,7 @@ switch $type {
                                             ]
 
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -258,7 +258,7 @@ switch $type {
                                             ]
 
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -291,7 +291,7 @@ switch $type {
                                             ]
 
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -315,7 +315,7 @@ switch $type {
                                              [list "[_ contacts.is_not_set]" "not_set"] \
                                             ]
                     append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
                     }
                     if { [exists_and_not_null var2] } {
                         if { $var2 == "exists" || $var2 == "not_exists" } {
@@ -362,7 +362,7 @@ switch $type {
             lappend contact_options [list "[_ contacts.lt_has_not_logged_in_wit]" "not_login_time"]
         }
         append form_elements {
-            {var1:text(select) {label {}} {options $contact_options} {html {onClick "javascript:acs_FormRefresh('advanced_search')"}}}
+            {var1:text(select) {label {}} {options $contact_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
         }
 
         if { [exists_and_not_null var1] } {
