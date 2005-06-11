@@ -266,13 +266,13 @@ append group_options  " [db_list_of_lists get_my_searches {}]"
 
 
 append form_elements {
-    {query_id:integer(select),optional {label ""} {options $group_options} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+    {query_id:integer(select),optional {label ""} {options $group_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
 }
 
 
 if { [exists_and_not_null rel_options] && $query_type == "group" } {
     append form_elements {
-        {rel_type:text(select),optional {label ""} {options $rel_options} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+        {rel_type:text(select),optional {label ""} {options $rel_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
     }
 }
 
@@ -280,7 +280,7 @@ append form_elements {
     {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
     {save:text(submit) {label {[_ contacts.Go]}} {value "go"}}
 }
-#     {format:text(select),optional {label "&nbsp;&nbsp;&nbsp;[_ contacts.Output]"} {options {{Default normal} {CSV csv}}} {html {onClick "javascript:acs_FormRefresh('search')"}}}
+#     {format:text(select),optional {label "&nbsp;&nbsp;&nbsp;[_ contacts.Output]"} {options {{Default normal} {CSV csv}}} {html {onChange "javascript:acs_FormRefresh('search')"}}}
 
 switch $format {
     normal {
