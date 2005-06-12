@@ -5,7 +5,6 @@
 <property name="header_stuff">
     <link href="/resources/contacts/contacts.css" rel="stylesheet" type="text/css">
 </property>
-<property name="focus">search.query</property>
 <div id="section">
   <ul>
     <li><a href="@person_add_url@">#contacts.Add_Person#</a>
@@ -19,7 +18,8 @@
 
 <p><formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 
-<listtemplate name="contacts"></listtemplate>
+
+<include src="../lib/contacts">
         
 
 

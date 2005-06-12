@@ -70,7 +70,11 @@ template::list::create \
                 <a href="@groups.ams_org_url@" class="button">[_ contacts.Organization_Form]</a>
             }
         }
-	### Add a link to the categorization mapping page for a group here.
+	categories {
+	    display_template {
+		<a href="@groups.categories_url@" class="button">[_ contacts.Manage_group_categories]</a>
+	    }
+	}
 	actions {
 	    display_template {
 		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">[_ contacts.Permissions]</a></if>
@@ -80,10 +84,10 @@ template::list::create \
     } -orderby {
     }
 
-#ad_return_error "ERROR" [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin"]
 
-multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p
+multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url
 
+set return_url [ad_conn url]
 foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all] {
     set group_id [lindex $group 1]
     set group_name [lindex $group 0]
@@ -96,16 +100,17 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
                           -object_type "person" \
                           -list_name "${package_id}__${group_id}" \
                           -pretty_name "${package_id}__${group_id}" \
-                          -return_url [ad_conn url] \
+                          -return_url $return_url \
                           -return_url_label "[_ contacts.Return_to_title]"]
     set ams_org_url [ams::list::url \
                           -package_key "contacts" \
                           -object_type "organization" \
                           -list_name "${package_id}__${group_id}" \
                           -pretty_name "${package_id}__${group_id}" \
-                          -return_url [ad_conn url] \
+                          -return_url $return_url \
                           -return_url_label "[_ contacts.Return_to_title]"]
-    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p
+    set categories_url [export_vars -base "/categories/cadmin/object-map" -url {{object_id $group_id}}]
+    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url
 
 
 }

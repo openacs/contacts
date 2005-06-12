@@ -1,0 +1,5 @@
+
+<listtemplate name="contacts"></listtemplate>
+        
+
+
