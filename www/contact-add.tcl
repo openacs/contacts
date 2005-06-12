@@ -7,7 +7,7 @@ ad_page_contract {
 
 } {
     {object_type "person"}
-    {group_id ""}
+    {group_id "-2"}
 } -validate {
     valid_type -requires {object_type} {
 	if { [lsearch [list organization person] $object_type] < 0 } {
@@ -17,6 +17,8 @@ ad_page_contract {
 }
 
 set package_id [ad_conn package_id]
+set user_id [ad_conn user_id]
+set peeraddr [ad_conn peeraddr]
 
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
@@ -24,57 +26,19 @@ lappend form_elements {object_type:text(hidden)}
 set default_group_id [contacts::default_group -package_id $package_id]
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
-set groups [list $default_group_id]
+set group_ids [list $default_group_id]
+
 if {![empty_string_p group_id] && $group_id != $default_group_id} {
-    lappend groups $group_id
+    lappend group_ids $group_id
     lappend form_elements {group_id:text(hidden) {value $group_id}}
 }
 
 # Save Group Information
 if {$default_group_id != $application_group_id} {
-    lappend groups $application_group_id
+    lappend group_ids $application_group_id
 }
 
-
-foreach group [contact::groups -expand "all" -privilege_required "read"] {
-    set group_id [lindex $group 1]
-    if { [lsearch $groups $group_id] >= 0 } {
-
-	# Setup CATEGORY entry widgets in here
-	set category_elements ""
-        lappend ams_forms "${package_id}__${group_id}"
-    }
-}
-
-foreach form $ams_forms {
-    append form_elements " "
-    append form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form]
-}
-
-# Append the option to create a user who get's a welcome message send
-# Furthermore set the title.
-
-if { $object_type == "person" } {
-    lappend form_elements {create_user_p:text(radio) \
-			       {label "[_ contacts.Create_user]"}\
-			       {options {{[_ acs-kernel.common_Yes] "t"} {[_ acs-kernel.common_no] "f"}}} \
-			       {values "f"}
-    }
-    set title "[_ contacts.Add_a_Person]"
-} else {
-    set title "[_ contacts.Add_an_Organization]"
-}
-
-# Append the category Elements at the end. In the long run we should
-# change this so you could mix/match category elements with the
-# elements in AMS, but we are not there.
-if {![empty_string_p $category_elements]} {
-    lappend form_elements $category_elements
-}
-
-set user_id [ad_conn user_id]
-set peeraddr [ad_conn peeraddr]
-set context [list $title]
+set group_list [contact::groups -expand "all" -privilege_required "read"]
 
 ad_form -name party_ae \
     -mode "edit" \
@@ -82,6 +46,47 @@ ad_form -name party_ae \
     -cancel_url [export_vars -base contact -url {party_id}] \
     -edit_buttons [list [list "[_ acs-kernel.common_Save]" save] [list "[_ contacts.Save_and_Add_Another]" save_add_another]] \
     -form $form_elements
+
+foreach group $group_list {
+    set group_id [lindex $group 1]
+    if { [lsearch $group_ids $group_id] >= 0 } {
+
+	ad_form -extend -name party_ae -form [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name "${package_id}__${group_id}"]
+	
+	# Add the category widget(s)
+	set element_name "category_ids$group_id"
+	if {$group_id < 0} {
+	    set element_name "category_ids[expr 0 - $group_id]"
+	}
+	
+	category::ad_form::add_widgets \
+	    -container_object_id $group_id \
+	    -categorized_object_id $user_id \
+	    -form_name party_ae \
+	    -element_name $element_name
+	
+    }
+}
+
+# Append the option to create a user who get's a welcome message send
+# Furthermore set the title.
+
+if { $object_type == "person" } {
+     ad_form -extend -name party_ae \
+	 -form {
+	     {create_user_p:text(radio) 
+		 {label "[_ contacts.Create_user]"} 
+		 {options {{[_ acs-kernel.common_Yes] "t"} {[_ acs-kernel.common_no] "f"}}} 
+		 {values "f"}
+	     }
+	 }
+    set title "[_ contacts.Add_a_Person]"
+} else {
+    set title "[_ contacts.Add_an_Organization]"
+}
+
+set context [list $title]
+
 
 callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
 
@@ -127,6 +132,24 @@ ad_form -extend -name party_ae \
 	if { ![template::form::is_valid party_ae] } {
 	    break
 	}
+	
+	# Add the new categories
+	
+	set cat_ids [list]
+	foreach group_id $group_ids {
+	    set element_name "category_ids$group_id"
+	    if {$group_id < 0} {
+		set element_name "category_ids[expr - $group_id]"
+	    }
+	    
+	    set cat_ids [concat $cat_ids \
+			     [category::ad_form::get_categories \
+				  -container_object_id $group_id \
+				  -element_name $element_name]]
+	}
+	
+	category::map_object -remove_old -object_id $user_id $cat_ids
+
 
     } -new_data {
 
@@ -181,7 +204,7 @@ ad_form -extend -name party_ae \
 	    }
 
 
-	    foreach group_id $groups {
+	    foreach group_id $group_ids {
 		group::add_member \
 		    -group_id $group_id \
 		    -user_id $party_id \
@@ -194,7 +217,7 @@ ad_form -extend -name party_ae \
 	    # Initialize Party Entry for organization
 	    set party_id [organizations::new -organization_id $party_id -name $name]
 
-	    foreach group_id $groups {
+	    foreach group_id $group_ids {
 		if {![empty_string_p $group_id]} {
 
 		    # relation-add does not work as there is no
@@ -209,10 +232,10 @@ ad_form -extend -name party_ae \
 	# No clue why this is not part of the db_transaction though ....
 	contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
         set revision_id [contact::revision::new -party_id $party_id]
-        foreach form $ams_forms {
+        foreach group_id $group_ids {
             ams::ad_form::save -package_key "contacts" \
                 -object_type $object_type \
-                -list_name $form \
+                -list_name "${package_id}__${group_id}" \
                 -form_name "party_ae" \
                 -object_id $revision_id
         }
