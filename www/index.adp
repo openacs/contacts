@@ -8,8 +8,8 @@
 <property name="focus">search.query</property>
 <div id="section">
   <ul>
-    <li><a href="contact-add?object_type=person">#contacts.Add_Person#</a>
-    <li><a href="contact-add?object_type=organization">#contacts.Add_Organization#</a>
+    <li><a href="@person_add_url@">#contacts.Add_Person#</a>
+    <li><a href="@organization_add_url@">#contacts.Add_Organization#</a>
     <li><a href="search">#contacts.Advanced_Search#</a>
     <li><a href="my-searches">#contacts.My_Searches#</a>
     <li><a href="settings">#contacts.Settings#</a>
