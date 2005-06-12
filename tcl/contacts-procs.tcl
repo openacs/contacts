@@ -256,7 +256,10 @@ ad_proc -public contact::groups {
             if {$component_count > 0 
 		&& ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
-                    lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]}
+		    if {$mapped_p || $all_p} {
+			lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]
+		    }
+		}
             }
         }
     }
