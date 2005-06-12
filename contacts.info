@@ -18,6 +18,7 @@
         <requires url="ams" version="1.1d1"/>
         <requires url="general-comments" version="4.1"/>
         <requires url="organizations" version="0.3d"/>
+        <requires url="categories" version="1.0"/>
 
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
