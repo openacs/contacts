@@ -13,6 +13,7 @@ ad_page_contract {
     {page:optional}
     {page_size:integer "25"}
     {tasks_interval:integer "7"}
+    {package_id ""}
 }
 
 
@@ -29,7 +30,7 @@ if { [exists_and_not_null query_id] } {
     }
 } else {
 #    set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
-    set group_id [contacts::default_group]
+    set group_id [contacts::default_group -package_id $package_id]
     set query_id $group_id
     set query_type "group"
     if { ![exists_and_not_null group_id] } {
