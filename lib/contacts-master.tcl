@@ -11,12 +11,17 @@ if { [site_node::get_package_url -package_key "tasks"] != "" } {
 } else {
     set prefix "${package_url}"
 }
+if { [site_node::get_package_url -package_key "tasks"] != "" } {
+    set tasks_enabled_p 1
+} else {
+    set tasks_enabled_p 0
+}
 
 set link_list [list]
 lappend link_list "${prefix}"
 lappend link_list "[_ contacts.Contacts]"
 
-if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
+if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] && !${tasks_enabled_p} } {
     lappend link_list "${prefix}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 
@@ -33,7 +38,7 @@ lappend link_list "[_ contacts.My_Searches]"
 lappend link_list "${prefix}public-searches"
 lappend link_list "[_ contacts.Public_Searches]"
 
-if { [site_node::get_package_url -package_key "tasks"] != "" } {
+if { ${tasks_enabled_p} } {
 	lappend link_list "/tasks/"
 	lappend link_list "[_ contacts.Tasks]"
 }
@@ -68,11 +73,18 @@ foreach {url label} $link_list {
     multirow append links $label [subst $url] $selected_p
 }
 
+if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
+    if { $page_url == "${prefix}add/person" } {
+	    set title [_ contacts.Add_Person]
+    } elseif { $page_url == "${prefix}add/organization" } {
+	    set title [_ contacts.Add_Organization]
+    }
+}
+
 if { ![exists_and_not_null title] } {
     set title [ad_conn instance_name]
     set context [list]
 } else {
     set context [list $title]
 }
-
 ad_return_template

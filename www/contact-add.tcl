@@ -16,6 +16,13 @@ ad_page_contract {
     }
 }
 
+set path_info [ad_conn path_info]
+if { $path_info == "add/person" } {
+    set object_type "person"
+} elseif { $path_info == "add/organization" } {
+    set object_type "organization"
+}
+
 set package_id [ad_conn package_id]
 set user_id [ad_conn user_id]
 set peeraddr [ad_conn peeraddr]
