@@ -233,6 +233,9 @@ ad_form -extend -name party_ae \
 		    db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
 		}
 	    }
+
+	    callback contact::organization_new -package_id $package_id -contact_id $party_id
+
 	}
 	
 	# Save the contact information
@@ -246,10 +249,6 @@ ad_form -extend -name party_ae \
                 -form_name "party_ae" \
                 -object_id $revision_id
         }
-
-
-
-	callback contact::contact_new_form -package_id $package_id -contact_id $party_id -form party_ae -object_type $object_type
 
 	# Add the user to the
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
