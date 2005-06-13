@@ -13,12 +13,18 @@ ad_page_contract {
     {page:optional}
     {page_size:integer "25"}
     {tasks_interval:integer "7"}
+    {add_person:optional}
+    {add_organization:optional}
+    {clear_query:optional}
 }
 
-
-set title "[_ contacts.Contacts]"
-set context {}
-
+if { [exists_and_not_null add_person] } {
+    ad_returnredirect "add/person"
+    ad_script_abort
+} elseif { [exists_and_not_null add_organization] } {
+    ad_returnredirect "add/organization"
+    ad_script_abort
+}
 if { [exists_and_not_null query_id] } {
     if { [contact::search::exists_p -search_id $query_id] } {
         set search_id $query_id
@@ -151,6 +157,14 @@ switch $format {
     }
 }
 
+if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
+    if { [exists_and_not_null query] && $group_id == "-2" } {
+	append form_elements {
+	    {add_person:text(submit) {label {[_ contacts.Add_Person]}} {value "1"}}
+	    {add_organization:text(submit) {label {[_ contacts.Add_Organization]}} {value "1"}}
+	}
+    }
+}
 
 ad_form -name "search" -method "GET" -export {orderby page_size page format} -form $form_elements \
     -on_request {

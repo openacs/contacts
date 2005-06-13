@@ -18,6 +18,7 @@ template::list::create \
     -name "signatures" \
     -multirow "signatures" \
     -row_pretty_plural "[_ contacts.signatures]" \
+    -actions [list [_ contacts.Add_Signature] "signature" [_ contacts.Add_Signature]] \
     -elements {
 	default_p {
 	    label ""

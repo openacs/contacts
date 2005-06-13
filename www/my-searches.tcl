@@ -9,9 +9,6 @@ ad_page_contract {
 } -validate {
 }
 
-set title "[_ contacts.My_Searches]"
-set context [list [list "search" "[_ contacts.Advanced_Search]"] $title]
-
 template::list::create \
     -name "searches" \
     -multirow "searches" \

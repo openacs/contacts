@@ -62,7 +62,24 @@ if { $party_is_contact_p } {
        	   ad_script_abort
         }
 } else {
-        ns_returnnotfound
-        ad_script_abort
+        switch $file_url {
+	   "add/person" {
+               if { [ns_queryget object_type] != "" } {
+                    rp_form_put object_type "person"
+               }
+               rp_internal_redirect contact-add
+           }
+           "add/organization" {
+               if { [ns_queryget object_type] != "" } {
+                    rp_form_put object_type "organization"
+               }
+               rp_internal_redirect contact-add
+           } 
+           default {
+               ns_returnnotfound
+               ad_script_abort
+           }
+        }
+
 }
 
