@@ -36,7 +36,7 @@ ad_proc -public contacts::populate::crm {
 
 
     # This is a check for the customer and supplier id if P/O is installed.
-    if {[info exists im_profiles_all]} {
+    if {[apm_package_enabled_p intranet-core]} {
 	set supplier_id [db_string freelancer_group "select group_id from groups where group_name = 'Freelancers'"]
 	set customers_id [db_string customers_group "select group_id from groups where group_name = 'Customers'"]
     } else {
