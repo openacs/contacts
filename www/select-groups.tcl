@@ -26,7 +26,7 @@ if { [llength $group_options] == "0" } {
 append form_elements {
     {group_ids:text(checkbox),multiple {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
 }
-set edit_buttons [list [list "[_ contacts.lt_Add_new_in_Selected_Group]" create]]
+set edit_buttons [list [list "[_ contacts.lt_Add_new_in_Selected_Groups]" create]]
 
 ad_form \
     -name group-parties-add \
