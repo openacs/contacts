@@ -62,7 +62,7 @@ create table contact_search_log (
         unique(search_id,user_id)
 );
 
-select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p,creation_date,creation_user,creation_ip,context_id');
+select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p;f,creation_date,creation_user,creation_ip,context_id');
 
 create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,boolean,timestamptz,integer,varchar,integer)
 returns integer as '

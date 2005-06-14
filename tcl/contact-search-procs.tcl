@@ -32,6 +32,7 @@ ad_proc -public contact::search::new {
                       [list owner_id $owner_id] \
                       [list all_or_any $all_or_any] \
                       [list object_type $object_type] \
+                      [list deleted_p $deleted_p] \
                       ]
 
     return [package_instantiate_object -var_list $var_list contact_search]
