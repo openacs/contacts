@@ -218,6 +218,8 @@ ad_form -extend -name party_ae \
 		    -rel_type "membership_rel"
 	    }
 	    
+
+	    callback contact::person_new -package_id $package_id -contact_id $party_id
 	    
 	} else {
 	    
@@ -234,7 +236,7 @@ ad_form -extend -name party_ae \
 		}
 	    }
 
-	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
+	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $party_id
 	}
 	
 	# Save the contact information
@@ -247,9 +249,18 @@ ad_form -extend -name party_ae \
                 -list_name "${package_id}__${group_id}" \
                 -form_name "party_ae" \
                 -object_id $revision_id
-        }
-
-	# Add the user to the
+	    # execute group specific callbacks
+	    group::get -group_id $group_id -array group_array
+	    set group_name ${group_array(group_name)}
+	    regsub -all " " $group_name "_" group_name
+	    regsub -all {[^-a-zA-Z0-9_]} $group_name "" group_name
+	    
+	    if {[info exists contact::${object_type}_${group_array(group_name)}_new]} {
+		callback contact::${object_type}_${group_array(group_name)}_new -package_id $package_id -contact_id $party_id
+	    }
+	}
+	    
+	    # Add the user to the
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {

@@ -25,6 +25,12 @@ ad_proc -public -callback contact::organization_new {
 } {
 }
 
+ad_proc -public -callback contact::person_new {
+    {-package_id:required}
+    {-contact_id:required}
+} {
+}
+
 ad_proc -public contacts::install::package_install {
 } {
     @author Malte Sussdorff (sussdorff@sussdorff.de)
