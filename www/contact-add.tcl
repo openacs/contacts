@@ -7,13 +7,19 @@ ad_page_contract {
 
 } {
     {object_type "person"}
-    {group_id "-2"}
+    {group_ids ""}
 } -validate {
     valid_type -requires {object_type} {
 	if { [lsearch [list organization person] $object_type] < 0 } {
 	    ad_complain "[_ contacts.lt_You_have_not_specifie]"
 	}
     }
+}
+
+set group_list [contact::groups]
+
+if {[empty_string_p $group_ids] && [llength $group_list] > 0} {
+    ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
 }
 
 set path_info [ad_conn path_info]
@@ -33,15 +39,12 @@ lappend form_elements {object_type:text(hidden)}
 set default_group_id [contacts::default_group -package_id $package_id]
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
-set group_ids [list $default_group_id]
-
-if {![empty_string_p group_id] && $group_id != $default_group_id} {
-    lappend group_ids $group_id
-    lappend form_elements {group_id:text(hidden) {value $group_id}}
+if {[lsearch $group_ids $default_group_id] == -1} {
+    lappend group_ids $default_group_id
 }
 
 # Save Group Information
-if {$default_group_id != $application_group_id} {
+if {[lsearch $group_ids $application_group_id] == -1} {
     lappend group_ids $application_group_id
 }
 
@@ -267,7 +270,7 @@ ad_form -extend -name party_ae \
         if { [exists_and_not_null formbutton\:save_add_another] } {
             ad_returnredirect [export_vars -base "contact-add" -url {object_type group_id}]
         } else {
-            ad_returnredirect [export_vars -base "." -url {{query_id $group_id}}] 
+            ad_returnredirect [export_vars -base "../" -url {{query_id $group_id}}] 
         }
 	ad_script_abort
     }

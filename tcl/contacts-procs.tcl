@@ -245,6 +245,7 @@ ad_proc -public contact::groups {
     {-privilege_required "read"}
     {-output "list"}
     {-all:boolean}
+    {-no_member_count:boolean}
 } {
 } {
     set user_id [ad_conn user_id]
@@ -267,7 +268,11 @@ ad_proc -public contact::groups {
         list {
             set list_output [list]
             foreach group $group_list {
-                lappend list_output [list [lindex $group 0] [lindex $group 1] [lindex $group 2]]
+		if {$no_member_count_p} {
+		    lappend list_output [list [lindex $group 0] [lindex $group 1]]
+		} else {
+		    lappend list_output [list [lindex $group 0] [lindex $group 1] [lindex $group 2]]
+		}
             }
             return $list_output
         }

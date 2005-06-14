@@ -120,6 +120,8 @@
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
+  <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% in Selected Group(s)</msg>
+  <msg key="Add_new_in_Group">Add new %object_type% in Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
@@ -242,7 +244,7 @@
   <msg key="lt_You_have_not_specifie">You have not specified a valid contact type</msg>
   <msg key="lt_You_have_specified_an">You have specified an invalid Object Type</msg>
   <msg key="lt_You_have_specified_an_1">You have specified an invalid size for the textarea</msg>
-  <msg key="lt_Your_administrator_mu">Your administrator must map and add a default group in the &lt;a href=\&quot;admin\&quot;&gt;admin pages&lt;/a&gt;</msg>
+  <msg key="lt_Your_administrator_mu">Your administrator must map and add a default group in the &lt;a href=&quot;admin&quot;&gt;admin pages&lt;/a&gt;</msg>
   <msg key="lt_Your_need_to_provide_">Your need to provide some contacts to send a message</msg>
   <msg key="lt_Your_provided_an_inva">Your provided an invalid Message Type</msg>
   <msg key="lt_zippostal_does_not_st">zip/postal does not start with -&gt;</msg>
