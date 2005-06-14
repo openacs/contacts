@@ -1,37 +1,12 @@
-set required_param_list [list ]
-set optional_param_list [list rel_type search_id query]
-set default_param_list [list orderby format page_size]
-set optional_unset_list [list page]
-
-set  _orderby "first_names,asc"
-set  _format "normal"
-set  _page_size "25"
-
-foreach required_param $required_param_list {
-    if {![info exists $required_param]} {
-	return -code error "$required_param is a required parameter."
-    }
-}
-
-foreach optional_param $optional_param_list {
-    if {![info exists $optional_param]} {
-	set $optional_param {}
-    }
-}
-
-
-foreach default_param $default_param_list {
-    if {![info exists $default_param]} {
-	set $default_param [set _${default_param}]
-    }
-}
-
-foreach optional_unset $optional_unset_list {
-    if {[info exists $optional_unset]} {
-	if {[empty_string_p [set $optional_unset]]} {
-	    unset $optional_unset
-	}
-    }
+ad_page_contract {
+    List and manage contacts
+} {
+    {orderby "first_names,asc"}
+    {format "normal"}
+    {search_id:integer ""}
+    {query ""}
+    {page:optional}
+    {page_size:integer "25"}
 }
 
 
