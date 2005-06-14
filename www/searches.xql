@@ -9,7 +9,7 @@
              owner_id
         from ( select distinct owner_id
                  from contact_searches
-                where title is not null
+                where ( title is not null or owner_id = :user_id )
                   and owner_id in ( select party_id from parties )) distinct_owners
         order by CASE WHEN owner_id = :user_id THEN '0000000000000000000' ELSE upper(contact__name(owner_id)) END
       </querytext>
