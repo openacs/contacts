@@ -17,6 +17,7 @@
         <requires url="ams" version="1.0d"/>
         <requires url="general-comments" version="4.1"/>
         <requires url="organizations" version="0.3d"/>
+        <requires url="mail-tracking" version="0.3d"/>
 
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
