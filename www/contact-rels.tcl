@@ -92,38 +92,6 @@ set package_url [ad_conn package_url]
 
 if { [exists_and_not_null query] } {
 
-    set search_clause [list]
-    lappend search_clause "and party_id in ( select member_id from group_distinct_member_map where group_id = '-2' )"
-    if { [exists_and_not_null rel_type] } {
-	set rel_valid_p 0
-	set group_id "-2"
-	db_foreach dbqd.contacts.www.index.get_rels {} {
-	    if { $rel_type == $relation_type } {
-		set rel_valid_p 1
-	    }
-	}
-	if { $rel_valid_p } {
-	    lappend search_clause "and party_id in ( select member_id from group_member_map where rel_type = '$rel_type' )"
-	} else {
-	    set rel_type ""
-	}
-    }
-
-    if { [exists_and_not_null query] } {
-	set search [string trim $query]
-	foreach term $query {
-	    if { [string is integer $query] } {
-		lappend search_clause "and party_id = $term"
-	    } else {
-		lappend search_clause "and upper(contact__name(party_id)) like upper('%${term}%')"
-	    }
-	}
-    }
-
-    set search_clause [join $search_clause "\n"]
-    #ad_return_error "Error" $search_clause
-    
-
     set primary_party $party_id
     
     template::list::create \
@@ -187,8 +155,9 @@ if { [exists_and_not_null query] } {
 	    }
 	}
 
+    set search_id ""
     set original_party_id $party_id
-    db_multirow -extend {map_url} -unclobber contacts dbqd.contacts.www.index.contacts_select {} {
+    db_multirow -extend {map_url} -unclobber contacts contacts_select {} {
 	set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
     }
     

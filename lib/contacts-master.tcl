@@ -32,11 +32,8 @@ if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] &
 lappend link_list "${prefix}search"
 lappend link_list "[_ contacts.Advanced_Search]"
 
-lappend link_list "${prefix}my-searches"
-lappend link_list "[_ contacts.My_Searches]"
-
-lappend link_list "${prefix}public-searches"
-lappend link_list "[_ contacts.Public_Searches]"
+lappend link_list "${prefix}searches"
+lappend link_list "[_ contacts.Saved_Searches]"
 
 if { ${tasks_enabled_p} } {
 	lappend link_list "/tasks/"

@@ -17,7 +17,8 @@ create table contact_searches (
         all_or_any              varchar(20)
                                 constraint contact_searches_and_or_all_nn not null,
         object_type             varchar(1000)
-                                constraint contact_searches_object_type_nn not null
+                                constraint contact_searches_object_type_nn not null,
+        deleted_p               boolean default 'f'
 );
 
 -- create the content type
@@ -35,21 +36,63 @@ select acs_object_type__create_type (
 );
 
 create table contact_search_conditions (
-   condition_id                   integer
-                                  constraint contact_search_conditions_id_pk primary key,
-   search_id                      integer
-                                  constraint contact_search_conditions_search_id_fk references contact_searches(search_id) on delete cascade
-                                  constraint contact_search_conditions_search_id_nn not null,
-   type                           varchar(255)
-                                  constraint contact_search_conditions_type_nn not null,
-   var_list                       text
-                                  constraint contact_search_conditions_var_list_nn not null
+        condition_id            integer
+                                constraint contact_search_conditions_id_pk primary key,
+        search_id               integer
+                                constraint contact_search_conditions_search_id_fk references contact_searches(search_id) on delete cascade
+                                constraint contact_search_conditions_search_id_nn not null,
+        type                    varchar(255)
+                                constraint contact_search_conditions_type_nn not null,
+        var_list                text
+                                constraint contact_search_conditions_var_list_nn not null
 );
 
+create table contact_search_log (
+        search_id               integer
+                                constraint contact_search_log_search_id_fk references contact_searches(search_id) on delete cascade
+                                constraint contact_search_logs_search_id_nn not null,
+        user_id                 integer
+                                constraint contact_search_log_user_id_fk references users(user_id) on delete cascade
+                                constraint contact_search_log_user_id_nn not null,
+        n_searches              integer
+                                constraint contact_search_log_n_searches_nn not null,
+        last_search             timestamptz
+                                constraint contact_search_log_last_search_nn not null,
+        unique(search_id,user_id)
+);
 
-select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,creation_date,creation_user,creation_ip,context_id');
+create or replace function contact_search__log (integer,integer)
+returns integer as '
+declare
+    p_search_id                     alias for $1;
+    p_user_id                       alias for $2;
+    v_last_search_id                integer;
+    v_exists_p
+begin
+       v_exists_p := ''1''::boolean from contact_search_log where search_id = p_search_id and user_id = p_user_id;
 
-create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,timestamptz,integer,varchar,integer)
+       if v_exists_p then
+         update contact_searches
+            set n_searches = n_searches + 1,
+                last_search = now()
+          where search_id = p_search_id
+            and user_id = p_user_id;
+       else
+         insert into contact_searches
+         (search_id,user_id,n_searches,last_search)
+         values
+         (p_search_id,p_user_id,''1'':integer,now());
+       end if;
+
+    return ''1'';
+end;' language 'plpgsql';
+
+
+
+
+select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p,creation_date,creation_user,creation_ip,context_id');
+
+create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,boolean,timestamptz,integer,varchar,integer)
 returns integer as '
 declare
     p_search_id                     alias for $1;
@@ -57,10 +100,11 @@ declare
     p_owner_id                      alias for $3;
     p_all_or_any                    alias for $4;
     p_object_type                   alias for $5;
-    p_creation_date                 alias for $6;
-    p_creation_user                 alias for $7;
-    p_creation_ip                   alias for $8;
-    p_context_id                    alias for $9;
+    p_deleted_p                     alias for $6;
+    p_creation_date                 alias for $7;
+    p_creation_user                 alias for $8;
+    p_creation_ip                   alias for $9;
+    p_context_id                    alias for $10;
     v_search_id                     contact_searches.search_id%TYPE;
 begin
     v_search_id := acs_object__new(
@@ -73,11 +117,58 @@ begin
     );
 
     insert into contact_searches
-    (search_id,title,owner_id,all_or_any,object_type)
+    (search_id,title,owner_id,all_or_any,object_type,deleted_p)
     values
-    (p_search_id,p_title,p_owner_id,p_all_or_any,p_object_type);
+    (v_search_id,p_title,p_owner_id,p_all_or_any,p_object_type,deleted_p);
 
     return v_search_id;
 
 end;' language 'plpgsql';
 
+
+
+create or replace function contact_search__log (integer,integer)
+returns integer as '
+declare
+    p_search_id                     alias for $1;
+    p_user_id                       alias for $2;
+    v_last_search_id                integer;
+    v_exists_p                      boolean;
+begin
+    -- if the user has used this search in the last 60 minutes we do not log it as a new search
+    v_last_search_id := search_id
+                   from contact_search_log
+                  where user_id = p_user_id
+                    and last_search > now() - ''1 hour''::interval
+                  order by last_search desc
+                  limit 1;
+
+    if v_last_search_id != p_search_id or v_last_search_id is null then
+       -- this is a new search we need to log
+       v_exists_p := ''1''::boolean
+                from contact_search_log 
+               where search_id = p_search_id
+                 and user_id = p_user_id;
+
+       if v_exists_p then
+         update contact_search_log
+            set n_searches = n_searches + 1,
+                last_search = now()
+          where search_id = p_search_id
+            and user_id = p_user_id;
+       else
+         insert into contact_search_log
+         (search_id,user_id,n_searches,last_search)
+         values
+         (p_search_id,p_user_id,''1''::integer,now());
+       end if;
+    else
+       -- we just update the last search time but no n_sesions
+       update contact_search_log
+          set last_search = now()
+        where search_id = p_search_id
+          and user_id = p_user_id;
+    end if;
+
+    return ''1'';
+end;' language 'plpgsql';

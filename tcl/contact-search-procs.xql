@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="contact::search::log.log_search">
+  <querytext>
+    select contact_search__log(:search_id,:user_id)
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::results_count_not_cached.select_results_count">
   <querytext>
     select count(*)
@@ -10,7 +16,6 @@
     [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>
-
 
 <fullquery name="contact::search::where_clause_not_cached.get_search_info">
   <querytext>

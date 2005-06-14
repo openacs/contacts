@@ -19,6 +19,7 @@ ad_proc -public contact::search::new {
     {-owner_id ""}
     {-all_or_any}
     {-object_type}
+    {-deleted_p "f"}
 } {
     create a contact search
 } {
@@ -60,7 +61,7 @@ ad_proc -public contact::search::delete {
 } {
     create a contact search
 } {
-    return [db_0or1row delete_it { select acs_object__delete(search_id) from contact_searches where search_id = :search_id }]
+    return [db_0or1row delete_it { update contact_searches set deleted_p = 't' where search_id = :search_id }]
 }
 
 ad_proc -public contact::search::exists_p {
@@ -73,6 +74,26 @@ ad_proc -public contact::search::exists_p {
     } else {
         return 0
     }
+}
+
+ad_proc -public contact::search::owner_id {
+    {-search_id ""}
+} {
+    create a contact search
+} {
+    return [db_string get_owner_id { select owner_id from contact_searches where search_id = :search_id } -default {}]
+}
+
+ad_proc -public contact::search::log {
+    {-search_id}
+    {-user_id ""}
+} {
+    log a search
+} {
+    if { ![exists_and_not_null user_id] } {
+        set user_id [ad_conn user_id]
+    }
+    db_1row log_search {}
 }
 
 ad_proc -public contact::search::results_count {

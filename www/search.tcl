@@ -40,12 +40,11 @@ if { [exists_and_not_null clear] } {
 }
 
 if { [exists_and_not_null delete] } {
-    contact::search::delete -search_id $search_id
-    ad_returnredirect "my-searches"
+    ad_returnredirect [export_vars -base search-action -url {search_id {action delete}}]
 }
 
 if { [exists_and_not_null search] } {
-    ad_returnredirect ".?query_id=$search_id"
+    ad_returnredirect ".?search_id=$search_id"
 }
 
 
@@ -427,7 +426,7 @@ if { $search_exists_p } {
         {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
         {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}
         {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"}}
-        {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {{query_id $search_id}}]">$results_count</a>}}}
+        {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {search_id}]">$results_count</a>}}}
     }
 }
 ad_form -name "advanced_search" -method "GET" -form $form_elements \
