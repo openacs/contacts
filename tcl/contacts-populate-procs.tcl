@@ -34,13 +34,21 @@ ad_proc -public contacts::populate::crm {
 
     set registered_user_group_id "-2"
 
-    set customers_id [group::new \
-			  -group_name "Customers" "group"]
-    contact::group::map -group_id $customers_id -package_id $contacts_package_id
 
-    set supplier_id [group::new \
-			 -group_name "Supplier" "group"]
+    # This is a check for the customer and supplier id if P/O is installed.
+    if {[info exists im_profiles_all]} {
+	set supplier_id [db_string freelancer_group "select group_id from groups where group_name = 'Freelancers'"]
+	set customers_id [db_string customers_group "select group_id from groups where group_name = 'Customers'"]
+    } else {
+	set supplier_id [group::new \
+			     -group_name "Supplier" "group"]
+	set customers_id [group::new \
+			  -group_name "Customers" "group"]
+
+    }
+    
     contact::group::map -group_id $supplier_id -package_id $contacts_package_id
+    contact::group::map -group_id $customers_id -package_id $contacts_package_id
 
     # Hopefully all is now setup to map the groups accordingly.
 
@@ -426,6 +434,35 @@ ad_proc -public contacts::populate::crm {
 
     set attribute_id [attribute::new \
 			  -object_type "organization" \
+			  -attribute_name "short_name" \
+			  -datatype "string" \
+			  -pretty_name "Short Company Name" \
+			  -pretty_plural "Short Company Names" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textbox" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "15" \
+	-required_p "f" \
+	-section_heading ""
+
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
 			  -attribute_name "company_name_ext" \
 			  -datatype "string" \
 			  -pretty_name "Company Name Extensions" \
@@ -533,6 +570,34 @@ ad_proc -public contacts::populate::crm {
 	-list_id $list_id \
 	-attribute_id $attribute_id \
 	-sort_order "50" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "company_fax" \
+			  -datatype "string" \
+			  -pretty_name "Company Fax No." \
+			  -pretty_plural "Company Fax Numbers" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "telecom_number" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "55" \
 	-required_p "f" \
 	-section_heading ""
 
