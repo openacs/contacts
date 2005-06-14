@@ -25,7 +25,7 @@
       select title
         from contact_searches
        where owner_id = :owner_id
-         and upper(title) like upper('${title}%')
+         and upper(title) like upper('${sql_title}%')
       </querytext>
 </fullquery>
 

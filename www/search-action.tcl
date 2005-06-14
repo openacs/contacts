@@ -57,7 +57,8 @@ switch $action {
         util_user_message -html -message [_ contacts.The_search_-title-_was_made_public]
     }
     "copy" {
-        set similar_titles [db_list get_similar_titles {}]
+        regsub -all "'" $title "''" sql_title 
+        set similar_titles [db_list select_similar_titles {}]
         set number 1
         set orig_title $title
         while { [lsearch $similar_titles $title] >= 0 } {
@@ -65,7 +66,7 @@ switch $action {
             incr number
         }
         set new_search_id [contact::search::new -title $title -owner_id $owner_id -all_or_any $all_or_any -object_type $object_type]
-        db_foreach select_search_conditions {}{
+        db_foreach select_search_conditions {} {
             contact::search::condition::new -search_id $new_search_id -type $type -var_list $var_list
         }
         util_user_message -html -message [_ contacts.The_search_-title-_was_copied_to_your_searches]

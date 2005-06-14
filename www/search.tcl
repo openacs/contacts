@@ -83,7 +83,7 @@ if { [exists_and_not_null object_type] } {
     append form_elements {
         {object_type:text(hidden) {value $object_type}}
         {object_type_pretty:text(inform) {label {[_ contacts.Search_for]}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
-        {all_or_any:text(select),optional {label ""} {options {{[_ acs-kernel.common_All] all} {[_ acs-kernel.common_Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]<br>"}}
+        {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]<br>"}}
     }
 } else {
     set object_type_options [list]
@@ -91,7 +91,7 @@ if { [exists_and_not_null object_type] } {
         lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
     }
     append form_elements {
-        {object_type:text(select) {label {Search for}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
+        {object_type:text(select) {label {#contacts.Search_for#}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 

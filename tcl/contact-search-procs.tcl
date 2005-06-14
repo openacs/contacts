@@ -61,7 +61,7 @@ ad_proc -public contact::search::delete {
 } {
     create a contact search
 } {
-    return [db_0or1row delete_it { update contact_searches set deleted_p = 't' where search_id = :search_id }]
+    db_dml delete_it { update contact_searches set deleted_p = 't' where search_id = :search_id }
 }
 
 ad_proc -public contact::search::exists_p {

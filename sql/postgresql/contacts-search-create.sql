@@ -19,6 +19,7 @@ create table contact_searches (
         object_type             varchar(1000)
                                 constraint contact_searches_object_type_nn not null,
         deleted_p               boolean default 'f'
+                                constraint contact_searches_deleted_p_nn not null
 );
 
 -- create the content type
@@ -90,7 +91,7 @@ begin
     insert into contact_searches
     (search_id,title,owner_id,all_or_any,object_type,deleted_p)
     values
-    (v_search_id,p_title,p_owner_id,p_all_or_any,p_object_type,deleted_p);
+    (v_search_id,p_title,p_owner_id,p_all_or_any,p_object_type,p_deleted_p);
 
     return v_search_id;
 
