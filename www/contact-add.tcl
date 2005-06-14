@@ -18,7 +18,7 @@ ad_page_contract {
 
 set group_list [contact::groups]
 
-if {[empty_string_p $group_ids] && [llength $group_list] > 0} {
+if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
 }
 
