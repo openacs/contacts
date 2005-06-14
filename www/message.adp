@@ -17,4 +17,4 @@
 <else>
 <include src="/packages/contacts/lib/@message_type@" return_url="@return_url@" party_ids="@party_ids@">
 </else>
-
+<include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@">
