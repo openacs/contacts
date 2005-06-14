@@ -93,7 +93,7 @@ if { [site_node::get_package_url -package_key "tasks"] != "" } {
 
 if { [string is false [empty_string_p [info procs "::application_data_link::get_linked"]]] } {
 
-    set project_id [application_data_link::get_linked -from_object_id $party_id -to_object_type "content_item"]
+    set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
 
     if {$project_id > 0} {
 	set package_id [acs_object::get_element -object_id $project_id -element package_id]
