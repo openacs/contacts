@@ -11,6 +11,10 @@
 <property name="party_id">@party_ids@</property>
 </else>
 <property name="focus">comment_add.comment</property>
-
+<if @message_type@ eq "">
 <formtemplate id="message"></formtemplate>
+</if>
+<else>
+<include src="/packages/contacts/lib/@message_type@" return_url="@return_url@" party_ids="@party_ids@">
+</else>
 
