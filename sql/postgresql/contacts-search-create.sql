@@ -61,35 +61,6 @@ create table contact_search_log (
         unique(search_id,user_id)
 );
 
-create or replace function contact_search__log (integer,integer)
-returns integer as '
-declare
-    p_search_id                     alias for $1;
-    p_user_id                       alias for $2;
-    v_last_search_id                integer;
-    v_exists_p
-begin
-       v_exists_p := ''1''::boolean from contact_search_log where search_id = p_search_id and user_id = p_user_id;
-
-       if v_exists_p then
-         update contact_searches
-            set n_searches = n_searches + 1,
-                last_search = now()
-          where search_id = p_search_id
-            and user_id = p_user_id;
-       else
-         insert into contact_searches
-         (search_id,user_id,n_searches,last_search)
-         values
-         (p_search_id,p_user_id,''1'':integer,now());
-       end if;
-
-    return ''1'';
-end;' language 'plpgsql';
-
-
-
-
 select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p,creation_date,creation_user,creation_ip,context_id');
 
 create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,boolean,timestamptz,integer,varchar,integer)
