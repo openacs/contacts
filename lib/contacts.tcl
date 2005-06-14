@@ -1,16 +1,64 @@
-ad_page_contract {
-    List and manage contacts.
+set required_param_list [list ]
+set optional_param_list [list rel_type page]
+set default_param_list [list orderby format query_id query page_size tasks_interval package_id]
+set optional_unset_list [list ]
 
-    @author Matthew Geddert openacs@geddert.com
-    @creation-date 2004-07-28
-    @cvs-id $Id$
-} {
-    {orderby "first_names,asc"}
-    {format "normal"}
-    {search_id:integer ""}
-    {query ""}
-    {page:optional}
-    {page_size:integer "25"}
+set  _orderby "first_names,asc"
+set  _format "normal"
+set  _query_id ""
+set  _query ""
+set  _page_size "25"
+set  _tasks_interval "7"
+set  _package_id ""
+
+foreach required_param $required_param_list {
+    if {![info exists $required_param]} {
+	return -code error "$required_param is a required parameter."
+    }
+}
+
+foreach optional_param $optional_param_list {
+    if {![info exists $optional_param]} {
+	set $optional_param {}
+    }
+}
+
+
+foreach default_param $default_param_list {
+    if {![info exists $default_param]} {
+	set $default_param [set _${default_param}]
+    }
+}
+
+foreach optional_unset $optional_unset_list {
+    if {[info exists $optional_unset]} {
+	if {[empty_string_p [set $optional_unset]]} {
+	    unset $optional_unset
+	}
+    }
+}
+
+
+
+set title "[_ contacts.Contacts]"
+set context {}
+
+if { [exists_and_not_null query_id] } {
+    if { [contact::search::exists_p -search_id $query_id] } {
+        set search_id $query_id
+        set query_type "search"
+    } else {
+        set group_id $query_id
+        set query_type "group"
+    }
+} else {
+#    set group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
+    set group_id [contacts::default_group -package_id $package_id]
+    set query_id $group_id
+    set query_type "group"
+    if { ![exists_and_not_null group_id] } {
+        ad_return_error "[_ contacts.Not_Configured]" "[_ contacts.lt_Your_administrator_mu]"
+    }
 }
 
 if { $orderby == "first_names,asc" } {
