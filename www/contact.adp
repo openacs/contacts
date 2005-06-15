@@ -55,6 +55,9 @@
       truncate_len="100"
       size="small"
       recent_on_top_p="1" />
+    <if @dotlrn_club_enabled_p@>
+      <a href="@club_url@">#contacts.Visit_Club#</a>
+      </if>
     <if @projects_enabled_p@>
     <if @project_url@ ne "">
       <br />

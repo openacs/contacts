@@ -94,18 +94,26 @@ if { [site_node::get_package_url -package_key "tasks"] != "" } {
 if { [string is false [empty_string_p [info procs "::application_data_link::get_linked"]]] } {
 
     set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
+    set dotlrn_club_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "dotlrn_club"] 0]
 
     if {$project_id > 0} {
 	set package_id [acs_object::get_element -object_id $project_id -element package_id]
 	set base_url [apm_package_url_from_id $package_id]
 	set project_url [export_vars -base $base_url {{project_item_id $project_id}}]
+	set projects_enabled_p 1
     } else {
+	set projects_enabled_p 0
 	set project_url ""
     }
 
-    set projects_enabled_p 1
+    if {$dotlrn_club_id > 0} {
+	set club_url [dotlrn_community::get_community_url $dotlrn_club_id]
+	set dotlrn_club_enabled_p 1
+    } else {
+	set dotlrn_club_enabled_p 0
+    }
 } else {
-    set projects_enabled_p 0
+
 }
 
 
