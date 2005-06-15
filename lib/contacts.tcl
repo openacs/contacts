@@ -6,7 +6,7 @@ ad_page_contract {
     {search_id:integer ""}
     {query ""}
     {page:optional}
-    {page_size:integer "25"}
+    {page_size:integer ""}
 }
 
 
@@ -20,18 +20,20 @@ if { $orderby == "first_names,asc" } {
 
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
 
-set first_p 1
-foreach page_s [list 25 50 100 500] {
-    if { [string is false $first_p] } {
-        append name_label " | "
-    }
-    if { $page_size == $page_s } {
-        append name_label $page_s
-    } else {
-        append name_label "<a href=\"[export_vars -base . -url {format search_id query page orderby {page_size $page_s}}]\">$page_s</a>"
-    }
-    set first_p 0
+
+set valid_page_sizes [list 25 50 100 500]
+if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
+    set page_size [parameter::get -parameter "DefaultPageSize" -default "50"]
 }
+foreach page_s $valid_page_sizes {
+    if { $page_size == $page_s } {
+        lappend page_size_list $page_s
+    } else {
+        lappend page_size_list "<a href=\"[export_vars -base . -url {format search_id query page orderby {page_size $page_s}}]\">$page_s</a>"
+    }
+}
+append name_label [join $page_size_list " | "]
+
 
 append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base . -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
 

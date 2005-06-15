@@ -10,7 +10,7 @@ ad_page_contract {
     {search_id:integer ""}
     {query ""}
     {page:optional}
-    {page_size:integer "25"}
+    {page_size:integer ""}
     {add_person:optional}
     {add_organization:optional}
 }
@@ -25,6 +25,11 @@ if { [exists_and_not_null add_person] } {
 
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
+
+set valid_page_sizes [list 25 50 100 500]
+if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
+    set page_size [parameter::get -boolean -parameter "DefaultPageSize" -default "50"]
+}
 
 set contacts_total_count [contact::search::results_count -search_id $search_id -query $query]
 
