@@ -1,0 +1,146 @@
+ad_page_contract {
+    Bulk update contacts
+
+    @author Matthew Geddert openacs@geddert.com
+    @creation-date 2005-06-14
+    @cvs-id $Id$
+} {
+    {party_id:integer,multiple,optional}
+    {person_ids ""}
+    {organization_ids ""}
+    {attribute_id ""}
+    {return_url "./"}
+} -validate {
+}
+
+set title "[_ contacts.Bulk_Update]"
+set user_id [ad_conn user_id]
+set context [list $title]
+set package_id [ad_conn package_id]
+set recipients [list]
+if { [exists_and_not_null party_id] } {
+    foreach party_id $party_id {
+        if { [contact::person_p -party_id $party_id] } {
+            lappend person_ids $party_id
+        } else {
+            lappend organization_ids $party_id
+        }
+    }
+}
+set organization_count [llength $organization_ids]
+set person_count [llength $person_ids]
+
+
+set people [list]
+foreach party_id $person_ids {
+    lappend people "<a href=\"[contact::url -party_id $party_id]\">[person::name -person_id $party_id]</a>"
+}
+set people [join $people ", "]
+
+set organizations [list]
+foreach party_id $organization_ids {
+    lappend organizations "<a href=\"[contact::url -party_id $party_id]\">[organizations::name -organization_id $party_id]</a>"
+}
+set organizations [join $organizations ", "]
+
+set form_elements {
+    person_ids:text(hidden),optional
+    organization_ids:text(hidden),optional
+    return_url:text(hidden)
+}
+
+
+if { $person_count == 0 } {
+    lappend form_elements "people:text(hidden),optional"
+} elseif { $person_count == 1 } {
+    lappend form_elements [list people:text(inform),optional [list label [_ contacts.Person]]]
+} else {
+    lappend form_elements [list people:text(inform),optional [list label [_ contacts.People]]]
+}
+
+if { $organization_count == 0 } {
+    lappend form_elements "organizations:text(hidden),optional"
+} elseif { $organization_count == 1 } {
+    lappend form_elements [list organizations:text(inform),optional [list label [_ contacts.Organization]]]
+} else {
+    lappend form_elements [list organizations:text(inform),optional [list label [_ contacts.Organizations]]]
+}
+
+if { $person_count > 0 && $organization_count > 0 } {
+    set object_type "party"
+} elseif { $person_count > 0 } {
+    set object_type "person"
+} elseif { $organization_count > 0 } {
+    set object_type "organization"
+}
+
+
+if { [exists_and_not_null attribute_id] } {
+    ams::attribute::get -attribute_id $attribute_id -array attr
+    lappend form_elements [list attribute_id:integer(hidden)]
+    lappend form_elements [ams::widget \
+                               -widget $attr(widget) \
+                               -request "ad_form_widget" \
+                               -attribute_id $attr(attribute_id) \
+                               -attribute_name $attr(attribute_name) \
+                               -pretty_name $attr(pretty_name) \
+                               -form_name "bulk_update" \
+                               -optional_p "1"]
+    set edit_buttons [list [list "[_ contacts.Bulk_Update_these_Contacts]" update]]
+    lappend form_elements 
+} else {
+
+set attribute_options [db_list_of_lists get_attributes "
+        select pretty_name,
+               attribute_id
+          from ams_attributes
+         where object_type in ([ams::object_parents -sql -object_type $object_type])
+           and widget in (select widget from ams_widgets where value_method in ( 'ams_value__time', 'ams_value__options'))
+         order by upper(pretty_name)
+"]
+set attribute_options [concat [list [list "" ""]] $attribute_options]
+lappend form_elements [list attribute_id:integer(select) [list label [_ contacts.Attribute]] [list options $attribute_options]]
+set edit_buttons [list [list "[_ contacts.Next]" next]]
+
+}
+
+
+ad_form -action bulk-update \
+    -name bulk_update \
+    -cancel_label "[_ contacts.Cancel]" \
+    -cancel_url $return_url \
+    -edit_buttons $edit_buttons \
+    -form $form_elements \
+    -on_request {
+    } -on_submit {
+        if { [template::form get_button bulk_update] == "update" } {
+            db_transaction {
+            ams::attribute::get -attribute_id $attribute_id -array attr
+            set value_id [ams::widget \
+                              -widget $attr(widget) \
+                              -request "form_save_value" \
+                              -attribute_id $attr(attribute_id) \
+                              -attribute_name $attr(attribute_name) \
+                              -pretty_name $attr(pretty_name) \
+                              -form_name "bulk_update" \
+                              -optional_p "1"]
+            set party_ids [concat $organization_ids $person_ids]
+        
+            foreach party_id $party_ids {
+                set old_revision_id [contact::live_revision -party_id $party_id]
+                set new_revision_id [contact::revision::new -party_id $party_id]
+                if { [exists_and_not_null old_revision_id] } {
+                    ams::object_copy -from $old_revision_id -to $new_revision_id
+                }
+                ams::attribute::value_save -object_id $new_revision_id -attribute_id $attribute_id -value_id $value_id
+            }
+            }
+        }
+    } -after_submit {
+        if { [template::form get_button bulk_update] == "update" } {
+	    ad_returnredirect -message [_ contacts.lt_nice_user_message] $return_url
+            ad_script_abort
+        }
+    }
+
+

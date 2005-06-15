@@ -41,10 +41,15 @@ append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -b
 set bulk_actions [list \
 		  "[_ contacts.Add_to_Group]" "group-parties-add" "[_ contacts.Add_to_group]" \
 		  "[_ contacts.Remove_From_Group]" "group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]" \
-		  "[_ contacts.Delete]" "delete" "[_ contacts.lt_Delete_the_selected_C]" \
 		  "[_ contacts.Mail_Merge]" "message" "[_ contacts.lt_E-mail_or_Mail_the_se]" \
 		  ]
-
+set package_id [ad_conn package_id]
+if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
+    lappend bulk_actions "[_ contacts.Bulk_Update]" "bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
+}
+if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
+    lappend bulk_actions "[_ contacts.Delete]" "delete" "[_ contacts.lt_Delete_the_selected_C]"
+}
 template::list::create \
     -html {width 100%} \
     -name "contacts" \
