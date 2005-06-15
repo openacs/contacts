@@ -1,21 +1,48 @@
-ad_page_contract {
-    List and manage contacts
-} {
-    {orderby "first_names,asc"}
-    {format "normal"}
-    {search_id:integer ""}
-    {query ""}
-    {page:optional}
-    {page_size:integer ""}
+set required_param_list [list ]
+set optional_param_list [list rel_type page]
+set default_param_list [list orderby format query_id query page_size tasks_interval package_id search_id]
+set optional_unset_list [list ]
+
+set  _orderby "first_names,asc"
+set  _format "normal"
+set  _query_id ""
+set  _query ""
+set  _search_id ""
+set  _page_size "25"
+set  _tasks_interval "7"
+set  _package_id ""
+
+foreach required_param $required_param_list {
+    if {![info exists $required_param]} {
+	return -code error "$required_param is a required parameter."
+    }
 }
+
+foreach optional_param $optional_param_list {
+    if {![info exists $optional_param]} {
+	set $optional_param {}
+    }
+}
+
+
+foreach default_param $default_param_list {
+    if {![info exists $default_param]} {
+	set $default_param [set _${default_param}]
+    }
+}
+
+
+
+    set package_id [apm_package_id_from_key contacts]
+    set base_url "[site_node::get_url_from_object_id -object_id $package_id]"
 
 
 if { $orderby == "first_names,asc" } {
     set name_order 0
-    set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base . -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a>"
+    set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a>"
 } else {
     set name_order 1
-    set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base . -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name]"
+    set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name]"
 }
 
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
@@ -29,26 +56,26 @@ foreach page_s $valid_page_sizes {
     if { $page_size == $page_s } {
         lappend page_size_list $page_s
     } else {
-        lappend page_size_list "<a href=\"[export_vars -base . -url {format search_id query page orderby {page_size $page_s}}]\">$page_s</a>"
+        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby {page_size $page_s}}]\">$page_s</a>"
     }
 }
 append name_label [join $page_size_list " | "]
 
 
-append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base . -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
+append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
 
 
 set bulk_actions [list \
-		  "[_ contacts.Add_to_Group]" "group-parties-add" "[_ contacts.Add_to_group]" \
-		  "[_ contacts.Remove_From_Group]" "group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]" \
-		  "[_ contacts.Mail_Merge]" "message" "[_ contacts.lt_E-mail_or_Mail_the_se]" \
+		  "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]" \
+		  "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]" \
+		  "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]" \
 		  ]
-set package_id [ad_conn package_id]
+
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
-    lappend bulk_actions "[_ contacts.Bulk_Update]" "bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
+    lappend bulk_actions "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }
 if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
-    lappend bulk_actions "[_ contacts.Delete]" "delete" "[_ contacts.lt_Delete_the_selected_C]"
+    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
 }
 template::list::create \
     -html {width 100%} \
@@ -69,7 +96,7 @@ template::list::create \
         contact {
 	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
             display_template {
-		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
+		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
                 <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
 	    }
         }
