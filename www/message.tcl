@@ -11,6 +11,10 @@ ad_page_contract {
     {message_type ""}
     {message:optional}
     {return_url "./"}
+    {object_id:integer,multiple,optional}
+    {file_ids ""}
+    {subject ""}
+    {content ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { [lsearch [list email letter label] $message_type] < 0 } {
@@ -43,8 +47,27 @@ foreach party_id $party_ids {
 }
 set recipients [join $recipients ", "]
 
+if {[exists_and_not_null object_id]} {
+    foreach object $object_id {
+	if {[fs::folder_p -object_id $object]} {
+	    db_foreach files "select r.revision_id
+	    from cr_revisions r, cr_items i
+	    where r.item_id = i.item_id and i.parent_id = :object" {
+		lappend file_list $revision_id
+	    }
+	} else {
+	    lappend file_list $object
+	}
+    }
+}
+
+if {[exists_and_not_null file_list]} {
+    set file_ids [join $file_list ","]
+}
+
 set form_elements {
     message_id:key
+    file_ids:text(hidden)
     party_ids:text(hidden)
     return_url:text(hidden)
     {to:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
