@@ -227,7 +227,7 @@ ad_form -extend -name party_ae \
 	} else {
 	    
 	    # Initialize Party Entry for organization
-	    set party_id [organizations::new -organization_id $party_id -name $name]
+	    set party_id [organization::new -organization_id $party_id -name $name]
 
 	    foreach group_id $group_ids {
 		if {![empty_string_p $group_id]} {
