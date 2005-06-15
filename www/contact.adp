@@ -30,6 +30,7 @@
 	      <if @rels.attribute@ not nil>
 		<dt class="attribute-name">@rels.attribute@:</dt>
 		<dd class="attribute-value">@rels.value;noquote@</dd>
+	      </if>
 	</dl>
     </if>
   </group>

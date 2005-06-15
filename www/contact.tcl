@@ -95,7 +95,6 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
 
     set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
     set dotlrn_club_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "dotlrn_club"] 0]
-
     if {$project_id > 0} {
 	set package_id [acs_object::get_element -object_id $project_id -element package_id]
 	set base_url [apm_package_url_from_id $package_id]
@@ -113,7 +112,8 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
 	set dotlrn_club_enabled_p 0
     }
 } else {
-
+    set dotlrn_club_enabled_p 0
+    set projects_enabled_p 0
 }
 
 
