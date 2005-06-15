@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d1" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--select_one--">--select one--</msg>
@@ -12,6 +12,7 @@
   <msg key="Add_Comment">Add Comment</msg>
   <msg key="Add_Condition">Add Condition</msg>
   <msg key="Add_Group">Add Group</msg>
+  <msg key="Add_new_in_Group">Add new %object_type% in Group(s)</msg>
   <msg key="Add_Organization">Add Organization</msg>
   <msg key="Add_Person">Add Person</msg>
   <msg key="Add_Search">Add Search</msg>
@@ -118,10 +119,9 @@
   <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
   <msg key="lt_--_Recent_Searches_--">-- Recent Searches --</msg>
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
+  <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% in Selected Group(s)</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
-  <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% in Selected Group(s)</msg>
-  <msg key="Add_new_in_Group">Add new %object_type% in Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
@@ -357,6 +357,7 @@
   <msg key="Upload_More">Upload More</msg>
   <msg key="View_all_roles">View all roles</msg>
   <msg key="View_next">View next</msg>
+  <msg key="Visit_Club">Visit Club</msg>
   <msg key="which_match">which match</msg>
   <msg key="Widget">Widget</msg>
   <msg key="your_signatures">your signatures</msg>

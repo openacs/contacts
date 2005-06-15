@@ -35,6 +35,8 @@ if { $party_is_contact_p } {
                relationships { set file "contact-rels" }
                comments      { set file "comments" }
                message       { set file "message" }
+	       letter        { set file "letter" }
+	       email         { set file "email" }
                default       { set file "contact" }
            }
            set form_supplied_party_id [ns_queryget party_id] 
