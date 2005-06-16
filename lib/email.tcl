@@ -50,7 +50,7 @@ ad_form -action message \
     -name email \
     -cancel_label "[_ contacts.Cancel]" \
     -cancel_url $return_url \
-    -edit_buttons {{"Send" send} {"Preview" preview}} \
+    -edit_buttons {{"Send" send}} \
     -form $form_elements \
     -on_request {
     } -new_request {
@@ -91,7 +91,6 @@ ad_form -action message \
 	}
 
 	foreach party_id $party_ids {
-	    set party_id 490
 	    set name [contact::name -party_id $party_id]
 	    set first_names [lindex $name 0]
 	    set last_name [lindex $name 1]
