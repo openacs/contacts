@@ -7,6 +7,25 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::title.select_title">
+  <querytext>
+    select title
+      from contact_searches
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::party_id_in_sub_search_clause.select_party_ids">
+  <querytext>
+    select parties.party_id
+      from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
+           group_distinct_member_map
+     where parties.party_id = group_distinct_member_map.member_id
+       and group_distinct_member_map.group_id = '-2'
+    [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::results_count_not_cached.select_results_count">
   <querytext>
     select count(*)

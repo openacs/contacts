@@ -7,11 +7,17 @@ ad_page_contract {
 } {
     {search_id:integer,optional}
     {type ""}
+    {old_type ""}
     {var1 ""}
     {var2 ""}
     {var3 ""}
     {var4 ""}
     {var5 ""}
+    {old_var1 ""}
+    {old_var2 ""}
+    {old_var3 ""}
+    {old_var4 ""}
+    {old_var5 ""}
     {save ""}
     {add ""}
     {next ""}
@@ -61,8 +67,15 @@ if { [exists_and_not_null add] } {
     set action "add"
 } else {
     set action "next"
+    
 }
-
+if { [exists_and_not_null save] || $action == "add" } {
+    set var_num 1
+    while { $var_num <= 5 } {
+        set "var${var_num}" [set "old_var${var_num}"]
+        incr var_num
+    }
+}
 
 set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
 set object_type_pretty_name(person)       [_ contacts.People]
@@ -347,6 +360,8 @@ switch $type {
     }
     contact {
         set contact_options [list \
+                                 [list "[_ contacts.in_the_search] ->" "in_search"] \
+                                 [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
                                  [list "[_ contacts.lt_updated_in_the_last_-]" "update"] \
                                  [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
                                  [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
@@ -367,6 +382,21 @@ switch $type {
         if { [exists_and_not_null var1] } {
             if { $var1 == "login" || $var1 == "not_login" } {
                 set action "add"
+            } elseif { [lsearch [list in_search not_in_search] $var1] >= 0 } {
+                set user_id [ad_conn user_id]
+                set search_options [db_list_of_lists get_my_searches {
+    select title,
+           search_id
+      from contact_searches
+     where owner_id = :user_id
+       and title is not null
+       and not deleted_p
+     order by lower(title)
+                }]
+                append form_elements {
+                    {var2:text(select) {label {}} {options $search_options}}
+                }
+                set add_p 1
             } else {
                 set interval_options {
                     {days days}
@@ -429,7 +459,15 @@ if { $search_exists_p } {
         {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {search_id}]">$results_count</a>}}}
     }
 }
+
+set var_num 1
+while { $var_num <= 5 } {
+    set "old_var${var_num}" [set "var${var_num}"]
+    incr var_num
+}
+set old_type $type
 ad_form -name "advanced_search" -method "GET" -form $form_elements \
+    -export [list old_var1 old_var2 old_var3 old_var4 old_var5 old_type] \
     -on_request {
     } -edit_request {
     } -on_refresh {
@@ -455,8 +493,11 @@ ad_form -name "advanced_search" -method "GET" -form $form_elements \
         }
     } -after_submit {
         if { $action == "add" } {
-#            rp_internal_redirect search
-            ad_returnredirect [export_vars -base "search" -url {search_id object_type all_or_any}]
+            set export_list [list search_id]
+            if { ![contact::search::exists_p -search_id $search_id] } {
+                lappend export_list object_type all_or_any
+            }
+            ad_returnredirect [export_vars -base "search" -url [list $export_list]]
             ad_script_abort
         }
     }

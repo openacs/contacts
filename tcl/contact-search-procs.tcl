@@ -38,6 +38,13 @@ ad_proc -public contact::search::new {
     return [package_instantiate_object -var_list $var_list contact_search]
 }
 
+ad_proc -public contact::search::title {
+    {-search_id ""}
+} {
+} {
+    return [db_string select_title {} -default {}]
+}
+
 ad_proc -public contact::search::update {
     {-search_id ""}
     {-title ""}
@@ -116,7 +123,31 @@ ad_proc -public contact::search::results_count_not_cached {
     return [db_string select_results_count {}]
 }
 
-
+ad_proc -private contact::party_id_in_sub_search_clause {
+    {-search_id}
+    {-party_id "party_id"}
+    {-not:boolean}
+} {
+} {
+    set query "
+    select parties.party_id
+      from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
+           group_distinct_member_map
+     where parties.party_id = group_distinct_member_map.member_id
+       and group_distinct_member_map.group_id = '-2'
+    [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
+    "
+    if { [exists_and_not_null query] } {
+        set result ${party_id}
+        if { $not_p } {
+            append result " not"
+        }
+        append result " in ( $query )"
+    } else {
+        set result ""
+    } 
+    return $result
+}
 
 
 ad_proc -public contact::search_clause {
@@ -460,6 +491,20 @@ ad_proc -public contact::search::translate {
             set operand [lindex $var_list 0]
             set interval "[lindex $var_list 1] [lindex $var_list 2]"
             switch $operand {
+                in_search {
+                    set search_id [lindex $var_list 2]
+                    set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
+                    set output_pretty "[_ contacts.lt_Contact_in_the_search_search_link]"
+                    ns_log notice "contact::party_id_in_sub_search_clause -search_id $search_id"
+                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id]
+                }
+                not_in_search {
+                    set search_id [lindex $var_list 2]
+                    set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
+                    set output_pretty "[_ contacts.lt_Contact_not_in_the_search_search_link]"
+                    ns_log notice "contact::party_id_in_sub_search_clause -search_id $search_id"
+                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id -not]
+                }
                 update {
                     set output_pretty "[_ contacts.lt_Contact_updated_in_th]"
                     set output_code   "CASE WHEN ( select creation_date from acs_objects where object_id = $revision_id ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
