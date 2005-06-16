@@ -16,7 +16,7 @@ ad_page_contract {
     }
 }
 
-ams::object_delete -object_id $rel_id
+# ams::object_delete -object_id $rel_id
 db_1row delete_rel {}
 
 if { ![exists_and_not_null return_url] } {
