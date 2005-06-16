@@ -43,8 +43,16 @@ set context [list $title]
 
 set recipients [list]
 foreach party_id $party_ids {
-    lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
+    
+    # Check if the party has a valid e-mail address
+    if {![empty_string_p [cc_email_from_party $party_id]]} {
+	lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
+	lappend parties_new $party_id
+    }
 }
+
+set party_ids $parties_new
+
 set recipients [join $recipients ", "]
 
 if {[exists_and_not_null object_id]} {
