@@ -239,7 +239,7 @@ ad_form -extend -name party_ae \
 		}
 	    }
 
-	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $party_id
+	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
 	}
 	
 	# Save the contact information
