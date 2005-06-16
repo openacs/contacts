@@ -1,12 +1,13 @@
 set required_param_list [list ]
 set optional_param_list [list rel_type page]
-set default_param_list [list orderby format query_id query page_size tasks_interval package_id search_id]
+set default_param_list [list orderby format query_id query page_size tasks_interval package_id search_id group_id]
 set optional_unset_list [list ]
 
 set  _orderby "first_names,asc"
 set  _format "normal"
 set  _query_id ""
 set  _query ""
+set  _group_id ""
 set  _search_id ""
 set  _page_size "25"
 set  _tasks_interval "7"
@@ -31,6 +32,20 @@ foreach default_param $default_param_list {
     }
 }
 
+set group_by_group_id ""
+
+if {![exists_and_not_null group_id]} {
+
+    set where_group_id " = -2"
+
+} elseif {[llength $group_id] > 1} {
+
+    set where_group_id " IN ('[join $group_id "','"]')"
+    set group_by_group_id "group by  parties.party_id , cr_revisions.revision_id, parties.email"
+} else {
+
+    set where_group_id " = :group_id"
+} 
 
 
     set package_id [apm_package_id_from_key contacts]
