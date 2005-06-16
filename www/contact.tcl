@@ -57,7 +57,11 @@ foreach form $ams_forms {
         }
     }
 }
-
+set append_list [list]
+callback contact::append_attribute -multirow_name append_list -name [contact::name -party_id $party_id]
+foreach append $append_list {
+    multirow append attributes [lindex $append 0] [lindex $append 1] [lindex $append 2]
+}
 
 set package_url [ad_conn package_url]
 
@@ -95,7 +99,7 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
 
     set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
     set dotlrn_club_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "dotlrn_club"] 0]
-    if {$project_id > 0} {
+    if {$project_id > 0 && $dotlrn_club_id <1} {
 	set package_id [acs_object::get_element -object_id $project_id -element package_id]
 	set base_url [apm_package_url_from_id $package_id]
 	set project_url [export_vars -base $base_url {{project_item_id $project_id}}]
@@ -108,6 +112,7 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
     if {$dotlrn_club_id > 0} {
 	set club_url [dotlrn_community::get_community_url $dotlrn_club_id]
 	set dotlrn_club_enabled_p 1
+
     } else {
 	set dotlrn_club_enabled_p 0
     }

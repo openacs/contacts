@@ -64,8 +64,10 @@
   <msg key="country_is_-">country is -&gt;</msg>
   <msg key="country_is_not_-">country is not -&gt;</msg>
   <msg key="Create">Create</msg>
+  <msg key="create_a_message">Create a message</msg>
   <msg key="Create_a_role">Create a role</msg>
   <msg key="Create_a_Signature">Create a Signature</msg>
+  <msg key="create_email">Create Email</msg>
   <msg key="create_project">Create project</msg>
   <msg key="Create_role">Create role</msg>
   <msg key="Create_user">Create User</msg>
@@ -354,6 +356,7 @@
   <msg key="Update_filenames">Update filenames</msg>
   <msg key="Updated_By">Updated By</msg>
   <msg key="Updated_On">Updated On</msg>
+  <msg key="Upload_File">Upload File</msg>
   <msg key="Upload_More">Upload More</msg>
   <msg key="View_all_roles">View all roles</msg>
   <msg key="View_next">View next</msg>

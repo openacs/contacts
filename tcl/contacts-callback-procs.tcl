@@ -31,6 +31,12 @@ ad_proc -public -callback contact::person_new {
 } {
 }
 
+ad_proc -public -callback contact::append_attribute {
+    {-multirow_name:required}
+    {-name:required}
+} {
+}
+
 ad_proc -public -callback pm::project_new -impl contacts {
     {-package_id:required}
     {-project_id:required}
