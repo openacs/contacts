@@ -42,6 +42,7 @@ set user_id [ad_conn user_id]
 set context [list $title]
 
 set recipients [list]
+set parties_new [list]
 foreach party_id $party_ids {
     
     # Check if the party has a valid e-mail address
