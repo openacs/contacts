@@ -31,12 +31,11 @@
 		<dt class="attribute-name">@rels.attribute@:</dt>
 		<dd class="attribute-value">@rels.value;noquote@</dd>
 	      </if>
+	    </group>
+	  </group>
 	</dl>
+      </multiple>
     </if>
-  </group>
-  </group>
-  </multiple>
-  </if>
   </div>
   <div class="secondary">
     <include
