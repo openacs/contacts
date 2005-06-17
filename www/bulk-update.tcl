@@ -90,17 +90,13 @@ if { [exists_and_not_null attribute_id] } {
     lappend form_elements 
 } else {
 
-set attribute_options [db_list_of_lists get_attributes "
-        select pretty_name,
-               attribute_id
-          from ams_attributes
-         where object_type in ([ams::object_parents -sql -object_type $object_type])
-           and widget in (select widget from ams_widgets where value_method in ( 'ams_value__time', 'ams_value__options'))
-         order by upper(pretty_name)
-"]
-set attribute_options [concat [list [list "" ""]] $attribute_options]
-lappend form_elements [list attribute_id:integer(select) [list label [_ contacts.Attribute]] [list options $attribute_options]]
-set edit_buttons [list [list "[_ contacts.Next]" next]]
+    set attribute_options [db_list_of_lists get_attributes {}]
+    set attribute_options [ams::util::localize_and_sort_list_of_lists -list $attribute_options]
+
+    set attribute_label [_ contacts.Attribute]
+    set attribute_options [concat [list [list "" ""]] $attribute_options]
+    lappend form_elements {attribute_id:integer(select) {label $attribute_label} {options $attribute_options}}
+    set edit_buttons [list [list "[_ contacts.Next]" next]]
 
 }
 
