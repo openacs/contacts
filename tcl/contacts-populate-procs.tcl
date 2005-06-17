@@ -9,6 +9,11 @@ ad_library {
 
 namespace eval contacts::populate {}
 
+ad_proc -private -callback contacts::populate::organization::customer_attributes {
+    {-list_id:required}
+} {
+}
+
 ad_proc -public contacts::populate::crm {
     {-package_id ""}
 } {
@@ -1315,6 +1320,8 @@ ad_proc -public contacts::populate::crm {
 	-sort_order "40" \
 	-required_p "f" \
 	-section_heading ""
+
+    callback contacts::populate::organization::customer_attributes -list_id $list_id
 
     # Person - Customer
 
