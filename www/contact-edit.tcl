@@ -52,7 +52,22 @@ foreach form $ams_forms {
 ad_form -name party_ae \
     -mode "edit" \
     -form $form_elements \
-    -has_edit "1" \
+    -has_edit "1"
+
+foreach group_id $groups_belonging_to {
+    set element_name "category_ids$group_id"
+    if {$group_id < 0} {
+	set element_name "category_ids[expr - $group_id]"
+    }
+
+    category::ad_form::add_widgets \
+	-container_object_id $group_id \
+	-categorized_object_id $party_id \
+	-form_name party_ae \
+	-element_name $element_name
+}
+
+ad_form -extend -name party_ae \
     -on_request {
 
 	if { $object_type == "person" }	{
@@ -119,6 +134,21 @@ ad_form -name party_ae \
                 -object_id $revision_id
         }
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was updated"
+
+	set cat_ids [list]
+	foreach group_id $groups_belonging_to {
+	    set element_name "category_ids$group_id"
+	    if {$group_id < 0} {
+		set element_name "category_ids[expr - $group_id]"
+	    }
+
+	    set cat_ids [concat $cat_ids \
+			     [category::ad_form::get_categories \
+				  -container_object_id $group_id \
+				  -element_name $element_name]]
+	}
+
+	category::map_object -remove_old -object_id $party_id $cat_ids
 
     } -after_submit {
         ad_returnredirect [contact::url -party_id $party_id]
