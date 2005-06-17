@@ -35,13 +35,14 @@ set peeraddr [ad_conn peeraddr]
 
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
-
 set default_group_id [contacts::default_group -package_id $package_id]
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
 if {[lsearch $group_ids $default_group_id] == -1} {
     lappend group_ids $default_group_id
 }
+
+lappend form_elements {group_ids:text(hidden)}
 
 # Save Group Information
 if {[lsearch $group_ids $application_group_id] == -1} {
@@ -54,7 +55,7 @@ ad_form -name party_ae \
     -mode "edit" \
     -cancel_label "[_ contacts.Cancel]" \
     -cancel_url [export_vars -base contact -url {party_id}] \
-    -edit_buttons [list [list "[_ acs-kernel.common_Save]" save] [list "[_ contacts.Save_and_Add_Another]" save_add_another]] \
+    -edit_buttons [list [list "[_ acs-kernel.common_Save]" save] ]\
     -form $form_elements
 
 foreach group $group_list {
@@ -267,11 +268,12 @@ ad_form -extend -name party_ae \
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {
-        if { [exists_and_not_null formbutton\:save_add_another] } {
-            ad_returnredirect [export_vars -base "contact-add" -url {object_type group_id}]
-        } else {
-            ad_returnredirect [export_vars -base "../" -url {{query_id $group_id}}] 
-        }
+	#the formbutton does not work. No clue how to fix it.
+#        if { [exists_and_not_null formbutton\:save_add_another] } {
+#            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]
+#        } else {
+            ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
+#        }
 	ad_script_abort
     }
 
