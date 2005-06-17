@@ -7,6 +7,7 @@ ad_page_contract {
 
 } {
     {party_id:integer,notnull}
+    {orderby ""}
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
@@ -18,6 +19,7 @@ ad_page_contract {
 set object_type [contact::type -party_id $party_id]
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
+set pm_package_id ""
 
 # I don't think it is wise to rely on the "title" attribute to be
 # displayed by the master template. Sadly there is no quick way to do
@@ -117,7 +119,8 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
     if {$dotlrn_club_id > 0} {
 	set club_url [dotlrn_community::get_community_url $dotlrn_club_id]
 	set dotlrn_club_enabled_p 1
-
+	set pm_package_id [dotlrn_community::get_package_id_from_package_key -package_key "project-manager" -community_id $dotlrn_club_id]
+	set base_url [apm_package_url_from_id $pm_package_id]
     } else {
 	set dotlrn_club_enabled_p 0
     }

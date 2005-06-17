@@ -58,6 +58,9 @@
     <if @dotlrn_club_enabled_p@>
       <a href="@club_url@">#contacts.Visit_Club#</a>
       </if>
+    <if @pm_package_id@>
+            <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@    elements="customer_name  earliest_finish_date latest_finish_date actual_hours_completed category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@base_url@">
+</if>
     <if @projects_enabled_p@>
     <if @project_url@ ne "">
       <br />
