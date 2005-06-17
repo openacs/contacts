@@ -26,6 +26,7 @@ if { [exists_and_not_null party_id] } {
 
 set title "[_ contacts.Add_to_Group]"
 set user_id [ad_conn user_id]
+set peeraddr [ad_conn peeraddr]
 set context [list $title]
 set package_id [ad_conn package_id]
 set recipients [list]
@@ -64,7 +65,7 @@ ad_form -action group-parties-add \
 	db_transaction {
             foreach group_id $group_ids {
                 foreach party_id $party_ids {
-                    # relation_add verifies that they aren't already in the group
+
                     switch [contact::type -party_id $party_id] {
                         person {
                             set rel_type "membership_rel"
@@ -73,7 +74,24 @@ ad_form -action group-parties-add \
                             set rel_type "organization_rel"
                         }
                     }
-                    relation_add -member_state "approved" $rel_type $group_id $party_id
+		    
+		    # relation-add does not work as there is no
+		    # special procedure for organizations at
+		    # the moment.
+		    set existing_rel_id [db_string rel_exists { 
+			select rel_id
+			from   acs_rels 
+			where  rel_type = :rel_type 
+			and    object_id_one = :group_id
+			and    object_id_two = :party_id
+		    } -default {}]
+		    
+		    if { [empty_string_p $existing_rel_id] } {
+		    
+			set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,:rel_type,:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
+			db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
+		    }
+
                 }
             }
 	}
