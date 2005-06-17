@@ -21,7 +21,7 @@ set link_list [list]
 lappend link_list "${prefix}"
 lappend link_list "[_ contacts.Contacts]"
 
-if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] && !${tasks_enabled_p} } {
+if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] || !${tasks_enabled_p} } {
     lappend link_list "${prefix}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 
