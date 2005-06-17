@@ -47,7 +47,7 @@ if { [llength $group_options] == "0" } {
 }
 
 append form_elements {
-    {group_ids:text(checkbox),multiple {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
+    {group_ids:text(checkbox),multiple {label "[_ contacts.Remove_from_Groups]"} {options $group_options}}
 }
 set edit_buttons [list [list "[_ contacts.lt_Remove_from_Selected_]" create]]
 
