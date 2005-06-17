@@ -19,12 +19,17 @@ set object_type [contact::type -party_id $party_id]
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
 
-if { $object_type == "person" } {
-    set hidden_attributes [list first_names last_name]
-} elseif { $object_type == "organization" } {
-    set hidden_attributes [list name]
-}
-
+# I don't think it is wise to rely on the "title" attribute to be
+# displayed by the master template. Sadly there is no quick way to do
+# this, so maybe if you still want to rely on this, you can make a
+# parameter out of it?
+set hidden_attributes [list]
+#if { $object_type == "person" } {
+#    set hidden_attributes [list first_names last_name]
+#} elseif { $object_type == "organization" } {
+#    set hidden_attributes [list name]
+#}
+#
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 if { [lsearch $groups_belonging_to -2] < 0 } {
