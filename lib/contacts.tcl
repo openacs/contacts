@@ -1,55 +1,50 @@
-set required_param_list [list ]
-set optional_param_list [list rel_type page]
-set default_param_list [list orderby format query_id query page_size tasks_interval package_id search_id group_id]
-set optional_unset_list [list ]
+set required_param_list [list]
+set optional_param_list [list]
+set default_param_list  [list orderby format query page page_size package_id search_id group_id ]
+set optional_unset_list [list]
 
-set  _orderby "first_names,asc"
-set  _format "normal"
-set  _query_id ""
-set  _query ""
-set  _group_id ""
-set  _search_id ""
-set  _page_size "25"
-set  _tasks_interval "7"
-set  _package_id ""
+# default values for default params
+set _orderby "first_names,asc"
+set _format "normal"
+set _page_size "25"
+set _tasks_interval "7"
 
 foreach required_param $required_param_list {
-    if {![info exists $required_param]} {
+    set $required_param [ns_queryget $default_param]
+    if { ![exists_and_not_null required_param] } {
 	return -code error "$required_param is a required parameter."
     }
 }
 
 foreach optional_param $optional_param_list {
-    if {![info exists $optional_param]} {
-	set $optional_param {}
+    set "${optional_param}_temp" [ns_queryget $optional_param]
+    if { [exists_and_not_null ${optional_param}_temp] } {
+	set $optional_param "${optional_param}_temp"
     }
 }
 
-
 foreach default_param $default_param_list {
-    if {![info exists $default_param]} {
+    set $default_param [ns_queryget $default_param]
+    if { ![exists_and_not_null ${default_param}] && [exists_and_not_null "_${default_param}"] } {
 	set $default_param [set _${default_param}]
     }
 }
 
 set group_by_group_id ""
-
-if {![exists_and_not_null group_id]} {
-
+if { ![exists_and_not_null group_id] } {
     set where_group_id " = -2"
-
-} elseif {[llength $group_id] > 1} {
-
-    set where_group_id " IN ('[join $group_id "','"]')"
-    set group_by_group_id "group by  parties.party_id , cr_revisions.revision_id, parties.email"
 } else {
+    if {[llength $group_id] > 1} {
+	set where_group_id " IN ('[join $group_id "','"]')"
+	set group_by_group_id "group by parties.party_id , cr_revisions.revision_id, parties.email"
+    } else {
+	set where_group_id " = :group_id"
+    }
+}
 
-    set where_group_id " = :group_id"
-} 
 
-
-    set package_id [apm_package_id_from_key contacts]
-    set base_url "[site_node::get_url_from_object_id -object_id $package_id]"
+set package_id [apm_package_id_from_key contacts]
+set base_url "[site_node::get_url_from_object_id -object_id $package_id]"
 
 
 if { $orderby == "first_names,asc" } {
