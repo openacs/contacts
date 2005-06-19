@@ -72,7 +72,7 @@ if { [exists_and_not_null object_type] } {
     append form_elements {
         {object_type:text(hidden) {value $object_type}}
         {object_type_pretty:text(inform) {label {[_ contacts.Search_for]}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
-        {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]<br>"}}
+        {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]"}}
     }
 } else {
     set object_type_options [list]
@@ -87,13 +87,17 @@ if { [exists_and_not_null object_type] } {
 
 
 if { $search_exists_p } {
-    set query_pretty "<ul>"
+    set conditions [list]
     db_foreach selectqueries {
         select type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
     } {
-        append query_pretty "<li>[contact::search::translate -type $query_type -var_list $query_var_list -to pretty -party_id "party_id" -revision_id "cr.revisions.revision_id"]</li>"
+        lappend conditions [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
     }
-    append query_pretty "</ul>"
+    if { [llength $conditions] > 0 } {
+	set query_pretty "<ul><li>[join $conditions {</li><li>}]</li></ul>"
+    } else {
+	set query_pretty ""
+    }
     lappend form_elements [list query:text(hidden),optional]
     lappend form_elements [list query_pretty:text(inform),optional [list label {}] [list value $query_pretty]]
 

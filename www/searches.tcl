@@ -26,10 +26,6 @@ template::list::create \
     -selected_format $format \
     -key search_id \
     -elements {
-        object_type {
-            label {Type}
-            display_col object_type
-        }
         title {
 	    label {#contacts.Title#}
 	    display_col title
@@ -98,15 +94,6 @@ db_multirow -extend {query search_url make_public_url delete_url copy_url result
     set copy_url        [export_vars -base search-action -url {search_id {owner_id $user_id} {action copy} return_url}]
 
     lappend search_ids $search_id
-    db_foreach selectqueries {
-        select type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
-    } {
-        if { [exists_and_not_null query] } {
-            append query "<br>"
-        }
-        append query "[contact::search::translate -type $query_type -var_list $query_var_list -to pretty -party_id "party_id" -revision_id "cr.revisions.revision_id"]</li>"
-    }
-
 }
 
 # Since contact::search::results_count can if not cached required two db queries
@@ -114,6 +101,7 @@ db_multirow -extend {query search_url make_public_url delete_url copy_url result
 # of db pools. So it has to be done here.
 template::multirow foreach searches {
     set results [contact::search::results_count -search_id $search_id]
+    set query   [contact::search_pretty -search_id $search_id]
 }
 
 list::write_output -name searches

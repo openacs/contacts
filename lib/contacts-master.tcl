@@ -8,12 +8,9 @@ set package_url [ad_conn package_url]
 
 if { [site_node::get_package_url -package_key "tasks"] != "" } {
     set prefix "/contacts/"
-} else {
-    set prefix "${package_url}"
-}
-if { [site_node::get_package_url -package_key "tasks"] != "" } {
     set tasks_enabled_p 1
 } else {
+    set prefix "${package_url}"
     set tasks_enabled_p 0
 }
 
@@ -21,7 +18,7 @@ set link_list [list]
 lappend link_list "${prefix}"
 lappend link_list "[_ contacts.Contacts]"
 
-if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] || !${tasks_enabled_p} } {
+if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] &&  !${tasks_enabled_p} } {
     lappend link_list "${prefix}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 

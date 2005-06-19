@@ -45,6 +45,16 @@ ad_proc -public contact::search::title {
     return [db_string select_title {} -default {}]
 }
 
+ad_proc -public contact::search::get {
+    -search_id:required
+    -array:required
+} {
+    Get the info on an ams_attribute
+} {
+    upvar 1 $array row
+    db_1row select_search_info {} -column_array row
+}
+
 ad_proc -public contact::search::update {
     {-search_id ""}
     {-title ""}
@@ -186,6 +196,63 @@ ad_proc -public contact::search_clause {
     return $result
 }
 
+
+ad_proc -public contact::search_pretty {
+    {-search_id}
+    {-format "text/html"}
+} {
+    Get the search in human readable format. Cached
+} {
+    return [util_memoize [list ::contact::search_pretty_not_cached -search_id $search_id -format $format]]
+}
+
+
+ad_proc -public contact::search_pretty_not_cached {
+    {-search_id}
+    {-format "text/html"}
+} {
+    Get the search in human readable format
+} {
+    set conditions [list]
+    db_foreach selectqueries {
+        select type, var_list from contact_search_conditions where search_id = :search_id
+    } {
+        lappend conditions [contacts::search::condition_type -type $type -request pretty -var_list $var_list]
+    }
+
+    if { [llength $conditions] > 0 } {
+
+	contact::search::get -search_id $search_id -array "search_info"
+
+	if { $search_info(object_type) == "person" } {
+	    set object_type [_ contacts.people]
+	} elseif { $search_info(object_type) == "organization" } {
+	    set object_type [_ contacts.organizations]
+	} else {
+	    set object_type [_ contacts.people_or_organizations]
+	}
+
+        set results "[_ contacts.Search_for_all_object_type_where]\n"
+
+	if { $search_info(all_or_any) == "all" } {
+	    append results [join $conditions "\n[_ contacts.and] "]
+	} else {
+	    append results [join $conditions "\n[_ contacts.or] "]
+	}
+
+	if { $format == "text/html" } { 
+	    set results [ad_enhanced_text_to_html $results]
+	} else {
+	    set results [ad_enhanced_text_to_plain_text $results]
+	}
+
+	return $results
+    } else {
+	return {}
+    }
+}
+
+
 ad_proc -public contact::search::query_clause {
     {-and:boolean}
     {-query ""}
@@ -309,7 +376,7 @@ ad_proc -public contact::search::where_clause_not_cached {
             lappend where_clauses "$party_id in ( select organization_id from organizations )"
         }
         db_foreach select_queries {} {
-            lappend where_clauses [contact::search::translate -type $type -var_list $var_list -to code -revision_id $revision_id -party_id $party_id]
+            lappend where_clauses [contacts::search::condition_type -type $type -request sql -var_list $var_list -revision_id $revision_id -party_id $party_id]
         }
     } else {
         set operator "and"
@@ -328,31 +395,4 @@ ad_proc -public contact::search::where_clause_not_cached {
     }
     return $result
 }
-
-
-ad_proc -public contact::search::translate {
-    {-type}
-    {-var_list}
-    {-to "code"}
-    {-party_id}
-    {-revision_id}
-} {
-    returns the group_id for which this group is a component, if none then it return null
-} {
-    set output_pretty [contacts::search::condition_type -type $type -request pretty -var_list $var_list -party_id $party_id -revision_id $revision_id]
-    set output_code   [contacts::search::condition_type -type $type -request sql -var_list $var_list -party_id $party_id -revision_id $revision_id]
-    if { ![exists_and_not_null output_pretty] || ![exists_and_not_null output_code] } {
-        if { [exists_and_not_null error_message] } {
-            error "[_ contacts.lt_The_query_type_var_li]"
-        } else {
-            error "[_ contacts.lt_The_query_type_var_li_1]"
-        }
-    } else {
-        switch $to {
-            code { return $output_code }
-            pretty { return $output_pretty }
-        }
-    }
-}
-
 

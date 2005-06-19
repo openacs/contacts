@@ -15,6 +15,14 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::get.select_search_info">
+  <querytext>
+    select *
+      from contact_searches
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::party_id_in_sub_search_clause.select_party_ids">
   <querytext>
     select parties.party_id
