@@ -122,11 +122,7 @@ select contact__name(party_id), party_id, revision_id
 if { [exists_and_not_null object_type] } {
 
     # QUERY TYPE
-    set type_options [list \
-                          [list "[_ contacts.Attribute_-]" "attribute"] \
-                          [list "[_ contacts.Contact_-]" "contact"] \
-                          [list "[_ contacts.Group_-]" "group"] \
-                         ]
+    set type_options [contacts::search::condition_types]
 
     append form_elements {
         {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
