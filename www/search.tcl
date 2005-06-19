@@ -7,17 +7,6 @@ ad_page_contract {
 } {
     {search_id:integer,optional}
     {type ""}
-    {old_type ""}
-    {var1 ""}
-    {var2 ""}
-    {var3 ""}
-    {var4 ""}
-    {var5 ""}
-    {old_var1 ""}
-    {old_var2 ""}
-    {old_var3 ""}
-    {old_var4 ""}
-    {old_var5 ""}
     {save ""}
     {add ""}
     {next ""}
@@ -63,20 +52,6 @@ if { [exists_and_not_null search_id] } {
     }
 }
 
-if { [exists_and_not_null add] } {
-    set action "add"
-} else {
-    set action "next"
-    
-}
-if { [exists_and_not_null save] || $action == "add" } {
-    set var_num 1
-    while { $var_num <= 5 } {
-        set "var${var_num}" [set "old_var${var_num}"]
-        incr var_num
-    }
-}
-
 set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
 set object_type_pretty_name(person)       [_ contacts.People]
 set object_type_pretty_name(organization) [_ contacts.Organizations]
@@ -91,6 +66,7 @@ set form_elements {
     {search_id:key}
     {owner_id:integer(hidden)}
 }
+
 if { [exists_and_not_null object_type] } {
     set object_type_pretty $object_type_pretty_name($object_type)
     append form_elements {
@@ -104,13 +80,12 @@ if { [exists_and_not_null object_type] } {
         lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
     }
     append form_elements {
-        {object_type:text(select) {label {#contacts.Search_for#}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
+        {object_type:text(select) {label {\#contacts.Search_for\#}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 
 
 
-# set query_pretty [list]
 if { $search_exists_p } {
     set query_pretty "<ul>"
     db_foreach selectqueries {
@@ -119,10 +94,9 @@ if { $search_exists_p } {
         append query_pretty "<li>[contact::search::translate -type $query_type -var_list $query_var_list -to pretty -party_id "party_id" -revision_id "cr.revisions.revision_id"]</li>"
     }
     append query_pretty "</ul>"
-    append form_elements {
-        {query:text(hidden),optional}
-        {query_pretty:text(inform),optional {label {}} {value $query_pretty}}
-    }
+    lappend form_elements [list query:text(hidden),optional]
+    lappend form_elements [list query_pretty:text(inform),optional [list label {}] [list value $query_pretty]]
+
     if { $sw_admin_p } {
 	set query_code "
 <pre>
@@ -132,7 +106,7 @@ select contact__name(party_id), party_id, revision_id
   from parties, cr_items, cr_revisions
  where party_id = cr_items.item_id
    and cr_items.latest_revision = cr_revisions.revision_id
-[contact::search::where_clause -and -search_id $search_id -party_id "party_id" -revision_id "cr.revisions.revision_id"]
+[contact::search_clause -and -search_id $search_id -party_id "party_id" -revision_id "cr.revisions.revision_id"]
 
 
 </pre>
@@ -150,302 +124,19 @@ if { [exists_and_not_null object_type] } {
                           [list "[_ contacts.Group_-]" "group"] \
                          ]
 
-#    [list "Tasks ->" "tasks"]
     append form_elements {
         {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
     }
 }
 
 
-# each type must specify when to save a query
-set add_p 0
+# get condition types widgets
+set form_elements [concat \
+                       $form_elements \
+                       [contacts::search::condition_type -type $type -request ad_form_widgets -form_name advanced_search -object_type $object_type] \
+                      ]
 
-switch $type {
-    attribute {
-
-
-        db_foreach get_attributes {
-            select pretty_name, attribute_id
-            from ams_attributes	
-            where object_type in ('organization','party','person','user') 
-            and ams_attribute_id is not null
-            order by upper (pretty_name) 
-        } {
-	    set pretty_name [lang::util::localize $pretty_name]
-	    lappend attribute_options [list "$pretty_name ->" $attribute_id]
-	}
-
-        append form_elements {
-            {var1:text(select),optional {label {}} {options $attribute_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-        }
-
-        if { [exists_and_not_null var1] } {
-            set attribute_id $var1
-            ams::attribute::get -attribute_id $attribute_id -array "attr_info"
-            set value_method [ams::widget -widget $attr_info(widget) -request "value_method"]
-
-            switch $value_method {
-                ams_value__options {
-                    set operand_options [list \
-                                             [list "[_ contacts.is_-]" "selected"] \
-                                             [list "[_ contacts.is_not_-]" "not_selected"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } else {
-                            set option_options [ams::widget_options -attribute_id $attribute_id]
-                            append form_elements {
-                                {var3:text(select) {label {}} {options $option_options}}
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-                ams_value__telecom_number {
-                    set operand_options [list \
-                                             [list "[_ contacts.area_code_is_-]" "area_code_equals"] \
-                                             [list "[_ contacts.area_code_is_not_-]" "not_area_code_equals"] \
-                                             [list "[_ contacts.country_code_is_-]" "country_code_equals"] \
-                                             [list "[_ contacts.lt_country_code_is_not_-]" "not_country_code_equals"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } else {
-                            append form_elements {
-                                {var3:integer(text) {label {}} {html {size 3 maxlength 3}}}
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-                ams_value__text {
-                    set operand_options [list \
-                                             [list "[_ contacts.contains_-]" "contains"] \
-                                             [list "[_ contacts.does_not_contain_-]" "not_contains"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } else {
-                            append form_elements {
-                                {var3:text(text) {label {}}}
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-                ams_value__postal_address {
-                    set operand_options [list \
-                                             [list "[_ contacts.country_is_-]" "country_is"] \
-                                             [list "[_ contacts.country_is_not_-]" "country_is_not"] \
-                                             [list "[_ contacts.stateprovince_is_-]" "state_is"] \
-                                             [list "[_ contacts.lt_stateprovince_is_not_]" "state_is_not"] \
-                                             [list "[_ contacts.lt_zippostal_starts_with]" "zip_is"] \
-                                             [list "[_ contacts.lt_zippostal_does_not_st]" "zip_is_not"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } elseif { $var2 == "state_is" || $var2 == "state_is_not" } {
-                            append form_elements {
-                                {var3:text(text) {label {}} {html {size 2 maxlength 2}}}
-                            }
-                        } elseif { $var2 == "country_is" || $var2 == "country_is_not" } {
-                            set country_options [template::util::address::country_options]
-                            append form_elements {
-                                {var3:text(select) {label {}} {options $country_options}}
-                            }
-                        } else {
-                            append form_elements {
-                                {var3:text(text) {label {}} {html {size 7 maxlength 7}}}
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-                ams_value__number {
-                    set operand_options [list \
-                                             [list "[_ contacts.is_-]" "is"] \
-                                             [list "[_ contacts.is_greater_than_-]" "greater_than"] \
-                                             [list "[_ contacts.is_less_than_-]" "less_than"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } else {
-                            append form_elements {
-                                {var3:integer(text) {label {}} {html {size 4 maxlength 20}}}
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-                ams_value__time {
-                    set operand_options [list \
-                                             [list "[_ contacts.is_less_than_-]" "less_than"] \
-                                             [list "[_ contacts.is_more_than_-]" "more_than"] \
-                                             [list "[_ contacts.is_after_-]" "after"] \
-                                             [list "[_ contacts.is_before_-]" "before"] \
-                                             [list "[_ contacts.is_set]" "set"] \
-                                             [list "[_ contacts.is_not_set]" "not_set"] \
-                                            ]
-                    append form_elements {
-                        {var2:text(select),optional {label {}} {options $operand_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-                    }
-                    if { [exists_and_not_null var2] } {
-                        if { $var2 == "exists" || $var2 == "not_exists" } {
-                            set action "add"
-                        } else {
-                            if { $var2 == "more_than" || $var2 == "less_than" } {
-                                set interval_options {
-                                    {years years}
-                                    {months months}
-                                    {days days}
-                                }
-                                append form_elements {
-                                    {var3:integer(text) {label {}} {html {size 2 maxlength 3}}}
-                                    {var4:text(select) {label {}} {options $interval_options} {after_html {ago}}}
-                                }
-                            } else {
-                                append form_elements {
-                                    {var3:date(date) {label {}}}
-                                }
-                            }
-                        }
-                        set add_p 1
-                    }
-
-                }
-            }
-
-
-        }
-    }
-    contact {
-        set contact_options [list \
-                                 [list "[_ contacts.in_the_search] ->" "in_search"] \
-                                 [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
-                                 [list "[_ contacts.lt_updated_in_the_last_-]" "update"] \
-                                 [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
-                                 [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
-                                 [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"] \
-                                 [list "[_ contacts.lt_created_in_the_last_-]" "created"] \
-                                 [list "[_ contacts.lt_not_created_in_the_la]" "not_created"] \
-                                ]
-        if { $object_type == "person" } {
-            lappend contact_options [list "[_ contacts.has_logged_in]" "login"]
-            lappend contact_options [list "[_ contacts.has_never_logged_in]" "not_login"]
-            lappend contact_options [list "[_ contacts.lt_has_logged_in_within_]" "login_time"]
-            lappend contact_options [list "[_ contacts.lt_has_not_logged_in_wit]" "not_login_time"]
-        }
-        append form_elements {
-            {var1:text(select) {label {}} {options $contact_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-        }
-
-        if { [exists_and_not_null var1] } {
-            if { $var1 == "login" || $var1 == "not_login" } {
-                set action "add"
-            } elseif { [lsearch [list in_search not_in_search] $var1] >= 0 } {
-                set user_id [ad_conn user_id]
-                set search_options [db_list_of_lists get_my_searches {
-    select title,
-           search_id
-      from contact_searches
-     where owner_id = :user_id
-       and title is not null
-       and not deleted_p
-     order by lower(title)
-                }]
-                append form_elements {
-                    {var2:text(select) {label {}} {options $search_options}}
-                }
-                set add_p 1
-            } else {
-                set interval_options {
-                    {days days}
-                    {months months}
-                    {years years}
-                }
-                append form_elements {
-                    {var2:integer(text) {label {}} {html {size 3 maxlength 4}}}
-                    {var3:text(select) {label {}} {options $interval_options}}
-                }
-            }
-            set add_p 1
-        }
-    }
-    group {
-        set operand_options [list \
-                                 [list "[_ contacts.contact_is_in_-]" "in"] \
-                                 [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
-                                ]
-
-        set group_options [contact::groups -expand "all" -privilege_required "read"]
-        set add_p 1
-        append form_elements {
-            {var1:text(select) {label {}} {options $operand_options}}
-            {var2:text(select) {label {}} {options $group_options}}
-        }
-
-    }
-    tasks {
-        set contact_options [list \
-                                 [list "" ""] \
-                                 [list "" ""] \
-                                 [list "" ""] \
-                                 [list "" ""] \
-                                 [list "" ""] \
-                                 [list "" ""] \
-                                ]
-    }
-}
-
-if { $add_p } {
-    append form_elements {
-        {add:text(submit) {label "[_ contacts.Add_Condition]"} {value "add"}}
-    }
-} else {
-    append form_elements {
-        {next:text(submit) {label "[_ contacts.Next]"} {value "next"}}
-    }
-}
+lappend form_elements  [list next:text(submit) [list label [_ acs-kernel.common_OK]] [list value "ok"]]
 
 if { $search_exists_p } {
     set results_count [contact::search::results_count -search_id $search_id]
@@ -460,14 +151,7 @@ if { $search_exists_p } {
     }
 }
 
-set var_num 1
-while { $var_num <= 5 } {
-    set "old_var${var_num}" [set "var${var_num}"]
-    incr var_num
-}
-set old_type $type
 ad_form -name "advanced_search" -method "GET" -form $form_elements \
-    -export [list old_var1 old_var2 old_var3 old_var4 old_var5 old_type] \
     -on_request {
     } -edit_request {
     } -on_refresh {
@@ -475,24 +159,15 @@ ad_form -name "advanced_search" -method "GET" -form $form_elements \
         if { [contact::search::exists_p -search_id $search_id] } {
             contact::search::update -search_id $search_id -title $title -owner_id $owner_id -all_or_any $all_or_any
         }
-        if { $action == "add" } {
+        set form_var_list [contacts::search::condition_type -type $type -request form_var_list -form_name advanced_search]
+        if { $form_var_list != "" } {
             if { [string is false [contact::search::exists_p -search_id $search_id]] } {
                 set search_id [contact::search::new -search_id $search_id -title $title -owner_id $owner_id -all_or_any $all_or_any -object_type $object_type]
             }
-            set var_list $var1
-            set vars [list var2 var3 var4 var5]
-            foreach var $vars {
-                if { [set $var] != "" } {
-                    if { [template::element::get_property advanced_search $var widget] == "date" } {
-                        set $var [join [template::util::date::get_property linear_date_no_time [set $var]] "-"]
-                    }
-                    lappend var_list [set $var]
-                }
-            }
-            contact::search::condition::new -search_id $search_id -type $type -var_list $var_list
+            contact::search::condition::new -search_id $search_id -type $type -var_list $form_var_list
         }
     } -after_submit {
-        if { $action == "add" } {
+        if { $form_var_list != "" } {
             set export_list [list search_id]
             if { ![contact::search::exists_p -search_id $search_id] } {
                 lappend export_list object_type all_or_any
@@ -501,4 +176,45 @@ ad_form -name "advanced_search" -method "GET" -form $form_elements \
             ad_script_abort
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
