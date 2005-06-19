@@ -56,12 +56,13 @@ if { [exists_and_not_null role_two] } {
     }
     if { $org_valid_p && $person_valid_p } {
         # we do nothing
+	set type_clause
     } else {
         if { $org_valid_p } {
-            set rel_type "organization_rel"
+            set type_clause "and parties.party_id in ( select organization_id from organizations )"
             set pretty_plural_list_name "[_ contacts.organizations]"
         } elseif { $person_valid_p } {
-            set rel_type "membership_rel"
+            set type_clause "and parties.party_id in ( select person_id from persons )"
             set pretty_plural_list_name "[_ contacts.people]"
         } else {
             error "[_ contacts.lt_neither_person_nor_or]"
@@ -164,20 +165,11 @@ if { [exists_and_not_null query] } {
 
 }
 
-set rel_options [list [list "[_ contacts.--select_one--]" ""]]
 
 set rel_options [db_list_of_lists get_rels {}]
+set rel_options [ams::util::localize_and_sort_list_of_lists -list $rel_options]
 
-set rel_options "{{-Select One-} {}} $rel_options"
-
-
-
-
-db_foreach get_rels {} {
-	set pretty_name [lang::util::localize $pretty_name]
-	lappend rel_options [list $pretty_name $role]
-    }
-
+set rel_options [concat [list [list "[_ contacts.--select_one--]" ""]] $rel_options]
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
     {role_two:text(select) {label "[_ contacts.Add]"} {options $rel_options}}

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+`<?xml version="1.0"?>
 <queryset>
 
 <fullquery name="get_valid_object_types">
@@ -55,6 +55,7 @@ select contact__name(parties.party_id),
   from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
  where parties.party_id = group_distinct_member_map.member_id
    and group_distinct_member_map.group_id = '-2'
+ $type_clause
  [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
  order by upper(contact__name(parties.party_id))
  limit 100
