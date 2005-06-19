@@ -5,12 +5,17 @@ ad_page_contract {
     @creation-date 2005-06-14
     @cvs-id $Id$
 } {
-    {party_id:integer,multiple,optional}
+    {party_id:integer,multiple ""}
     {person_ids ""}
     {organization_ids ""}
     {attribute_id ""}
     {return_url "./"}
 } -validate {
+    parties_submitted_p {
+	if { [llength $party_id] == 0 && [llength $person_ids] == 0 && [llength $organization_ids] == 0 } {
+	    ad_complain [_ contacts.lt_You_need_parties_to_bulk_update]
+	}
+    }
 }
 
 set title "[_ contacts.Bulk_Update]"
