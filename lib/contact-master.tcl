@@ -30,14 +30,8 @@ if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}"
     lappend link_list "[_ contacts.Summary_View]"
 
-    lappend link_list "${prefix}groups"
-    lappend link_list "[_ contacts.Groups]"
-
     lappend link_list "${prefix}relationships"
     lappend link_list "[_ contacts.Relationships]"
-
-    lappend link_list "${prefix}comments"
-    lappend link_list "[_ contacts.Comments]"
 
     lappend link_list "${prefix}files"
     lappend link_list "[_ contacts.Files]"
@@ -57,10 +51,6 @@ if { [ad_conn user_id] != 0} {
 #    lappend link_list "/contacts/contact-history"
 #    lappend link_list "History"
 
-
-
-
-
 # Convert the list to a multirow and add the selected_p attribute
 multirow create links label url selected_p
 
@@ -76,18 +66,9 @@ foreach {url label} $link_list {
 
     multirow append links $label [subst $url] $selected_p
 }
-
-
-
-
-
+ 
 if { [contact::type -party_id $party_id] == "person" } {
     set public_url [acs_community_member_url -user_id $party_id]
 }
-
-
-
-
-
 
 ad_return_template
