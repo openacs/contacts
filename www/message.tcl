@@ -14,7 +14,8 @@ ad_page_contract {
     {object_id:integer,multiple,optional}
     {file_ids ""}
     {subject ""}
-    {content ""}
+    {content:html ""}
+    {signature_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { [lsearch [list email letter label] $message_type] < 0 } {
@@ -35,7 +36,6 @@ if { [exists_and_not_null party_id] } {
 }
 
 set party_count [llength $party_ids]
-
 
 set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
@@ -94,23 +94,37 @@ if { [string is false [exists_and_not_null message_type]] } {
 set context [list $title]
 
 if { [string is false [exists_and_not_null message]] } {
+    set signature_list [db_list_of_lists signatures "select title,signature_id
+      from contact_signatures
+     where party_id = :user_id
+     order by default_p, upper(title), upper(signature)"]
     append form_elements {
-	{message:text(select) {label "[_ contacts.Message]"} {options {{{-- Create New Message --} new}}}}
-    }
-    set edit_buttons [list [list "[_ contacts.Next]" create]]
-
-    ad_form -action message \
-	-name message \
-	-cancel_label "[_ contacts.Cancel]" \
-	-cancel_url $return_url \
-	-edit_buttons $edit_buttons \
-	-form $form_elements \
-	-on_request {
-	} -new_request {
-	} -edit_request {
-	} -on_submit {
+	{message:text(select) 
+	    {label "[_ contacts.Message]"} 
+	    {options {{{-- Create New Message --} new}}}
 	}
+	{signature_id:text(select) 
+	    {label "[_ contacts.Signature]"}
+	    {options {$signature_list}}
+	}
+    }
+    
 }
+
+set edit_buttons [list [list "[_ contacts.Next]" create]]
+
+ad_form -action message \
+    -name message \
+    -cancel_label "[_ contacts.Cancel]" \
+    -cancel_url $return_url \
+    -edit_buttons $edit_buttons \
+    -form $form_elements \
+    -on_request {
+    } -new_request {
+    } -edit_request {
+    } -on_submit {
+    }
+
 
 
 if { [exists_and_not_null include_signature] } {
