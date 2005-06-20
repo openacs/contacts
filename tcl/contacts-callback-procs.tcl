@@ -37,6 +37,11 @@ ad_proc -public -callback contact::append_attribute {
 } {
 }
 
+ad_proc -public -callback contact::after_instantiate {
+    {-package_id:required}
+} {
+}
+
 ad_proc -public -callback pm::project_new -impl contacts {
     {-package_id:required}
     {-project_id:required}

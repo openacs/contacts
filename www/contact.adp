@@ -36,6 +36,13 @@
 	</dl>
       </multiple>
     </if>
+    <dl>
+      <dd class="attribute-value">
+	<if @employee_url@ ne "">
+	  <strong><a href="@employee_url@">Add new employee</a></strong>
+	</if>      
+      </dt>
+    </dl>
   </div>
   <div class="secondary">
     <include

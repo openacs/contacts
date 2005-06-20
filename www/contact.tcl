@@ -73,9 +73,19 @@ foreach append $append_list {
 set package_url [ad_conn package_url]
 
 multirow create rels relationship contact contact_url attribute value
+
+# Code for quickly adding an employee
+
+if {$object_type == "organization"} {
+    set employee_url [export_vars -base "/contacts/add/person" -url {{group_ids "-2"} {object_id_two "$party_id"} {rel_type "contact_rels_employment"}}]
+} else {
+    set employee_url ""
+}
+
 db_foreach get_relationships {} {
     set contact_url [contact::url -party_id $other_party_id]
     multirow append rels $role_singular $other_name $contact_url {} {}
+
     # NOT YET IMPLEMENTED - Checking to see if role_singular or role_plural is needed
 
     if { [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}] } {

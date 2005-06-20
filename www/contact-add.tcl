@@ -8,6 +8,8 @@ ad_page_contract {
 } {
     {object_type "person"}
     {group_ids ""}
+    {rel_type ""}
+    {object_id_two ""}
 } -validate {
     valid_type -requires {object_type} {
 	if { [lsearch [list organization person] $object_type] < 0 } {
@@ -35,6 +37,9 @@ set peeraddr [ad_conn peeraddr]
 
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
+lappend form_elements {rel_type:text(hidden)}
+lappend form_elements {object_id_two:text(hidden)}
+
 set default_group_id [contacts::default_group -package_id $package_id]
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
@@ -50,6 +55,7 @@ if {[lsearch $group_ids $application_group_id] == -1} {
 }
 
 set group_list [contact::groups -expand "all" -privilege_required "read"]
+
 
 ad_form -name party_ae \
     -mode "edit" \
@@ -79,6 +85,12 @@ foreach group $group_list {
     }
 }
 
+# Append relationship attributes
+
+if {[exists_and_not_null rel_type]} {
+    ad_form -extend -name party_ae -form [ams::ad_form::elements -package_key "contacts" -object_type $rel_type -list_name [ad_conn package_id]]
+}
+
 # Append the option to create a user who get's a welcome message send
 # Furthermore set the title.
 
@@ -97,7 +109,6 @@ if { $object_type == "person" } {
 }
 
 set context [list $title]
-
 
 callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
 
@@ -263,8 +274,33 @@ ad_form -extend -name party_ae \
 		callback contact::${object_type}_${group_array(group_name)}_new -package_id $package_id -contact_id $party_id
 	    }
 	}
+	
+	# Insert the relationship
+	if {[exists_and_not_null rel_type] && [exists_and_not_null object_id_two]} {
+	    set rel_id {}
+	    set context_id {}
+	    set creation_user [ad_conn user_id]
+	    set creation_ip [ad_conn peeraddr]
+	    set rel_id [db_exec_plsql create_rel "select acs_rel__new (
+                     :rel_id,
+                     :rel_type,
+                     :party_id,
+                     :object_id_two,
+                     :context_id,
+                     :creation_user,
+                     :creation_ip  
+                    )"]
 	    
-	    # Add the user to the
+	    if {[exists_and_not_null rel_type]} {
+		ams::ad_form::save -package_key "contacts" \
+		    -object_type $rel_type \
+		    -list_name [ad_conn package_id] \
+		    -form_name "party_ae" \
+		    -object_id $rel_id
+	    }
+	}
+
+	# Add the user to the
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {

@@ -84,9 +84,11 @@ set bulk_actions [list \
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
     lappend bulk_actions "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }
-if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
-    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
-}
+
+# Delete file is not there, taking out the code to display the delete button
+# if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
+#    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
+# }
 template::list::create \
     -html {width 100%} \
     -name "contacts" \
