@@ -35,7 +35,7 @@ append form_elements {
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
     }
-    {content:text(richtext),optional
+    {content:text(textarea),optional
 	{label "[_ contacts.Message]"}
 	{html {cols 55 rows 18}}
 	{help_text {remember that you can use <a href="message-help">mail merge substitutions</a>. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}}}
@@ -54,6 +54,11 @@ ad_form -action message \
     -form $form_elements \
     -on_request {
     } -new_request {
+ 	if {[exists_and_not_null signature_id]} {
+	    set signature "[db_string signature "select signature from contact_signatures where signature_id = :signature_id"]"
+	    set signature [ad_convert_to_html -- "$signature"]
+	    append content $signature
+	}
     } -edit_request {
     } -on_submit {
 	set from [contact::name -party_id [ad_conn user_id]]
