@@ -7,7 +7,7 @@
 </else>
 </if>
 <if @groups:rowcount@ gt 0>
-<h3 class="contact-title">#contacts.Groups#</h3>
+<h3 class="contact-title"><a href="./groups">#contacts.Groups#</a></h3>
 <ul>
 <multiple name="groups">
 <if @groups.sub_p@>(</if><else><li></else>
