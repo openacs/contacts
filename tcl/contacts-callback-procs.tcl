@@ -15,6 +15,7 @@ ad_proc -public -callback contact::contact_form {
     {-package_id:required}
     {-form:required}
     {-object_type:required}
+    {-party_id}
 } {
 }
 
