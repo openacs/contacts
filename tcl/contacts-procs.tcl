@@ -186,7 +186,7 @@ ad_proc -public contact::url {
 } {
     create a contact revision
 } {
-    return "[ad_conn package_url]$party_id/"
+    return "[apm_package_url_from_id [apm_package_id_from_key "contacts"]]$party_id/"
 }
 
 ad_proc -public contact::revision::new {
