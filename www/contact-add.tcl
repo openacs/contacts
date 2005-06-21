@@ -308,8 +308,12 @@ ad_form -extend -name party_ae \
 #        if { [exists_and_not_null formbutton\:save_add_another] } {
 #            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]
 #        } else {
+	if {[empty_string_p $object_id_two]} {
             ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
-#        }
+	} else {
+	    ad_returnredirect "/contacts/$object_id_two"
+	}
+	    #        }
 	ad_script_abort
     }
 
