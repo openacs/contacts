@@ -37,8 +37,8 @@ set peeraddr [ad_conn peeraddr]
 
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
-lappend form_elements {rel_type:text(hidden)}
-lappend form_elements {object_id_two:text(hidden)}
+lappend form_elements {rel_type:text(hidden),optional}
+lappend form_elements {object_id_two:text(hidden),optional}
 
 set default_group_id [contacts::default_group -package_id $package_id]
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
