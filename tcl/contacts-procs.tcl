@@ -79,6 +79,28 @@ ad_proc -private contact::util::get_file_extension {
     return [lindex [split $filename "."] end]
 }
 
+ad_proc -private contact::util::get_employees {
+    {-organization_id:required}
+} {
+    get employees of an organization
+} {
+    set contact_list $organization_id
+
+    db_foreach select_employee_ids {
+	select CASE WHEN object_id_one = :organization_id
+                    THEN object_id_two
+                    ELSE object_id_one END as other_party_id
+	from acs_rels, acs_rel_types
+	where acs_rels.rel_type = acs_rel_types.rel_type
+	and ( object_id_one = :organization_id or object_id_two = :organization_id )
+	and acs_rels.rel_type = 'contact_rels_employment'
+    } {
+	lappend contact_list $other_party_id
+    }
+
+    return $contact_list
+}
+
 ad_proc -public contact::name {
     {-party_id:required}
 } {

@@ -94,16 +94,9 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     
     set contact_organizations [application_data_link::get_linked -from_object_id $folder_id -to_object_type "organization"]
     
+    set contact_list ""
     foreach party_id $contact_organizations {
-	lappend contact_list $party_id
-	db_foreach select_employee_ids "select CASE WHEN object_id_one = :party_id THEN object_id_two ELSE object_id_one END as other_party_id
-           from acs_rels,
-                acs_rel_types
-          where acs_rels.rel_type = acs_rel_types.rel_type
-            and ( object_id_one = :party_id or object_id_two = :party_id )
-            and acs_rels.rel_type = 'contact_rels_employment'" {
-		lappend contact_list $other_party_id
-	    }
+	set contact_list [concat $contact_list [contact::util::get_employees -organization_id $party_id]]
     }
 	
     if {[exists_and_not_null contact_list]} {
