@@ -49,9 +49,10 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
 
     set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
     set dotlrn_club_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "dotlrn_club"] 0]
+
     if {$project_id > 0 && $dotlrn_club_id <1} {
-	set package_id [acs_object::get_element -object_id $project_id -element package_id]
-	set base_url [apm_package_url_from_id $package_id]
+	set pm_package_id [acs_object::get_element -object_id $project_id -element package_id]
+	set pm_base_url [apm_package_url_from_id $pm_package_id]
 	set project_url [export_vars -base $base_url {{project_item_id $project_id}}]
 	set projects_enabled_p 1
     } else {
@@ -63,13 +64,20 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
 	set club_url [dotlrn_community::get_community_url $dotlrn_club_id]
 	set dotlrn_club_enabled_p 1
 	set pm_package_id [dotlrn_community::get_package_id_from_package_key -package_key "project-manager" -community_id $dotlrn_club_id]
-	set base_url [apm_package_url_from_id $pm_package_id]
+	set pm_base_url [apm_package_url_from_id $pm_package_id]
     } else {
 	set dotlrn_club_enabled_p 0
+    }
+
+    set iv_package_id [application_link::get_linked -from_package_id [ad_conn package_id] -to_package_key "invoices"]
+    if {$iv_package_id > 0 } {
+	set iv_base_url [apm_package_url_from_id $iv_package_id]
+	set invoices_enabled_p 1
     }
 } else {
     set dotlrn_club_enabled_p 0
     set projects_enabled_p 0
+    set invoices_enabled_p 0
 }
 
 
