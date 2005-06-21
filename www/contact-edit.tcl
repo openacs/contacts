@@ -151,7 +151,9 @@ ad_form -extend -name party_ae \
 	}
 
 	category::map_object -remove_old -object_id $party_id $cat_ids
-	callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
+	if {$object_type == "organization"} {
+	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
+	}
 
     } -after_submit {
         ad_returnredirect [contact::url -party_id $party_id]
