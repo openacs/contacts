@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d2" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--select_one--">--select one--</msg>
@@ -41,6 +41,7 @@
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
   <msg key="Attributes">Attributes</msg>
+  <msg key="Bulk_Update">Bulk Update</msg>
   <msg key="Cancel">Cancel</msg>
   <msg key="Clear">Clear</msg>
   <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
@@ -149,6 +150,7 @@
   <msg key="lt_attribute_pretty_zipp">%attribute_pretty% zip/postal starts with: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_zipp_1">%attribute_pretty% zip/postal does not start with: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_brbrsave_this_search_">&lt;br&gt;&lt;br&gt;save this search as</msg>
+  <msg key="lt_Bulk_update_the_seclected_C">bulk update the selected contacts</msg>
   <msg key="lt_commented_on_in_last_">commented on in last -&gt;</msg>
   <msg key="lt_commentspretty_date_a">%comments.pretty_date% at %comments.pretty_time% -</msg>
   <msg key="lt_Contact_Administratio">Contact Administration</msg>
@@ -304,6 +306,7 @@
   <msg key="Relationships">Relationships</msg>
   <msg key="relationships">relationships</msg>
   <msg key="Remove_From_Group">Remove From Group</msg>
+  <msg key="Remove_from_Groups">Remove from Groups</msg>
   <msg key="Remove_From_to_Group">Remove From to Group</msg>
   <msg key="Required">Required</msg>
   <msg key="Results">Results</msg>

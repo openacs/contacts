@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d1" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d2" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="Add_a_Group">Eine Gruppe hinzufügen</msg>
   <msg key="Add_a_Person">Eine Person hinzufügen</msg>
   <msg key="Add_an_Organization">Eine Organisation hinzufügen</msg>
   <msg key="Add_Condition">Bedingung hinzufügen</msg>
   <msg key="Add_Group">Gruppe hinzufügen</msg>
+  <msg key="Add_new_in_Group">Eine neue %object_type% Gruppen zuteilen</msg>
   <msg key="Add_Organization">Organisation hinzufügen</msg>
   <msg key="Add_Person">Person hinzufügen</msg>
   <msg key="Add_Signature">Eine Signatur hinzufügen</msg>
@@ -15,6 +16,7 @@
   <msg key="Administer_Contacts">Kontakte verwalten</msg>
   <msg key="Advanced_Search">Expertensuche</msg>
   <msg key="All">Alle</msg>
+  <msg key="All_Contacts">Alle Kontakte</msg>
   <msg key="Attribute_-">Attribut -&amp;gt;</msg>
   <msg key="Attributes">Attribute</msg>
   <msg key="Cancel">Abbrechen</msg>
@@ -72,6 +74,7 @@
   <msg key="Save_and_Add_Another">Speichern und Weiteren hinzufügen</msg>
   <msg key="Save_As">Speichern als</msg>
   <msg key="save_this_search_">Speichern dieser Suche</msg>
+  <msg key="Saved_Searches">Gespeicherte Suchen</msg>
   <msg key="Search">Suchen</msg>
   <msg key="Search_for">Suche nach</msg>
   <msg key="Settings">Einstellungen</msg>
