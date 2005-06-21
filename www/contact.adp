@@ -45,6 +45,9 @@
     </dl>
   </div>
   <div class="secondary">
+    <if @dotlrn_club_enabled_p@>
+      <h3 class="contact-title"><a href="@club_url@">#contacts.Visit_Club#</a></h3>
+      </if>
     <include
       src="/packages/contacts/lib/groups"
       party_id="@party_id@"
@@ -62,10 +65,8 @@
       truncate_len="100"
       size="small"
       recent_on_top_p="1" />
-    <if @dotlrn_club_enabled_p@>
-      <a href="@club_url@">#contacts.Visit_Club#</a>
-      </if>
     <if @pm_package_id@>
+	<h3 class="contact-title"><a href="@base_url@">#project-manager.Projects#</a></h3>
             <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@    elements="customer_name  earliest_finish_date latest_finish_date actual_hours_completed category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@base_url@" customer_id="@party_id@" status_id="1">
 </if>
     <if @projects_enabled_p@>
