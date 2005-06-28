@@ -175,7 +175,7 @@ template::list::create \
 	}
     }
 
-db_multirow -unclobber contacts contacts_select {} {
+db_multirow -extend {contact_url} -unclobber contacts contacts_select {} {
     set contact_url [contact::url -party_id $party_id]
 }
 
