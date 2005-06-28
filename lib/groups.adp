@@ -17,7 +17,7 @@
 </ul>
 </if>
 <else>
-<strong>#contacts.lt_This_contact_is_not_p#</strong>
+<if @hide_form_p@ true><h3 class="contact-title"><a href="./groups">#contacts.Groups#</a></h3></if>
 </else>
 
 <if @hide_form_p@ false and @delete_p@>
