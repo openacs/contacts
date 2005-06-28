@@ -26,11 +26,34 @@ if { [exists_and_not_null party_id] } {
 if { [exists_and_not_null group_id] } {
 set group_ids $group_id
 db_transaction {
+    set message [list]
     foreach group_id $group_ids {
+	set contacts [list]
         foreach party_id $party_ids {
             # relation_add verifies that they aren't already in the group
+	    set contact_name [contact::name -party_id $party_id] 
+	    if { $group_id != "-2" } {
+		lappend contacts "<a href=\"[contact::url -party_id $party_id]\">$contact_name</a>"
+	    } else {
+		lappend contacts $contact_name
+	    }
             group::remove_member -group_id $group_id -user_id $party_id
         }
+	set contacts [join $contacts ", "]
+	set group [lang::util::localize [group::get_element -group_id $group_id -element group_name]]
+	if { $group_id != "-2" } {
+	    if { [llength $contacts] > 1 } {
+		util_user_message -message [_ contacts.lt_contacts_were_removed_from_group]
+	    } else {
+		util_user_message -message [_ contacts.lt_contacts_was_removed_from_group]
+	    }
+	} else {
+	    if { [llength $contacts] > 1 } {
+		util_user_message -message [_ contacts.lt_contacts_were_deleted]
+	    } else {
+		util_user_message -message [_ contacts.lt_contacts_was_deleted]
+	    }
+	}
     }
 }
 ad_returnredirect $return_url
