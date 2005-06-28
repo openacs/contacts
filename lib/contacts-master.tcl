@@ -12,28 +12,28 @@ if { $contacts_master_template != "/packages/contacts/lib/contacts-master" } {
 set package_url [ad_conn package_url]
 
 set link_list [list]
-lappend link_list "${prefix}"
+lappend link_list "${package_url}"
 lappend link_list "[_ contacts.Contacts]"
 
 if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
-    lappend link_list "${prefix}add/person"
+    lappend link_list "${package_url}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 
-    lappend link_list "${prefix}add/organization"
+    lappend link_list "${package_url}add/organization"
     lappend link_list "[_ contacts.Add_Organization]"
 }
 
-lappend link_list "${prefix}search"
+lappend link_list "${package_url}search"
 lappend link_list "[_ contacts.Advanced_Search]"
 
-lappend link_list "${prefix}searches"
+lappend link_list "${package_url}searches"
 lappend link_list "[_ contacts.Saved_Searches]"
 
-lappend link_list "${prefix}settings"
+lappend link_list "${package_url}settings"
 lappend link_list "[_ contacts.Settings]"
 
 if { [permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
-    lappend link_list "${prefix}admin/"
+    lappend link_list "${package_url}admin/"
     lappend link_list "[_ contacts.Admin]"
 }
 
@@ -50,7 +50,7 @@ foreach {url label} $link_list {
 
     if {[string equal $page_url $url]} {
         set selected_p 1
-        if { ${url} == ${prefix} } {
+        if { ${url} == ${package_url} } {
 	    set title [ad_conn instance_name]
         } else {
 	    set title $label
@@ -60,9 +60,9 @@ foreach {url label} $link_list {
 }
 
 if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
-    if { $page_url == "${prefix}add/person" } {
+    if { $page_url == "${package_url}add/person" } {
 	    set title [_ contacts.Add_Person]
-    } elseif { $page_url == "${prefix}add/organization" } {
+    } elseif { $page_url == "${package_url}add/organization" } {
 	    set title [_ contacts.Add_Organization]
     }
 }
