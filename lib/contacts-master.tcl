@@ -3,6 +3,11 @@
 #    @cvs-id $Id$
 
 
+set contacts_master_template [parameter::get -parameter "ContactsMaster" -default "/packages/contacts/lib/contacts-master"]
+if { $contacts_master_template != "/packages/contacts/lib/contacts-master" } {
+    ad_return_template
+}
+
 # Set up links in the navbar that the user has access to
 set package_url [ad_conn package_url]
 
