@@ -5,37 +5,42 @@
 # @arch-tag: 48fe00a8-a527-4848-b5de-0f76dfb60291
 # @cvs-id $Id$
 
-foreach required_param {party_ids} {
+foreach required_param {party_ids recipients} {
     if {![info exists $required_param]} {
 	return -code error "$required_param is a required parameter."
     }
 }
-foreach optional_param {return_url} {
+foreach optional_param {return_url file_ids} {
     if {![info exists $optional_param]} {
 	set $optional_param {}
     }
 }
 
-foreach party_id $party_ids {
-    lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
-}
-set recipients [join $recipients ", "]
 
 set form_elements {
     message_id:key
     party_ids:text(hidden)
     return_url:text(hidden)
-    file_ids:text(inform)
+}
+
+if { [exists_and_not_null file_ids] } {
+    append form_elements {
+        file_ids:text(inform)
+    }
+}
+
+append form_elements {
     {message_type:text(hidden) {value "email"}}
     {to:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
 }
 
+
 append form_elements {
-    {subject:text(text),optional
+    {subject:text(text)
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
     }
-    {content:text(textarea),optional
+    {content:text(textarea)
 	{label "[_ contacts.Message]"}
 	{html {cols 55 rows 18}}
 	{help_text {remember that you can use <a href="message-help">mail merge substitutions</a>. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}}}
@@ -56,7 +61,7 @@ ad_form -action message \
     } -new_request {
  	if {[exists_and_not_null signature_id]} {
 	    set signature "[db_string signature "select signature from contact_signatures where signature_id = :signature_id"]"
-	    set signature [ad_convert_to_html -- "$signature"]
+#	    set signature [ad_convert_to_html -- "$signature"]
 	    append content $signature
 	}
     } -edit_request {
@@ -129,3 +134,4 @@ ad_form -action message \
 	
 	ad_returnredirect $return_url
     }
+
