@@ -7,6 +7,8 @@ ad_library {
 }
 
 if {[empty_string_p [info procs callback]]} {
+
+    ns_log notice "CONTACTS: callback proc didn't exist so we are adding it here"
     ad_proc -public callback {
 	-catch:boolean
 	{-impl *}
@@ -21,7 +23,7 @@ if {[empty_string_p [info procs callback]]} {
 
 if { [empty_string_p [info procs rel_types::create_role]] } {
 
-    ns_log notice "rel_types::create_role didn't exist so we are adding it here"
+    ns_log notice "CONTACTS: rel_types::create_role proc didn't exist so we are adding it here"
     namespace eval rel_types {}
     ad_proc -public rel_types::create_role {
 	{-pretty_name:required}
@@ -82,3 +84,20 @@ if { [empty_string_p [info procs rel_types::create_role]] } {
 
 
 }
+
+
+if {[empty_string_p [info procs application_data_link::get_linked]]} {
+
+    ns_log notice "CONTACTS: application_data_link::get_linked proc didn't exist so we are adding it here"
+    namespace eval application_data_link {}
+    ad_proc -public application_data_link::get_linked {
+	args
+    } {
+	Placeholder for contacts to work on 5.1
+    } {
+	return {}
+    }
+
+}
+
+
