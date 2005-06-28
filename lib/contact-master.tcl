@@ -3,6 +3,11 @@
 #    @cvs-id $Id$
 
 
+set contact_master_template [parameter::get -parameter "ContactMaster" -default "/packages/contacts/lib/contact-master"]
+if { $contact_master_template != "/packages/contacts/lib/contact-master" } {
+    ad_return_template
+}
+
 # Set up links in the navbar that the user has access to
 set name [contact::name -party_id $party_id]
 if { ![exists_and_not_null name] } {
@@ -36,20 +41,9 @@ if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}files"
     lappend link_list "[_ contacts.Files]"
 
-    if { [site_node::get_package_url -package_key "tasks"] != "" } {
-	lappend link_list "/tasks/contact?party_id=$party_id"
-	lappend link_list "[_ contacts.Tasks]"
-    }
-
     lappend link_list "${prefix}message"
     lappend link_list "[_ contacts.Mail]"
 }
-
-# not yet implemented
-#    lappend link_list "/contacts/contact-files"
-#    lappend link_list "Files"
-#    lappend link_list "/contacts/contact-history"
-#    lappend link_list "History"
 
 # Convert the list to a multirow and add the selected_p attribute
 multirow create links label url selected_p
