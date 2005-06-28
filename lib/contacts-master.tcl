@@ -11,19 +11,11 @@ if { $contacts_master_template != "/packages/contacts/lib/contacts-master" } {
 # Set up links in the navbar that the user has access to
 set package_url [ad_conn package_url]
 
-if { [site_node::get_package_url -package_key "tasks"] != "" } {
-    set prefix "/contacts/"
-    set tasks_enabled_p 1
-} else {
-    set prefix "${package_url}"
-    set tasks_enabled_p 0
-}
-
 set link_list [list]
 lappend link_list "${prefix}"
 lappend link_list "[_ contacts.Contacts]"
 
-if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] &&  !${tasks_enabled_p} } {
+if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
     lappend link_list "${prefix}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 
@@ -36,11 +28,6 @@ lappend link_list "[_ contacts.Advanced_Search]"
 
 lappend link_list "${prefix}searches"
 lappend link_list "[_ contacts.Saved_Searches]"
-
-if { ${tasks_enabled_p} } {
-	lappend link_list "/tasks/"
-	lappend link_list "[_ contacts.Tasks]"
-}
 
 lappend link_list "${prefix}settings"
 lappend link_list "[_ contacts.Settings]"

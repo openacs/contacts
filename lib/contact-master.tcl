@@ -22,11 +22,8 @@ set page_query [ad_conn query]
 
 set title $name
 set context [list $name]
-if { [site_node::get_package_url -package_key "tasks"] != "" } {
-    set prefix "/contacts/${party_id}/"
-} else {
-    set prefix "${package_url}${party_id}/"
-}
+set prefix "${package_url}${party_id}/"
+
 set link_list [list]
 if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}edit"
