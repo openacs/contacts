@@ -108,8 +108,17 @@ template::list::create \
         contact {
 	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
             display_template {
-		<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
-                <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
+		<a href="@contacts.contact_url@">@contacts.name@</a> <span class="contact-editlink">\[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
+		<if @contacts.email@ not nil or @contacts.url@ not nil>
+                  <span class="contact-attributes">
+		    <if @contacts.email@ not nil>
+                      <a href="@contacts.contact_url@message">@contacts.email@</a>
+		    </if>
+		    <if @contacts.url@ not nil>
+                      <if @contacts.email@ not nil>, </if><a href="@contacts.url@">@contacts.url@</a>
+		    </if>
+                  </span>
+		</if>
 	    }
         }
         contact_id {
@@ -166,11 +175,12 @@ template::list::create \
 	}
     }
 
-db_multirow -unclobber contacts contacts_select {} 
+db_multirow -unclobber contacts contacts_select {} {
+    set contact_url [contact::url -party_id $party_id]
+}
 
 if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
-#    ad_returnredirect -message "in '$query_name' only this contact matched your query of '$query'" [contact::url -party_id [template::multirow get contacts 1 party_id]]
-
+    # Redirecting the user directly to the one resulted contact
     ad_returnredirect [contact::url -party_id [template::multirow get contacts 1 party_id]]
     ad_script_abort
 }
