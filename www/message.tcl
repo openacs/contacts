@@ -41,20 +41,70 @@ set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
 set context [list $title]
 
-set recipients [list]
-set parties_new [list]
+set recipients  [list]
 foreach party_id $party_ids {
-    
-    # Check if the party has a valid e-mail address
-    if {![empty_string_p [cc_email_from_party $party_id]]} {
-	lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
-	lappend parties_new $party_id
+    set contact_name   [contact::name -party_id $party_id]
+    set contact_url    [contact::url -party_id $party_id]
+    set contact_link   "<a href=\"${contact_url}\">${contact_name}</a>"
+    set sort_key       [string toupper $contact_name]
+    # Check if the party has a valid e-mail address we can send to
+    set email_p        [string is false [empty_string_p [cc_email_from_party $party_id]]]
+    set letter_p       [contact::letter::postal_address_exists_for_party_id_p -party_id $party_id]
+    lappend recipients [list $contact_name $party_id $contact_link $email_p $letter_p]
+}
+set sorted_recipients  [ams::util::sort_list_of_lists -list $recipients]
+set recipients         [list]
+set invalid_recipients [list]
+set party_ids          [list]
+set invalid_party_ids  [list]
+
+foreach recipient $sorted_recipients {
+    set party_id       [lindex $recipient 1]
+    set contact_link   [lindex $recipient 2]
+    set email_p        [lindex $recipient 3]
+    set letter_p       [lindex $recipient 4]
+    if { $message_type == "letter" } {
+        if { $letter_p } {
+            lappend party_ids $party_id
+            lappend recipients $contact_link
+        } else {
+            lappend invalid_party_ids $party_id
+            lappend invalid_recipients $contact_link
+        }
+    } elseif { $message_type == "email" } {
+        if { $email_p } {
+            lappend party_ids $party_id
+            lappend recipients $contact_link
+        } else {
+            lappend invalid_party_ids $party_id
+            lappend invalid_recipients $contact_link
+        }
+    } else {
+        if { $email_p || $letter_p } {
+            lappend party_ids $party_id
+            lappend recipients $contact_link
+        } else {
+            lappend invalid_party_ids $party_id
+            lappend invalid_recipients $contact_link
+        }
     }
 }
 
-set party_ids $parties_new
-
 set recipients [join $recipients ", "]
+set invalid_recipients [join $invalid_recipients ", "]
+if { [llength $invalid_recipients] > 0 } {
+    switch $message_type {
+        letter {
+            util_user_message -html -message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
+        }
+        email {
+            util_user_message -html -message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
+        }
+        default {
+            util_user_message -html -message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
+        }
+    }
+}
 
 if {[exists_and_not_null object_id]} {
     foreach object $object_id {
@@ -85,7 +135,7 @@ set form_elements {
 
 if { [string is false [exists_and_not_null message_type]] } {
     append form_elements {
-	{message_type:text(select) {label "[_ contacts.Type]"} {options {{Email email} {Letter letter} {Label label}}}}
+	{message_type:text(select) {label "[_ contacts.Type]"} {options {{"[_ contacts.Email]" email} {"[_ contacts.Letter]" letter}}}}
     }
     set title [_ contacts.create_a_message]
 } else {
@@ -94,14 +144,24 @@ if { [string is false [exists_and_not_null message_type]] } {
 set context [list $title]
 
 if { [string is false [exists_and_not_null message]] } {
-    set signature_list [db_list_of_lists signatures "select title,signature_id
+    set signature_list [list [list [_ contacts.--none--] ""]]
+    set reset_title $title
+    set reset_signature_id $signature_id
+    db_foreach signatures "select title, signature_id, default_p
       from contact_signatures
      where party_id = :user_id
-     order by default_p, upper(title), upper(signature)"]
+     order by default_p, upper(title), upper(signature)" {
+         lappend signature_list [list $title $signature_id]
+         if { $default_p == "t" } {
+             set default_signature_id $signature_id
+         }
+     }
+    set title $reset_title
+    set signature_id $reset_signature_id
     append form_elements {
-	{message:text(select) 
+	{message:text(select),optional
 	    {label "[_ contacts.Message]"} 
-	    {options {{{-- Create New Message --} new}}}
+	    {options {{"[_ contacts.--Create_New_Message--]" new}}}
 	}
 	{signature_id:text(select) 
 	    {label "[_ contacts.Signature]"}
@@ -113,6 +173,7 @@ if { [string is false [exists_and_not_null message]] } {
 
 set edit_buttons [list [list "[_ contacts.Next]" create]]
 
+set parties_new $party_ids
 ad_form -action message \
     -name message \
     -cancel_label "[_ contacts.Cancel]" \
@@ -120,11 +181,16 @@ ad_form -action message \
     -edit_buttons $edit_buttons \
     -form $form_elements \
     -on_request {
+        if { [exists_and_not_null default_signature_id] } {
+            set signature_id $default_signature_id
+        } else {
+            set signature_id ""
+        }
     } -new_request {
     } -edit_request {
     } -on_submit {
     }
-
+set party_ids $parties_new
 
 
 if { [exists_and_not_null include_signature] } {
@@ -132,7 +198,7 @@ if { [exists_and_not_null include_signature] } {
     switch $message_type {
 	letter {
 	    set content [ad_html_text_convert -from [template::util::richtext::get_property format $content] -to "text/html" [template::util::richtext::get_property content $content]]
-		set subject ""
+            set subject ""
 	}
 	email {
 	    set this_subject [string trim $subject]
