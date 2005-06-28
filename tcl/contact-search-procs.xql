@@ -34,6 +34,15 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search_pretty_not_cached.select_conditions">
+  <querytext>
+    select type,
+           var_list
+      from contact_search_conditions
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::results_count_not_cached.select_results_count">
   <querytext>
     select count(*)

@@ -50,7 +50,7 @@ ad_proc -public contacts::search::condition_type {
 	return [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix]
     } else {
 	# the widget requested did not exist
-	ns_log Debug "AMS: the contacts search condition type \"${type}\" was requested and the associated ::contacts::search::condition_type::${type} procedure does not exist"
+	ns_log Debug "Contacts: the contacts search condition type \"${type}\" was requested and the associated ::contacts::search::condition_type::${type} procedure does not exist"
     }
 }
 
@@ -66,7 +66,7 @@ ad_proc -private contacts::search::condition_types {
 	    lappend condition_types [list [contacts::search::condition_type -type $condition_type -request "type_name"] $condition_type]
 	}
     }
-    return $condition_types
+    return [::ams::util::localize_and_sort_list_of_lists -list $condition_types]
 }
 
 ad_proc -private contacts::search::condition_type_exists_p {
@@ -123,8 +123,10 @@ ad_proc -private contacts::search::condition_type::attribute {
                                                  [list "[_ contacts.is_not_-]" "not_selected"] \
                                             ]
                        
-                        set option_options [ams::widget_options -attribute_id $attribute_id]
-                        lappend var_elements [list ${var1}:text(select) [list label {}] [list options $option_options]]
+			if { $operand == "selected" || $operand == "not_selected" } {
+			    set option_options [ams::widget_options -attribute_id $attribute_id]
+			    lappend var_elements [list ${var1}:text(select) [list label {}] [list options $option_options]]
+			}
                     }
                     ams_value__telecom_number {
                         set operand_options [list \
@@ -158,7 +160,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                         } elseif { $operand == "country_is" || $operand == "country_is_not" } {
                             set country_options [template::util::address::country_options]
                             lappend var_elements [list ${var1}:text(select) [list label {}] [list options $country_options]]
-                        } else {
+                        } elseif { $operand == "zip_is" || $operand == "zip_is_not" } {
                             lappend var_elements [list ${var1}:text(text) [list label {}] [list html [list size 7 maxlength 7]]]
                         }
                     }
@@ -360,10 +362,12 @@ ad_proc -private contacts::search::condition_type::attribute {
                             set value [string toupper $value]
                             switch $operand {
                                 country_is {
+				    set country_pretty [_ ref-countries.$value]
                                     set output_pretty "[_ contacts.lt_attribute_pretty_coun_2]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.country_code = '$value' )"
                                 }
                                 country_is_not {
+				    set country_pretty [_ ref-countries.$value]
                                     set output_pretty "[_ contacts.lt_attribute_pretty_coun_3]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, postal_addresses pa${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}' and aav${attribute_id}.value_id = pa${attribute_id}.address_id and pa${attribute_id}.country_code = '$value' )"
                                 }
@@ -510,7 +514,7 @@ ad_proc -private contacts::search::condition_type::contact {
                     }]
                 set search_options [concat [list [list "" ""]] $search_options]
                 lappend form_elements [list \
-                                           ${var1}:text(select) \
+                                           ${var1}:integer(select) \
                                            [list label {}] \
                                            [list options $search_options] \
                                           ]
@@ -681,6 +685,242 @@ ad_proc -private contacts::search::condition_type::group {
         }
     }
 }
+
+
+
+ad_proc -private contacts::search::condition_type::relationship {
+    -request:required
+    {-var_list ""}
+    {-form_name ""}
+    {-party_id ""}
+    {-revision_id ""}
+    {-prefix "contact"}
+    {-object_type ""}
+} {
+    Return all widget procs. Each list element is a list of the first then pretty_name then the widget
+} {
+    set role      [ns_queryget "${prefix}role"]
+    set operand   [ns_queryget "${prefix}operand"]
+    set times     [ns_queryget "${prefix}${role}times"]
+    set search_id [ns_queryget "${prefix}${role}search_id"]
+
+    if { ![exists_and_not_null object_type] } {
+	set object_type "party"
+    }
+    switch $request {
+        ad_form_widgets {
+            set form_elements [list]
+
+	    set rel_options [db_list_of_lists get_rels {
+select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
+       primary_role as role
+  from contact_rel_types
+ where secondary_object_type in ( :object_type, 'party' )
+ group by primary_role
+ order by upper(acs_rel_type__role_pretty_name(primary_role))
+	    }]
+	    set rel_options [ams::util::localize_and_sort_list_of_lists -list $rel_options]
+	    set rel_options [concat [list [list "" ""]] $rel_options]
+            lappend form_elements [list \
+                                       ${prefix}role:text(select) \
+                                       [list label [_ contacts.with]] \
+                                       [list options $rel_options] \
+                                      ]
+
+            set operand_options [list \
+                                     [list "[_ contacts.exists]" "exists"] \
+                                     [list "[_ contacts.does_not_exists]" "not_exists"] \
+                                     [list "[_ contacts.in_the_search] ->" "in_search"] \
+                                     [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
+                                    ]
+#                                     [list "[_ contacts.exists_at_least] ->" "min_number"] \
+#                                     [list "[_ contacts.exists_at_most] ->" "max_number"] \
+
+            lappend form_elements [list \
+                                       ${prefix}operand:text(select),optional \
+                                       [list label {}] \
+                                       [list options $operand_options] \
+                                       [list html [list onChange "javascript:acs_FormRefresh('$form_name')"]] \
+                                      ]
+
+            # login and not_login do not need special elements
+	    switch $operand {
+		min_number - max_number {
+		    lappend form_elements [list ${prefix}${role}times:integer(text) [list label {}] [list html [list size 2 maxlength 4]] [list after_html [_ contacts.Times]]]
+		}
+		in_search - not_in_search {
+		    set user_id [ad_conn user_id]
+		    set search_options [db_list_of_lists get_my_searches {
+                        select title,
+			search_id
+			from contact_searches
+			where owner_id = :user_id
+			and title is not null
+			and not deleted_p
+			order by lower(title)
+                    }]
+		    set search_options [concat [list [list "" ""]] $search_options]
+		    lappend form_elements [list \
+					       ${prefix}${role}search_id:integer(select) \
+					       [list label {}] \
+					       [list options $search_options] \
+					      ]
+		}
+            }
+            return $form_elements
+        }
+        form_var_list {
+            if { [exists_and_not_null role] && [exists_and_not_null operand] } {
+		set results [list $role $operand]
+		switch $operand {
+		    min_number - max_number {
+			if { [exists_and_not_null times] } {
+			    lappend results $times
+			} else {
+			    set not_complete_p 1
+			}
+		    }
+		    in_search - not_in_search {
+			if { [exists_and_not_null search_id] } {
+			    lappend results $search_id
+			} else {
+			    set not_complete_p 1
+			}
+		    }
+		}
+		if { ![exists_and_not_null not_complete_p] } {
+		    return $results
+		}
+            }
+	    return {}
+        }
+        sql - pretty {
+            set role [lindex $var_list 0]
+	    set union "
+(
+( select object_id_one as party_id
+    from acs_rels where rel_type in ( select rel_type
+                                        from acs_rel_types
+                                       where rel_type in ( select object_type
+                                                             from acs_object_types
+                                                            where supertype = 'contact_rel' )
+                                         and role_two = '$role' ) )
+union
+( select object_id_two as party_id
+    from acs_rels where rel_type in ( select rel_type
+                                        from acs_rel_types
+                                       where rel_type in ( select object_type
+                                                             from acs_object_types
+                                                            where supertype = 'contact_rel' )
+                                         and role_one = '$role' ) )
+)
+"
+	    set union_reverse "
+(
+( select object_id_two as party_id
+    from acs_rels where rel_type in ( select rel_type
+                                        from acs_rel_types
+                                       where rel_type in ( select object_type
+                                                             from acs_object_types
+                                                            where supertype = 'contact_rel' )
+                                         and role_two = '$role' ) )
+union
+( select object_id_one as party_id
+    from acs_rels where rel_type in ( select rel_type
+                                        from acs_rel_types
+                                       where rel_type in ( select object_type
+                                                             from acs_object_types
+                                                            where supertype = 'contact_rel' )
+                                         and role_one = '$role' ) )
+)
+"
+
+
+	    set operand [lindex $var_list 1]
+	    switch $operand {
+		min_number - max_number { set times [lindex $var_list 2] }
+		in_search - not_in_search { set search_id [lindex $var_list 2] }
+	    }
+	    if { $request == "pretty" } {
+		if { [exists_and_not_null times] } {
+		    if { $times != 1 } {
+			set role [lang::util::localize [db_string get_pretty_role { select pretty_plural from acs_rel_roles where role = :role } -default {}]]
+		    } else {
+		      set role [lang::util::localize [db_string get_pretty_role { select pretty_name from acs_rel_roles where role = :role } -default {}]]
+                    }
+		} else {
+		      set role [lang::util::localize [db_string get_pretty_role { select pretty_name from acs_rel_roles where role = :role } -default {}]]
+                }
+	    } else {
+                set role ""
+            }
+            switch $operand {
+		exists {
+		    set output_pretty [_ contacts.lt_role_exists]
+		    set output_code "party_id in $union"
+		}
+		not_exists {
+		    set output_pretty [_ contacts.lt_role_not_exists]
+		    set output_code "party_id not in $union"
+		}
+		max_number {
+		    set output_pretty [_ contacts.lt_At_most_times_role_are_related]
+		    set output_code "party_id in 
+( select party_id from
+(
+select count(party_id) as rel_count, party_id from
+$union_reverse rels
+group by party_id
+) rel_count_and_id
+where rel_count <= $times )"
+		}
+		min_number {
+		    set output_pretty [_ contacts.lt_At_least_times_role_are_related]
+		    set output_code "party_id in 
+( select party_id from
+(
+select count(party_id) as rel_count, party_id from
+$union_reverse rels
+group by party_id
+) rel_count_and_id
+where rel_count >= $times )"
+		}
+                in_search {
+                    set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
+                    set output_pretty [_ contacts.lt_role_in_the_search_search_link]
+  		    set output_code "party_id in 
+( select party_id from
+(
+select distinct party_id from
+$union_reverse rels
+) rel_count_and_id
+where [contact::party_id_in_sub_search_clause -search_id $search_id] )"
+                }
+                not_in_search {
+                    set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
+                    set output_pretty [_ contacts.lt_role_not_in_the_search_search_link]
+  		    set output_code "party_id in 
+( select party_id from
+(
+select distinct party_id from
+$union_reverse rels
+) rel_count_and_id
+where [contact::party_id_in_sub_search_clause -search_id $search_id -not] )"
+                }
+            }
+            if { $request == "pretty" } {
+                return $output_pretty
+            } else {
+                return $output_code
+            }
+        }
+        type_name {
+            return [_ contacts.Relationship]
+        }
+    }
+}
+
+
 
 
 

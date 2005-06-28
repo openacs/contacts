@@ -123,6 +123,32 @@ ad_proc -public contact::search::results_count {
     return [util_memoize [list ::contact::search::results_count_not_cached -search_id $search_id -query $query]]
 }
 
+ad_proc -public contact::search::flush_all {
+} {
+    Flush everything related to a search
+} {
+    db_foreach get_searches { select search_id from contact_searches } {
+	contact::search::flush -search_id $search_id
+    }
+}
+
+ad_proc -public contact::search::flush_results_counts {
+} {
+    Flush everything related to a search
+} {
+    util_memoize_flush_regexp -log "contact::search::results_count_not_cached"
+}
+
+ad_proc -public contact::search::flush {
+    {-search_id}
+} {
+    Flush everything related to a search
+} {
+    util_memoize_flush_regexp -log "contact::search::results_count_not_cached -search_id $search_id"
+    util_memoize_flush_regexp -log "contact::search::results_count_not_cached -search_id {}"
+    util_memoize_flush_regexp -log "contact::search_pretty_not_cached -search_id $search_id"
+    util_memoize_flush_regexp -log "contact::search::where_clause_not_cached -search_id $search_id"
+}
 
 ad_proc -public contact::search::results_count_not_cached {
     {-search_id}
@@ -213,11 +239,19 @@ ad_proc -public contact::search_pretty_not_cached {
 } {
     Get the search in human readable format
 } {
+    
+    # the reason we do not put this in the db_foreach statement is because we 
+    # can run into problems with the number of database pools we have when a sub
+    # query is a condition. We are limited to 3 levels of database access for most
+    # openacs installs so this bypasses that problem
+    set db_conditions [db_list_of_lists select_conditions {}]
     set conditions [list]
-    db_foreach selectqueries {
-        select type, var_list from contact_search_conditions where search_id = :search_id
-    } {
-        lappend conditions [contacts::search::condition_type -type $type -request pretty -var_list $var_list]
+    foreach condition $db_conditions {
+        lappend conditions [contacts::search::condition_type \
+				-type [lindex $condition 0] \
+				-request pretty \
+				-var_list [lindex $condition 1] \
+			       ]
     }
 
     if { [llength $conditions] > 0 } {
@@ -365,34 +399,55 @@ ad_proc -public contact::search::where_clause_not_cached {
     set where_clauses [list]
 
     if { [exists_and_not_null all_or_any] } {
-        if { $all_or_any == "any" } {
-            set operator "or"
-        } else {
-            set operator "and"
-        }
-        if { $object_type == "person" } {
-            lappend where_clauses "$party_id in ( select person_id from persons )"
-        } elseif { $object_type == "organization" } {
-            lappend where_clauses "$party_id in ( select organization_id from organizations )"
-        }
-        db_foreach select_queries {} {
-            lappend where_clauses [contacts::search::condition_type -type $type -request sql -var_list $var_list -revision_id $revision_id -party_id $party_id]
-        }
+	set result {}
+	if { $object_type == "person" } {
+	    append result "$party_id in ( select person_id from persons )\n"
+	} elseif { $object_type == "organization" } {
+	    append result "$party_id in ( select organization_id from organizations )\n"
+	}
+    
+	# the reason we do not put this in the db_foreach statement is because we 
+	# can run into problems with the number of database pools we have when a sub
+	# query is a condition. We are limited to 3 levels of database access for most
+	# openacs installs so this bypasses that problem
+	set db_conditions [db_list_of_lists select_queries {}]
+	foreach condition $db_conditions {
+	    lappend where_clauses [contacts::search::condition_type \
+				       -type [lindex $condition 0] \
+				       -request sql \
+				       -var_list [lindex $condition 1] \
+				       -revision_id $revision_id \
+				       -party_id $party_id \
+				      ]
+	}
+	
+
+	if { [llength $where_clauses] > 0 } {
+	    if { $all_or_any == "any" } {
+		set operator "or"
+	    } else {
+		set operator "and"
+	    }
+	    if { [exists_and_not_null result] } {
+		append result " and "
+	    }
+	    if { [llength $where_clauses] > 1 } {
+		append result "( [join $where_clauses "\n $operator "] )"
+	    } else {
+		append result [lindex $where_clauses 0]
+	    }
+	}
+
+	if { [exists_and_not_null result] } {
+	    set result "( $result )"
+	    if { $and_p } {
+		set result "and $result"
+	    }
+	}
     } else {
-        set operator "and"
+        set result {}
     }
 
-    set result {}
-    if { [llength $where_clauses] > 0 } {
-        if { $and_p } {
-            append result "and "
-        }
-        if { [llength $where_clauses] > 1 } {
-            append result "( [join $where_clauses "\n $operator "] )"
-        } else {
-            append result [join $where_clauses "\n $operator "]
-        }
-    }
     return $result
 }
 
