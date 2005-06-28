@@ -18,7 +18,7 @@
            CASE WHEN package_id is not null THEN '1' ELSE '0' END as mapped_p,
            CASE WHEN default_p THEN '1' ELSE '0' END as default_p
       from groups left join contact_groups on ( groups.group_id = contact_groups.group_id )
-     where groups.group_id != '-1'
+     where groups.group_id not in ('-1','-2')
        and groups.group_id not in ( select gcm.component_id from group_component_map gcm where gcm.group_id != -1 )
        and acs_permission__permission_p(groups.group_id,:user_id,:privilege_required)
      order by CASE WHEN contact_groups.default_p THEN '000000000' ELSE upper(groups.group_name) END
