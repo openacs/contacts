@@ -73,6 +73,8 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
     if {$iv_package_id > 0 } {
 	set iv_base_url [apm_package_url_from_id $iv_package_id]
 	set invoices_enabled_p 1
+    } else {
+        set invoices_enabled_p 0
     }
 } else {
     set dotlrn_club_enabled_p 0
