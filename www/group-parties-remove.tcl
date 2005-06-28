@@ -8,7 +8,7 @@ ad_page_contract {
     {party_id:integer,multiple,optional}
     {party_ids:optional}
     {return_url "./"}
-    {group_id:optional}
+    {group_id:integer,multiple,optional}
 } -validate {
     valid_party_submission {
 	if { ![exists_and_not_null party_id] && ![exists_and_not_null party_ids] } { 
@@ -23,7 +23,19 @@ if { [exists_and_not_null party_id] } {
     }
 }
 
-
+if { [exists_and_not_null group_id] } {
+set group_ids $group_id
+db_transaction {
+    foreach group_id $group_ids {
+        foreach party_id $party_ids {
+            # relation_add verifies that they aren't already in the group
+            group::remove_member -group_id $group_id -user_id $party_id
+        }
+    }
+}
+ad_returnredirect $return_url
+ad_script_abort
+}
 
 set title "[_ contacts.Remove_From_to_Group]"
 set user_id [ad_conn user_id]
@@ -71,6 +83,7 @@ ad_form -action group-parties-remove \
             }
 	}
     } -after_submit {
+	contact::search::flush_results_counts
 	ad_returnredirect $return_url
     }
 

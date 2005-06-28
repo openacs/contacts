@@ -28,7 +28,6 @@ ad_page_contract {
 
 set page_title "[_ contacts.Advanced_Search]"
 set context [list $page_title]
-set sw_admin_p [acs_user::site_wide_admin_p]
 
 if { [exists_and_not_null clear] } {
     ad_returnredirect "search"
@@ -100,22 +99,6 @@ if { $search_exists_p } {
     }
     lappend form_elements [list query:text(hidden),optional]
     lappend form_elements [list query_pretty:text(inform),optional [list label {}] [list value $query_pretty]]
-
-    if { $sw_admin_p } {
-	set query_code "
-<pre>
-
-
-select contact__name(party_id), party_id, revision_id
-  from parties, cr_items, cr_revisions
- where party_id = cr_items.item_id
-   and cr_items.latest_revision = cr_revisions.revision_id
-[contact::search_clause -and -search_id $search_id -party_id "party_id" -revision_id "cr.revisions.revision_id"]
-
-
-</pre>
-"
-     }
 }
 
 
@@ -167,54 +150,16 @@ ad_form -name "advanced_search" -method "GET" -form $form_elements \
             contact::search::condition::new -search_id $search_id -type $type -var_list $form_var_list
         }
     } -after_submit {
-        if { $form_var_list != "" } {
+        if { $form_var_list != "" || [exists_and_not_null save] } {
             set export_list [list search_id]
             if { ![contact::search::exists_p -search_id $search_id] } {
                 lappend export_list object_type all_or_any
-            }
+            } else {
+		contact::search::flush -search_id $search_id
+	    }
             ad_returnredirect [export_vars -base "search" -url [list $export_list]]
             ad_script_abort
-        }
+	}
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

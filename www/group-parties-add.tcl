@@ -96,6 +96,7 @@ ad_form -action group-parties-add \
             }
 	}
     } -after_submit {
+	contact::search::flush_results_counts
 	ad_returnredirect $return_url
 	ad_script_abort
     }
