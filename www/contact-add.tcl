@@ -18,10 +18,12 @@ ad_page_contract {
     }
 }
 
-set group_list [contact::groups]
-
+set group_list [concat [list [list [_ contacts.All_Contacts] "-2" "0"]] [contact::groups]]
 if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
+} elseif { [lsearch $group_ids "-2"] < 0 } {
+    # an invalid group_ids list has been specified or they do not have permission to add person
+    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 
 set path_info [ad_conn path_info]
@@ -41,6 +43,7 @@ lappend form_elements {rel_type:text(hidden),optional}
 lappend form_elements {object_id_two:text(hidden),optional}
 
 set default_group_id [contacts::default_group -package_id $package_id]
+set default_group_id "-2"
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
 if {[lsearch $group_ids $default_group_id] == -1} {
@@ -55,6 +58,7 @@ if {[lsearch $group_ids $application_group_id] == -1} {
 }
 
 set group_list [contact::groups -expand "all" -privilege_required "read"]
+set group_list "{{All Contacts} -2 0} $group_list"
 
 
 ad_form -name party_ae \
@@ -304,6 +308,7 @@ ad_form -extend -name party_ae \
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {
+	contact::search::flush_results_counts
 	#the formbutton does not work. No clue how to fix it.
 #        if { [exists_and_not_null formbutton\:save_add_another] } {
 #            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]
@@ -317,6 +322,8 @@ ad_form -extend -name party_ae \
 	ad_script_abort
     }
 
-
-
+if { $object_type == "person" && [parameter::get -boolean -parameter "AllPeopleAreUsers" -default "0"] } {
+    template::element set_properties party_ae create_user_p widget hidden
+    template::element set_value party_ae create_user_p "1"
+}
 ad_return_template

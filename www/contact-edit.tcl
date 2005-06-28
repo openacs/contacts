@@ -36,7 +36,7 @@ set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
 
 
-set ams_forms [list]
+set ams_forms [list "${package_id}__-2"]
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {
@@ -102,7 +102,7 @@ ad_form -extend -name party_ae \
         
     } -on_submit {
 
-	# MGEDDERT: I NEED TO MAKE SURE THAT VALUES THAT NEED TO BE UNIQUE ARE UNIQUE
+	# WE NEED TO MAKE SURE THAT VALUES THAT NEED TO BE UNIQUE ARE UNIQUE
 
 	# for orgs name needs to be unique
 	# for all of them email needs to be unique
@@ -156,6 +156,7 @@ ad_form -extend -name party_ae \
 	}
 
     } -after_submit {
+	contact::search::flush_results_counts
         ad_returnredirect [contact::url -party_id $party_id]
 	ad_script_abort
     }
