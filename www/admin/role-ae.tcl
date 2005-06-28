@@ -23,6 +23,8 @@ ad_form -name "role_form" \
 	{role:text {label "[_ contacts.Role_Name]"}}
         {pretty_name:text {label "[_ contacts.Role_Singular]"}}
         {pretty_plural:text {label "[_ contacts.Role_Plural]"}}
+    } -on_request {
+	# if a return_url was provided it is set here
     } -on_submit {
 
 	if {[db_string role_exists_with_same_names_p {
@@ -30,7 +32,7 @@ ad_form -name "role_form" \
 	    ad_return_complaint 1 "[_ contacts.lt_li_The_role_you_enter]"
 	    return
 	}
-	if {[empty_string_p $role]} {
+	if { [empty_string_p $role] } {
 	    rel_types::create_role -pretty_name $pretty_name -pretty_plural $pretty_plural
 	} else {
 	    rel_types::create_role -pretty_name $pretty_name -pretty_plural $pretty_plural -role $role
