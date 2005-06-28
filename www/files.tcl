@@ -100,8 +100,10 @@ ad_form -name upload_files -html {enctype multipart/form-data} -form $form_eleme
 	incr upload_number
     }
     if {[llength $message] == 1} {
+	set message [lindex $message 1]
 	util_user_message -html -message "[_ contacts.lt_The_file_lindex_messa]"
     } elseif {[llength $message] > 1} {
+	set message [join $message ", "]
 	util_user_message -html -message "[_ contacts.lt_The_files_join_messag]"
     }
 } -after_submit {
