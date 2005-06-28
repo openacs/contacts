@@ -20,11 +20,14 @@ set form_elements {
 
 set group_options [contact::groups -privilege_required "create"]
 if { [llength $group_options] == "0" } {
-    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
+    # only the default group is available to this user
+    set group_ids "-2" 
+    ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
+#    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 
 append form_elements {
-    {group_ids:text(checkbox),multiple {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
+    {group_ids:text(checkbox),multiple,optional {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
 }
 set edit_buttons [list [list "[_ contacts.lt_Add_new_in_Selected_Groups]" create]]
 
@@ -36,8 +39,9 @@ ad_form \
     -form $form_elements \
     -on_request {
     } -on_submit {
-	ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
     } -after_submit {
+	# the contact needs to be added to the default group
+	lappend group_ids "-2"
 	ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
 	ad_script_abort
     }
