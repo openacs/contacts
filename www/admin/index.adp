@@ -13,6 +13,10 @@
   <li>#contacts.lt_The_default_group_mus#</li>
 </ul>
 <p>#contacts.lt_Once_ready_for_releas#</p>
+<ul class="action-links">
+  <li><a href="@ams_person_url@">Default Person Form</a></li>
+  <li><a href="@ams_org_url@">Default Organization Form</a></li>
+</ul>
 <listtemplate name="groups"></listtemplate>
 
 

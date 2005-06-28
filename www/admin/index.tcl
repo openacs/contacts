@@ -116,6 +116,20 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
 }
 
 
+    set ams_person_url [ams::list::url \
+                          -package_key "contacts" \
+                          -object_type "person" \
+                          -list_name "${package_id}__-2" \
+                          -pretty_name "${package_id}__-2" \
+                          -return_url $return_url \
+                          -return_url_label "[_ contacts.Return_to_title]"]
+    set ams_org_url [ams::list::url \
+                          -package_key "contacts" \
+                          -object_type "organization" \
+                          -list_name "${package_id}__-2" \
+                          -pretty_name "${package_id}__-2" \
+                          -return_url $return_url \
+                          -return_url_label "[_ contacts.Return_to_title]"]
 
 
 
