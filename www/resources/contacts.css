@@ -38,14 +38,14 @@ dl.comments dt {
   }
 dl.comments dd {
   padding: 5px;
-  margin: 0 0px 5px 0px;
+  margin: 0 0px 0px 0px;
   background: #EEE;
   }
 dl.comments dt.odd, dl.comments dd.odd {
   background: #DDD;
   }
 dl.comments dt.mine-odd, dl.comments dd.mine-odd {
-  background: #ECD;
+  background: #FDE;
   }
 dl.comments dt.mine-even, dl.comments dd.mine-even {
   background: #FDE;
@@ -228,4 +228,21 @@ div.tasks dd {
 }
 .done {
 	color: #BBB;
+}
+.contact-editlink {
+	padding-left: 1em;
+	font-size: 80%;
+}
+.contact-attributes {
+	clear:both;
+	display: block;
+	margin-left: 10px;
+	font-size: 80%;
+}
+.contact-attributes a {
+	text-decoration: none;
+	color: #000;
+}
+.contact-attributes a:hover {
+	text-decoration: underline;
 }
