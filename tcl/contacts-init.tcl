@@ -100,4 +100,18 @@ if {[empty_string_p [info procs application_data_link::get_linked]]} {
 
 }
 
+if {[empty_string_p [info procs application_link::get_linked]]} {
+
+    ns_log notice "CONTACTS: application_link::get_linked proc didn't exist so we are adding it here"
+    namespace eval application_link {}
+    ad_proc -public application_link::get_linked {
+	args
+    } {
+	Placeholder for contacts to work on 5.1
+    } {
+	return {}
+    }
+
+}
+
 
