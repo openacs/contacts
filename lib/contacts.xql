@@ -19,6 +19,7 @@ select contact__name(parties.party_id),
        cr_revisions.revision_id,
        contact__name(parties.party_id,:name_order) as name,
        parties.email,
+       parties.url,
        ( select first_names from persons where person_id = party_id ) as first_names,
        ( select last_name from persons where person_id = party_id ) as last_name,
        ( select name from organizations where organization_id = party_id ) as organization
