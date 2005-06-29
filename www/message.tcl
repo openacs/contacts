@@ -49,7 +49,7 @@ foreach party_id $party_ids {
     set sort_key       [string toupper $contact_name]
     # Check if the party has a valid e-mail address we can send to
     set email_p        [string is false [empty_string_p [cc_email_from_party $party_id]]]
-    set letter_p       [contact::letter::postal_address_exists_for_party_id_p -party_id $party_id]
+    set letter_p       [contact::letter::mailing_address_exists_p -party_id $party_id]
     lappend recipients [list $contact_name $party_id $contact_link $email_p $letter_p]
 }
 set sorted_recipients  [ams::util::sort_list_of_lists -list $recipients]
