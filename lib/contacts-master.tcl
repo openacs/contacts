@@ -29,6 +29,9 @@ lappend link_list "[_ contacts.Advanced_Search]"
 lappend link_list "${package_url}searches"
 lappend link_list "[_ contacts.Saved_Searches]"
 
+lappend link_list "${package_url}messages"
+lappend link_list "[_ contacts.Messages]"
+
 lappend link_list "${package_url}settings"
 lappend link_list "[_ contacts.Settings]"
 
