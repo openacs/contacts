@@ -20,9 +20,9 @@ create table contact_party_revisions (
 select content_type__create_type (
    'contact_party_revision',      -- content_type
    'content_revision',            -- supertype    
-   '#contacts.Party_Revision#',              -- pretty_name 
-   '#contacts.Party_Revisions#',             -- pretty_plural
-   'contact_party_revisions',     -- table_name (should this be pm_task?)
+   '#contacts.Party_Revision#',   -- pretty_name 
+   '#contacts.Party_Revisions#',  -- pretty_plural
+   'contact_party_revisions',     -- table_name
    'party_revision_id',           -- id_column 
    'contact_party_revision__name' -- name_method
 );
@@ -140,8 +140,9 @@ create table organization_rels (
                          constraint organization_rels_rel_id_pk primary key
 );
 
+
 \i contacts-package-create.sql
 \i contacts-search-create.sql
-
+\i contacts-messages-create.sql
 
 

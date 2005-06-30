@@ -77,7 +77,7 @@ begin
                 insert into cr_items
                 (item_id,parent_id,name,content_type)
                 values
-                (p_party_id,contact_party_revision__folder_id(),p_party_id::varchar,''contact_party_revision'');
+                (p_party_id,contact__folder_id(),p_party_id::varchar,''contact_party_revision'');
         end if;
 
         return p_party_id;
@@ -99,9 +99,7 @@ begin
         return v_name;
 end;' language 'plpgsql';
 
-
-
-create or replace function contact_party_revision__folder_id () returns integer
+create or replace function contact__folder_id () returns integer
 as '
 declare
         v_folder_id              integer;
@@ -123,6 +121,8 @@ begin
 
         return v_folder_id;
 end;' language 'plpgsql';
+
+select content_folder__register_content_type(contact__folder_id(),'content_revision','t');
 
 create or replace function contact__name (
         varchar,                -- first_names
