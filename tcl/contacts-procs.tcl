@@ -14,7 +14,6 @@ namespace eval contact::group:: {}
 namespace eval contact::revision:: {}
 namespace eval contact::special_attributes:: {}
 namespace eval contact::rels:: {}
-namespace eval contact::letter:: {}
 
 ad_proc -public contacts::default_group {
     {-package_id ""}
@@ -25,92 +24,6 @@ ad_proc -public contacts::default_group {
         set package_id [ad_conn package_id]
     }
     return [db_string get_default_group {select group_id from contact_groups where package_id =:package_id and default_p} -default {}]
-}
-
-ad_proc -private contact::letter::mailing_address_exists_p {
-    {-party_id:required}
-} {
-    Does a mailing address exist for this party
-} {
-    set attribute_ids [contact::letter::mailing_address_attribute_id_priority]
-    set revision_id [contact::live_revision -party_id $party_id]
-    if { [llength $attribute_ids] > 0 } {
-        if { [db_0or1row mailing_address_exists_p " select '1' from ams_attribute_values where object_id = :revision_id and attribute_id in ('[join $attribute_ids {','}]') limit 1 "] } {
-            return 1
-        } else {
-            return 0
-        }
-    } else {
-        return 0
-    }
-}
-
-ad_proc -private contact::letter::mailing_address {
-    {-party_id:required}
-    {-format "text"}
-} {
-    Does a mailing address exist for this party
-} {
-    set attribute_ids [contact::letter::mailing_address_attribute_id_priority]
-    set revision_id [contact::live_revision -party_id $party_id]
-    set attributes_with_values [db_list_of_lists mailing_address_values " select attribute_id, value_id from ams_attribute_values where object_id = :revision_id and attribute_id in ('[join $attribute_ids {','}]')"]
-    foreach attribute $attribute_ids {
-        if { [lsearch $attributes_with_values [lindex $attribute 0]] >= 0 } {
-            # the attribute_id for this value is set
-            set attribute_id [lindex $attribute 0]
-            set value_id [lindex $attribute 1]
-            break
-        }
-    }
-    if { [exists_and_not_null attribute_id] } {
-        return [ams::widget \
-                    -widget postal_address \
-                    -request "value_${format}" \
-                    -attribute_name "Mailing Address" \
-                    -attribute_id $attribute_id \
-                    -value [db_string get_value { select ams_attribute_value__value(:attribute_id,:value_id)} -default {}] \
-                   ]
-
-    } else {
-        return {}
-    }
-}
-
-ad_proc -private contact::letter::mailing_address_attribute_id_priority {
-} {
-    Returns the order of priority of attribute_ids for the letter mailing address
-} {
-    set attribute_ids [parameter::get -parameter "MailingAddressAttributeIdOrder" -default {}]
-    if { [llength $attribute_ids] == 0 } {
-        # no attribute_id preference was specified so we get all postal_address attribute types and order them
-        set postal_address_attributes [db_list_of_lists get_postal_address_attributes { select pretty_name, attribute_id from ams_attributes where widget = 'postal_address'}]
-        set postal_address_attributes [ams::util::localize_and_sort_list_of_lists -list $postal_address_attributes]
-        set attribute_ids [list]
-        foreach attribute $postal_address_attributes {
-            lappend attribute_ids [lindex $attribute 1]
-        }
-    }
-    return $attribute_ids
-}
-
-
-
-ad_proc -private contact::util::interpolate {
-    {-values:required}
-    {-text:required}
-} {
-    Interpolates a set of values into a string. This is directly copied from the bulk mail package
-
-    @param values a list of key, value pairs, each one consisting of a
-    target string and the value it is to be replaced with.
-    @param text the string that is to be interpolated
-
-    @return the interpolated string
-} {
-    foreach pair $values {
-        regsub -all [lindex $pair 0] $text [lindex $pair 1] text
-    }
-    return $text
 }
 
 ad_proc -private contact::util::generate_filename {
