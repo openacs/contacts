@@ -308,6 +308,7 @@ ad_form -extend -name party_ae \
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
 
     } -after_submit {
+	contact::flush -party_id $party_id
 	contact::search::flush_results_counts
 	#the formbutton does not work. No clue how to fix it.
 #        if { [exists_and_not_null formbutton\:save_add_another] } {
