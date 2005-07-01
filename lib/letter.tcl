@@ -146,7 +146,7 @@ $mailing_address</div>
 <html>
 <head>
 <title>[_ contacts.Print_Letter]</title>
-<link rel=\"stylesheet\" type=\"text/css\" href=\"/resources/contacts/print.css\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"/resources/contacts/contacts-print.css\">
 </head>
 <body id=\"${paper_type}\">
 <div id=\"header\">
