@@ -10,7 +10,7 @@ body {
   background-color: #FFF;
   font-size: 10pt;
   line-height: 14pt;
-  font-family: bitstream vera sans,tahoma,verdana,arial,helvetica,sans-serif;
+  font-family: Times, Times New Roman, Garamond, Bodoni, Minion Web, ITC Stone Serif, MS Georgia, Bitstream Cyberbit,serif;
   padding: 0;
   margin: 0;
 }
@@ -61,10 +61,10 @@ a {
 }
 
 @media print {
+
 	body {
-	  font-size: 10pt;
+	  font-size: 11pt;
           line-height: 14pt;
-          font-family: bitstream vera sans,tahoma,verdana,arial,helvetica,sans-serif;
           padding: 0;
           margin: 0;
    	}
@@ -77,30 +77,36 @@ a {
 	.date {
 	  position: relative;
           text-align: right;
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          line-height: 11pt;
 	  top: 0;
           right: 0;
           padding: 0;
+	  padding-right: 0.5cm;
           margin: 0;
 	}
 	.mailing-address {
 	  position: relative;
-          top: 2cm;
+          top: 3.6cm;
           left: 0cm;
           font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
           font-size: 80%;
+          line-height: 11pt;
           padding: 0;
           margin: 0;
 	}
         .content {
 	  position: relative;
-          top: 3cm;
+          top: 5cm;
           left: 0cm;
         }
         #letterhead .content,
         #letterhead .mailing-address {
-          left: 2.5cm;
+          left: 2.9cm;
+	  padding-right: 2.9cm;
         }
 }
 @page {
-  margin: 2cm;
+  margin: 2.6cm;
 }
