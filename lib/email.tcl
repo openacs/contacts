@@ -21,6 +21,7 @@ set form_elements {
     message_id:key
     party_ids:text(hidden)
     return_url:text(hidden)
+    title:text(hidden),optional
 }
 
 if { [exists_and_not_null file_ids] } {
@@ -55,20 +56,34 @@ ad_form -action message \
     -name email \
     -cancel_label "[_ contacts.Cancel]" \
     -cancel_url $return_url \
-    -edit_buttons {{"Send" send}} \
+    -edit_buttons [list [list [_ contacts.Send] send]] \
     -form $form_elements \
     -on_request {
     } -new_request {
+ 	if {[exists_and_not_null item_id]} {
+	    contact::message::get -item_id $item_id -array message_info
+	    set subject $message_info(description)
+	    set content [ad_html_text_convert \
+			     -to "text/plain" \
+			     -from $message_info(content_format) \
+			     -- $message_info(content) \
+			    ]
+	    set title $message_info(title)
+	}
  	if {[exists_and_not_null signature_id]} {
-	    set signature "[db_string signature "select signature from contact_signatures where signature_id = :signature_id"]"
+	    set signature [contact::signature::get -signature_id $signature_id]
 #	    set signature [ad_convert_to_html -- "$signature"]
-	    append content $signature
+	    if { [exists_and_not_null signature] } {
+		append content "\n\n"
+		append content $signature
+	    }
 	}
     } -edit_request {
     } -on_submit {
-	set from [contact::name -party_id [ad_conn user_id]]
-	set from_addr [cc_email_from_party [ad_conn user_id]]
-	template::multirow create messages message_type to_addr subject content
+	set user_id [ad_conn user_id]
+	set from [contact::name -party_id $user_id]
+	set from_addr [contact::email -party_id $user_id]
+	template::multirow create messages message_type to_addr subject content party_id title to
 
 	# Insert the uploaded file linked under the package_id
 	set filename [template::util::file::get_property filename $upload_file]
@@ -86,10 +101,18 @@ ad_form -action message \
 	    set filename [contact::util::generate_filename \
 			      -title $title \
 			      -extension $extension \
-			      -party_id $party_id]
+			      -party_id $party_id \
+			     ]
 	    
 	    set revision_id [cr_import_content \
-				 -storage_type "file" -title $title $package_id $tmp_filename $tmp_size $mime_type $filename]
+				 -storage_type "file" \
+				 -title $title \
+				 $package_id \
+				 $tmp_filename \
+				 $tmp_size \
+				 $mime_type \
+				 $filename \
+				]
 
 	    if {[exists_and_not_null file_ids]} {
 		append file_ids ",$revision_id"
@@ -106,32 +129,47 @@ ad_form -action message \
 	    set last_name [lindex $name 1]
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    set to $name
-	    set to_addr [cc_email_from_party $party_id]
+	    set to_addr [contact::email -party_id $party_id]
 	    if {[empty_string_p $to_addr]} {
+		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
 		break
 	    }
 	    set values [list]
 	    foreach element [list first_names last_name name date] {
 		lappend values [list "{$element}" [set $element]]
 	    }
-	    template::multirow append messages $message_type $to_addr [contact::util::interpolate -text $subject -values $values] [contact::util::interpolate -text $content -values $values]
+	    template::multirow append messages $message_type $to_addr [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content -values $values] $party_id $title $to
 
 	    # Link the file to all parties
 	    if {[exists_and_not_null revision_id]} {
-		application_data_link::new -this_object_id $revision_id -target_object_id $party_id
+		application_data_link::new -this_object_id $revision_id -target_object_id $party_id $to
 	    }
 	}
-
+	
+	set recipients [list]
 	template::multirow foreach messages {
 	    if {[exists_and_not_null file_ids]} {
 		acs_mail_lite::complex_send -to_addr $to_addr -from_addr "$from_addr" -subject "$subject" -body "$content" -package_id $package_id -file_ids $file_ids
 	    } else {
 		acs_mail_lite::send -to_addr $to_addr -from_addr "$from_addr" -subject "$subject" -body "$content" -package_id $package_id
 	    }
+	    
+	    contact::message::log \
+		-message_type "email" \
+		-sender_id $user_id \
+		-recipient_id $party_id \
+		-title $title \
+		-description $subject \
+		-content $content \
+		-content_format "text/plain"
+
+	    lappend recipients "<a href=\"[contact::url -party_id $party_id]\">$to</a>"
 	}
+	set recipients [join $recipients ", "]
+	util_user_message -html -message [_ contacts.Your_message_was_sent_to_-recipients-]
 
     } -after_submit {
-	
 	ad_returnredirect $return_url
+	ad_script_abort
     }
 
