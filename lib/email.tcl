@@ -46,8 +46,14 @@ append form_elements {
 	{html {cols 55 rows 18}}
 	{help_text {remember that you can use <a href="message-help">mail merge substitutions</a>. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}}}
     }
-    {upload_file:file(file),optional
-	{label "[_ contacts.Upload_File]"}
+
+}
+
+if { [parameter::get -boolean -parameter "EmailAttachmentsAllowed" -default "1"] } {
+    append form_elements {
+	{upload_file:file(file),optional
+	    {label "[_ contacts.Upload_File]"}
+	}
     }
 }
 
@@ -86,7 +92,11 @@ ad_form -action message \
 	template::multirow create messages message_type to_addr subject content party_id title to
 
 	# Insert the uploaded file linked under the package_id
-	set filename [template::util::file::get_property filename $upload_file]
+	if { [parameter::get -boolean -parameter "EmailAttachmentsAllowed" -default "1"] } {
+	    set filename [template::util::file::get_property filename $upload_file]
+	} else {
+	    set filename ""
+	}
 	set package_id [ad_conn package_id]
 
 	if {$filename != "" } {
