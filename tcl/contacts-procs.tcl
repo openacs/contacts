@@ -83,34 +83,88 @@ ad_proc -private contact::util::get_employees {
     return $contact_list
 }
 
+ad_proc -private contact::flush {
+    {-party_id:required}
+} {
+    Flush memorized information related to this contact
+} {
+    util_memoize_flush "::contact::email_address_exists_p_not_cached -party_id $party_id"
+    util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
+    util_memoize_flush "::contact::name_not_cached -party_id $party_id"
+    util_memoize_flush "::contact::email_not_cached -party_id $party_id"
+}
+
 ad_proc -public contact::name {
+    {-party_id:required}
+} {
+    this returns the contact's name. Cached
+} {
+    return [util_memoize [list ::contact::name_not_cached -party_id $party_id]]
+}
+
+ad_proc -public contact::name_not_cached {
     {-party_id:required}
 } {
     this returns the contact's name
 } {
-    if {[contact::person_p \
-	     -party_id $party_id]} {
-	return [person::name \
-		    -person_id $party_id]
+    if {[contact::person_p -party_id $party_id]} {
+	return [person::name -person_id $party_id]
     } else {
-
 	# if there is an org the name is returned otherwise null is
 	# returned
-
         return [db_string get_org_name {select name from organizations where organization_id = :party_id} -default {}]
     }
 }
 
-ad_proc -public contact::type {
+ad_proc -public contact::email {
+    {-party_id:required}
+} {
+    this returns the contact's name. Cached
+} {
+    return [util_memoize [list ::contact::email_not_cached -party_id $party_id]]
+}
+
+ad_proc -public contact::email_not_cached {
     {-party_id:required}
 } {
     this returns the contact's name
 } {
-    if {[contact::person_p \
-	     -party_id $party_id]} {
+    set email [db_string get_party_email { select email from parties where party_id = :party_id } -default {}]
+    if { ![exists_and_not_null email] } {
+	# we check if these is an ams_attribute_valued email address for this party
+	set attribute_id [contact::email_attribute_id]
+	set revision_id [contact::live_revision -party_id $party_id]
+	if { [exists_and_not_null revision_id] } {
+	    set email [db_string get_email { select ams_attribute_value__value(:attribute_id,value_id) from ams_attribute_values where object_id = :revision_id and attribute_id = :attribute_id } -default {}]
+	    set email [ams::widget -widget email -request value_text -value $email]
+	}
+    }
+    return $email
+}
+
+ad_proc -private contact::email_attribute_id {
+} {
+    this returns the email attributes attribute_id. cached
+} {
+    return [util_memoize [list ::contact::email_attribute_id]]
+}
+
+ad_proc -private contact::email_attribute_id {
+} {
+    this returns the email attributes attribute_id
+} {
+    return [db_string get_email_attribute_id { select attribute_id from acs_attributes where object_type = 'party' and attribute_name = 'email'}]
+}
+
+
+ad_proc -public contact::type {
+    {-party_id:required}
+} {
+    returns the contact type
+} {
+    if {[contact::person_p -party_id $party_id]} {
 	return "person"
-    } elseif {[contact::organization_p \
-		   -party_id $party_id]} {
+    } elseif {[contact::organization_p -party_id $party_id]} {
 	return "organization"
     } else {
 	return ""
@@ -122,14 +176,10 @@ ad_proc -public contact::exists_p {
 } {
     does this contact exist?
 } {
-
     # persons can be organizations so we need to do the check this way
-
-    if {[contact::person_p \
-	     -party_id $party_id]} {
+    if {[contact::person_p -party_id $party_id]} {
 	return 1
-    } elseif {[contact::organization_p \
-		   -party_id $party_id]} {
+    } elseif {[contact::organization_p -party_id $party_id]} {
 	return 1
     } else {
 	return 0
@@ -139,27 +189,44 @@ ad_proc -public contact::exists_p {
 ad_proc -public contact::person_p {
     {-party_id:required}
 } {
-    this returns the contact's name
+    is this party a person? Cached
+} {
+    return [util_memoize [list ::contact::person_p_not_cached -party_id $party_id]]
+}
+
+ad_proc -public contact::person_p_not_cached {
+    {-party_id:required}
+} {
+    is this party a person? Cached
 } {
     if {[db_0or1row contact_person_exists_p {select '1' from persons where person_id = :party_id}]} {
-	return 1} else {
-	    return 0
-	}
+	return 1
+    } else {
+	return 0
+    }
 }
 
 ad_proc -public contact::organization_p {
     {-party_id:required}
 } {
-    this returns the contact's name
+    is this party an organization? Cached
 } {
-    if {[contact::person_p \
-	     -party_id $party_id]} {
+    return [util_memoize [list ::contact::organization_p_not_cached -party_id $party_id]]
+}
+
+ad_proc -public contact::organization_p_not_cached {
+    {-party_id:required}
+} {
+    is this party and organization?
+} {
+    if {[contact::person_p -party_id $party_id]} {
 	return 0
     } else {
 	if {[db_0or1row contact_org_exists_p {select '1' from organizations where organization_id = :party_id}]} {
-	    return 1} else {
-		return 0
-	    }
+	    return 1
+	} else {
+	    return 0
+	}
     }
 }
 
@@ -189,9 +256,10 @@ ad_proc -public contact::live_revision {
     create a contact revision
 } {
     if {[db_0or1row revision_exists_p {select 1 from cr_items where item_id = :party_id}]} {
-	return [item::get_live_revision $party_id]} else {
-	    return ""
-	}
+	return [item::get_live_revision $party_id]
+    } else {
+	return ""
+    }
 }
 
 ad_proc -public contact::subsite_user_group {
