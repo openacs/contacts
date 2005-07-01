@@ -6,29 +6,101 @@
 
 ----------------------------------------------- */
 
-@page {
-	margin-top: 1in;
-        margin-right: 1in;
-        margin-bottom: 1in;
-        margin-left: 3in;
-}
 body {
-   background: white;
-   font-size: 12pt;
-   }
-div.letter {
-	page-break-after: always;
+  background-color: #FFF;
+  font-size: 10pt;
+  line-height: 14pt;
+  font-family: bitstream vera sans,tahoma,verdana,arial,helvetica,sans-serif;
+  padding: 0;
+  margin: 0;
 }
-a:link, a:visited {
-   color: #520;
-   background: transparent;
-   font-weight: bold;
-   text-decoration: underline;
-   }
-#content a:link:after, #content a:visited:after {
-   content: " (" attr(href) ") ";
-   font-size: 90%;
-   }
-#content a[href^="/"]:after {
-   content: " (http://www.mbseminary.edu" attr(href) ") ";
-   }
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+@media screen {
+	#header {
+	  background-color: #DDD;
+	  border-bottom: 1px solid #AAA;
+	  padding: 1em;
+	  font-weight: bolder;
+	}
+	#header p {
+	  padding: 0;
+	  margin: 0;
+	}
+        #header a {
+	  text-decoration: underline;
+          color: #F00;
+        }
+	.message {
+          clear: both;
+	  padding: 5px;
+	  margin: 20px 10px 20px 10px;
+	  border: 3px outset #666;
+	  max-width: 50em;
+	}
+	.date {
+          text-align: right;
+	}
+	.mailing-address {
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          padding: 0;
+          margin: 2em 0 0 0;
+	}
+        .content {
+          padding: 0;
+          margin: 2em 0 0 0;
+        }
+        #letterhead .content,
+        #letterhead .mailing-address {
+          margin-left: 50px;
+        }
+}
+
+@media print {
+	body {
+	  font-size: 10pt;
+          line-height: 14pt;
+          font-family: bitstream vera sans,tahoma,verdana,arial,helvetica,sans-serif;
+          padding: 0;
+          margin: 0;
+   	}
+	#header {
+	  display: none;
+	}
+	.message {
+	  page-break-after: always;
+        }
+	.date {
+	  position: relative;
+          text-align: right;
+	  top: 0;
+          right: 0;
+          padding: 0;
+          margin: 0;
+	}
+	.mailing-address {
+	  position: relative;
+          top: 2cm;
+          left: 0cm;
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          padding: 0;
+          margin: 0;
+	}
+        .content {
+	  position: relative;
+          top: 3cm;
+          left: 0cm;
+        }
+        #letterhead .content,
+        #letterhead .mailing-address {
+          left: 2.5cm;
+        }
+}
+@page {
+  margin: 2cm;
+}
