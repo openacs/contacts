@@ -61,7 +61,7 @@ ad_form -action message \
 				   -from "text/plain" \
 				   -- $signature \
 				  ]
-		set signature "<p>${signature}</p>"
+		set signature "<p><br>${signature}</p>"
 	    }
 	}
  	if {[exists_and_not_null item_id]} {
@@ -82,7 +82,7 @@ ad_form -action message \
 		set content [list $signature "text/html"]
 	    }
 	}
-
+	set paper_type "letterhead"
     } -edit_request {
     } -on_submit {
 	set user_id [ad_conn user_id]
