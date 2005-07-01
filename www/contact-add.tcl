@@ -315,7 +315,8 @@ ad_form -extend -name party_ae \
 #            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]
 #        } else {
 	if {[empty_string_p $object_id_two]} {
-            ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
+	    ad_returnredirect [contact::url -party_id $party_id]
+#            ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
 	} else {
 	    ad_returnredirect "/contacts/$object_id_two"
 	}
