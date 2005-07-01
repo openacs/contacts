@@ -39,16 +39,18 @@ db_transaction {
 	    }
             group::remove_member -group_id $group_id -user_id $party_id
         }
+	set contact_count [llength $contacts]
 	set contacts [join $contacts ", "]
+	set contact $contacts
 	set group [lang::util::localize [group::get_element -group_id $group_id -element group_name]]
 	if { $group_id != "-2" } {
-	    if { [llength $contacts] > 1 } {
+	    if { $contact_count > 1 } {
 		util_user_message -message [_ contacts.lt_contacts_were_removed_from_group]
 	    } else {
 		util_user_message -message [_ contacts.lt_contacts_was_removed_from_group]
 	    }
 	} else {
-	    if { [llength $contacts] > 1 } {
+	    if { $contact_count > 1 } {
 		util_user_message -message [_ contacts.lt_contacts_were_deleted]
 	    } else {
 		util_user_message -message [_ contacts.lt_contacts_was_deleted]
