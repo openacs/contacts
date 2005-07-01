@@ -299,6 +299,7 @@ ad_proc -public contact::search::query_clause {
     @param and Set this flag if you want the result to start with an 'and' if the list of where clauses returned is non-empty.
 } {
     set query [string trim $query]
+    regsub -all "'" $query "''" query
     set query_clauses [list]
 
     if { [string is integer $query] } {
