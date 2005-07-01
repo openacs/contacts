@@ -23,8 +23,7 @@
         return_url=@return_url@ 
         party_ids=@party_ids@ 
         file_ids=@file_ids@ 
-        subject=@subject@ 
-        content=@content@ 
+	item_id=@item_id@
         signature_id=@signature_id@ 
         recipients=@recipients;noquote@
         >

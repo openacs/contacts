@@ -7,18 +7,16 @@ ad_page_contract {
 } {
     {party_id:integer,multiple,optional}
     {party_ids:optional}
-    {message_id:integer,optional}
     {message_type ""}
     {message:optional}
     {return_url "./"}
     {object_id:integer,multiple,optional}
     {file_ids ""}
-    {subject ""}
-    {content:html ""}
+    {item_id:integer ""}
     {signature_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
-	if { [lsearch [list email letter label] $message_type] < 0 } {
+	if { [lsearch [list email letter] $message_type] < 0 } {
 	    ad_complain "[_ contacts.lt_Your_provided_an_inva]"
 	}
     }
@@ -28,6 +26,11 @@ ad_page_contract {
 	}
     }
 }
+if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
+    set message_type [lindex [split $message "."] 0]
+    set item_id [lindex [split $message "."] 1]
+}
+
 if { [exists_and_not_null party_id] } {
     set party_ids [list]
     foreach party_id $party_id {
@@ -48,8 +51,8 @@ foreach party_id $party_ids {
     set contact_link   "<a href=\"${contact_url}\">${contact_name}</a>"
     set sort_key       [string toupper $contact_name]
     # Check if the party has a valid e-mail address we can send to
-    set email_p        [string is false [empty_string_p [cc_email_from_party $party_id]]]
-    set letter_p       [contact::letter::mailing_address_exists_p -party_id $party_id]
+    set email_p        [contact::message::email_address_exists_p -party_id $party_id]
+    set letter_p       [contact::message::mailing_address_exists_p -party_id $party_id]
     lappend recipients [list $contact_name $party_id $contact_link $email_p $letter_p]
 }
 set sorted_recipients  [ams::util::sort_list_of_lists -list $recipients]
@@ -125,7 +128,6 @@ if {[exists_and_not_null file_list]} {
 }
 
 set form_elements {
-    message_id:key
     file_ids:text(hidden)
     party_ids:text(hidden)
     return_url:text(hidden)
@@ -134,9 +136,37 @@ set form_elements {
 
 
 if { [string is false [exists_and_not_null message_type]] } {
-    append form_elements {
-	{message_type:text(select) {label "[_ contacts.Type]"} {options {{"[_ contacts.Email]" email} {"[_ contacts.Letter]" letter}}}}
+
+    set message_type_options [ams::util::localize_and_sort_list_of_lists \
+				  -list [db_list_of_lists get_message_types { select pretty_name, message_type from contact_message_types }] \
+				 ]
+
+    set message_options [list]
+    foreach op $message_type_options {
+	lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" [lindex $op 1]]
+	# set email_text and letter_text and others in the future
+	set "[lindex $op 1]_text" [lindex $op 0]
     }
+
+    set public_text [_ contacts.Public]
+    set package_id [ad_conn package_id]
+    set message_options [concat \
+			     $message_options \
+			     [db_list_of_lists get_messages {
+				 select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END || ' ' || CASE WHEN message_type = 'email' THEN :email_text WHEN message_type = 'letter' THEN :letter_text END || ': ' || title,
+				        message_type || '.' || to_char(item_id,'FM9999999999999999999999')
+                                   from contact_messages
+                                  where owner_id in ( select party_id from parties )
+                                     or owner_id = :package_id
+                                  order by CASE WHEN owner_id = :package_id THEN '000000000' ELSE upper(contact__name(owner_id)) END, message_type, upper(title)
+			     }] \
+			    ]
+
+    lappend form_elements [list \
+			       message:text(select) \
+			       [list label "[_ contacts.Message]"] \
+			       [list options $message_options] \
+			      ]
     set title [_ contacts.create_a_message]
 } else {
     set title [_ contacts.create_$message_type]
@@ -159,10 +189,6 @@ if { [string is false [exists_and_not_null message]] } {
     set title $reset_title
     set signature_id $reset_signature_id
     append form_elements {
-	{message:text(select),optional
-	    {label "[_ contacts.Message]"} 
-	    {options {{"[_ contacts.--Create_New_Message--]" new}}}
-	}
 	{signature_id:text(select) 
 	    {label "[_ contacts.Signature]"}
 	    {options {$signature_list}}
@@ -173,7 +199,8 @@ if { [string is false [exists_and_not_null message]] } {
 
 set edit_buttons [list [list "[_ contacts.Next]" create]]
 
-set parties_new $party_ids
+# the message form will rest party_ids so we need to carry it over
+set new_party_ids $party_ids
 ad_form -action message \
     -name message \
     -cancel_label "[_ contacts.Cancel]" \
@@ -190,36 +217,4 @@ ad_form -action message \
     } -edit_request {
     } -on_submit {
     }
-set party_ids $parties_new
-
-
-if { [exists_and_not_null include_signature] } {
-    # we had good input
-    switch $message_type {
-	letter {
-	    set content [ad_html_text_convert -from [template::util::richtext::get_property format $content] -to "text/html" [template::util::richtext::get_property content $content]]
-            set subject ""
-	}
-	email {
-	    set this_subject [string trim $subject]
-	} 
-    }
-    set from [contact::name -party_id [ad_conn user_id]]
-    template::multirow create messages message_type to subject content
-    foreach party_id $party_ids {
-	set name [contact::name -party_id $party_id]
-	set first_names [lindex $name 0]
-	set last_name [lindex $name 1]
-	set date [lc_time_fmt [dt_sysdate] "%q"]
-	set to $name
-	set values [list]
-	foreach element [list first_names last_name name date] {
-	    lappend values [list "{$element}" [set $element]]
-	}
-	template::multirow append messages $message_type $to [contact::util::interpolate -text $subject -values $values] [contact::util::interpolate -text $content -values $values]
-    }
-    
-    ad_return_template message-messages
-} else {
-    ad_return_template message
-}
+set party_ids $new_party_ids
