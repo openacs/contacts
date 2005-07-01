@@ -8,7 +8,10 @@
 </if>
 <else>
 <master src="/packages/contacts/lib/contact-master">
-<property name="party_id">@party_ids@</property>
+<property name="party_id">@party_id@</property>
+<if @party_ids@ eq "">
+<p>@error_message;noquote@</p>
+</if>
 </else>
 <property name="focus">comment_add.comment</property>
 

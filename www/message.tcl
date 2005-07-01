@@ -39,7 +39,6 @@ if { [exists_and_not_null party_id] } {
 }
 
 set party_count [llength $party_ids]
-
 set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
 set context [list $title]
@@ -97,15 +96,18 @@ set recipients [join $recipients ", "]
 set invalid_recipients [join $invalid_recipients ", "]
 if { [llength $invalid_recipients] > 0 } {
     switch $message_type {
-        letter {
-            util_user_message -html -message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
-        }
-        email {
-            util_user_message -html -message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
-        }
-        default {
-            util_user_message -html -message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
-        }
+	letter {
+	    set error_message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
+	}
+	email {
+	    set error_message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
+	}
+	default {
+	    set error_message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
+	}
+    }
+    if { $party_ids != "" } {
+	util_user_message -html -message $error_message
     }
 }
 
