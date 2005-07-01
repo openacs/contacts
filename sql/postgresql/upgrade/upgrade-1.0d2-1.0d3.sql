@@ -114,6 +114,7 @@ create table contact_message_log (
         sent_date               timestamptz
                                 constraint contact_message_sent_date_nn not null,
         title                   varchar(1000),
+	description             text,
         content                 text
                                 constraint contact_message_log_content_nn not null,
         content_format          varchar(200)
