@@ -140,6 +140,7 @@ template::list::create \
 	search_id {}
 	page_size {}
 	tasks_interval {}
+        query {}
     } -orderby {
         first_names {
             label "[_ contacts.First_Name]"
