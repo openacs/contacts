@@ -23,6 +23,27 @@ ad_page_contract {
             ad_complain "[_ contacts.You_have_specified_an_invalid_object_type]"
         }
     }
+    valid_search_id -requires {search_id} {
+	db_0or1row condition_exists_p {
+                                        select owner_id
+                                          from contact_searches
+                                         where search_id = :search_id
+                                      }
+        if { [exists_and_not_null owner_id] } {
+	    set valid_owner_ids [list]
+	    lappend valid_owner_ids [ad_conn user_id]
+	    if { [permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
+		lappend valid_owner_ids [ad_conn package_id]
+	    }
+	    if { [lsearch $valid_owner_ids $owner_id] < 0 } {
+		if { [contact::exists_p -party_id $owner_id] } {
+		    ad_complain "[_ contacts.lt_You_do_not_have_permission_to_edit_other_peo]"
+		} else {
+		    ad_complain "[_ contacts.lt_You_do_not_have_permission_to_edit_this_search]"
+		}
+	    }
+	}
+    }
 }
 
 
@@ -88,9 +109,9 @@ if { [exists_and_not_null object_type] } {
 if { $search_exists_p } {
     set conditions [list]
     db_foreach selectqueries {
-        select type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
+        select condition_id, type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
     } {
-        lappend conditions [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
+        lappend conditions "[contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list] <a href=\"[export_vars -base search-condition-delete -url {condition_id}]\"><img src=\"/resources/acs-subsite/Delete16.gif\" width=\"16\" height=\"16\" border=\"0\"></a>"
     }
     if { [llength $conditions] > 0 } {
 	set query_pretty "<ul><li>[join $conditions {</li><li>}]</li></ul>"
