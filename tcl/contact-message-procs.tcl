@@ -9,12 +9,31 @@ ad_library {
 
 namespace eval contact:: {}
 namespace eval contact::message:: {}
+namespace eval contact::signature:: {}
+
+ad_proc -public contact::signature::get {
+    {-signature_id:required}
+} {
+    Get a signature
+} {
+    return [db_string get_signature "select signature from contact_signatures where signature_id = :signature_id" -default {}]
+}
 
 ad_proc -private contact::message::root_folder {
 } {
     returns the cr_folder for contacts
 } {
     return [db_string get_root_folder { select contact__folder_id() }]
+}
+
+ad_proc -public contact::message::get {
+    {-item_id:required}
+    {-array:required}
+} {
+    Get the info on a contact message
+} {
+    upvar 1 $array row
+    db_1row select_message_info { select * from contact_messages where item_id = :item_id } -column_array row
 }
 
 ad_proc -private contact::message::save {
@@ -68,12 +87,12 @@ ad_proc -private contact::message::save {
 
 
 ad_proc -private contact::message::log {
-    {-message_id:required}
     {-message_type:required}
     {-sender_id ""}
     {-recipient_id:required}
     {-sent_date ""}
     {-title ""}
+    {-description ""}
     {-content:required}
     {-content_format "text/plain"}
 } {
@@ -87,19 +106,42 @@ ad_proc -private contact::message::log {
     }
     db_dml log_message {
 	insert into contact_message_log
-	( message_id, message_type, sender_id, recipient_id, sent_date, title, content, content_format)
+	( message_id, message_type, sender_id, recipient_id, sent_date, title, description, content, content_format)
         values
-        ( :message_id, :message_type, :sender_id, :recipient_id, :sent_date, :title, :content, :content_format)
+        ( acs_object_id_seq.nextval, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
     }
 }
 
+ad_proc -private contact::message::email_address_exists_p {
+    {-party_id:required}
+} {
+    Does a email address exist for this party. Cached
+} {
+    return [util_memoize [list ::contact::message::email_address_exists_p_not_cached -party_id $party_id]]
+}
+
+ad_proc -private contact::message::email_address_exists_p_not_cached {
+    {-party_id:required}
+} {
+    Does a email address exist for this party
+} {
+    return [string is false [empty_string_p [contact::email -party_id $party_id]]]
+}
 
 ad_proc -private contact::message::mailing_address_exists_p {
     {-party_id:required}
 } {
+    Does a mailing address exist for this party. Cached
+} {
+    return [util_memoize [list ::contact::message::mailing_address_exists_p_not_cached -party_id $party_id]]
+}
+
+ad_proc -private contact::message::mailing_address_exists_p_not_cached {
+    {-party_id:required}
+} {
     Does a mailing address exist for this party
 } {
-    set attribute_ids [contact::letter::mailing_address_attribute_id_priority]
+    set attribute_ids [contact::message::mailing_address_attribute_id_priority]
     set revision_id [contact::live_revision -party_id $party_id]
     if { [llength $attribute_ids] > 0 } {
         if { [db_0or1row mailing_address_exists_p " select '1' from ams_attribute_values where object_id = :revision_id and attribute_id in ('[join $attribute_ids {','}]') limit 1 "] } {
@@ -112,35 +154,42 @@ ad_proc -private contact::message::mailing_address_exists_p {
     }
 }
 
+
 ad_proc -private contact::message::mailing_address {
     {-party_id:required}
-    {-format "text"}
+    {-format "text/plain"}
 } {
     Does a mailing address exist for this party
 } {
-    set attribute_ids [contact::letter::mailing_address_attribute_id_priority]
+    regsub -all "text/" $format "" format
+    if { $format != "html" } {
+	set format "text"
+    }
+
+    set attribute_ids [contact::message::mailing_address_attribute_id_priority]
     set revision_id [contact::live_revision -party_id $party_id]
-    set attributes_with_values [db_list_of_lists mailing_address_values " select attribute_id, value_id from ams_attribute_values where object_id = :revision_id and attribute_id in ('[join $attribute_ids {','}]')"]
+    set mailing_address {}
+    db_foreach mailing_address_values "
+                   select attribute_id,
+                          ams_attribute_value__value(attribute_id,value_id) as value
+                     from ams_attribute_values
+                    where object_id = :revision_id
+                      and attribute_id in ('[join $attribute_ids {','}]')
+    " {
+	set attribute_value($attribute_id) $value
+    }
     foreach attribute $attribute_ids {
-        if { [lsearch $attributes_with_values [lindex $attribute 0]] >= 0 } {
-            # the attribute_id for this value is set
-            set attribute_id [lindex $attribute 0]
-            set value_id [lindex $attribute 1]
+	if { [info exists attribute_value($attribute)] } {
+	    set mailing_address [ams::widget \
+				     -widget postal_address \
+				     -request "value_${format}" \
+				     -value $value \
+				    ]
+
             break
         }
     }
-    if { [exists_and_not_null attribute_id] } {
-        return [ams::widget \
-                    -widget postal_address \
-                    -request "value_${format}" \
-                    -attribute_name "Mailing Address" \
-                    -attribute_id $attribute_id \
-                    -value [db_string get_value { select ams_attribute_value__value(:attribute_id,:value_id)} -default {}] \
-                   ]
-
-    } else {
-        return {}
-    }
+    return $mailing_address
 }
 
 ad_proc -private contact::message::mailing_address_attribute_id_priority {
