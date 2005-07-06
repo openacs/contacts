@@ -15,6 +15,7 @@ namespace eval contact::revision:: {}
 namespace eval contact::special_attributes:: {}
 namespace eval contact::rels:: {}
 
+
 ad_proc -public contacts::default_group {
     {-package_id ""}
 } {
@@ -157,12 +158,28 @@ ad_proc -private contact::email_attribute_id {
 }
 
 
+ad_proc -public contact::link {
+    {-party_id:required}
+} {
+    this returns the contact's name. Cached
+} {
+    set contact_name [contact::name -party_id $party_id]
+    if { ![empty_string_p $contact_name] } {
+        set contact_url [contact::url -party_id $party_id]
+        return "<a href=\"${contact_url}\">${contact_name}</a>"
+    } else {
+        return {}
+    }
+}
+
 ad_proc -public contact::type {
     {-party_id:required}
 } {
     returns the contact type
 } {
-    if {[contact::person_p -party_id $party_id]} {
+    if {[contact::user_p -party_id $party_id]} {
+        return "user"
+    } elseif {[contact::person_p -party_id $party_id]} {
 	return "person"
     } elseif {[contact::organization_p -party_id $party_id]} {
 	return "organization"
@@ -200,6 +217,26 @@ ad_proc -public contact::person_p_not_cached {
     is this party a person? Cached
 } {
     if {[db_0or1row contact_person_exists_p {select '1' from persons where person_id = :party_id}]} {
+	return 1
+    } else {
+	return 0
+    }
+}
+
+ad_proc -public contact::user_p {
+    {-party_id:required}
+} {
+    is this party a user? Cached
+} {
+    return [util_memoize [list ::contact::user_p_not_cached -party_id $party_id]]
+}
+
+ad_proc -public contact::user_p_not_cached {
+    {-party_id:required}
+} {
+    is this party a person? Cached
+} {
+    if {[db_0or1row contact_user_exists_p {select '1' from users where user_id = :party_id}]} {
 	return 1
     } else {
 	return 0
@@ -271,6 +308,27 @@ ad_proc -public contact::subsite_user_group {
 	return [item::get_live_revision $party_id]} else {
 	    return ""
 	}
+}
+
+ad_proc -private contact::person_upgrade_to_user {
+    {-person_id ""}
+} {
+    Upgrade a person to a user. This proc does not send an email to the newly created user.
+} {
+    contact::flush -party_id $person_id
+    ns_log Notice "set username [contact::email -party_id $person_id]"
+    db_transaction {
+        set username [contact::email -party_id $person_id]
+        set user_id $person_id
+        set extra_vars [ns_set create]
+        oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {user_id username}
+        package_instantiate_object -extra_vars $extra_vars user
+        # we reset the password in admin mode. this means that an email
+        # will not automatically be sent.
+        auth::password::reset -authority_id [auth::authority::local] -username $username -admin
+    } on_error {
+        error "There was an error in contact::person_upgrade_to_user: $errmsg"
+    }
 }
 
 ad_proc -private contact::group::new {
@@ -366,8 +424,7 @@ ad_proc -public contact::special_attributes::ad_form_values {
     -form:required
 } {
 } {
-    set object_type [contact::type \
-			 -party_id $party_id]
+    set object_type [contact::type -party_id $party_id]
 
     db_1row get_extra_info {
 	select email, url
@@ -375,10 +432,9 @@ ad_proc -public contact::special_attributes::ad_form_values {
 	where party_id = :party_id}
     set element_list [list email url]
 
-    if {$object_type == "person" } {
+    if { [lsearch [list person user] $object_type] >= 0 } {
 
-	array set person [person::get \
-			      -person_id $party_id]
+	array set person [person::get -person_id $party_id]
 	set first_names $person(first_names)
 	set last_name $person(last_name)
 
@@ -406,10 +462,9 @@ ad_proc -public contact::special_attributes::ad_form_save {
     -form:required
 } {
 } {
-    set object_type [contact::type \
-			 -party_id $party_id]
+    set object_type [contact::type -party_id $party_id]
     set element_list [list email url]
-    if {$object_type == "person" } {
+    if { [lsearch [list person user] $object_type] >= 0 } {
 	lappend element_list first_names last_name
     } elseif {$object_type == "organization" } {
 	lappend element_list name legal_name reg_number notes
@@ -438,7 +493,7 @@ ad_proc -public contact::special_attributes::ad_form_save {
 	    }
         }
     }
-    if {$object_type == "person" } {
+    if { [lsearch [list person user] $object_type] >= 0 } {
 
 	# first_names and last_name are required
 

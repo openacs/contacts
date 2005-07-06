@@ -101,10 +101,10 @@ if {[exists_and_not_null rel_type]} {
 if { $object_type == "person" } {
      ad_form -extend -name party_ae \
 	 -form {
-	     {create_user_p:text(radio) 
-		 {label "[_ contacts.Create_user]"} 
-		 {options {{[_ acs-kernel.common_Yes] "t"} {[_ acs-kernel.common_no] "f"}}} 
-		 {values "f"}
+	     {create_user_p:text(checkbox),optional
+		 {label ""} 
+		 {options {{"[_ contacts.Create_a_user_account_for_this_person]" "t"}}} 
+		 {values ""}
 	     }
 	 }
     set title "[_ contacts.Add_a_Person]"
@@ -138,9 +138,8 @@ ad_form -extend -name party_ae \
     } -edit_request {
     } -on_submit {
 
-	# MGEDDERT: I NEED TO MAKE SURE THAT VALUES THAT NEED TO BE UNIQUE ARE UNIQUE
-
 	# for orgs name needs to be unique
+        # for users username needs to be unique
 	# for all of them email needs to be unique
 
 	if { $object_type == "person" } {
@@ -150,11 +149,37 @@ ad_form -extend -name party_ae \
 	    if { ![exists_and_not_null last_name] } {
 		template::element::set_error party_ae last_name "[_ contacts.lt_Last_Name_is_required]"
 	    }
+            if { $create_user_p == "t" } {
+                if { ![exists_and_not_null email] } {
+                    template::element::set_error party_ae email "[_ contacts.lt_Email_Address_is_required_for_users]"
+                } else {
+                    set other_user_id [acs_user::get_by_username -username $email]
+                    if { ![empty_string_p $other_user_id] } {
+                        set another_user [contact::link -party_id $other_user_id]
+                        template::element::set_error party_ae email "[_ contacts.lt_-another_user-_already_uses_this_username]"
+                    }
+                }
+            }
 	} else {
 	    if { ![exists_and_not_null name] } {
 		template::element::set_error party_ae name "[_ contacts.Name_is_required]"
-	    }
+	    } else {
+                set other_organization_id [organization::get_by_name -name $name]
+                if { ![empty_string_p $other_organization_id] } {
+                    set another_organization [contact::link -party_id $other_organization_id]
+                    template::element::set_error party_ae name "[_ contacts.lt_-another_organization-_already_uses_this_name]"
+                }
+            }
 	}
+
+        if { [exists_and_not_null email] } {
+            set other_party_id [party::get_by_email -email $email]
+            if { ![empty_string_p $other_party_id] } {
+                set another_contact [contact::link -party_id $other_party_id]
+                template::element::set_error party_ae email "[_ contacts.lt_-another_contact-_already_uses_this_email]"
+            }
+        }
+
 	if { ![template::form::is_valid party_ae] } {
 	    break
 	}
@@ -180,64 +205,35 @@ ad_form -extend -name party_ae \
     } -new_data {
 
 	if { $object_type == "person" } {
-	    if { ![exists_and_not_null email] } {
-		set email "$party_id@bogusdomain.com"
-		set username $party_id
-	    }
-	    if { ![exists_and_not_null username] } {
-		set username $email
-	    }
+
 	    if { ![exists_and_not_null url] } {
 		set url ""
 	    }
 
-	    if {$create_user_p == "f"} {
-		# Initialize Party Entry
-		# We do not want to create a new user with each contact
-		template::form create add_party
-		template::element create add_party email -value "$email"
-		template::element create add_party first_names -value "$first_names"
-		template::element create add_party last_name -value "$last_name"
-		template::element create add_party url -value "$url"
-		
-		set party_id [party::new -party_id $party_id -form_id add_party person]
-
-	    } else {
-		
-                array set creation_info [auth::create_user \
-                                             -user_id $party_id \
-                                             -verify_password_confirm \
-                                             -username $email \
-                                             -email $email \
-                                             -first_names $first_names \
-                                             -last_name $last_name \
-                                             -screen_name "" \
-                                             -password "" \
-                                             -password_confirm "" \
-                                             -url $url \
-                                             -secret_question "" \
-                                             -secret_answer ""]
-		if { ![string equal $creation_info(creation_status) "ok"] } {
-		    ad_return_error "Error" "contacts/www/contact add user error: \n creation_status \n $creation_info(creation_status) \n creation_message \n $creation_info(creation_message) \n element_messages \n $creation_info(element_messages)"
-                    error $creation_info(creation_status)
-                }
-	    }
-
-
-	    if { "$email" == "$party_id@bogusdomain.com" } {
-		    # we need to delete the party email address
-		party::update -party_id $party_id -email "" -url $url
-	    }
-
-
-	    foreach group_id $group_ids {
-		group::add_member \
-		    -group_id $group_id \
-		    -user_id $party_id \
-		    -rel_type "membership_rel"
-	    }
-	    
-
+            # Initialize Person
+            template::form create add_party
+            template::element create add_party email -value "$email"
+            template::element create add_party first_names -value "$first_names"
+            template::element create add_party last_name -value "$last_name"
+            template::element create add_party url -value "$url"
+            set party_id [party::new -party_id $party_id -form_id add_party person]
+            # party::new does not correctly save email address
+            party::update -party_id $party_id -email $email -url $url
+            
+            # in order to create a user we need a valid unique username (i.e. their email address).
+            # the on_submit block has already validated that this is in fact a valid and unique 
+            # email address which will serve as their username
+            if { $create_user_p == "t" } {
+                contact::person_upgrade_to_user -person_id $party_id
+            }
+            
+            foreach group_id $group_ids {
+                group::add_member \
+                    -group_id $group_id \
+                    -user_id $party_id \
+                    -rel_type "membership_rel"
+            }
+            
 	    callback contact::person_new -package_id $package_id -contact_id $party_id
 	    
 	} else {
@@ -305,7 +301,9 @@ ad_form -extend -name party_ae \
 	}
 
 	# Add the user to the
-	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was added"
+        set contact_link [contact::link -party_id $party_id]
+        set object_type [_ contacts.$object_type]
+	util_user_message -html -message "[_ contacts.lt_The_-object_type-_-contact_link-_was_added]"
 
     } -after_submit {
 	contact::flush -party_id $party_id
