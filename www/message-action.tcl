@@ -39,7 +39,7 @@ ad_page_contract {
     }
     owner_valid -requires {owner_id} {
         if { [exists_and_not_null owner_id] } {
-            if { $owner_id == [ad_conn package_id] || ( [contact::exists_p -party_id $owner_id] && [contact::type -party_id $owner_id] == "person" ) } {
+            if { $owner_id == [ad_conn package_id] || ( [contact::exists_p -party_id $owner_id] && [lsearch [list person user] [contact::type -party_id $owner_id]] >= 0 ) } {
             } else {
                 ad_complain [_ contacts.The_owner_id_specified_is_not_valid]
             }

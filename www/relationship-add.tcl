@@ -40,7 +40,13 @@ set party_id $party_one
 set contact_name_one [contact::name -party_id $party_id]
 set contact_name_two [contact::name -party_id $party_two]
 set contact_type_one [contact::type -party_id $party_id]
+if { $contact_type_one == "user" } {
+    set contact_type_one "person"
+}
 set contact_type_two [contact::type -party_id $party_two]
+if { $contact_type_two == "user" } {
+    set contact_type_two "person"
+}
 set secondary_role_pretty [db_string get_secondary_role_pretty {}]
 if { ![exists_and_not_null rel_type] } {
     set options_list [db_list_of_lists get_rel_types {}]

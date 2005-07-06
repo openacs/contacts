@@ -27,6 +27,9 @@ ad_page_contract {
 }
 
 set contact_type [contact::type -party_id $party_id]
+if { $contact_type == "user" } {
+    set contact_type "person"
+}
 set contact_name [contact::name -party_id $party_id]
 set contact_url  [contact::url  -party_id $party_id]
 

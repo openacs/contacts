@@ -67,7 +67,7 @@ ad_form -action group-parties-add \
                 foreach party_id $party_ids {
 
                     switch [contact::type -party_id $party_id] {
-                        person {
+                        person - user {
                             set rel_type "membership_rel"
                         }
                         organization {
