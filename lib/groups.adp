@@ -24,5 +24,8 @@
 <h3>#contacts.Other_Options#</h3>
 <ul class="action-links">
   <li><a href="@remove_url@">#contacts.lt_Delete_this_contact#</a>
+<if @upgrade_url@ not nil>
+  <li><a href="@upgrade_url@">#contacts.lt_Upgrade_this_person_to_a_user#</a>
+</if>
 </ul>
 </if>

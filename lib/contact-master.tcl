@@ -58,7 +58,7 @@ foreach {url label} $link_list {
     multirow append links $label [subst $url] $selected_p
 }
  
-if { [contact::type -party_id $party_id] == "person" } {
+if { [lsearch [list person user] [contact::type -party_id $party_id]] >= 0 } {
     set public_url [acs_community_member_url -user_id $party_id]
 }
 
