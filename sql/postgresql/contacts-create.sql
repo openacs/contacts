@@ -129,9 +129,7 @@ UNION
 create table contact_rels (
         rel_id           integer
                          constraint contact_rels_rel_id_fk references acs_rels(rel_id) on delete cascade
-                         constraint contact_rels_rel_id_pk primary key,
-        comment          text,
-        comment_format   varchar(50) default 'text/plain'
+                         constraint contact_rels_rel_id_pk primary key
 );
 
 create table organization_rels (
