@@ -74,16 +74,21 @@ append name_label [join $page_size_list " | "]
 
 append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
 
-
-set bulk_actions [list \
-		  "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]" \
-		  "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]" \
-		  "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]" \
-		  ]
-
+template::multirow create bulk_acts pretty link detailed
+template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]"
+template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
+template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
-    lappend bulk_actions "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
+    template::multirow append bulk_acts "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }
+callback contacts::bulk_actions -multirow "bulk_acts"
+
+set bulk_actions [list]
+template::multirow foreach bulk_acts {
+    lappend bulk_actions $pretty $link $detailed
+}
+
+set return_url "[ad_conn url]?[ad_conn query]"
 
 # Delete file is not there, taking out the code to display the delete button
 # if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
@@ -103,7 +108,7 @@ template::list::create \
     -actions "" \
     -bulk_actions $bulk_actions \
     -bulk_action_method post \
-    -bulk_action_export_vars { search_id } \
+    -bulk_action_export_vars { search_id return_url } \
     -elements {
         contact {
 	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
