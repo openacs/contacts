@@ -32,6 +32,13 @@ ad_proc -public -callback contact::person_new {
 } {
 }
 
+ad_proc -public -callback contact::history {
+    {-party_id:required}
+    {-multirow:required}
+    {-truncate_len ""}
+} {
+}
+
 ad_proc -public -callback contact::append_attribute {
     {-multirow_name:required}
     {-name:required}

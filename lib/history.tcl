@@ -44,56 +44,14 @@ if { [lsearch [list top bottom none] $form] < 0 } {
 }
 
 
-
-
-
-
-if { [exists_and_not_null limit] } {
-    set limit_clause "limit $limit"
-} else {
-    set limit_clause ""
+if { ![exists_and_not_null truncate_len] } {
+    set truncate_len ""
 }
 
+template::multirow create hist timestamp object_id creation_user content include
+callback contact::history -party_id $party_id -multirow "hist" -truncate_len $truncate_len
 
 
-
-set project_id "26798"
-
-set tasks [list]
-db_foreach get_tasks {
-    select pt.task_id,
-           tasks__completion_date(ci.item_id) as completion_date,
-           tasks__completion_user(ci.item_id) as completion_user,
-           cr.title,
-           cr.description as content
-      from cr_items ci,
-           pm_tasks_revisions ptr,
-           pm_tasks pt left join pm_process_instance ppi on (pt.process_instance = ppi.instance_id ),
-           cr_revisions cr,
-           acs_objects ao
-     where ci.parent_id = :project_id
-       and ci.item_id = pt.task_id
-       and ci.latest_revision = ptr.task_revision_id
-       and ci.live_revision = ptr.task_revision_id
-       and ptr.task_revision_id = cr.revision_id
-       and cr.revision_id = ao.object_id
-       and pt.status = '2'
-       and pt.deleted_p = 'f'
-       and task_id in ( select task_id from pm_task_assignment where party_id = :party_id and role_id = '1' )
-} {
-    if { [exists_and_not_null truncate_len] } {
-        set content_html [ad_html_text_convert -truncate_len $truncate_len -from "text/plain" -to "text/html" $content]
-    } else {
-        set content_html [ad_html_text_convert -from "text/plain" -to "text/html" $content]
-    }
-    lappend tasks [list $completion_date $task_id $completion_user [list $title $content_html] "/packages/tasks/lib/task-chunk"]
-}
-
-
-
-
-
-set comments [list]
 db_foreach get_comments "
          select g.comment_id,
                 o.creation_user,
@@ -113,23 +71,22 @@ db_foreach get_comments "
     } else {
         set comment_html [ad_html_text_convert -from $mime_type -to "text/html" $content]
     }
-    lappend comments [list $creation_date $comment_id $creation_user $comment_html]
+    template::multirow append "hist" $creation_date $comment_id $creation_user $comment_html ""
 }
 
-set hist [lsort -index 0 -decreasing [concat $tasks $comments]]
-
+template::multirow sort hist -decreasing timestamp
 template::multirow create history date time object_id creation_user user_link include content
 
 set result_number 1
-foreach item $hist { 
-    set timestamp      [lindex [split [lindex $item 0] "."] 0]
+template::multirow foreach hist {
+    set timestamp     [lindex [split $timestamp "."] 0]
     set date          [lc_time_fmt $timestamp "%q"]
     set time          [string trimleft [lc_time_fmt $timestamp "%r"] "0"]
-    set object_id     [lindex $item 1]
-    set creation_user [lindex $item 2]
+#    set object_id     
+#    set creation_user 
     set user_link     [contact::name -party_id $creation_user]
-    set content       [lindex $item 3]
-    set include       [lindex $item 4]
+#    set content
+#    set include
     template::multirow append history $date $time $object_id $creation_user $user_link $include $content
     if { [exists_and_not_null limit] } {
 	incr result_number
