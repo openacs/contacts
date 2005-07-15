@@ -39,6 +39,11 @@ ad_proc -public -callback contact::history {
 } {
 }
 
+ad_proc -public -callback contacts::bulk_actions {
+    {-multirow:required}
+} {
+}
+
 ad_proc -public -callback contact::append_attribute {
     {-multirow_name:required}
     {-name:required}
