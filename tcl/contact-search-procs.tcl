@@ -111,7 +111,9 @@ ad_proc -public contact::search::log {
     if { ![exists_and_not_null user_id] } {
         set user_id [ad_conn user_id]
     }
-    db_1row log_search {}
+    if { [contact::search::exists_p -search_id $search_id] } {
+	db_1row log_search {}
+    }
 }
 
 ad_proc -public contact::search::results_count {
