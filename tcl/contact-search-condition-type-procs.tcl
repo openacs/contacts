@@ -135,15 +135,18 @@ ad_proc -private contacts::search::condition_type::attribute {
                                                  [list "[_ contacts.country_code_is_-]" "country_code_equals"] \
                                                  [list "[_ contacts.lt_country_code_is_not_-]" "not_country_code_equals"] \
                                                 ]
-
-                        lappend var_elements [list ${var1}:integer(text) [list label {}] [list html [list size 3 maxlength 3]]]
+			if { [exists_and_not_null operand] } {
+			    lappend var_elements [list ${var1}:integer(text) [list label {}] [list html [list size 3 maxlength 3]]]
+			}
                     }
                     ams_value__text {
                         set operand_options [list \
                                                  [list "[_ contacts.contains_-]" "contains"] \
                                                  [list "[_ contacts.does_not_contain_-]" "not_contains"] \
                                                 ]
-                        lappend var_elements [list ${var1}:text(text) [list label {}]]
+			if { [exists_and_not_null operand] } {
+			    lappend var_elements [list ${var1}:text(text) [list label {}]]
+			}
                     }
                     ams_value__postal_address {
                         set operand_options [list \
@@ -170,8 +173,9 @@ ad_proc -private contacts::search::condition_type::attribute {
                                                  [list "[_ contacts.is_greater_than_-]" "greater_than"] \
                                                  [list "[_ contacts.is_less_than_-]" "less_than"] \
                                                 ]
-
-                        lappend var_elements [list ${var1}:integer(text) [list label {}] [list html [list size 4 maxlength 20]]]
+			if { [exists_and_not_null operand] } {
+			    lappend var_elements [list ${var1}:integer(text) [list label {}] [list html [list size 4 maxlength 20]]]
+			}
                     }
                     ams_value__time {
                         set operand_options [list \
@@ -197,7 +201,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                                                        [list options $interval_options] \
                                                        [list after_html [list ago]] \
                                                       ]
-                        } else {
+                        } elseif { [exists_and_not_null operand] } {
                             lappend var_elements [list ${var1}:date(date) [list label {}]]
                         }
                     }
