@@ -62,8 +62,9 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
     }
 }
 
-if { [permission::permission_p -object_id "-2" -privilege "delete"] } {
-    set remove_url [export_vars -base "/contacts/group-parties-remove" -url {{group_id "-2"} party_id {return_url {/contacts/}}}] 
+set default_group [contacts::default_group]
+if { [permission::permission_p -object_id $default_group -privilege "delete"] } {
+    set remove_url [export_vars -base "/contacts/group-parties-remove" -url {{group_id $default_group} party_id {return_url {/contacts/}}}] 
     if { [db_0or1row contact_is_person { select 1 from acs_objects where object_id = :party_id and object_type = 'person' }] } {
         set upgrade_url [export_vars -base "/contacts/person-upgrade-to-user" -url {{person_id $party_id}}] 
     }

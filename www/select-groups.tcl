@@ -17,11 +17,11 @@ set package_id [ad_conn package_id]
 set form_elements {
     object_type:text(hidden)
 }
-
+set default_group [contacts::default_group]
 set group_options [contact::groups -privilege_required "create"]
 if { [llength $group_options] == "0" } {
     # only the default group is available to this user
-    set group_ids "-2" 
+    set group_ids $default_group
     ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
 #    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
@@ -41,7 +41,7 @@ ad_form \
     } -on_submit {
     } -after_submit {
 	# the contact needs to be added to the default group
-	lappend group_ids "-2"
+	lappend group_ids $default_group
 	ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
 	ad_script_abort
     }

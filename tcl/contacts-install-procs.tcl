@@ -70,11 +70,12 @@ ad_proc -public contacts::install::package_instantiate {
 
     # users have some attributes mapped by default. This could be extended in custom packages.
 
+    set default_group [contacts::default_group -package_id $package_id]
     ams::widgets_init
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "person" \
-		     -list_name "${package_id}__-2" \
+		     -list_name "${package_id}__$default_group" \
 		     -pretty_name "Person - Registered Users" \
 		     -description "" \
 		     -description_mime_type ""]
@@ -168,7 +169,7 @@ ad_proc -public contacts::install::package_instantiate {
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "organization" \
-		     -list_name "${package_id}__-2" \
+		     -list_name "${package_id}__$default_group" \
 		     -pretty_name "Organization - Registered Users" \
 		     -description "" \
 		     -description_mime_type ""]
@@ -203,7 +204,7 @@ ad_proc -public contacts::install::package_instantiate {
 
     # Make the registered users group mapped by default
 
-    contacts::insert_map -group_id "-2" -default_p "t" -package_id $package_id
+    contacts::insert_map -group_id "$default_group" -default_p "t" -package_id $package_id
 }
 
 ad_proc -public contacts::install::package_mount {

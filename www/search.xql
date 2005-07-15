@@ -34,7 +34,7 @@
                                 from contact_groups
                                where package_id = :package_id ) contact_groups on (groups.group_id = contact_groups.group_id)
      where groups.group_id != '-1'
-    order by CASE WHEN groups.group_id = '-2' THEN '000000000' ELSE upper(groups.group_name) END
+    order by CASE WHEN groups.group_id = '[contacts::default_group]' THEN '000000000' ELSE upper(groups.group_name) END
 
       </querytext>
 </fullquery>

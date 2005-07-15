@@ -9,6 +9,7 @@ ad_page_contract {
     {party_ids:optional}
     {return_url "./"}
     {group_id:integer,multiple,optional}
+    {confirmed_p "0"}
 } -validate {
     valid_party_submission {
 	if { ![exists_and_not_null party_id] && ![exists_and_not_null party_ids] } { 
@@ -24,42 +25,49 @@ if { [exists_and_not_null party_id] } {
 }
 
 if { [exists_and_not_null group_id] } {
-set group_ids $group_id
-db_transaction {
-    set message [list]
-    foreach group_id $group_ids {
-	set contacts [list]
-        foreach party_id $party_ids {
-            # relation_add verifies that they aren't already in the group
-	    set contact_name [contact::name -party_id $party_id] 
-	    if { $group_id != "-2" } {
-		lappend contacts "<a href=\"[contact::url -party_id $party_id]\">$contact_name</a>"
-	    } else {
-		lappend contacts $contact_name
-	    }
-            group::remove_member -group_id $group_id -user_id $party_id
-        }
-	set contact_count [llength $contacts]
-	set contacts [join $contacts ", "]
-	set contact $contacts
-	set group [lang::util::localize [group::get_element -group_id $group_id -element group_name]]
-	if { $group_id != "-2" } {
-	    if { $contact_count > 1 } {
-		util_user_message -message [_ contacts.lt_contacts_were_removed_from_group]
-	    } else {
-		util_user_message -message [_ contacts.lt_contacts_was_removed_from_group]
-	    }
-	} else {
-	    if { $contact_count > 1 } {
-		util_user_message -message [_ contacts.lt_contacts_were_deleted]
-	    } else {
-		util_user_message -message [_ contacts.lt_contacts_was_deleted]
+    if { $group_id != [contacts::default_group] || $confirmed_p } {
+
+	set group_ids $group_id
+	db_transaction {
+	    set message [list]
+	    foreach group_id $group_ids {
+		set contacts [list]
+		foreach party_id $party_ids {
+		    # relation_add verifies that they aren't already in the group
+		    set contact_name [contact::name -party_id $party_id] 
+		    if { $group_id != [contacts::default_group] } {
+			lappend contacts "<a href=\"[contact::url -party_id $party_id]\">$contact_name</a>"
+		    } else {
+			lappend contacts $contact_name
+		    }
+		    group::remove_member -group_id $group_id -user_id $party_id
+		}
+		set contact_count [llength $contacts]
+		set contacts [join $contacts ", "]
+		set contact $contacts
+		set group [lang::util::localize [group::get_element -group_id $group_id -element group_name]]
+		if { $group_id != [contacts::default_group] } {
+		    if { $contact_count > 1 } {
+			util_user_message -message [_ contacts.lt_contacts_were_removed_from_group]
+		    } else {
+			util_user_message -message [_ contacts.lt_contacts_was_removed_from_group]
+		    }
+		} else {
+		    if { $contact_count > 1 } {
+			util_user_message -message [_ contacts.lt_contacts_were_deleted]
+		    } else {
+			util_user_message -message [_ contacts.lt_contacts_was_deleted]
+		    }
+		}
 	    }
 	}
+	ad_returnredirect $return_url
+	ad_script_abort
+    } else {
+	set delete_url [export_vars -base group-parties-remove -url {party_id group_id party_ids {confirmed_p 1} return_url}]
+	set cancel_url $return_url
+	ad_return_template group-delete-confirm
     }
-}
-ad_returnredirect $return_url
-ad_script_abort
 }
 
 set title "[_ contacts.Remove_From_to_Group]"

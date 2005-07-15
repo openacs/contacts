@@ -94,8 +94,7 @@ set title "Contacts"
 set context {}
 set package_url [ad_conn package_url]
 
-if { [exists_and_not_null query] && [exists_and_not_null row_two] } {
-
+if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
     set primary_party $party_id
     
     template::list::create \

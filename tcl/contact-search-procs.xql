@@ -29,7 +29,7 @@
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
            group_distinct_member_map
      where parties.party_id = group_distinct_member_map.member_id
-       and group_distinct_member_map.group_id = '-2'
+       and group_distinct_member_map.group_id = '[contacts::default_group]'
     [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>
@@ -48,7 +48,7 @@
     select count(*)
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
      where parties.party_id = group_distinct_member_map.member_id
-       and group_distinct_member_map.group_id = '-2'
+       and group_distinct_member_map.group_id = '[contacts::default_group]'
     [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>

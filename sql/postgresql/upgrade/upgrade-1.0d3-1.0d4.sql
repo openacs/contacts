@@ -6,11 +6,13 @@
 --
 --
 
+select define_function_args('acs_user__new','user_id,object_type;user,creation_date;now(),creation_user,creation_ip,authority_id,username,email,url,first_names,last_name,password,salt,screen_name,email_verified_p;t,context_id');
+
+
 alter table contact_rels drop column comment; 
 alter table contact_rels drop column comment_format;
 
 -- create contact application groups
-
 create or replace function contacts_upgrade_1d3_to_1d4 ()
 returns integer as '
 declare
@@ -32,6 +34,19 @@ begin
                  package_id
                  ) as new_group_id, package_id from apm_packages where package_key = ''contacts''
   LOOP
+
+        RAISE NOTICE ''NEW GROUP ID IS %'', package.new_group_id;
+	UPDATE ams_lists
+           SET list_name = to_char(package.package_id,''FM9999999999999999'') || ''__'' || to_char(package.new_group_id,''FM9999999999999999'')
+         WHERE list_name = to_char(package.package_id,''FM9999999999999999'') || ''__-2'';
+
+	UPDATE contact_search_conditions
+           SET var_list = ''in '' || to_char(package.new_group_id,''FM9999999999999999'')
+         WHERE list_name = ''in -2'';
+
+	UPDATE contact_search_conditions
+           SET var_list = ''not_in '' || to_char(package.new_group_id,''FM9999999999999999'')
+         WHERE list_name = ''not_in -2'';
 
         RAISE NOTICE ''NEW GROUP ID IS %'', package.new_group_id;
         FOR member IN select distinct member_id, acs_object__name(member_id) as name from group_member_map where group_id = ''-2''

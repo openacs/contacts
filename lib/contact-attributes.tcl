@@ -27,10 +27,10 @@ if { $object_type == "user" } {
     set object_type "person"
 }
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
-if { [lsearch $groups_belonging_to -2] < 0 } {
+if { [lsearch $groups_belonging_to [contacts::default_group]] < 0 } {
     ad_return_error "[_ contacts.lt_This_users_has_not_be]" "[_ contacts.lt_This_user_is_awaiting]"
 }
-set ams_forms [list "${package_id}__-2"]
+set ams_forms [list "${package_id}__[contacts::default_group]"]
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {

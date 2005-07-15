@@ -29,8 +29,7 @@ set groups_belonging_to [db_list get_party_groups { select group_id from group_d
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
 
-
-set ams_forms [list "${package_id}__-2"]
+set ams_forms [list "${package_id}__[contacts::default_group]"]
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {

@@ -18,6 +18,7 @@ ad_page_contract {
 
 set object_type [contact::type -party_id $party_id]
 set user_id [ad_conn user_id]
+set default_group [contacts::default_group]
 
 set package_url [ad_conn package_url]
 
@@ -25,7 +26,7 @@ set package_url [ad_conn package_url]
 # Code for quickly adding an employee
 
 if {$object_type == "organization"} {
-    set employee_url [export_vars -base "/contacts/add/person" -url {{group_ids "-2"} {object_id_two "$party_id"} {rel_type "contact_rels_employment"}}]
+    set employee_url [export_vars -base "/contacts/add/person" -url {{group_ids $default_group} {object_id_two "$party_id"} {rel_type "contact_rels_employment"}}]
 } else {
     set employee_url ""
 }

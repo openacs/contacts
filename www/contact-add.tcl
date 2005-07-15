@@ -18,10 +18,13 @@ ad_page_contract {
     }
 }
 
-set group_list [concat [list [list [_ contacts.All_Contacts] "-2" "0"]] [contact::groups]]
+set default_group [contacts::default_group]
+
+
+set group_list [concat [list [list [_ contacts.All_Contacts] $default_group "0"]] [contact::groups]]
 if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
-} elseif { [lsearch $group_ids "-2"] < 0 } {
+} elseif { [lsearch $group_ids $default_group] < 0 } {
     # an invalid group_ids list has been specified or they do not have permission to add person
     ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
@@ -42,12 +45,10 @@ lappend form_elements {object_type:text(hidden)}
 lappend form_elements {rel_type:text(hidden),optional}
 lappend form_elements {object_id_two:text(hidden),optional}
 
-set default_group_id [contacts::default_group -package_id $package_id]
-set default_group_id "-2"
 set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
 
-if {[lsearch $group_ids $default_group_id] == -1} {
-    lappend group_ids $default_group_id
+if {[lsearch $group_ids $default_group] == -1} {
+    lappend group_ids $default_group
 }
 
 lappend form_elements {group_ids:text(hidden)}
@@ -58,7 +59,7 @@ if {[lsearch $group_ids $application_group_id] == -1} {
 }
 
 set group_list [contact::groups -expand "all" -privilege_required "read"]
-set group_list "{{All Contacts} -2 0} $group_list"
+set group_list "{{All Contacts} $default_group 0} $group_list"
 
 
 ad_form -name party_ae \
@@ -105,6 +106,7 @@ if { $object_type == "person" } {
 		 {label ""} 
 		 {options {{"[_ contacts.Create_a_user_account_for_this_person]" "t"}}} 
 		 {values ""}
+                 {section "[_ contacts.User_Account_Information]"}
 	     }
 	 }
     set title "[_ contacts.Add_a_Person]"

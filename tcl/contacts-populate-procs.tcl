@@ -37,7 +37,7 @@ ad_proc -public contacts::populate::crm {
 	set contacts_package_id $package_id
     }
 
-    set registered_user_group_id "-2"
+    set registered_user_group_id [contacts::default_group -package_id $package_id]
 
 
     # This is a check for the customer and supplier id if P/O is installed.

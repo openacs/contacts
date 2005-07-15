@@ -32,7 +32,7 @@ foreach default_param $default_param_list {
 
 set group_by_group_id ""
 if { ![exists_and_not_null group_id] } {
-    set where_group_id " = -2"
+    set where_group_id " = [contacts::default_group]"
 } else {
     if {[llength $group_id] > 1} {
 	set where_group_id " IN ('[join $group_id "','"]')"

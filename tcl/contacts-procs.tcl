@@ -24,7 +24,8 @@ ad_proc -public contacts::default_group {
     if {[string is false [exists_and_not_null package_id]]} {
         set package_id [ad_conn package_id]
     }
-    return [db_string get_default_group {select group_id from contact_groups where package_id =:package_id and default_p} -default {}]
+#    return [db_string get_default_group {select group_id from contact_groups where package_id = :package_id and default_p} -default {}]
+    return [db_string get_default_group {select group_id from application_groups where package_id = :package_id } -default {}]
 }
 
 ad_proc -private contact::util::generate_filename {
@@ -326,6 +327,10 @@ ad_proc -private contact::person_upgrade_to_user {
         # we reset the password in admin mode. this means that an email
         # will not automatically be sent.
         auth::password::reset -authority_id [auth::authority::local] -username $username -admin
+	group::add_member \
+	    -group_id "-2" \
+	    -user_id $person_id \
+	    -rel_type "membership_rel"
     } on_error {
         error "There was an error in contact::person_upgrade_to_user: $errmsg"
     }
