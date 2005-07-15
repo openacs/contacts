@@ -42,11 +42,11 @@ begin
 
 	UPDATE contact_search_conditions
            SET var_list = ''in '' || to_char(package.new_group_id,''FM9999999999999999'')
-         WHERE list_name = ''in -2'';
+         WHERE var_list = ''in -2'';
 
 	UPDATE contact_search_conditions
            SET var_list = ''not_in '' || to_char(package.new_group_id,''FM9999999999999999'')
-         WHERE list_name = ''not_in -2'';
+         WHERE var_list = ''not_in -2'';
 
         RAISE NOTICE ''NEW GROUP ID IS %'', package.new_group_id;
         FOR member IN select distinct member_id, acs_object__name(member_id) as name from group_member_map where group_id = ''-2''
