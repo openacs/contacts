@@ -7,7 +7,7 @@
 <if @history:rowcount@ gt 0>
   <dl class="comments">
 <multiple name="history">
-    <dt id="@history.object_id@" class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">@history.date@ #contacts.at# @history.time@ @user_link@</dd>
+    <dt id="@history.object_id@" class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">@history.date@ #contacts.at# @history.time@ @history.user_link@</dd>
       <dd class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">
    
 	<if @history.include@ nil>

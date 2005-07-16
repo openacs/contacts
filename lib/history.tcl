@@ -43,6 +43,19 @@ if { [lsearch [list top bottom none] $form] < 0 } {
     error "[_ contacts.lt_Invalid_input_you_spe]"
 }
 
+ad_form -name comment_add \
+   -action "[ad_conn package_url]comment-add" \
+    -form "
+        party_id:integer(hidden)
+        return_url:text(hidden),optional
+        {comment:text(textarea),nospell {label {}} {html {$textarea_size}} {after_html {<br />}}}
+        {save:text(submit),optional {label {[_ contacts.Add_Comment]}}}
+    " -on_request {
+    } -after_submit {
+    }
+
+set user_id [ad_conn user_id]
+
 
 if { ![exists_and_not_null truncate_len] } {
     set truncate_len ""
@@ -74,6 +87,49 @@ db_foreach get_comments "
     template::multirow append "hist" $creation_date $comment_id $creation_user $comment_html ""
 }
 
+
+db_foreach get_messages "
+         select message_id,
+                message_type,
+                sender_id,
+                sent_date,
+                title,
+                description,
+                content,
+                content_format
+           from contact_message_log
+          where recipient_id = :party_id
+" {
+
+    set message_url [export_vars -base "[ad_conn package_url]message-log" -url {message_id}]
+
+    set header "<em><a href=\"${message_url}\">[_ contacts.$message_type] [_ contacts.Message]</a>:</em> "
+    if { [exists_and_not_null title] } {
+	set content_html "$header<a href=\"$message_url\">$title</a>"
+    } else {
+	set content [ad_html_text_convert \
+			      -from $content_format \
+			      -to "text/plain" \
+			      -- $content]
+	regsub -all "\r|\n" $content {LiNeBrEaK} content
+
+	set content_html [ad_html_text_convert \
+			      -from text/plain \
+			      -to "text/html" \
+			      -truncate_len "600" \
+			      -more "<a href=\"${message_url}\">[_ contacts.more]</a>" \
+			      -- $content]
+	regsub -all {LiNeBrEaKLiNeBrEaK} $content_html {LiNeBrEaK} content_html
+	#    regsub -all {LiNeBrEaKLiNeBrEaK} $content_html {LiNeBrEaK} content_html
+	#    regsub -all {LiNeBrEaKLiNeBrEaK} $content_html {LiNeBrEaK} content_html 
+	# 167 is the actual paragraph standard internationally but 182 is more common in the US
+	regsub -all {LiNeBrEaK} $content_html {\&nbsp;\&nbsp;\&#182;\&nbsp;} content_html
+	    set content_html "${header}${content_html}"
+    }
+    template::multirow append "hist" $sent_date $message_id $sender_id $content_html ""
+}
+
+
 template::multirow sort hist -decreasing timestamp
 template::multirow create history date time object_id creation_user user_link include content
 
@@ -102,15 +158,3 @@ template::multirow foreach hist {
 
 
 
-ad_form -name comment_add \
-   -action "[ad_conn package_url]comment-add" \
-    -form "
-        party_id:integer(hidden)
-        return_url:text(hidden),optional
-        {comment:text(textarea),nospell {label {}} {html {$textarea_size}} {after_html {<br />}}}
-        {save:text(submit),optional {label {[_ contacts.Add_Comment]}}}
-    " -on_request {
-    } -after_submit {
-    }
-
-set user_id [ad_conn user_id]
