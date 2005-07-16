@@ -140,7 +140,7 @@ ad_form -action bulk-update \
     } -after_submit {
 	contact::search::flush_results_counts
         if { [template::form get_button bulk_update] == "update" } {
-	    ad_returnredirect -message [_ contacts.lt_nice_user_message] $return_url
+	    ad_returnredirect -message [_ contacts.lt_your_bulk_update_was_successful] $return_url
             ad_script_abort
         }
     }
