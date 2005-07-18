@@ -48,15 +48,15 @@ if { [exists_and_not_null group_id] } {
 		set group [lang::util::localize [group::get_element -group_id $group_id -element group_name]]
 		if { $group_id != [contacts::default_group] } {
 		    if { $contact_count > 1 } {
-			util_user_message -message [_ contacts.lt_contacts_were_removed_from_group]
+			util_user_message -html -message [_ contacts.lt_contacts_were_removed_from_group]
 		    } else {
-			util_user_message -message [_ contacts.lt_contacts_was_removed_from_group]
+			util_user_message -html -message [_ contacts.lt_contacts_was_removed_from_group]
 		    }
 		} else {
 		    if { $contact_count > 1 } {
-			util_user_message -message [_ contacts.lt_contacts_were_deleted]
+			util_user_message -html -message [_ contacts.lt_contacts_were_deleted]
 		    } else {
-			util_user_message -message [_ contacts.lt_contacts_was_deleted]
+			util_user_message -html -message [_ contacts.lt_contacts_was_deleted]
 		    }
 		}
 	    }
