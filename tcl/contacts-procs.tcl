@@ -25,7 +25,9 @@ ad_proc -public contacts::default_group {
         set package_id [ad_conn package_id]
     }
 #    return [db_string get_default_group {select group_id from contact_groups where package_id = :package_id and default_p} -default {}]
-    return [db_string get_default_group {select group_id from application_groups where package_id = :package_id } -default {}]
+#    return [db_string get_default_group {select group_id from
+# application_groups where package_id = :package_id } -default {}]
+    return "-2"
 }
 
 ad_proc -private contact::util::generate_filename {
