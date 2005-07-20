@@ -17,7 +17,7 @@
       <h3 class="contact-title"><a href="@club_url@">#contacts.Visit_Club#</a></h3>
       </if>
     <include
-      src="/packages/contacts/lib/groups"
+      src="/packages/contacts/lib/searches"
       party_id="@party_id@"
       hide_form_p="t" />
     <if @tasks_enabled_p@>
@@ -27,7 +27,7 @@
 	hide_form_p="t" />
     </if>
     <include
-      src="/packages/contacts/lib/comments"
+      src="/packages/contacts/lib/history"
       party_id="@party_id@"
       limit="3"
       truncate_len="100"
