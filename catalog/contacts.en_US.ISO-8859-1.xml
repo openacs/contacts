@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d2" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d4" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -97,6 +97,7 @@
   <msg key="Edit_Details">Edit Details</msg>
   <msg key="Edit_group_name">Edit %group_name%</msg>
   <msg key="Email">Email</msg>
+  <msg key="email">EMail</msg>
   <msg key="Email_Address">Email Address</msg>
   <msg key="Error">Error</msg>
   <msg key="even">even</msg>
@@ -109,6 +110,7 @@
   <msg key="files">files</msg>
   <msg key="First_Name">First Name</msg>
   <msg key="First_Names">First Names</msg>
+  <msg key="From">From</msg>
   <msg key="Get">Get</msg>
   <msg key="Go">Go</msg>
   <msg key="Group">Group</msg>
@@ -406,6 +408,7 @@
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>
+  <msg key="To">To</msg>
   <msg key="True">True</msg>
   <msg key="Type">Type</msg>
   <msg key="Update">Update</msg>
