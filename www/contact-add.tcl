@@ -9,6 +9,7 @@ ad_page_contract {
     {object_type "person"}
     {group_ids ""}
     {rel_type ""}
+    {role_two ""}
     {object_id_two ""}
 } -validate {
     valid_type -requires {object_type} {
@@ -91,6 +92,10 @@ foreach group $group_list {
 }
 
 # Append relationship attributes
+
+if {[exists_and_not_null role_two]} {
+    set rel_type [db_string select_rel_type "select rel_type from contact_rel_types where secondary_object_type = :object_type and secondary_role = :role_two" -default ""]
+}
 
 if {[exists_and_not_null rel_type]} {
     ad_form -extend -name party_ae -form [ams::ad_form::elements -package_key "contacts" -object_type $rel_type -list_name [ad_conn package_id]]
