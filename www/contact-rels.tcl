@@ -197,7 +197,7 @@ template::list::create \
     -selected_format "normal" \
     -elements {
         role {
-            label "[_ contacts.Role]"
+            label "[_ contacts.Art_of_Relationship]"
             display_col role_singular
         }
         other_name {
