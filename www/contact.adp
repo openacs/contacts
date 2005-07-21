@@ -48,12 +48,14 @@
 	    base_url="@base_url@" />
       </if>
     </if>
-    <if @invoices_enabled_p@>
-      <h3 class="contact-title"><a href="/invoices">#invoices.Offers#</a></h3>
-      <include src="/packages/invoices/lib/offer-list" organization_id="@party_id@" elements="offer_nr title amount_total" package_id="@iv_package_id@" base_url="@iv_base_url@" />
+    <if @object_type@ eq "organization">
+      <if @invoices_enabled_p@>
+	<h3 class="contact-title"><a href="/invoices">#invoices.Offers#</a></h3>
+	<include src="/packages/invoices/lib/offer-list" organization_id="@party_id@" elements="offer_nr title amount_total" package_id="@iv_package_id@" base_url="@iv_base_url@" />
 	
-      <h3 class="contact-title"><a href="/invoices">#invoices.Billable_Projects#</a></h3>
-      <include src="/packages/invoices/lib/projects-billable" organization_id="@party_id@" elements="checkbox project_id title amount_open" package_id="@iv_package_id@" base_url="@iv_base_url@" />
+	<h3 class="contact-title"><a href="/invoices">#invoices.Billable_Projects#</a></h3>
+	<include src="/packages/invoices/lib/projects-billable" organization_id="@party_id@" elements="checkbox project_id title amount_open" package_id="@iv_package_id@" base_url="@iv_base_url@" />
+      </if>
     </if>
     <if @update_date@ not nil>
       <p class="last-updated">#contacts.Last_updated# @update_date@</p>
