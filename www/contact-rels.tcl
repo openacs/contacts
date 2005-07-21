@@ -74,16 +74,6 @@ if { [exists_and_not_null role_two] } {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 set name_order 0
 set member_state "approved"
 set format "normal"
@@ -175,12 +165,21 @@ set rel_options [concat [list [list "[_ contacts.--select_one--]" ""]] $rel_opti
 
 ad_form -name "search" -method "GET" -export {party_id} -form {
     {role_two:text(select),optional {label "[_ contacts.Add]"} {options $rel_options}}
-    {query:text(text) {label ""} {html {size 24}}}
-    {search:text(submit) {label "[_ contacts.Search]"}}
+    {query:text(text),optional {label ""} {html {size 24}}}
+    {search:text(submit) {label "[_ contacts.Search_Existing]"}}
+    {add:text(submit) {label "[_ contacts.Add_New]"}}
 } -on_request {
 } -edit_request {
 } -on_refresh {
 } -on_submit {
+    if {[exists_and_not_null add]} {
+	set default_group [contacts::default_group]
+	if {[contact::organization_p -party_id $party_id]} {
+	    ad_returnredirect [export_vars -base "/contacts/add/person" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]
+	} else {
+	    ad_returnredirect [export_vars -base "/contacts/add/organization" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]
+	}
+    } 
     if { ![exists_and_not_null role_two] } {
 	template::element::set_error search role_two "[_ contacts.A_role_is_required]"
     }
