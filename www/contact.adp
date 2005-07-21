@@ -27,14 +27,13 @@
       size="small"
       recent_on_top_p="1" />
     <if @pm_package_id@>
-	<h3 class="contact-title"><a href="@pm_base_url@">#project-manager.Projects#</a></h3>
-            <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@    elements="customer_name  earliest_finish_date latest_finish_date actual_hours_completed category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@pm_base_url@" customer_id="@party_id@" status_id="1">
+      <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@    elements="customer_name  earliest_finish_date latest_finish_date actual_hours_completed category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@pm_base_url@" customer_id="@party_id@" status_id="1">
 </if>
     <if @projects_enabled_p@>
       <if @project_url@ ne "">
 	<br />
 	<h3>
-	  <a href="@project_url@">#contacts.PROJECT#</a>
+	  <a href="@project_url@">#contacts.PROJECT#</a></h3>
 	  <include
 	    src="/packages/project-manager/lib/subprojects"
 	    project_item_id="@project_id@"
@@ -43,7 +42,6 @@
     </if>
     <if @object_type@ eq "organization">
       <if @invoices_enabled_p@>
-	<h3 class="contact-title"><a href="/invoices">#invoices.Offers#</a></h3>
 	<include src="/packages/invoices/lib/offer-list" organization_id="@party_id@" elements="offer_nr title amount_total" package_id="@iv_package_id@" base_url="@iv_base_url@" />
 	
 	<h3 class="contact-title"><a href="/invoices">#invoices.Billable_Projects#</a></h3>
