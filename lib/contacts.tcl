@@ -1,5 +1,5 @@
 set required_param_list [list]
-set optional_param_list [list]
+set optional_param_list [list base_url]
 set default_param_list  [list orderby format query page page_size package_id search_id group_id ]
 set optional_unset_list [list]
 
@@ -17,9 +17,8 @@ foreach required_param $required_param_list {
 }
 
 foreach optional_param $optional_param_list {
-    set "${optional_param}_temp" [ns_queryget $optional_param]
-    if { [exists_and_not_null ${optional_param}_temp] } {
-	set $optional_param "${optional_param}_temp"
+    if { ![exists_and_not_null ${optional_param}] } {
+	set $optional_param ""
     }
 }
 
@@ -44,7 +43,6 @@ if { ![exists_and_not_null group_id] } {
 
 
 set package_id [apm_package_id_from_key contacts]
-set base_url "[site_node::get_url_from_object_id -object_id $package_id]"
 
 
 if { $orderby == "first_names,asc" } {
