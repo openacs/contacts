@@ -18,6 +18,7 @@
 	    </if>
 	  </group>
 	</group>
+	<dd class="attribute-value"><a href="@rels.relation_url@">Add new @rels.relationship@</a></dd>
       </dl>
-    </multiple>
+  </multiple>
   </if>
