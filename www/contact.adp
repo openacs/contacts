@@ -4,13 +4,6 @@
   <div class="primary">
     <include src="/packages/contacts/lib/contact-attributes" party_id="@party_id@" />
     <include src="/packages/contacts/lib/contact-relationships" party_id="@party_id@" />
-    <dl>
-      <dd class="attribute-value">
-	<if @employee_url@ ne "">
-	  <strong><a href="@employee_url@">Add new employee</a></strong>
-	</if>      
-      </dt>
-    </dl>
   </div>
   <div class="secondary">
     <if @dotlrn_club_enabled_p@>
