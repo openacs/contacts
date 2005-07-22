@@ -106,20 +106,21 @@ ad_form -action message \
 	    set first_names [lindex $name 0]
 	    set last_name [lindex $name 1]
 	    set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
+	    set revision_id [contact::live_revision -party_id 10309]
+	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id]
 	    if {[empty_string_p $mailing_address]} {
 		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
 		break
 	    }
 
 	    set letter "<div class=\"message\">
-<div class=\"date\">$date</div>
 <div class=\"mailing-address\">$name<br />
 $mailing_address</div>
 <div class=\"content\">$content</div>
 </div>"
 
 	    set values [list]
-	    foreach element [list first_names last_name name] {
+	    foreach element [list first_names last_name name mailing_address date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    set letter [contact::message::interpolate -text $letter -values $values]
