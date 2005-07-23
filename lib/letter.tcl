@@ -98,16 +98,19 @@ ad_form -action message \
 	}
 	set content_format [template::util::richtext::get_property format $content]
 	set content [string trim [template::util::richtext::get_property content $content]]
-	set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q"]
+
 
 	set messages [list]
 	foreach party_id $party_ids {
 	    set name [contact::name -party_id $party_id]
 	    set first_names [lindex $name 0]
 	    set last_name [lindex $name 1]
+	    set locale [lang::user::site_wide_locale -user_id $party_id]
+	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
 	    set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
 	    set revision_id [contact::live_revision -party_id 10309]
-	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id]
+	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
+	    ns_log Notice "$salutation"
 	    if {[empty_string_p $mailing_address]} {
 		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
 		break
@@ -117,6 +120,7 @@ ad_form -action message \
 <div class=\"mailing-address\">$name<br />
 $mailing_address</div>
 <div class=\"content\">$content</div>
+
 </div>"
 
 	    set values [list]
