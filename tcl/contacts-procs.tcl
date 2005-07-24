@@ -65,13 +65,11 @@ ad_proc -private contact::util::get_file_extension {
     return [lindex [split $filename "."] end]
 }
 
-ad_proc -private contact::util::get_employees {
+ad_proc -public contact::util::get_employees {
     {-organization_id:required}
 } {
     get employees of an organization
 } {
-    set contact_list $organization_id
-
     db_foreach select_employee_ids {
 	select CASE WHEN object_id_one = :organization_id
                     THEN object_id_two
