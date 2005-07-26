@@ -385,6 +385,9 @@ ad_proc -public contact::groups {
 } {
     set user_id [ad_conn user_id]
     set group_list [list]
+    # Filter clause
+    set filter_clause ""
+    # set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
     db_foreach get_groups {} {
         if {$mapped_p 
 	    || $all_p} {
