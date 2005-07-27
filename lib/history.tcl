@@ -137,7 +137,7 @@ set result_number 1
 template::multirow foreach hist {
     set timestamp     [lindex [split $timestamp "."] 0]
     set date          [lc_time_fmt $timestamp "%q"]
-    set time          [string trimleft [lc_time_fmt $timestamp "%r"] "0"]
+    set time          [string trimleft [lc_time_fmt $timestamp "%X"] "0"]
 #    set object_id     
 #    set creation_user 
     set user_link     [contact::name -party_id $creation_user]
