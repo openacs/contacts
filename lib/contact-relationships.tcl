@@ -33,6 +33,7 @@ db_foreach get_relationships {} {
 	set other_object_type "organization"
     } 
     set relation_url [export_vars -base "/contacts/add/$other_object_type" -url {{group_ids $default_group} {object_id_two "$party_id"} rel_type}]    
+    set role_singular [lang::util::localize $role_singular]
     multirow append rels $role_singular $relation_url $other_name $contact_url {} {}
 
     # NOT YET IMPLEMENTED - Checking to see if role_singular or role_plural is needed
