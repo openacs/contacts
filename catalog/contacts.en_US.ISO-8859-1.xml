@@ -17,6 +17,7 @@
   <msg key="Add_Group">Add Group</msg>
   <msg key="Add_Letter_Message">Add Letter Message</msg>
   <msg key="Add_Message">Add Message</msg>
+  <msg key="Add_New">Add New</msg>
   <msg key="Add_new_in_Group">Add new %object_type% selected groups</msg>
   <msg key="Add_Organization">Add Organization</msg>
   <msg key="Add_Person">Add Person</msg>
@@ -44,6 +45,7 @@
   <msg key="Archived">Archived</msg>
   <msg key="area_code_is_-">area code is -&gt;</msg>
   <msg key="area_code_is_not_-">area code is not -&gt;</msg>
+  <msg key="Art_of_Relationship">Type of Relationship</msg>
   <msg key="at">at</msg>
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
@@ -77,6 +79,7 @@
   <msg key="create_a_message">Create a message</msg>
   <msg key="Create_a_role">Create a role</msg>
   <msg key="Create_a_Signature">Create a Signature</msg>
+  <msg key="Create_a_user_account_for_this_person">Create a user account for this person</msg>
   <msg key="create_email">Create Email</msg>
   <msg key="create_letter">Create Letter</msg>
   <msg key="create_project">Create project</msg>
@@ -122,6 +125,7 @@
   <msg key="has_never_logged_in">has never logged in</msg>
   <msg key="Help_Text">Help Text</msg>
   <msg key="History">History</msg>
+  <msg key="In_Searches">Searches</msg>
   <msg key="in_the_search">in the search</msg>
   <msg key="Invalid_Object_Type">Invalid Object Type</msg>
   <msg key="irrelevant">irrelevant</msg>
@@ -138,6 +142,7 @@
   <msg key="Last_Name">Last Name</msg>
   <msg key="Last_updated">Last updated</msg>
   <msg key="Letter">Letter</msg>
+  <msg key="letter">Letter</msg>
   <msg key="Letterhead">Letterhead</msg>
   <msg key="Limit_Contacts_to">Limit Contacts to</msg>
   <msg key="lt_--_Groups_-----------">-- Groups --------------------------</msg>
@@ -146,6 +151,7 @@
   <msg key="lt_--_Recent_Searches_--">-- Recent Searches --</msg>
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
+  <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
@@ -271,6 +277,7 @@
   <msg key="lt_Title_is_not_shown_in_the_message">Title is not shown in the message, it is used to select the appropriate message.</msg>
   <msg key="lt_Unable_to_retrieve_gr">Unable to retrieve group_id</msg>
   <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
+  <msg key="lt_Upgrade_this_person_to_a_user">Upgrade this person to a user</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">You cannot add this contact to more groups.</msg>
   <msg key="lt_You_cannot_make_sub_g">You cannot make sub groups the default group</msg>
@@ -339,6 +346,7 @@
   <msg key="Preview">Preview</msg>
   <msg key="Print">Print</msg>
   <msg key="Print_Letter">Print Letter</msg>
+  <msg key="Processes">Processes</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Public">Public</msg>
   <msg key="Public_Messages">Public Messages</msg>
@@ -373,6 +381,7 @@
   <msg key="save_this_search_">Save this Search</msg>
   <msg key="Saved_Searches">Saved Searches</msg>
   <msg key="Search">Search</msg>
+  <msg key="Search_Existing">Search Existing</msg>
   <msg key="Search_for">Search for</msg>
   <msg key="Search_for_all_object_type_where">Search for all &lt;strong&gt;%object_type%&lt;/strong&gt; where</msg>
   <msg key="Search_for_all_object_type_who_are">Search for all %object_type% who are</msg>
@@ -394,6 +403,7 @@
   <msg key="Status">Status</msg>
   <msg key="Subject">Subject</msg>
   <msg key="Subject_is_required">Subject is required</msg>
+  <msg key="Summary">Summary</msg>
   <msg key="Summary_View">Summary View</msg>
   <msg key="Table">Table</msg>
   <msg key="Tasks">Tasks</msg>
@@ -417,6 +427,7 @@
   <msg key="Updated_On">Updated On</msg>
   <msg key="Upload_File">Upload File</msg>
   <msg key="Upload_More">Upload More</msg>
+  <msg key="User_Account_Information">User Account Information</msg>
   <msg key="View_all_roles">View all roles</msg>
   <msg key="View_next">View next</msg>
   <msg key="Visit_Club">Visit Club</msg>
