@@ -36,7 +36,7 @@ append form_elements {
     {address:text(inform),optional
 	{label "[_ contacts.Address]"}
 	{value "{name}<br>{mailing_address}"}
-	{help_text {The recipeints name and mailing address will automatically be included so that they work with window envelopes}}
+	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
     {content:richtext(richtext)
 	{label "[_ contacts.Message]"}

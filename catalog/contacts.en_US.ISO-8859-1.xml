@@ -263,6 +263,7 @@
   <msg key="lt_The_party_id_specifie">The party_id specified does not exist</msg>
   <msg key="lt_The_query_type_var_li">The query \&quot;%type% %var_list%\&quot; is no longer valid because: %error_message</msg>
   <msg key="lt_The_query_type_var_li_1">The query \&quot;%type% %var_list%\&quot; is no longer valid. Contact an admin.</msg>
+  <msg key="lt_The_recipeints_name_a">The recipeints name and mailing address will automatically be included so that they work with window envelopes</msg>
   <msg key="lt_The_second_contact_sp">The second contact specified does not exist</msg>
   <msg key="lt_The_second_role_speci">The second role specified does not exist</msg>
   <msg key="lt_There_was_a_problem_w">There was a problem with your input. this type of relationship cannot exist.</msg>

@@ -44,7 +44,7 @@ append form_elements {
     {content:text(textarea)
 	{label "[_ contacts.Message]"}
 	{html {cols 55 rows 18}}
-	{help_text {remember that you can use <a href="message-help">mail merge substitutions</a>. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}}}
+	{help_text {[_ contacts.lt_remember_that_you_can]}}
     }
 
 }
