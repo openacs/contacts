@@ -95,16 +95,6 @@ create table contact_signatures (
         unique(party_id,title,signature)
 );
 
-create table contact_mailings (
-        mailing_id            integer
-                                constraint contact_mailings_id_pk primary key,
-        title                   varchar(255)
-                                constraint contact_mailings_title_nn not null,
-        mailing                 varchar(1000)
-                                constraint contact_mailings_mailing_nn not null
-        unique(party_id,title,mailing)
-);
-
 -- this view greatly simplifies getting available roles for various contact types
 create view contact_rel_types as 
 (    select rel_type,

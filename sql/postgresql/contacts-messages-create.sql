@@ -14,6 +14,8 @@ create table contact_message_types (
 );
 insert into contact_message_types (message_type,pretty_name) values ('email','#contacts.Email#');
 insert into contact_message_types (message_type,pretty_name) values ('letter','#contacts.Letter#');
+insert into contact_message_types (message_type,pretty_name) values ('header','#contacts.Header#');
+insert into contact_message_types (message_type,pretty_name) values ('footer','#contacts.Footer#');
 
 
 create table contact_message_items (
@@ -25,13 +27,16 @@ create table contact_message_items (
                                 constraint contact_message_items_owner_id_nn not null,
         message_type            varchar(20)
                                 constraint contact_message_items_message_type_fk references contact_message_types(message_type)
-                                constraint contact_message_items_message_type_nn not null
+                                constraint contact_message_items_message_type_nn not null,
+	locale			varchar(30)
+				constraint contact_message_items_locale_fk references ad_locales(locale)
 );
 
 create view contact_messages as 
     select cmi.item_id, 
            cmi.owner_id,
            cmi.message_type,
+	   cmi.locale,
            cr.title,
            cr.description,
            cr.content,

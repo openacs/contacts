@@ -54,6 +54,7 @@ set form_elements {
     {message_type:text(hidden)}
     {return_url:text(hidden)}
     {title:text(text) {label "[_ contacts.Title]"} {html {size 45 maxlength 1000}} {help_text "[_ contacts.lt_Title_is_not_shown_in_the_message]"}}
+    {locale:text(select) {label "[_ acs-lang.Locale]"} {options [lang::util::get_locale_options]}}
 }
 
 switch $message_type {
@@ -68,6 +69,17 @@ switch $message_type {
 	    {content:richtext(richtext) {label "[_ contacts.Message]"} {html {cols 70 rows 24}}}
 	}
     }
+    header {
+	append form_elements {
+	    {content:richtext(richtext) {label "[_ contacts.Header]"} {html {cols 70 rows 24}}}
+	}
+    } 
+    footer {
+	append form_elements {
+	    {content:richtext(richtext) {label "[_ contacts.Header]"} {html {cols 70 rows 24}}}
+	}
+    } 
+
 }
 
 ad_form -name "rel_type" \
@@ -77,16 +89,17 @@ ad_form -name "rel_type" \
     -on_request {
     } -new_request {
 	set owner_id [ad_conn user_id]
+	set locale [lang::system::locale]
     } -edit_request {
 
 	db_1row get_data { select * from contact_messages where item_id = :item_id }
-	if { $message_type == "letter" } {
+	if { $message_type != "email" } {
 	    set content [list $content $content_format]
 	}
-
+	
     } -on_submit {
 
-	if { $message_type == "letter" } {
+	if { $message_type != "email" } {
 	    set content_format [template::util::richtext::get_property format $content]
 	    set content [template::util::richtext::get_property content $content]
 	    set description ""
@@ -101,7 +114,8 @@ ad_form -name "rel_type" \
 	    -title $title \
 	    -description $description \
 	    -content $content \
-	    -content_format $content_format
+	    -content_format $content_format \
+	    -locale $locale
 
     } -after_submit {
 	ad_returnredirect $return_url

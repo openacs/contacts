@@ -37,20 +37,23 @@ template::list::create \
     -key item_id \
     -elements {
         type_pretty {
-	    label {#contacts.Type#}
+	    label {#acs-kernel.common_Type#}
 	    display_col type_pretty
 	}
-        title {
-	    label {#contacts.Title#}
+	title {
+	    label {#acs-kernel.common_Title#}
 	    display_col title
-            link_url_eval $message_url
+	    link_url_eval $message_url
+	}
+	locale {
+	    label {#acs-lang.Locale#}
 	}
         action {
             label ""
             display_template {
-                <a href="@messages.copy_url@" class="button">#contacts.Copy#</a>
+                <a href="@messages.copy_url@" class="button">#acs-kernel.common_Copy#</a>
                 <if @messages.delete_url@ not nil>
-                <a href="@messages.delete_url@" class="button">#contacts.Delete#</a>
+                <a href="@messages.delete_url@" class="button">#acs-kernel.common_Delete#</a>
                 </if>
                 <if @messages.make_public_url@ not nil>
                 <a href="@messages.make_public_url@" class="button">#contacts.Make_Public#</a>

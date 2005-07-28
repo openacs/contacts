@@ -23,7 +23,8 @@
            title,
            description,
            content,
-           content_format
+           content_format,
+	   locale
       from contact_messages
      where owner_id = :owner_id
      order by message_type, upper(title)
