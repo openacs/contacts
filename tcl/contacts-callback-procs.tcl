@@ -104,8 +104,9 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     
     @error 
 } {
+    set community_id [dotlrn_community::get_community_id]
     
-    set contact_organizations [application_data_link::get_linked -from_object_id $folder_id -to_object_type "organization"]
+    set contact_organizations [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"]
     
     set contact_list ""
     foreach party_id $contact_organizations {
