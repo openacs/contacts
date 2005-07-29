@@ -70,6 +70,7 @@ ad_proc -public contact::util::get_employees {
 } {
     get employees of an organization
 } {
+    set contact_list {}
     db_foreach select_employee_ids {
 	select CASE WHEN object_id_one = :organization_id
                     THEN object_id_two
