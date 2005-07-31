@@ -191,24 +191,6 @@ ad_form -extend -name party_ae \
 	    break
 	}
 	
-	# Add the new categories
-	
-	set cat_ids [list]
-	foreach group_id $group_ids {
-	    set element_name "category_ids$group_id"
-	    if {$group_id < 0} {
-		set element_name "category_ids[expr - $group_id]"
-	    }
-	    
-	    set cat_ids [concat $cat_ids \
-			     [category::ad_form::get_categories \
-				  -container_object_id $group_id \
-				  -element_name $element_name]]
-	}
-	
-	category::map_object -remove_old -object_id $user_id $cat_ids
-
-
     } -new_data {
 
 	if { $object_type == "person" } {
@@ -234,13 +216,30 @@ ad_form -extend -name party_ae \
                 contact::person_upgrade_to_user -person_id $party_id
             }
             
+
+	    # Add the new categories and enter the Party into the groups
+	    set cat_ids [list]
+
             foreach group_id $group_ids {
                 group::add_member \
                     -group_id $group_id \
                     -user_id $party_id \
                     -rel_type "membership_rel"
-            }
-            
+
+		set element_name "category_ids$group_id"
+		if {$group_id < 0} {
+		    set element_name "category_ids[expr - $group_id]"
+		}
+		
+		set cat_ids [concat $cat_ids \
+			     [category::ad_form::get_categories \
+				  -container_object_id $group_id \
+				  -element_name $element_name]]
+	    }
+	    
+	    category::map_object -remove_old -object_id $party_id $cat_ids
+
+	    
 	    callback contact::person_new -package_id $package_id -contact_id $party_id
 	    
 	} else {
