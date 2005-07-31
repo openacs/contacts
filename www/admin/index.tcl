@@ -13,7 +13,7 @@ set orderby "name"
 set title "[_ contacts.lt_Contact_Administratio]"
 set context {}
 set package_id [ad_conn package_id]
-
+set parameter_url [export_vars -base "/shared/parameters" {package_id {return_url "[ad_conn url]"}}]
 template::list::create \
     -name "groups" \
     -multirow "groups" \
