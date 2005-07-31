@@ -30,14 +30,29 @@ set groups_belonging_to [db_list get_party_groups { select group_id from group_d
 if { [lsearch $groups_belonging_to [contacts::default_group]] < 0 } {
     ad_return_error "[_ contacts.lt_This_users_has_not_be]" "[_ contacts.lt_This_user_is_awaiting]"
 }
-set ams_forms [list "${package_id}__[contacts::default_group]"]
+set ams_groups [contacts::default_group]
 foreach group [contact::groups -expand "all" -privilege_required "read"] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {
-        lappend ams_forms "${package_id}__${group_id}"
+        lappend ams_groups $group_id
     }
 }
 set revision_id [contact::live_revision -party_id $party_id]
+
+
+# The categories multirow contains all categories for all trees and is
+# prepared for easy access later on.
+
+db_multirow categories get_categories "select object_id, category_id from category_object_map where object_id = :party_id"
+category::list::collapse_multirow -name categories -object_column object_id
+set tree_list [list]
+foreach tree [category_tree::get_mapped_trees_from_object_list $ams_groups] {
+    lappend tree_list [lindex $tree 0]
+}
+if {[llength $tree_list]>0} {
+    category::list::prepare_display -tree_ids $tree_list -name categories
+    category::list::elements -categories_column category_id -name categories -tree_ids $tree_list
+}
 
 # This is the multirow that gets the values for each attribute
 # If you map the categories you have to check for the group (which is
@@ -48,13 +63,22 @@ set revision_id [contact::live_revision -party_id $party_id]
 # value.
 
 multirow create attributes section attribute value
-foreach form $ams_forms {
+
+foreach group_id $ams_groups {
+    set form "${package_id}__${group_id}"
     set values [ams::values -package_key "contacts" -object_type $object_type -list_name $form -object_id $revision_id -format "html"]
     foreach {section attribute_name pretty_name value} $values {
         if { [lsearch $hidden_attributes $attribute_name] < 0 } {
             multirow append attributes $section $pretty_name $value
         }
     }
+
+    # Using the predefined multirow categories above, get the
+    # mapped categories of the party in the mapped trees of the group
+    foreach tree [category_tree::get_mapped_trees $group_id] {
+	multirow append attributes "" [lindex $tree 1] [multirow get categories 1 "categories_[lindex $tree 0]"]
+    }
+    
 }
 set append_list [list]
 callback contact::append_attribute -multirow_name append_list -name [contact::name -party_id $party_id]
