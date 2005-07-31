@@ -121,7 +121,7 @@ if { $object_type == "person" } {
 
 set context [list $title]
 
-callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type
+callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type -group_ids $group_ids
 
 ad_form -extend -name party_ae \
     -on_request {

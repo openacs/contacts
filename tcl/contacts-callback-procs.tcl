@@ -16,6 +16,7 @@ ad_proc -public -callback contact::contact_form {
     {-form:required}
     {-object_type:required}
     {-party_id}
+    {-group_ids ""}
 } {
 }
 
