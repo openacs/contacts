@@ -26,8 +26,8 @@ ad_proc -public contacts::install::package_install {
 
     rel_types::new -table_name "contact_rels" -create_table_p "f" \
 	"contact_rel" \
-	"Contact Relationship" \
-	"Contact Relationships" \
+	"[_ contacts.Contact_Relationship]" \
+	"[_ contacts.lt_Contact_Relationships]" \
 	"party" \
 	"0" \
 	"" \
@@ -35,12 +35,12 @@ ad_proc -public contacts::install::package_install {
 	"0" \
 	""
 
-    rel_types::create_role -role "organization" -pretty_name "Organization" -pretty_plural "Organizations"
+    rel_types::create_role -role "organization" -pretty_name "[_ contacts.Organization]" -pretty_plural "[_ contacts.Organizations]"
 
     rel_types::new -table_name "organization_rels" -create_table_p "f" \
 	"organization_rel" \
-	"Organization Relationship" \
-	"Organization Relationships" \
+	"[_ contacts.lt_Organization_Relation]" \
+	"[_ contacts.lt_Organization_Relation_1]" \
 	"group" \
 	"0" \
 	"" \
@@ -48,12 +48,12 @@ ad_proc -public contacts::install::package_install {
 	"0" \
 	""
 
-    rel_types::create_role -role "employee" -pretty_name "Employee" -pretty_plural "Employees"
-    rel_types::create_role -role "employer" -pretty_name "Employer" -pretty_plural "Employers"
+    rel_types::create_role -role "employee" -pretty_name "[_ contacts.Employee]" -pretty_plural "[_ contacts.Employees]"
+    rel_types::create_role -role "employer" -pretty_name "[_ contacts.Employer]" -pretty_plural "[_ contacts.Employers]"
     rel_types::new -table_name "contact_rel_employment" -create_table_p "t" -supertype "contact_rel" -role_one "employee" -role_two "employer" \
 	"contact_rels_employment" \
-	"Contact Rel Employment" \
-	"Contact Rels Employment" \
+	"[_ contacts.lt_Contact_Rel_Employmen]" \
+	"[_ contacts.lt_Contact_Rels_Employme]" \
 	"person" \
 	"0" \
 	"" \
@@ -76,7 +76,7 @@ ad_proc -public contacts::install::package_instantiate {
 		     -package_key "contacts" \
 		     -object_type "person" \
 		     -list_name "${package_id}__$default_group" \
-		     -pretty_name "Person - Registered Users" \
+		     -pretty_name "[_ contacts.lt_Person_-_Registered_U]" \
 		     -description "" \
 		     -description_mime_type ""]
 

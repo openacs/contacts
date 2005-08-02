@@ -318,23 +318,41 @@ ad_proc -private contact::person_upgrade_to_user {
     Upgrade a person to a user. This proc does not send an email to the newly created user.
 } {
     contact::flush -party_id $person_id
-    ns_log Notice "set username [contact::email -party_id $person_id]"
+    set user_id $person_id
+    set username [contact::email -party_id $person_id]
+    set authority_id [auth::authority::local]
     db_transaction {
-        set username [contact::email -party_id $person_id]
-        set user_id $person_id
-        set extra_vars [ns_set create]
-        oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {user_id username}
-        package_instantiate_object -extra_vars $extra_vars user
-        # we reset the password in admin mode. this means that an email
-        # will not automatically be sent.
-        auth::password::reset -authority_id [auth::authority::local] -username $username -admin
+	db_dml upgrade_user {update acs_objects set object_type = 'user' where object_id = :user_id;
+	    
+	    insert into users
+	    (user_id, authority_id, username, email_verified_p)
+	    values
+	    (:user_id, :authority_id, :username, 't');
+	    
+	    insert into user_preferences
+	    (user_id)
+	    values
+	    (:user_id);}
+    
+	# we reset the password in admin mode. this means that an email
+	# will not automatically be sent.
+	auth::password::reset -authority_id [auth::authority::local] -username $username -admin
 	group::add_member \
 	    -group_id "-2" \
 	    -user_id $person_id \
 	    -rel_type "membership_rel"
+	
+	# Grant the user to update the password on himself
+	permission::grant -party_id $user_id -object_id $user_id -privilege write
+
+	# add him to dotlrn (I'M LAZY)
+	#dotlrn::user_add -user_id $user_id
+	
     } on_error {
-        error "There was an error in contact::person_upgrade_to_user: $errmsg"
+	error "There was an error in contact::person_upgrade_to_user: $errmsg"
     }
+
+    # I'm too lazy to write 
 }
 
 ad_proc -private contact::group::new {
@@ -387,8 +405,8 @@ ad_proc -public contact::groups {
     set user_id [ad_conn user_id]
     set group_list [list]
     # Filter clause
-    set filter_clause ""
-    # set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
+    # set filter_clause ""
+    set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
     db_foreach get_groups {} {
         if {$mapped_p 
 	    || $all_p} {

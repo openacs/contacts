@@ -44,6 +44,7 @@ ad_proc -private contact::message::save {
     {-description ""}
     {-content:required}
     {-content_format "text/plain"}
+    {-locale ""}
 } {
     save a contact message
 } {
@@ -63,13 +64,13 @@ ad_proc -private contact::message::save {
 
 	db_dml insert_into_message_items {
 	    insert into contact_message_items
-	    ( item_id, owner_id, message_type )
+	    ( item_id, owner_id, message_type, locale )
 	    values
-	    ( :item_id, :owner_id, :message_type )
+	    ( :item_id, :owner_id, :message_type, :locale )
 	}
     } else {
 	db_dml update_message_item {
-	    update contact_message_items set owner_id = :owner_id, message_type = :message_type where item_id = :item_id
+	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale where item_id = :item_id
 	}
     }
 
