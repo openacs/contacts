@@ -2,7 +2,7 @@
 
 <p><formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 
-<include src="../lib/contacts" base_url="/contacts/index">
+<include src="../lib/contacts" base_url="/contacts/">
         
 
 
