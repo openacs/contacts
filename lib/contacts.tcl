@@ -73,11 +73,11 @@ append name_label [join $page_size_list " | "]
 append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
 
 template::multirow create bulk_acts pretty link detailed
-template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]"
-template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
-template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
+template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "group-parties-add" "[_ contacts.Add_to_group]"
+template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
+template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
-    template::multirow append bulk_acts "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
+    template::multirow append bulk_acts "[_ contacts.Bulk_Update]" "bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }
 callback contacts::bulk_actions -multirow "bulk_acts"
 
