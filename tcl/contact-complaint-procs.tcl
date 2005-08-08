@@ -1,0 +1,62 @@
+ad_library {
+
+    @author Miguel Marin (miguelmarin@viaro.net)
+    @author Viaro Networks www.viaro.net
+} 
+
+
+namespace eval contact::complaint:: {}
+
+ad_proc -public contact::complaint::new {
+    {-complaint_id ""}
+    {-title ""}
+    -customer_id:required
+    -turnover:required
+    -percent:required
+    {-description ""}
+    -supplier_id:required
+    -paid:required
+    -object_id:required
+    {-state "open"}
+} {
+    Inserts a new complaint. Creates a new revision if complaint_id is not present, 
+    otherwise creates a new item and revision for the complaint.
+    
+    @param complaint_id  The revision_id of the complaint_id, if not provided then it will create a new one.
+    @param title         The title of the item.
+    @param customer_id   
+    @param turnover
+    @param percent
+    @param description
+    @param supplier_id
+    @param paid
+    @param object_id
+
+} {
+    if { [empty_string_p $complaint_id] } {
+	# We create a new cr_item and revision
+	set item_id [content::item::new \
+			 -name $title \
+			 -creation_user [ad_conn user_id] \
+			 -package_id [ad_conn package_id] \
+			 -description $description \
+			 -title $title \
+			 -is_live t]
+	set complaint_id [content::item::get_live_revision -item_id $item_id]
+	
+    } else {
+	# Create only a new revision
+	set item_id [db_string get_item_id { }]
+	set complaint_id [content::revision::new \
+			      -item_id $item_id \
+			      -title $title \
+			      -description $description \
+			      -creation_user [ad_conn user_id] \
+			      -package_id [ad_conn package_id]]
+
+    }
+    
+    # Insert extra information the table
+    db_dml insert_complaint { }
+
+}
