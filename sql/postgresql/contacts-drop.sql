@@ -17,6 +17,8 @@ drop table contact_signatures;
 drop table contact_groups;
 drop table contact_rels;
 drop table organization_rels;
+drop table contact_complaint_tracking;
+
 select content_type__drop_type ('contact_party_revision','t','t');
 --drop table contact_party_revisions;
 select acs_rel_type__drop_type('organization_rel','t');
