@@ -12,12 +12,15 @@ ad_page_contract {
 
 set party_id [lindex $party_id 0]
 switch [contact::type -party_id $party_id] {
-     person {
-         set rel_type "membership_rel"
-     }
-     organization {
-         set rel_type "organization_rel"
-     }
+    person {
+	set rel_type "membership_rel"
+    }
+    organization {
+	set rel_type "organization_rel"
+    }
+    default {
+	set rel_type "membership_rel"
+    }
 }
 relation_add -member_state "approved" $rel_type $group_id $party_id
 

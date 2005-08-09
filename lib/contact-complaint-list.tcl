@@ -7,9 +7,12 @@ ad_page_contract {
 } {
     customer_id:optional
     supplier_id:optional
+    {filter_p 0} 
 }
 
-
+if {![exists_and_not_null customer_id]} {
+    unset customer_id
+}
 set elements [list \
 		  title [list label "Title"]\
 		  customer [list label "Customer"]\
@@ -57,9 +60,7 @@ template::list::create \
 
 
 db_multirow -extend { customer supplier title description } complaint get_complaints { } {
-    acs_user::get -user_id $customer_id -array customer_info
-    acs_user::get -user_id $supplier_id -array supplier_info
-    set customer "$customer_info(first_names) $customer_info(last_name)"
-    set supplier "$supplier_info(first_names) $supplier_info(last_name)"
+    set customer "[contact::name -party_id $customer_id]"
+    set supplier "[contact::name -party_id $supplier_id]"
     db_1row get_revision_info { }
 }

@@ -18,8 +18,12 @@
 </if>
 <else>
   <master src="@contacts_master_template@">
+  <property name="title">@title@</property>
+  <property name="context">@context@</property>
+  <property name="header_stuff">
+    <link href="/resources/contacts/contacts.css" rel="stylesheet" type="text/css">
+  </property>
 </else>
-
 <slave>
 
 

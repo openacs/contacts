@@ -9,6 +9,8 @@ ad_page_contract {
     {party_ids:optional}
     {message_type ""}
     {message:optional}
+    {header_id:integer ""}
+    {footer_id:integer ""}
     {return_url "./"}
     {object_id:integer,multiple,optional}
     {file_ids ""}
@@ -26,6 +28,7 @@ ad_page_contract {
 	}
     }
 }
+
 if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
     set message_type [lindex [split $message "."] 0]
     set item_id [lindex [split $message "."] 1]
@@ -137,7 +140,7 @@ set form_elements {
 }
 
 
-if { [string is false [exists_and_not_null message_type]] } {
+if { ![exists_and_not_null message_type] } {
 
     set message_type_options [ams::util::localize_and_sort_list_of_lists \
 				  -list [db_list_of_lists get_message_types { select pretty_name, message_type from contact_message_types }] \
@@ -145,34 +148,62 @@ if { [string is false [exists_and_not_null message_type]] } {
 
     set message_options [list]
     foreach op $message_type_options {
-	lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" [lindex $op 1]]
+	set message_type [lindex $op 1]
+	if {$message_type == "letter" || $message_type == "email"} {
+	    lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" $message_type]
+	} else {
+	    set ${message_type}_options [list [list [_ contacts.--none--] ""]]
+	}
+	
 	# set email_text and letter_text and others in the future
-	set "[lindex $op 1]_text" [lindex $op 0]
+	set "${message_type}_text" [lindex $op 0]
     }
 
     set public_text [_ contacts.Public]
     set package_id [ad_conn package_id]
+
+    db_foreach get_messages {
+	select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END as public_display,
+	title,
+	to_char(item_id,'FM9999999999999999999999') as item_id,
+	message_type
+	from contact_messages
+	where owner_id in ( select party_id from parties )
+	or owner_id = :package_id
+	order by CASE WHEN owner_id = :package_id THEN '000000000' ELSE upper(contact__name(owner_id)) END, message_type, upper(title)
+    } {
+	if {$message_type == "letter" || $message_type == "email"} {
+	    lappend ${message_type}_options [list "$public_display [set ${message_type}_text]:$title" "${message_type}.$item_id"]
+	} else {
+	    lappend ${message_type}_options [list "$public_display:$title" "$item_id"]
+	}
+    }
     set message_options [concat \
 			     $message_options \
-			     [db_list_of_lists get_messages {
-				 select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END || ' ' || CASE WHEN message_type = 'email' THEN :email_text WHEN message_type = 'letter' THEN :letter_text END || ': ' || title,
-				        message_type || '.' || to_char(item_id,'FM9999999999999999999999')
-                                   from contact_messages
-                                  where owner_id in ( select party_id from parties )
-                                     or owner_id = :package_id
-                                  order by CASE WHEN owner_id = :package_id THEN '000000000' ELSE upper(contact__name(owner_id)) END, message_type, upper(title)
-			     }] \
-			    ]
+			     $letter_options \
+			     $email_options]
+
+    if {[exists_and_not_null header_options]} {
+	lappend form_elements [list \
+			       header_id:text(select) \
+			       [list label "[_ contacts.Header]"] \
+			       [list options $header_options] \
+			      ]
+    }
 
     lappend form_elements [list \
 			       message:text(select) \
 			       [list label "[_ contacts.Message]"] \
 			       [list options $message_options] \
 			      ]
+
+    set message_type ""
     set title [_ contacts.create_a_message]
+
 } else {
     set title [_ contacts.create_$message_type]
 }
+
 set context [list $title]
 
 if { [string is false [exists_and_not_null message]] } {
@@ -197,6 +228,14 @@ if { [string is false [exists_and_not_null message]] } {
 	}
     }
     
+}
+
+if {[exists_and_not_null footer_options]} {
+    lappend form_elements [list \
+			       footer_id:text(select) \
+			       [list label "[_ contacts.Footer]"] \
+			       [list options $footer_options] \
+			      ]
 }
 
 set edit_buttons [list [list "[_ contacts.Next]" create]]

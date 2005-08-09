@@ -1,11 +1,6 @@
-
-
-if { ![info exist customer_id] || ![info exist supplier_id] } {
-    set user_options [list]
-    db_foreach get_users { } {
-	lappend user_options [list $fullname $user_id]
-    }
-}
+# customer_id. Party ID of the customer for which the complaint was made.
+# supplier_id. Party ID of the supplier who caused the complaint
+# project_id. Alternative for the customer_id, if you know the project_id
 
 if { ![info exist return_url] } {
     set return_url [get_referrer]
@@ -15,7 +10,8 @@ if { ![info exist return_url] } {
 ad_form -name complaint_form -form {
     complaint_id:key
     {title:text(text)
-	{label "Title:"}
+	{label "[_ contacts.Title_1]"}
+        {help_text "[_ contacts.complaint_title_help]"}
     }
     {return_url:text(hidden)
 	{value $return_url}
@@ -25,52 +21,60 @@ ad_form -name complaint_form -form {
 if { ![info exist customer_id] } {
     ad_form -extend -name complaint_form -form {
 	{customer_id:text(select)
-	    {label "Customer:"}
+	    {label "[_ contacts.Customer]"}
 	    {options $user_options}
 	}
     }
 } else {
-    acs_user::get -user_id $customer_id -array customer_info
+    set customer_name [contact::name -party_id $customer_id]
     ad_form -extend -name complaint_form -form {
 	{customer_id:text(hidden)
 	    {value $customer_id}
 	}
 	{customer:text(inform),optional
-	    {label "Customer:"}
-	    {value "$customer_info(first_names) $customer_info(last_name)"}
+	    {label "[_ contacts.Customer]"}
+	    {value "<a href=\"/contacts/${customer_id}\">$customer_name</a>"}
 	}
     }
 }
 
 if { ![info exist supplier_id]} {
+
+    set user_options [list]
+    db_foreach get_users { } {
+	lappend user_options [list $fullname $user_id]
+    }
     ad_form -extend -name complaint_form -form {
 	{supplier_id:text(select)
-	    {label "Supplier:"}
+	    {label "[_ contacts.Supplier]"}
 	    {options $user_options}
 	}
     }
 } else {
-    acs_user::get -user_id $supplier_id -array supplier_info
+
+    set supplier_name [contact::name -party_id $supplier_id]
     ad_form -extend -name complaint_form -form {
 	{supplier_id:text(hidden)
 	    {value $supplier_id}
 	}
 	{supplier:text(inform),optional
-	    {label "Supplier:"}
-	    {value "$supplier_info(first_names) $supplier_info(last_name)"}
+	    {label "[_ contacts.Supplier]"}
+	    {value "$supplier_name"}
 	}
     }
 }
 
 ad_form -extend -name complaint_form -form {
     {turnover:text(text)
-	{label "Turnover:"}
+	{label "[_ contacts.Turnover]"}
 	{html {size 10}}
+        {help_text "[_ contacts.complaint_turnover_help]"}
     }
     {percent:text(text)
-	{label "Percent:"}
+	{label "[_ contacts.Percent]"}
 	{html {size 2}}
 	{after_html "%"}
+        {help_text "[_ contacts.complaint_percent_help]"}
     }
 }
 
@@ -82,30 +86,34 @@ if { ![info exist project_id] } {
     }
     ad_form -extend -name complaint_form -form {
 	{object_id:text(select)
-	    {label "Project:"}
+	    {label "[_ contacts.Project]"}
 	    {options $project_options}
 	}
     }
 } else {
+    set object_id $project_id
     ad_form -extend -name complaint_form -form {
 	{object_id:text(hidden)
 	    {value $object_id}
 	}
 	{project:text(inform)
-	    {label "Object:"}
-	    {value [pm::project::name -project_item_id $object_id]}
+	    {label "[_ contacts.Object]"}
+	    {value "[pm::project::name -project_id $object_id]"}
 	}
     }
 }
 
 ad_form -extend -name complaint_form -form {
     {paid:text(text)
-	{label "Paid:"}
+	{label "[_ contacts.Paid]"}
 	{html {size 10}}
+        {help_text "[_ contacts.complaint_paid_help]"}
+
     }
     {description:text(textarea)
-	{label "Description:"}
+	{label "[_ contacts.Description]"}
 	{html {rows 10 cols 30}}
+        {help_text "[_ contacts.complaint_description_help]"}
     }
 } -new_data {
   

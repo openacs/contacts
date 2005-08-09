@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d4" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d5" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--none--">-- Keine --</msg>
   <msg key="--select_one--">-- Bitte auswählen --</msg>
@@ -18,6 +18,7 @@
   <msg key="Add_Signature">Eine Signatur hinzufügen</msg>
   <msg key="Add_to_Group">Zur Gruppe hinzufügen</msg>
   <msg key="Add_to_group">Zur Gruppe hinzufügen</msg>
+  <msg key="Add_to_Groups">Zu folgenden Gruppen hinzufügen</msg>
   <msg key="Address">Adresse</msg>
   <msg key="Admin">Verwaltung</msg>
   <msg key="Administer_Contacts">Kontakte verwalten</msg>
@@ -32,6 +33,7 @@
   <msg key="Bulk_Update">Massen Update</msg>
   <msg key="Cancel">Abbrechen</msg>
   <msg key="Clear">Leeren</msg>
+  <msg key="Comments">Kommentare</msg>
   <msg key="Contact">Kontakt</msg>
   <msg key="Contact_-">Kontakt -&amp;gt;</msg>
   <msg key="Contacts">Kontakte</msg>
@@ -52,11 +54,13 @@
   <msg key="False">falsch</msg>
   <msg key="Files">Dateien</msg>
   <msg key="First_Names">Vornamen</msg>
+  <msg key="Footer">Fußzeile</msg>
   <msg key="Get">Lade</msg>
   <msg key="Go">Suche</msg>
   <msg key="Group_-">Gruppe -&amp;gt;</msg>
   <msg key="Group_Name">Gruppenname</msg>
   <msg key="Groups">Gruppen</msg>
+  <msg key="Header">Kopfzeile</msg>
   <msg key="History">Historie</msg>
   <msg key="In_Searches">Suchen</msg>
   <msg key="is_not_set">ist nicht eingerichtet</msg>
@@ -69,6 +73,8 @@
   <msg key="lt_--_Groups_-----------">-- Gruppen --------------------------</msg>
   <msg key="lt_--_My_Searches_------">-- Meine Suchen ---------------------</msg>
   <msg key="lt_--_top_level_group_--">-- Gruppe erste Ebene --</msg>
+  <msg key="lt_Add_new_in_Selected_Groups">Eine neue %object_type% hinzufügen und den ausgewählten Gruppen zuordnen</msg>
+  <msg key="lt_Add_new_relsrelations">Hinzufügen neuer %rels.relationship%</msg>
   <msg key="lt_Bulk_update_the_seclected_C">Die ausgewählten Kontakte ändern</msg>
   <msg key="lt_Contact_Administratio">Verwaltung der Kontakte</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Nur SW Admins sehen dies</msg>
@@ -85,8 +91,10 @@
   <msg key="lt_The_default_group_mus">Die Standardgruppe muss den Vornamen und den Nachnamen für ein Personenformblatt enthalten sowie einen Organisationsnamen für ein Organisationsformblatt, beide benötigen eine E-Mail Adresse.</msg>
   <msg key="lt_this_is_my_default_si">Dies ist meine Standard Signatur</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Dieser Person als User registrieren/ upgraden</msg>
+  <msg key="lt_You_cannot_send_a_letter_to_invalid_recipients">Sie können keinen Brief an den folgenden Kontakt schicken: %invalid_recipients%</msg>
   <msg key="Mail">Mailing</msg>
   <msg key="Mail_Merge">Adresszusammenstellung</msg>
+  <msg key="Manage_group_categories">Kategorien für diese Gruppe</msg>
   <msg key="Message">Nachricht</msg>
   <msg key="Messages">Vorlagen</msg>
   <msg key="My_Searches">Meine Suchen</msg>
@@ -136,5 +144,6 @@
   <msg key="Upload_More">Mehrere Dateien uploaden</msg>
   <msg key="User_Account_Information">Informationen zu dem User Account</msg>
   <msg key="View_all_roles">Alle Rollen ansehen</msg>
+  <msg key="Visit_Club">Zum Kundenportal</msg>
   <msg key="which_match">die übereinstimmen mit</msg>
 </message_catalog>

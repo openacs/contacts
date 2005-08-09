@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d4" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d6" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -59,6 +59,7 @@
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
   <msg key="Comment_Added">Comment Added</msg>
   <msg key="Comments">Comments</msg>
+  <msg key="Complaint">Complaint</msg>
   <msg key="Configuration_Error">Configuration Error</msg>
   <msg key="Contact">Contact</msg>
   <msg key="Contact_-">Contact -&gt;</msg>
@@ -87,10 +88,12 @@
   <msg key="Create_user">Create User</msg>
   <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
+  <msg key="Customer">Customer:</msg>
   <msg key="Date">Date</msg>
   <msg key="days">days</msg>
   <msg key="Delete">Delete</msg>
   <msg key="Delete_from">Delete</msg>
+  <msg key="Description">Description:</msg>
   <msg key="Details">Details</msg>
   <msg key="does_not_contain_-">does not contain -&gt;</msg>
   <msg key="does_not_exists">does not exist</msg>
@@ -102,6 +105,10 @@
   <msg key="Email">Email</msg>
   <msg key="email">EMail</msg>
   <msg key="Email_Address">Email Address</msg>
+  <msg key="Employee">Employee</msg>
+  <msg key="Employees">Employees</msg>
+  <msg key="Employer">Employer</msg>
+  <msg key="Employers">Employers</msg>
   <msg key="Error">Error</msg>
   <msg key="even">even</msg>
   <msg key="exists">exists</msg>
@@ -113,6 +120,7 @@
   <msg key="files">files</msg>
   <msg key="First_Name">First Name</msg>
   <msg key="First_Names">First Names</msg>
+  <msg key="Footer">Footer</msg>
   <msg key="From">From</msg>
   <msg key="Get">Get</msg>
   <msg key="Go">Go</msg>
@@ -123,6 +131,7 @@
   <msg key="groups">groups</msg>
   <msg key="has_logged_in">has logged in</msg>
   <msg key="has_never_logged_in">has never logged in</msg>
+  <msg key="Header">Header</msg>
   <msg key="Help_Text">Help Text</msg>
   <msg key="History">History</msg>
   <msg key="In_Searches">Searches</msg>
@@ -194,7 +203,9 @@
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
+  <msg key="lt_Contact_Rels_Employme">Contact Rels Employment</msg>
   <msg key="lt_Contact_updated_in_th">Contact updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
@@ -238,6 +249,7 @@
   <msg key="lt_Organization_Relation_1">Organization Relationships</msg>
   <msg key="lt_Party_ID_equals_Searc">&quot;Party ID&quot; equals &quot;Search_Word&quot;</msg>
   <msg key="lt_People_or_Organizatio">People or Organizations</msg>
+  <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
   <msg key="lt_remember_that_you_can">remember that you can use &lt;a href=&quot;message-help&quot;&gt;mail merge substitutions&lt;/a&gt;. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}</msg>
@@ -249,6 +261,7 @@
   <msg key="lt_Some_of_the_required_">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:</msg>
   <msg key="lt_Some_of_the_required__1">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:</msg>
   <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
+  <msg key="lt_The_-object_type-_-contact_link-_was_added">The object type %contact_link% was added</msg>
   <msg key="lt_the_action_supplied_i">the action supplied is not valid</msg>
   <msg key="lt_The_contact_is_in_the">The contact is in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_is_NOT_in">The contact is NOT in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
@@ -321,6 +334,7 @@
   <msg key="Not_Configured">Not Configured</msg>
   <msg key="not_in_the_search">not in the search</msg>
   <msg key="Number_of_Rows">Number of Rows</msg>
+  <msg key="Object">Object:</msg>
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
   <msg key="or">or</msg>
@@ -332,6 +346,7 @@
   <msg key="Other_Options">Other Options</msg>
   <msg key="Output">Output</msg>
   <msg key="Owner">Owner</msg>
+  <msg key="Paid">Paid:</msg>
   <msg key="Paper_Type">Paper Type</msg>
   <msg key="Parent_Group">Parent Group</msg>
   <msg key="Part_of">Part of</msg>
@@ -341,6 +356,7 @@
   <msg key="people">people</msg>
   <msg key="People_or_Organizations">People or Organizations</msg>
   <msg key="people_or_organizations">people or organizations</msg>
+  <msg key="Percent">Percent:</msg>
   <msg key="Permissions">Permissions</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Person Form</msg>
@@ -349,6 +365,7 @@
   <msg key="Print_Letter">Print Letter</msg>
   <msg key="Processes">Processes</msg>
   <msg key="PROJECT">PROJECT</msg>
+  <msg key="Project">Project:</msg>
   <msg key="Public">Public</msg>
   <msg key="Public_Messages">Public Messages</msg>
   <msg key="Public_Page">Public Page</msg>
@@ -406,6 +423,7 @@
   <msg key="Subject_is_required">Subject is required</msg>
   <msg key="Summary">Summary</msg>
   <msg key="Summary_View">Summary View</msg>
+  <msg key="Supplier">Supplier:</msg>
   <msg key="Table">Table</msg>
   <msg key="Tasks">Tasks</msg>
   <msg key="The_action_specified_is_invalid">The action specified is invalid</msg>
@@ -419,8 +437,10 @@
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>
+  <msg key="Title_1">Title:</msg>
   <msg key="To">To</msg>
   <msg key="True">True</msg>
+  <msg key="Turnover">Turnover:</msg>
   <msg key="Type">Type</msg>
   <msg key="Update">Update</msg>
   <msg key="Update_filenames">Update filenames</msg>

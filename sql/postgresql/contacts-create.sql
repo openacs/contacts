@@ -138,11 +138,13 @@ create table contact_complaint_tracking (
 			references cr_revisions(revision_id)
 			on delete cascade,
 	customer_id 	integer
-			constraint contact_complaint_tracking_fk
-			references users(user_id) on delete cascade,
+			constraint contact_complaint_tracking_customer_fk
+			references parties(party_id) on delete cascade,
 	turnover	float,
 	percent		integer,
-	supplier_id	integer,
+	supplier_id	integer
+       			constraint contact_complaint_tracking_supplier_fk
+			references parties(party_id) on delete cascade,
 	paid		float,
 	object_id	integer,
 	state 		varchar(10),

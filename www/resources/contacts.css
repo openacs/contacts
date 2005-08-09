@@ -25,16 +25,15 @@ p.last-updated {
   text-align: right;
 }
 dl.comments {
-  font-size: 85%;
+  font-size: 100%;
   margin: 0px;
   padding: 0px;
   }
 dl.comments dt {
-  padding: 5px;
   margin: 5px 0px 0px 0px;
   background: #EEE;
   font-weight: normal;
-  font-size: 75%;
+  font-size: 100%;
   }
 dl.comments dd {
   padding: 5px;
@@ -45,10 +44,10 @@ dl.comments dt.odd, dl.comments dd.odd {
   background: #DDD;
   }
 dl.comments dt.mine-odd, dl.comments dd.mine-odd {
-  background: #FDE;
+  background: #FFFFFF;
   }
 dl.comments dt.mine-even, dl.comments dd.mine-even {
-  background: #FDE;
+  background: #FFFFFF;
   }
 dl.comments .number {
   padding: 0px 5px 0px 0px;

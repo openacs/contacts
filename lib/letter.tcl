@@ -16,6 +16,31 @@ foreach optional_param {return_url} {
     }
 }
 
+if {[exists_and_not_null header_id]} {
+    contact::message::get -item_id $header_id -array header_info
+    set header [ad_html_text_convert \
+		     -to "text/html" \
+		     -from $header_info(content_format) \
+		     -- $header_info(content) \
+		    ]
+} else {
+    set header "<div class=\"mailing-address\">{name}<br />
+{mailing_address}</div>"
+}
+
+if {[exists_and_not_null footer_id]} {
+    contact::message::get -item_id $footer_id -array footer_info
+    set footer [ad_html_text_convert \
+		     -to "text/html" \
+		     -from $footer_info(content_format) \
+		     -- $footer_info(content) \
+		    ]
+} else {
+    set footer ""
+}
+
+
+    
 set date [split [dt_sysdate] "-"]
 append form_elements {
     message_id:key
@@ -33,15 +58,20 @@ append form_elements {
     {date:date(date)
 	{label "[_ contacts.Date]"}
     }
-    {address:text(inform),optional
-	{label "[_ contacts.Address]"}
-	{value "{name}<br>{mailing_address}"}
+    {header:text(inform),optional
+	{label "[_ contacts.Header]"}
+	{value "$header"}
 	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
     {content:richtext(richtext)
 	{label "[_ contacts.Message]"}
 	{html {cols 70 rows 24}}
 	{help_text {[_ contacts.lt_remember_that_you_can]}}
+    }
+    {footer:text(inform),optional
+	{label "[_ contacts.Footer]"}
+	{value "$footer"}
+	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
 }
 
@@ -116,12 +146,22 @@ ad_form -action message \
 		break
 	    }
 
-	    set letter "<div class=\"message\">
-<div class=\"mailing-address\">$name<br />
-$mailing_address</div>
-<div class=\"content\">$content</div>
-
-</div>"
+	    set letter "<table heigth=\"3000\" width=\"650\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" border=\"0\">
+	<tr>
+		<td>
+$header
+			<br><br>
+		</td>
+	</tr>
+	<tr>
+<td>
+$content
+</td>
+</tr>
+<tr valign=\"bottom\">
+<td>
+$footer
+</td>"
 
 	    set values [list]
 	    foreach element [list first_names last_name name mailing_address date salutation] {

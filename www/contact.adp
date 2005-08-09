@@ -46,6 +46,7 @@
 	
 	<h3 class="contact-title"><a href="/invoices">#invoices.Billable_Projects#</a></h3>
 	<include src="/packages/invoices/lib/projects-billable" organization_id="@party_id@" elements="checkbox project_id title amount_open" package_id="@iv_package_id@" base_url="@iv_base_url@" />
+	<include src="/packages/glossar/lib/glossar-list" owner_id=@party_id@ orderby=@orderby@ customer_id=@party_id@ format=table></include>
       </if>
     </if>
     <if @update_date@ not nil>

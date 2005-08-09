@@ -11,7 +11,7 @@
       <dd class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">
    
 	<if @history.include@ nil>
-	      <p>@history.content;noquote@</p>
+	      @history.content;noquote@
         </if>
         <else>
               <include src=@history.include@ content=@history.content;noquote@ object_id=@history.object_id@ party_id=@party_id@>

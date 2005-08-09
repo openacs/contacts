@@ -37,6 +37,7 @@ if { $party_is_contact_p } {
                message       { set file "message" }
 	       letter        { set file "letter" }
 	       email         { set file "email" }
+	       complaint     { set file "complaint" }
 	       history       { set file "history" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }

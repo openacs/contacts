@@ -29,6 +29,8 @@
 	item_id=@item_id@
         signature_id=@signature_id@ 
         recipients=@recipients;noquote@
+        footer_id=@footer_id@
+        header_id=@header_id@
         >
   </else>
 </if>

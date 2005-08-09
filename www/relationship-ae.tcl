@@ -74,6 +74,7 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 	set creation_ip [ad_conn peeraddr]
 	set rel_id [db_exec_plsql create_rel {}]
         db_dml insert_contact_rel {}
+	#	callback contact::insert_contact_rel -package_id $package_id -form party_ae -object_type $object_type
         util_user_message -message "[_ contacts.Relationship_Added]"
     } else {
         util_user_message -message "[_ contacts.Relationship_Updated]"
