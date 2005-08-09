@@ -5,16 +5,24 @@ ad_page_contract {
     @author www.viaro.net www.viaro.net
     @creation-date 2005-08-05
 } {
-    customer_id:optional
-    supplier_id:optional
+    {customer_id ""}
+    {supplier_id ""}
     {filter_p 0} 
 }
 
 if {![exists_and_not_null customer_id]} {
     unset customer_id
 }
+
+if {![exists_and_not_null supplier_id]} {
+    unset supplier_id
+}
+
+set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
 set elements [list \
-		  title [list label "Title"]\
+		  title [list label "Title" \
+			     display_template \
+			     "<a href=\"$edit_url\"><img src=\"/resources/Edit16.gif\"></a>@complaint.title@"]\
 		  customer [list label "Customer"]\
 		  supplier [list label "Supplier"]\
 		  turnover [list label "Turnover"]\
