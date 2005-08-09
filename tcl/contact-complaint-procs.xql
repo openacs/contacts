@@ -23,5 +23,17 @@
     </querytext>
 </fullquery>
 
+<fullquery name="contact::complaint::check_name.check_name">
+    <querytext>
+	select
+		1
+	from 
+		cr_items
+	where
+		name = :name
+		and parent_id = :parent_id
+    </querytext>
+</fullquery>
+
 </queryset>
 

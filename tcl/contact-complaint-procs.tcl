@@ -28,9 +28,9 @@ ad_proc -public contact::complaint::new {
     @param turnover
     @param percent
     @param description
-    @param supplier_id
+    @param supplier_id  
     @param paid
-    @param object_id
+    @param object_id    The object_id you are making the complaint
 
 } {
     if { [empty_string_p $complaint_id] } {
@@ -59,4 +59,22 @@ ad_proc -public contact::complaint::new {
     # Insert extra information the table
     db_dml insert_complaint { }
 
+}
+
+ad_proc -public contact::complaint::check_name {
+    -name:required
+    {-parent_id "-100"}
+    {-complaint_id ""}
+} {
+    Check if the name you are giving to the complaint already exists, if it does returns 1 otherwise returns 0
+    
+    @param name          The name of the item to check
+    @param parent_id     The id of the parent item_id if exist, using -100 by default
+    @param complaint_id  To figure out if is a new item or a new revision. If it's a revision, return 0   
+} {
+    if {![empty_string_p $complaint_id] } {
+	return 0
+    } else {
+	return [db_string check_name { } -default 0]
+    }
 }
