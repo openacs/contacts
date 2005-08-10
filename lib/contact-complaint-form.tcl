@@ -7,6 +7,15 @@ if { ![info exist return_url] } {
 }
 
 
+if { ![exists_and_not_null complaint_id] } {
+    if { [info exist complaint_id] } {
+	unset complaint_id
+    }
+    set complaint_rev_id ""
+} else {
+    set complaint_rev_id $complaint_id
+}
+
 ad_form -name complaint_form -form {
     complaint_id:key
     {title:text(text)
@@ -18,27 +27,18 @@ ad_form -name complaint_form -form {
     }
 }
 
-if { ![info exist customer_id] } {
-    ad_form -extend -name complaint_form -form {
-	{customer_id:text(select)
-	    {label "[_ contacts.Customer]"}
-	    {options $user_options}
-	}
+set customer_name [contact::name -party_id $customer_id]
+ad_form -extend -name complaint_form -form {
+    {customer_id:text(hidden)
+	{value $customer_id}
     }
-} else {
-    set customer_name [contact::name -party_id $customer_id]
-    ad_form -extend -name complaint_form -form {
-	{customer_id:text(hidden)
-	    {value $customer_id}
-	}
-	{customer:text(inform),optional
-	    {label "[_ contacts.Customer]"}
-	    {value "<a href=\"/contacts/${customer_id}\">$customer_name</a>"}
-	}
+    {customer:text(inform),optional
+	{label "[_ contacts.Customer]"}
+	{value "<a href=\"/contacts/${customer_id}\">$customer_name</a>"}
     }
 }
 
-if { ![info exist supplier_id]} {
+if { ![exists_and_not_null supplier_id]} {
 
     set user_options [list]
     db_foreach get_users { } {
@@ -51,7 +51,7 @@ if { ![info exist supplier_id]} {
 	}
     }
 } else {
-
+    
     set supplier_name [contact::name -party_id $supplier_id]
     ad_form -extend -name complaint_form -form {
 	{supplier_id:text(hidden)
@@ -110,10 +110,21 @@ ad_form -extend -name complaint_form -form {
         {help_text "[_ contacts.complaint_paid_help]"}
 
     }
+    {status:text(select)
+	{label "[_ contacts.Status]"}
+	{options { { [_ contacts.open] open } { [_ contacts.valid] valid } { [_ contacts.invalid] invalid } }}
+        {help_text "[_ contacts.complaint_status_help]"}
+
+    }
     {description:text(textarea)
 	{label "[_ contacts.Description]"}
 	{html {rows 10 cols 30}}
         {help_text "[_ contacts.complaint_description_help]"}
+    }
+} -validate {
+    {title
+	{ ![contact::complaint::check_name -name $title -complaint_id $complaint_rev_id] }
+	"[_ contacts.title_already_present]"
     }
 } -new_data {
   
