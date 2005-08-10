@@ -20,16 +20,16 @@ if {![exists_and_not_null supplier_id]} {
 
 set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
 set elements [list \
-		  title [list label "Title" \
+		  title [list label [_ contacts.Title_1] \
 			     display_template \
-			     "<a href=\"$edit_url\"><img src=\"/resources/Edit16.gif\"></a>@complaint.title@"]\
-		  customer [list label "Customer"]\
-		  supplier [list label "Supplier"]\
-		  turnover [list label "Turnover"]\
-		  percent [list label "Percent"]\
-		  state [list label "State"]\
-		  object_id [list label "Object ID"]\
-		  description [list label "Description"]\
+			     "<a href=\"$edit_url\"><img border=0 src=\"/resources/Edit16.gif\"></a>@complaint.title@"]\
+		  customer [list label [_ contacts.Customer]]\
+		  supplier [list label [_ contacts.Supplier]]\
+		  turnover [list label [_ contacts.Turnover]]\
+		  percent [list label [_ contacts.Percent]]\
+		  state [list label "[_ contacts.Status]:"]\
+		  object_id [list label [_ contacts.Object_id]]\
+		  description [list label [_ contacts.Description]]\
 		 ]
 
 set customer_list [list]
@@ -50,14 +50,14 @@ template::list::create \
     -key complaint_id \
     -filters {
 	customer_id {
-	    label "Customer"
+	    label "[_ contacts.Customer]"
  	    values { $customer_list }
 	    where_clause {
 		customer_id = :customer_id
 	    }
 	}
 	supplier_id {
-	    label "Supplier"
+	    label "[_ contacts.Supplier]"
  	    values { $supplier_list }
 	    where_clause {
 		supplier_id = :supplier_id
