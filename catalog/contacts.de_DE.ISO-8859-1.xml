@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d5" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d6" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--none--">-- Keine --</msg>
   <msg key="--select_one--">-- Bitte auswählen --</msg>
@@ -34,6 +34,7 @@
   <msg key="Cancel">Abbrechen</msg>
   <msg key="Clear">Leeren</msg>
   <msg key="Comments">Kommentare</msg>
+  <msg key="Complaint">Beschwerde</msg>
   <msg key="Contact">Kontakt</msg>
   <msg key="Contact_-">Kontakt -&amp;gt;</msg>
   <msg key="Contacts">Kontakte</msg>
@@ -42,6 +43,7 @@
   <msg key="Create_a_Signature">Eine Signatur erstellen</msg>
   <msg key="Create_a_user_account_for_this_person">Für diesen User einen User Account erzeugen</msg>
   <msg key="CSV">CSV</msg>
+  <msg key="Customer">Kunde:</msg>
   <msg key="Date">Datum</msg>
   <msg key="Delete">Löschen</msg>
   <msg key="Delete_from">Löschen</msg>
@@ -108,6 +110,7 @@
   <msg key="Paper_Type">Papiertyp</msg>
   <msg key="Parent_Group">Übergeordnete Gruppe</msg>
   <msg key="People">Kontakte</msg>
+  <msg key="Percent">Rabatt in Prozent:</msg>
   <msg key="Permissions">Berechtigungen</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Personen Formblatt</msg>
@@ -139,8 +142,11 @@
   <msg key="Sort_by">Sortieren nach:</msg>
   <msg key="Summary">Zusammenfassung</msg>
   <msg key="Summary_View">Überblick</msg>
+  <msg key="Supplier">Freelancer:</msg>
   <msg key="Tasks">Aufgaben</msg>
+  <msg key="Title_1">Titel:</msg>
   <msg key="True">richtig</msg>
+  <msg key="Turnover">Umsatz:</msg>
   <msg key="Upload_More">Mehrere Dateien uploaden</msg>
   <msg key="User_Account_Information">Informationen zu dem User Account</msg>
   <msg key="View_all_roles">Alle Rollen ansehen</msg>

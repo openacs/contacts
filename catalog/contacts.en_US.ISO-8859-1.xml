@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <message_catalog package_key="contacts" package_version="1.0d6" locale="en_US" charset="ISO-8859-1">
+
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
   <msg key="--none--">-- None --</msg>
@@ -58,12 +59,13 @@
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
   <msg key="Comment_Added">Comment Added</msg>
   <msg key="Comments">Comments</msg>
-  <msg key="complaint_description_help"></msg>
-  <msg key="complaint_paid_help"></msg>
-  <msg key="complaint_percent_help"></msg>
-  <msg key="complaint_status_help"></msg>
-  <msg key="complaint_title_help">Unique name that identifies the complaint.</msg>
-  <msg key="complaint_turnover_help"></msg>
+  <msg key="Complaint">Complaint</msg>
+  <msg key="complaint_description_help">Extensive description of the complaint, especially why it was given.</msg>
+  <msg key="complaint_paid_help">How much was paid to the supplier</msg>
+  <msg key="complaint_percent_help">Rebate in percent that has had to be given due to the complaint</msg>
+  <msg key="complaint_status_help">What is the status of the complaint</msg>
+  <msg key="complaint_title_help">Short name for identifying the complaint</msg>
+  <msg key="complaint_turnover_help">Turnover that was made with the customer with regards to the complaint</msg>
   <msg key="Configuration_Error">Configuration Error</msg>
   <msg key="Contact">Contact</msg>
   <msg key="Contact_-">Contact -&gt;</msg>
@@ -104,12 +106,16 @@
   <msg key="Done">Done</msg>
   <msg key="Edit">Edit</msg>
   <msg key="Edit_a_Signature">Edit a Signature</msg>
-  <msg key="Edit_complaint">Edit This Complaint</msg>
+  <msg key="Edit_complaint">Edit complaint</msg>
   <msg key="Edit_Details">Edit Details</msg>
   <msg key="Edit_group_name">Edit %group_name%</msg>
   <msg key="Email">Email</msg>
   <msg key="email">EMail</msg>
   <msg key="Email_Address">Email Address</msg>
+  <msg key="Employee">Employee</msg>
+  <msg key="Employees">Employees</msg>
+  <msg key="Employer">Employer</msg>
+  <msg key="Employers">Employers</msg>
   <msg key="Error">Error</msg>
   <msg key="even">even</msg>
   <msg key="exists">exists</msg>
@@ -205,7 +211,9 @@
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
+  <msg key="lt_Contact_Rels_Employme">Contact Rels Employment</msg>
   <msg key="lt_Contact_updated_in_th">Contact updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
@@ -249,6 +257,7 @@
   <msg key="lt_Organization_Relation_1">Organization Relationships</msg>
   <msg key="lt_Party_ID_equals_Searc">&quot;Party ID&quot; equals &quot;Search_Word&quot;</msg>
   <msg key="lt_People_or_Organizatio">People or Organizations</msg>
+  <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
   <msg key="lt_remember_that_you_can">remember that you can use &lt;a href=&quot;message-help&quot;&gt;mail merge substitutions&lt;/a&gt;. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}</msg>
@@ -260,6 +269,7 @@
   <msg key="lt_Some_of_the_required_">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:</msg>
   <msg key="lt_Some_of_the_required__1">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:</msg>
   <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
+  <msg key="lt_The_-object_type-_-contact_link-_was_added">The object type %contact_link% was added</msg>
   <msg key="lt_the_action_supplied_i">the action supplied is not valid</msg>
   <msg key="lt_The_contact_is_in_the">The contact is in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_is_NOT_in">The contact is NOT in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
@@ -332,6 +342,8 @@
   <msg key="Not_Configured">Not Configured</msg>
   <msg key="not_in_the_search">not in the search</msg>
   <msg key="Number_of_Rows">Number of Rows</msg>
+  <msg key="Object">Object:</msg>
+  <msg key="Object_id">Object_id</msg>
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
   <msg key="open">Open</msg>
@@ -436,7 +448,6 @@
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>
   <msg key="Title_1">Title:</msg>
-  <msg key="title_already_present">This title is already present on one complaint. Please use another one.</msg>
   <msg key="To">To</msg>
   <msg key="True">True</msg>
   <msg key="Turnover">Turnover:</msg>
