@@ -98,7 +98,7 @@ if { ![info exist project_id] } {
 	}
 	{project:text(inform)
 	    {label "[_ contacts.Object]"}
-	    {value "[pm::project::name -project_id $object_id]"}
+	    {value "[pm::project::name -project_item_id $object_id]"}
 	}
     }
 }
