@@ -5,11 +5,11 @@
 <fullquery name="get_complaints">
     <querytext>
 	select 
-		*
+		cct.*
 	from
-		contact_complaint_tracking
+		contact_complaint_tracking cct, cr_items ci
 	where
-		1 = 1
+		ci.latest_revision = cct.complaint_id
 		[template::list::filter_where_clauses -and -name complaint] 
     </querytext>
 </fullquery>

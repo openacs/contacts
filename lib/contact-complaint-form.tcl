@@ -78,28 +78,11 @@ ad_form -extend -name complaint_form -form {
     }
 }
 
-if { ![info exist project_id] } {
-    set project_options [list]
-    db_foreach get_projects { } {
-	set project_name [pm::project::name -project_item_id $project_item_id]
-	lappend project_options [list $project_name $project_item_id]
+ad_form -extend -name complaint_form -form {
+    {object_id:text(hidden)
     }
-    ad_form -extend -name complaint_form -form {
-	{object_id:text(select)
-	    {label "[_ contacts.Project]"}
-	    {options $project_options}
-	}
-    }
-} else {
-    set object_id $project_id
-    ad_form -extend -name complaint_form -form {
-	{object_id:text(hidden)
-	    {value $object_id}
-	}
-	{project:text(inform)
-	    {label "[_ contacts.Object]"}
-	    {value "[pm::project::name -project_item_id $object_id]"}
-	}
+    {project:text(inform)
+	{label "[_ contacts.Object]"}
     }
 }
 
@@ -110,7 +93,7 @@ ad_form -extend -name complaint_form -form {
         {help_text "[_ contacts.complaint_paid_help]"}
 
     }
-    {status:text(select)
+    {state:text(select)
 	{label "[_ contacts.Status]"}
 	{options { { [_ contacts.open] open } { [_ contacts.valid] valid } { [_ contacts.invalid] invalid } }}
         {help_text "[_ contacts.complaint_status_help]"}
@@ -136,7 +119,9 @@ ad_form -extend -name complaint_form -form {
 	-description $description \
 	-supplier_id $supplier_id \
 	-paid $paid \
-	-object_id $object_id
+	-object_id $object_id \
+	-state $state
+
 
 } -edit_data {
     
@@ -149,11 +134,16 @@ ad_form -extend -name complaint_form -form {
 	-description $description \
 	-supplier_id $supplier_id \
 	-paid $paid \
-	-object_id $object_id
+	-object_id $object_id \
+	-state $state
 
+
+} -new_request {
+    set project "[pm::project::name -project_item_id $object_id]"
 } -edit_request {
 
     db_1row get_revision_info { }
+    set project "[pm::project::name -project_item_id $object_id]"
 
 } -after_submit {
     ad_returnredirect $return_url

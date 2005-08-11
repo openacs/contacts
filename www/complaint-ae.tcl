@@ -9,6 +9,7 @@ ad_page_contract {
     {supplier_id:integer}
     {customer_id ""}
     {project_id ""}
+    {object_id ""}
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
@@ -21,6 +22,7 @@ if {![empty_string_p $project_id]} {
     if {[empty_string_p $customer_id]} {
         set customer_id [db_string get_customer_id "select customer_id from pm_projectsx where item_id = :project_id"]
     }
+    set object_id $project_id
 }
 
 ad_return_template
