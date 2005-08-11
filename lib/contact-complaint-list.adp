@@ -5,9 +5,11 @@
           <listfilters name="complaint"></listfilters>
       </td>            
     </if>
+    <if @complaint:rowcount@ gt 0>
     <td valign="top" width="80%">
 	<listtemplate name="complaint"></listtemplate>	
     </td>
+</if>
   </tr>
 </table>
 

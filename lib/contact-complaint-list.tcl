@@ -1,21 +1,29 @@
-ad_page_contract {
-    Shows a list template with information about contact_complaint_tracking table
+# filter_p:     if set to 1, the filter selection will be displayed
+# customer_id:  customer_id for which we want to see the complaints
+# supplier_id:  supplier_id for which we want to see the complaints
 
-    @author Miguel Marin (miguelmarin@viaro.net)
-    @author www.viaro.net www.viaro.net
-    @creation-date 2005-08-05
-} {
-    {customer_id ""}
-    {supplier_id ""}
-    {filter_p 0} 
+set required_param_list [list]
+set optional_param_list [list filter_p]
+set optional_unset_list [list customer_id supplier_id]
+
+foreach required_param $required_param_list {
+    if {![info exists $required_param]} {
+	return -code error "$required_param is a required parameter."
+    }
 }
 
-if {![exists_and_not_null customer_id]} {
-    unset customer_id
+foreach optional_param $optional_param_list {
+    if {![info exists $optional_param]} {
+	set $optional_param {}
+    }
 }
 
-if {![exists_and_not_null supplier_id]} {
-    unset supplier_id
+foreach optional_unset $optional_unset_list {
+    if {[info exists $optional_unset]} {
+	if {[empty_string_p [set $optional_unset]]} {
+	    unset $optional_unset
+	}
+    }
 }
 
 set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
