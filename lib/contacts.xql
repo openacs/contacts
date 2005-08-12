@@ -3,9 +3,14 @@
 
 <fullquery name="contacts_pagination">
       <querytext>
-select parties.party_id
-  from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ), group_distinct_member_map
+select parties.party_id, organizations.name,
+      first_names, last_name
+  from parties
+      left join persons on (parties.party_id = persons.person_id)
+      left join organizations on (parties.party_id = organizations.organization_id), group_distinct_member_map, cr_items, cr_revisions
  where parties.party_id = group_distinct_member_map.member_id
+   and parties.party_id = cr_items.item_id
+   and cr_items.latest_revision = cr_revisions.revision_id
    and group_distinct_member_map.group_id $where_group_id
 [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
 [template::list::orderby_clause -orderby -name "contacts"]
@@ -14,16 +19,14 @@ select parties.party_id
 
 <fullquery name="contacts_select">      
       <querytext>
-select contact__name(parties.party_id),
+select organizations.name,
+      first_names, last_name,
        parties.party_id,
-       cr_revisions.revision_id,
-       contact__name(parties.party_id,:name_order) as name,
        parties.email,
-       parties.url,
-       ( select first_names from persons where person_id = party_id ) as first_names,
-       ( select last_name from persons where person_id = party_id ) as last_name,
-       ( select name from organizations where organization_id = party_id ) as organization
-  from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
+       parties.url
+  from parties 
+      left join persons on (parties.party_id = persons.person_id)
+      left join organizations on (parties.party_id = organizations.organization_id), group_distinct_member_map
  where parties.party_id = group_distinct_member_map.member_id
    and group_distinct_member_map.group_id $where_group_id
 [template::list::page_where_clause -and -name "contacts" -key "party_id"]

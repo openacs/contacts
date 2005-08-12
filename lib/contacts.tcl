@@ -35,7 +35,7 @@ if { ![exists_and_not_null group_id] } {
 } else {
     if {[llength $group_id] > 1} {
 	set where_group_id " IN ('[join $group_id "','"]')"
-	set group_by_group_id "group by parties.party_id , cr_revisions.revision_id, parties.email"
+	set group_by_group_id "group by parties.party_id , parties.email"
     } else {
 	set where_group_id " = :group_id"
     }
@@ -45,12 +45,16 @@ if { ![exists_and_not_null group_id] } {
 set package_id [apm_package_id_from_key contacts]
 
 
-if { $orderby == "first_names,asc" } {
-    set name_order 0
-    set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a>"
-} else {
-    set name_order 1
-    set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name]"
+switch $orderby {
+    "first_names,asc" {
+        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+    }
+    "last_name,asc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+    }
+    "organization,asc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization]"
+    }
 }
 
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
@@ -147,14 +151,20 @@ template::list::create \
     } -orderby {
         first_names {
             label "[_ contacts.First_Name]"
-            orderby_asc  "lower(contact__name(party_id,'f')) asc"
-            orderby_desc "lower(contact__name(party_id,'f')) asc"
+            orderby_asc  "lower(first_names) asc"
+            orderby_desc "lower(first_names) asc"
         }
         last_name {
             label "[_ contacts.Last_Name]"
-            orderby_asc  "lower(contact__name(party_id,'t')) asc"
-            orderby_desc "lower(contact__name(party_id,'t')) asc"
+            orderby_asc  "lower(last_name) asc"
+            orderby_desc "lower(last_name) asc"
         }
+        organization {
+            label "[_ contacts.Last_Name]"
+            orderby_asc  "lower(organizations.name) asc"
+            orderby_desc "lower(organizations.name) asc"
+        }
+
         default_value first_names,asc
     } -formats {
 	normal {
@@ -179,8 +189,9 @@ template::list::create \
 	}
     }
 
-db_multirow -extend {contact_url} -unclobber contacts contacts_select {} {
+db_multirow -extend {contact_url name} -unclobber contacts contacts_select {} {
     set contact_url [contact::url -party_id $party_id]
+    set name [contact::name -party_id $party_id]
 }
 
 if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
