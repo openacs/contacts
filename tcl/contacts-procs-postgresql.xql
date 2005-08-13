@@ -20,7 +20,6 @@
       from groups left join contact_groups on ( groups.group_id = contact_groups.group_id )
      where groups.group_id not in ('-1','[contacts::default_group]')
        and groups.group_id not in ( select gcm.component_id from group_component_map gcm where gcm.group_id != -1 )
-       and acs_permission__permission_p(groups.group_id,:user_id,:privilege_required)
        $filter_clause
      order by mapped_p desc, CASE WHEN contact_groups.default_p THEN '000000000' ELSE upper(groups.group_name) END
   </querytext>

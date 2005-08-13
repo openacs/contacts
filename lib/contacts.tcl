@@ -29,6 +29,14 @@ foreach default_param $default_param_list {
     }
 }
 
+# If we do not have a search_id, limit the list to only users in the default group.
+
+if {[exists_and_not_null search_id]} {
+    set group_where_clause ""
+} else {
+    set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
+}
+
 set group_by_group_id ""
 if { ![exists_and_not_null group_id] } {
     set where_group_id " = [contacts::default_group]"

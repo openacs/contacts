@@ -671,7 +671,7 @@ ad_proc -private contacts::search::condition_type::group {
             switch $operand {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
-                    set output_code "$party_id in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
+                    set output_code "group_distinct_member_map.group_id = '$group_id'"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"

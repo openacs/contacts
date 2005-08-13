@@ -158,6 +158,14 @@ ad_proc -public contact::search::results_count_not_cached {
 } {
     Get the total number of results from a search
 } {
+    
+    # If we do not have a search_id, limit the list to only users in the default group.
+    
+    if {[exists_and_not_null search_id]} {
+        set group_where_clause ""
+    } else {
+        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
+    }
     return [db_string select_results_count {}]
 }
 
@@ -167,12 +175,19 @@ ad_proc -private contact::party_id_in_sub_search_clause {
     {-not:boolean}
 } {
 } {
+    # If we do not have a search_id, limit the list to only users in the default group.
+    
+    if {[exists_and_not_null search_id]} {
+        set group_where_clause ""
+    } else {
+        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
+    }
     set query "
     select parties.party_id
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
            group_distinct_member_map
      where parties.party_id = group_distinct_member_map.member_id
-       and group_distinct_member_map.group_id = '[contacts::default_group]'
+     $group_where_clause
     [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
     "
     if { [exists_and_not_null query] } {
@@ -308,7 +323,7 @@ ad_proc -public contact::search::query_clause {
         lappend query_clauses "$party_id = $query"
     } elseif { [exists_and_not_null query] } {
         foreach term $query {
-            lappend query_clauses "upper(contact__name($party_id)) like upper('%${term}%')"
+            lappend query_clauses "upper(organizations.name) like upper('%${term}%')"
         }
     }
 
@@ -404,9 +419,9 @@ ad_proc -public contact::search::where_clause_not_cached {
     if { [exists_and_not_null all_or_any] } {
 	set result {}
 	if { $object_type == "person" } {
-	    append result "$party_id in ( select person_id from persons )\n"
+	    append result "$party_id = persons.person_id\n"
 	} elseif { $object_type == "organization" } {
-	    append result "$party_id in ( select organization_id from organizations )\n"
+	    append result "$party_id = organizations.organization_id\n"
 	}
     
 	# the reason we do not put this in the db_foreach statement is because we 
