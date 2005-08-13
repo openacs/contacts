@@ -323,7 +323,7 @@ ad_proc -public contact::search::query_clause {
         lappend query_clauses "$party_id = $query"
     } elseif { [exists_and_not_null query] } {
         foreach term $query {
-            lappend query_clauses "upper(organizations.name) like upper('%${term}%')"
+            lappend query_clauses "(upper(organization.name) like upper('%${term}%') or upper(last_names) like upper('%${term}%') or upper(first_names) like upper ('%${term}%')"
         }
     }
 
