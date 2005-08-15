@@ -29,7 +29,6 @@ select organizations.name,
       left join persons on (parties.party_id = persons.person_id)
       left join organizations on (parties.party_id = organizations.organization_id)
  where 1 = 1
-$group_where_clause
 [template::list::page_where_clause -and -name "contacts" -key "party_id"]
 $group_by_group_id
 [template::list::orderby_clause -orderby -name "contacts"]
