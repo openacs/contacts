@@ -35,7 +35,7 @@
 
 <fullquery name="contact::search::results_count_not_cached.select_results_count">
   <querytext>
-    select count(*)
+    select count(distinct party_id)
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
      where parties.party_id = group_distinct_member_map.member_id
      $group_where_clause
