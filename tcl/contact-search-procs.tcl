@@ -319,11 +319,26 @@ ad_proc -public contact::search::query_clause {
     regsub -all "'" $query "''" query
     set query_clauses [list]
 
+    # If we have a query, we need to do a subselect with an "in" clause. 
+    # We are assuming that people usually want to get a small number of the
+    # base for the selection, therefore the subselects will return a very small
+    # number of rows, justifying the union cum in clause.
     if { [string is integer $query] } {
         lappend query_clauses "$party_id = $query"
     } elseif { [exists_and_not_null query] } {
         foreach term $query {
-            lappend query_clauses "(upper(organization.name) like upper('%${term}%') or upper(last_names) like upper('%${term}%') or upper(first_names) like upper ('%${term}%')"
+
+            # We want to enable searches with "*", to select all users who's 
+            # last_name starts with "Ab", searching for "Ab*"
+            # For this we check if the term starts or ends with "*" and if yes
+            # we do a regsub to replace the "*" with "%" for reuse in SQL
+            if {[string length [string trim $term "*"]] == [string length $term]} {
+                set term_clause "%${term}%"
+            } else {
+                regsub -all "*" $term "%" term
+            }
+
+            lappend query_clauses "party_id in (select organization_id from organizations where upper(organizations.name) like upper('%${term}%') union select person_id from persons where upper(last_name) like upper('%${term}%') or upper(first_names) like upper ('%${term}%'))"
         }
     }
 
