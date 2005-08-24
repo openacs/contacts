@@ -1,5 +1,5 @@
     <if @attributes:rowcount@ gt 0>
-      <multiple name="attributes">
+  <multiple name="attributes">
 	<h3 class="contact-title">@attributes.section@</h3>
 	<dl class="attribute-values">
 	  <group column="section">

@@ -587,9 +587,6 @@ ad_proc -public contacts::get_values {
     }
 
     if {[empty_string_p $group_id]} {
-	if {![string match "#*#" $group_name]} {
-	    set group_name [lang::util::convert_to_i18n -prefix "group" $group_name]
-	}
 	if {![db_0or1row get_group_id "select group_id from groups where group_name = :group_name"]} {
 	    ad_return_error "ERROR" "[_ contacts.lt_Unable_to_retrieve_gr]"
 	}

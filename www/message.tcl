@@ -161,7 +161,8 @@ if { ![exists_and_not_null message_type] } {
 
     set public_text [_ contacts.Public]
     set package_id [ad_conn package_id]
-
+    set letter_options ""
+    set email_options ""
     db_foreach get_messages {
 	select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END as public_display,
 	title,
@@ -178,6 +179,7 @@ if { ![exists_and_not_null message_type] } {
 	    lappend ${message_type}_options [list "$public_display:$title" "$item_id"]
 	}
     }
+
     set message_options [concat \
 			     $message_options \
 			     $letter_options \

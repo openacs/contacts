@@ -23,6 +23,7 @@ set default_group [contacts::default_group]
 
 
 set group_list [concat [list [list [_ contacts.All_Contacts] $default_group "0"]] [contact::groups]]
+
 if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
 } elseif { [lsearch $group_ids $default_group] < 0 } {
