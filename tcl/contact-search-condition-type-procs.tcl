@@ -87,6 +87,7 @@ ad_proc -private contacts::search::condition_type::attribute {
     {-revision_id ""}
     {-object_type ""}
     {-prefix ""}
+    {-without_arrow_p "f"}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
 } {
@@ -220,7 +221,11 @@ ad_proc -private contacts::search::condition_type::attribute {
             set sorted_options [ams::util::localize_and_sort_list_of_lists -list $attribute_options]
             set attribute_options [list [list "" ""]]
             foreach op $sorted_options {
-                lappend attribute_options [list "[lindex $op 0] ->" "[lindex $op 1]"]
+		if { $without_arrow_p } {
+		    lappend attribute_options [list "[lindex $op 0]" "[lindex $op 1]"]
+		} else {
+		    lappend attribute_options [list "[lindex $op 0] ->" "[lindex $op 1]"]
+		}
             }
             lappend form_elements [list \
                                        ${prefix}attribute_id:text(select),optional \
@@ -422,10 +427,21 @@ ad_proc -private contacts::search::condition_type::attribute {
                                 }
                                 after {
                                     set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
+				    # We need to evalute the date_part since the i18N message doesn't
+				    # execute the tcl code.
+				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
+				    set date_result [eval $date_part]
+				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
+
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time > '$value'::timestamptz )"
                                 }
                                 before {
-                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_b]"
+				    # We need to evalute the date_part since the i18N message doesn't
+				    # execute the tcl code.
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
+				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
+				    set date_result [eval $date_part]
+				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < '$value'::timestamptz )"
                                 }
                             }
@@ -433,6 +449,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                 }
             }
+
             if { $request == "pretty" } {
                 return $output_pretty
             } else {
