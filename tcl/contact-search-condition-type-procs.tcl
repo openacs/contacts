@@ -120,6 +120,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                 switch $value_method {
                     ams_value__options {
                         set operand_options [list \
+						 [list "- - - - - -" ""] \
                                                  [list "[_ contacts.is_-]" "selected"] \
                                                  [list "[_ contacts.is_not_-]" "not_selected"] \
                                             ]
@@ -131,6 +132,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__telecom_number {
                         set operand_options [list \
+						 [list "- - - - - -" ""] \
                                                  [list "[_ contacts.area_code_is_-]" "area_code_equals"] \
                                                  [list "[_ contacts.area_code_is_not_-]" "not_area_code_equals"] \
                                                  [list "[_ contacts.country_code_is_-]" "country_code_equals"] \
@@ -142,6 +144,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__text {
                         set operand_options [list \
+						 [list "- - - - - -" ""] \
                                                  [list "[_ contacts.contains_-]" "contains"] \
                                                  [list "[_ contacts.does_not_contain_-]" "not_contains"] \
                                                 ]
@@ -151,6 +154,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__postal_address {
                         set operand_options [list \
+						 [list "- - - - - -" ""] \
                                                  [list "[_ contacts.country_is_-]" "country_is"] \
                                                  [list "[_ contacts.country_is_not_-]" "country_is_not"] \
                                                  [list "[_ contacts.stateprovince_is_-]" "state_is"] \
@@ -180,6 +184,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__time {
                         set operand_options [list \
+						 [list "- - - - - -" ""] \
                                                  [list "[_ contacts.is_less_than_-]" "less_than"] \
                                                  [list "[_ contacts.is_more_than_-]" "more_than"] \
                                                  [list "[_ contacts.is_after_-]" "after"] \
@@ -219,7 +224,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                 and ams_attribute_id is not null
             }]
             set sorted_options [ams::util::localize_and_sort_list_of_lists -list $attribute_options]
-            set attribute_options [list [list "" ""]]
+            set attribute_options [list [list "- - - -" ""]]
             foreach op $sorted_options {
 		if { $without_arrow_p } {
 		    lappend attribute_options [list "[lindex $op 0]" "[lindex $op 1]"]
@@ -660,7 +665,7 @@ ad_proc -private contacts::search::condition_type::group {
     switch $request {
         ad_form_widgets {
             set form_elements [list]
-            set operand_options [list \
+	    set operand_options [list \
                                      [list "[_ contacts.contact_is_in_-]" "in"] \
                                      [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
                                     ]
@@ -754,6 +759,7 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
                                      [list "[_ contacts.in_the_search] ->" "in_search"] \
                                      [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
                                     ]
+
 #                                     [list "[_ contacts.exists_at_least] ->" "min_number"] \
 #                                     [list "[_ contacts.exists_at_most] ->" "max_number"] \
 
