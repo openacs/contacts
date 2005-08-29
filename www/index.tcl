@@ -13,6 +13,7 @@ ad_page_contract {
     {page_size:integer ""}
     {add_person:optional}
     {add_organization:optional}
+    {aggregate_attribute_id ""}
 }
 
 if { [exists_and_not_null add_person] } {
@@ -23,6 +24,11 @@ if { [exists_and_not_null add_person] } {
     ad_script_abort
 }
 
+set aggregated_p 0
+if {[exists_and_not_null aggregate_attribute_id] } {
+    set aggregated_p 1
+} 
+
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
 
@@ -32,6 +38,10 @@ if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] 
 }
 
 set contacts_total_count [contact::search::results_count -search_id $search_id -query $query]
+
+if { $aggregated_p } {
+    set contacts_total_count "<a href=\"?search_id=$search_id\">$contacts_total_count</a>"
+}
 
 if { [exists_and_not_null search_id] } {
     contact::search::log -search_id $search_id
@@ -51,7 +61,7 @@ set form_elements {
     {search_id:integer(select),optional {label ""} {options $search_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
     {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
     {save:text(submit) {label {[_ contacts.Search]}} {value "go"}}
-    {results_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> $contacts_total_count"}}
+    {results_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results] $contacts_total_count </span>"}}
 }
 
 if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {

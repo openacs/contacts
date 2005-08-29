@@ -17,6 +17,8 @@ ad_page_contract {
     {all_or_any ""}
     {title ""}
     {owner_id ""}
+    {aggregate_attribute_id ""}
+    {aggregate ""}
 } -validate {
     valid_object_type -requires {object_type} {
         if { [lsearch [list party person organization] $object_type] < 0 } {
@@ -46,6 +48,10 @@ ad_page_contract {
     }
 }
 
+
+if { [exists_and_not_null aggregate] } {
+    ad_returnredirect "[export_vars -base ./ -url {search_id aggregate_attribute_id}]"
+}
 
 set page_title "[_ contacts.Advanced_Search]"
 set context [list $page_title]
@@ -144,13 +150,24 @@ lappend form_elements  [list next:text(submit) [list label [_ acs-kernel.common_
 
 if { $search_exists_p } {
     set results_count [contact::search::results_count -search_id $search_id]
-
     append form_elements {
         {title:text(text),optional {label "<br><br>[_ contacts.save_this_search_]"} {html {size 40 maxlength 255}}}
         {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
         {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
         {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}
-        {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"}}
+        {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"} \
+	     {after_html "<br>[_ contacts.Aggregate_by]:<br>"}
+	}
+    }
+
+    append form_elements [contacts::search::condition_type::attribute \
+			      -request ad_form_widgets \
+			      -prefix "aggregate_" \
+			      -without_arrow_p "t" \
+			      -only_multiple_p "t"]
+
+    append form_elements {
+	{aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"}}
         {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {search_id}]">$results_count</a>}}}
     }
 }
