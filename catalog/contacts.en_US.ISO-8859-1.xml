@@ -34,6 +34,9 @@
   <msg key="Administer_Contacts">Administer Contacts</msg>
   <msg key="Advanced_Search">Advanced Search</msg>
   <msg key="Advanced_Searches">Advanced Searches</msg>
+  <msg key="Aggregate">Aggregate</msg>
+  <msg key="Aggregate_by">Aggregate by</msg>
+  <msg key="aggregated_by">aggregated by:</msg>
   <msg key="All">All</msg>
   <msg key="All__Edit">All / Edit</msg>
   <msg key="All_Contacts">All Contacts</msg>
