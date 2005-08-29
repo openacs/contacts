@@ -57,8 +57,13 @@ namespace eval contacts::attribute {
 
     }
 
-
-
+    ad_proc -public options_attribute { 
+    } {
+	Returns a list of only the attributes that have
+	multiple choices of the format {pretty_name attribute_id}
+    } {
+	return [db_list_of_lists get_option_attributes { }]
+    }
 
 }
 

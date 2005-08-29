@@ -88,8 +88,11 @@ ad_proc -private contacts::search::condition_type::attribute {
     {-object_type ""}
     {-prefix ""}
     {-without_arrow_p "f"}
+    {-only_multiple_p "f"}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
+    @param without_arrow_p Show the elementes in the select menu without the "->"
+    @param only_multiple_p Only show those elements that have multiple choices
 } {
     switch $request {
         ad_form_widgets {
@@ -216,13 +219,16 @@ ad_proc -private contacts::search::condition_type::attribute {
             
             set form_elements [list]
 
-            
-            set attribute_options [db_list_of_lists get_attributes {
-                select pretty_name, attribute_id
-                from ams_attributes	
-                where object_type in ('organization','party','person','user') 
-                and ams_attribute_id is not null
-            }]
+            if { !$only_multiple_p } {
+		set attribute_options [db_list_of_lists get_attributes {
+		    select pretty_name, attribute_id
+		    from ams_attributes	
+		    where object_type in ('organization','party','person','user') 
+		    and ams_attribute_id is not null
+		}] 
+	    } else {
+		set attribute_options [contacts::attribute::options_attribute]
+	    }
             set sorted_options [ams::util::localize_and_sort_list_of_lists -list $attribute_options]
             set attribute_options [list [list "- - - -" ""]]
             foreach op $sorted_options {
