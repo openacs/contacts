@@ -62,7 +62,9 @@ namespace eval contacts::attribute {
 	Returns a list of only the attributes that have
 	multiple choices of the format {pretty_name attribute_id}
     } {
-	return [db_list_of_lists get_option_attributes { }]
+	set options [db_list_of_lists get_option_attributes { }]
+	lappend options [list "[_ contacts.Country]" "-1"]
+	return $options
     }
 
 }

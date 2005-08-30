@@ -13,6 +13,16 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_countries_options">
+    <querytext>
+	select 
+	        c.default_name as option,
+		c.iso
+	from 
+		countries c
+    </querytext>
+</fullquery>
+
 <fullquery name="get_value_id">
     <querytext>
 	select 
@@ -54,6 +64,44 @@
               a.object_id = i.latest_revision and
               i.item_id = p.party_id
               and a.value_id = $value_id )
+    </querytext>
+</fullquery>
+
+
+<fullquery name="get_countries_results">
+    <querytext>
+    select 
+         count(parties.party_id)
+    from 
+         parties
+    where parties.party_id in (
+          select 	
+		parties.party_id
+	  from 
+                parties
+                left join organizations on (parties.party_id = organizations.organization_id)
+                left join cr_items on (parties.party_id = cr_items.item_id)
+                left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ), 
+                group_distinct_member_map
+                where parties.party_id = group_distinct_member_map.member_id
+                $search_clause
+          ) 
+          and parties.party_id in (
+			select	
+			       	p.party_id
+			from
+			       	parties p,
+				ams_attribute_values a,
+				postal_addresses pa,
+				cr_items i,
+				cr_revisions r
+			where
+				i.item_id = p.party_id
+				and r.revision_id = i.latest_revision
+				and r.revision_id = a.object_id
+				and a.value_id = pa.address_id
+				and pa.country_code = :iso
+			)
     </querytext>
 </fullquery>
 

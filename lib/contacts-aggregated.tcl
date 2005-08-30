@@ -23,8 +23,24 @@ foreach unset_param $optional_unset_list {
 # Get the search message
 set message [contact::search_pretty -search_id $search_id]
 
-# Get the attribute name and the options for that attribute
-set attr_name [attribute::pretty_name -attribute_id $attr_id]
+
+# We check if the attr_id is -1, if it is we are going
+# to search for the country in home_address or company_addres
+set home_address_attr_id [db_string get_home_attr_id { } -default ""]
+set company_address_attr_id [db_string get_company_attr_id { } -default ""]
+
+if { [string equal $attr_id "-1"] } {
+    set attr_name "[_ contacts.Country]"
+    set query_name get_countries_options
+    set result_query get_countries_results
+    set country_p 1
+} else {
+    # Get the attribute name and the options for that attribute
+    set attr_name [attribute::pretty_name -attribute_id $attr_id]
+    set query_name get_attribute_options
+    set result_query get_results
+    set country_p 0
+}
 
 # Get the search_clasue used in the advanced search
 set search_clause [contact::search_clause -and \
@@ -50,13 +66,14 @@ template::list::create  \
 	}
     }
 
-db_multirow -extend { result } contacts get_attribute_options { } {
+db_multirow -extend { result } contacts $query_name { } {
     # We get the value_id here and not in the options query since
     # the value_id is only present when one attribute is associated
     # to one option, and we want to see every option.
-
-    set value_id [db_string get_value_id { } -default 0]
-    set result [db_string get_results " " -default 0]
+    if { !$country_p } {
+	set value_id [db_string get_value_id { } -default 0]
+    }
+    set result [db_string $result_query " " -default 0]
 }
 
 
