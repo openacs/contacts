@@ -366,34 +366,6 @@ ad_proc -public contacts::populate::crm {
 	-required_p "f" \
 	-section_heading ""
 
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "personnotes" \
-			  -datatype "text" \
-			  -pretty_name "Notes About Person" \
-			  -pretty_plural "Notes About Person" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "textarea" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "100" \
-	-required_p "f" \
-	-section_heading ""
-
     # ORGA - REG
 
     set list_id [ams::list::get_list_id \
@@ -986,34 +958,6 @@ ad_proc -public contacts::populate::crm {
 	-list_id $list_id \
 	-attribute_id $attribute_id \
 	-sort_order "90" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "collaboration_notes" \
-			  -datatype "text" \
-			  -pretty_name "Notes on Collboration" \
-			  -pretty_plural "Notes on Collboration" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "textarea" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "100" \
 	-required_p "f" \
 	-section_heading ""
 
