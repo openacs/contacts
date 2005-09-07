@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d6" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d8" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -82,6 +82,7 @@
   <msg key="contacts">contacts</msg>
   <msg key="contains_-">contains -&gt;</msg>
   <msg key="Copy">Copy</msg>
+  <msg key="Country">Country</msg>
   <msg key="country_code_is_-">country code is -&gt;</msg>
   <msg key="country_is_-">country is -&gt;</msg>
   <msg key="country_is_not_-">country is not -&gt;</msg>
