@@ -26,9 +26,6 @@ set message [contact::search_pretty -search_id $search_id]
 
 # We check if the attr_id is -1, if it is we are going
 # to search for the country in home_address or company_addres
-set home_address_attr_id [db_string get_home_attr_id { } -default ""]
-set company_address_attr_id [db_string get_company_attr_id { } -default ""]
-
 if { [string equal $attr_id "-1"] } {
     set attr_name "[_ contacts.Country]"
     set query_name get_countries_options
@@ -44,10 +41,10 @@ if { [string equal $attr_id "-1"] } {
 
 # Get the search_clasue used in the advanced search
 set search_clause [contact::search_clause -and \
-		      -search_id $search_id \
-		      -query "" \
+		       -search_id $search_id \
+		       -query "" \
 		       -party_id "parties.party_id" \
-		      -revision_id "revision_id"]
+		       -revision_id "revision_id"]
 
 template::list::create  \
     -name "contacts" \
