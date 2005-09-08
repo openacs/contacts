@@ -105,11 +105,22 @@ ad_proc -private contact::message::log {
     if { ![exists_and_not_null sent_date] } {
 	set sent_date [db_string get_current_timestamp { select now() }]
     }
+    set creation_ip [ad_conn peeraddr]
+    set package_id [ad_conn package_id]
+    # We make every message logged in this table an acs_object
+    set object_id [db_string create_acs_object { select acs_object__new (
+									 null,
+									 'contact_message_log',
+									 :sent_date,
+									 :sender_id,
+									 :creation_ip,
+									 :package_id
+									 ) } ]
     db_dml log_message {
 	insert into contact_message_log
 	( message_id, message_type, sender_id, recipient_id, sent_date, title, description, content, content_format)
         values
-        ( acs_object_id_seq.nextval, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
+        ( :object_id, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
     }
 }
 
