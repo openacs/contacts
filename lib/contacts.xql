@@ -20,7 +20,8 @@ select parties.party_id
 
 <fullquery name="contacts_select">      
       <querytext>
-select organizations.name,
+select  $extend_query
+	organizations.name,
       first_names, last_name,
        parties.party_id,
        parties.email,

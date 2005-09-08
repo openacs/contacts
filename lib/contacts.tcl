@@ -1,5 +1,5 @@
 set required_param_list [list]
-set optional_param_list [list base_url]
+set optional_param_list [list base_url extend_p extend_values]
 set default_param_list  [list orderby format query page page_size package_id search_id group_id ]
 set optional_unset_list [list]
 
@@ -32,7 +32,31 @@ foreach default_param $default_param_list {
 # If we do not have a search_id, limit the list to only users in the default group.
 
 if {[exists_and_not_null search_id]} {
-    set group_where_clause ""
+    set group_where_clause "" 
+    # Also we can extend this search.
+    # Is to allow extend the list by any extend_options defined in contact_extend_options
+    set available_options [contact::extend::get_options -ignore_extends $extend_values]
+    ad_form -name extend -form {
+	{extend_option:text(select),optional
+	    {label "Available Options" }
+	    {options {{" - - - - - - -" ""} $available_options}}
+	}
+	{search_id:text(hidden)
+	    {value "$search_id"}
+	}
+	{extend_values:text(hidden)
+	    {value "$extend_values"}
+	}
+    } -on_submit {
+	# We clear the list when no value is submited, otherwise
+	# we acumulate the extend values.
+	if { [empty_string_p $extend_option] } {
+	    set extend_values [list]
+	} else {
+	    lappend extend_values [list $extend_option] 
+	}
+	ad_returnredirect [export_vars -base "?" {search_id extend_values}]
+    }
 } else {
     set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
 }
@@ -104,6 +128,53 @@ set return_url "[ad_conn url]?[ad_conn query]"
 # if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
 #    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
 # }
+
+set elements [list \
+		  contact [list \
+			       label \
+			       {<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>} \
+			       display_template \
+			       { 
+				   <a href="@contacts.contact_url@">@contacts.name@</a> 
+				   <span class="contact-editlink">
+				   \[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]
+				   </span>
+				   <if @contacts.email@ not nil or @contacts.url@ not nil>
+				       <span class="contact-attributes">
+				       <if @contacts.email@ not nil>
+                                           <a href="@contacts.contact_url@message">@contacts.email@</a>
+		                       </if>
+		                       <if @contacts.url@ not nil>
+                                            <if @contacts.email@ not nil>
+                                                 ,
+                                            </if>
+                                            <a href="@contacts.url@">@contacts.url@</a>
+ 		                       </if>
+				       </span>
+                        	   </if>
+			       }] \
+		  contact_id [list display_col party_id] \
+		  first_names [list display_col first_names] \
+		  last_name [list display_col last_name] \
+		  organization [list display_col organization] \
+		  email [list display_col email]]
+
+set row_list [list \
+		  checkbox {} \
+		  contact {}]
+
+# For each extend value we add the element to the list and to the query
+set extend_query ""
+foreach value $extend_values {
+    set extend_info [lindex [contact::extend::option_info -extend_id $value] 0]
+    set name        [lindex $extend_info 0]
+    set pretty_name [lindex $extend_info 1]
+    set sub_query   [lindex $extend_info 2]
+    lappend elements $name [list label "$pretty_name" display_col $name]
+    lappend row_list $name [list]
+    append extend_query "( $sub_query ) as $name,"
+}
+
 template::list::create \
     -html {width 100%} \
     -name "contacts" \
@@ -119,39 +190,8 @@ template::list::create \
     -bulk_actions $bulk_actions \
     -bulk_action_method post \
     -bulk_action_export_vars { search_id return_url } \
-    -elements {
-        contact {
-	    label "<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>"
-            display_template {
-		<a href="@contacts.contact_url@">@contacts.name@</a> <span class="contact-editlink">\[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]</span>
-		<if @contacts.email@ not nil or @contacts.url@ not nil>
-                  <span class="contact-attributes">
-		    <if @contacts.email@ not nil>
-                      <a href="@contacts.contact_url@message">@contacts.email@</a>
-		    </if>
-		    <if @contacts.url@ not nil>
-                      <if @contacts.email@ not nil>, </if><a href="@contacts.url@">@contacts.url@</a>
-		    </if>
-                  </span>
-		</if>
-	    }
-        }
-        contact_id {
-            display_col party_id
-	}
-        first_names {
-	    display_col first_names
-	}
-        last_name {
-	    display_col last_name
-	}
-        organization {
-	    display_col organization
-	}
-        email {
-	    display_col email
-	}
-    } -filters {
+    -elements $elements \
+    -filters {
 	search_id {}
 	page_size {}
 	tasks_interval {}
@@ -179,8 +219,7 @@ template::list::create \
 	    label "[_ contacts.Table]"
 	    layout table
 	    row {
- 		checkbox {}
-		contact {}
+		$row_list
 	    }
 	}
 	csv {
@@ -197,7 +236,7 @@ template::list::create \
 	}
     }
 
-db_multirow -extend {contact_url name} -unclobber contacts contacts_select {} {
+db_multirow -extend {contact_url name} -unclobber contacts contacts_select " " {
     set contact_url [contact::url -party_id $party_id]
     set name [contact::name -party_id $party_id]
 }
@@ -210,3 +249,4 @@ if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
 
 
 list::write_output -name contacts
+
