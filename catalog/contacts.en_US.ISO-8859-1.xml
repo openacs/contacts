@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d8" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d10" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -104,6 +104,7 @@
   <msg key="Delete">Delete</msg>
   <msg key="Delete_from">Delete</msg>
   <msg key="Description">Description:</msg>
+  <msg key="description_help">A short description of what the subquery does.</msg>
   <msg key="Details">Details</msg>
   <msg key="does_not_contain_-">does not contain -&gt;</msg>
   <msg key="does_not_exists">does not exist</msg>
@@ -125,6 +126,8 @@
   <msg key="exists">exists</msg>
   <msg key="exists_at_least">exists at least</msg>
   <msg key="exists_at_most">exists at most</msg>
+  <msg key="ext_del_message">Extend Option # %extend_id% deleted.</msg>
+  <msg key="Extended_search_opt">Extended Search Options</msg>
   <msg key="False">False</msg>
   <msg key="File">File</msg>
   <msg key="Files">Files</msg>
@@ -374,6 +377,8 @@
   <msg key="Permissions">Permissions</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Person Form</msg>
+  <msg key="Pretty_name">Pretty Name</msg>
+  <msg key="pretty_name_help">The Pretty Name to use in the list label.</msg>
   <msg key="Preview">Preview</msg>
   <msg key="Print">Print</msg>
   <msg key="Print_Letter">Print Letter</msg>
@@ -433,8 +438,11 @@
   <msg key="Sort_by">Sort by</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
+  <msg key="Stored_extended">Stored Extended Options</msg>
   <msg key="Subject">Subject</msg>
   <msg key="Subject_is_required">Subject is required</msg>
+  <msg key="Subquery">Subquery</msg>
+  <msg key="subquery_help">The subquery to be executed to grab the result.</msg>
   <msg key="Summary">Summary</msg>
   <msg key="Summary_View">Summary View</msg>
   <msg key="Supplier">Supplier:</msg>
@@ -449,6 +457,7 @@
   <msg key="The_search_-title-_was_copied_to_your_searches">The search &quot;%title%&quot; was copied to your searches</msg>
   <msg key="The_search_-title-_was_deleted">The search &quot;%title%&quot; was deleted</msg>
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
+  <msg key="this_var_name">This &quot;Variable Name&quot; is already present</msg>
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>
   <msg key="Title_1">Title:</msg>
@@ -464,6 +473,8 @@
   <msg key="Upload_More">Upload More</msg>
   <msg key="User_Account_Information">User Account Information</msg>
   <msg key="valid">Valid</msg>
+  <msg key="Var_name">Variable Name</msg>
+  <msg key="var_name_help">Name of the variable to use in the extend search.</msg>
   <msg key="View_all_roles">View all roles</msg>
   <msg key="View_next">View next</msg>
   <msg key="Visit_Club">Visit Club</msg>
