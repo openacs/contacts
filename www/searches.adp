@@ -1,5 +1,5 @@
 <master src="/packages/contacts/lib/contacts-master" />
-
+<br>
   <table cellpadding="3" cellspacing="3">
     <tr>
       <td class="list-filter-pane" valign="top" width="200">

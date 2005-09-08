@@ -14,6 +14,7 @@ ad_page_contract {
     {add_person:optional}
     {add_organization:optional}
     {aggregate_attribute_id ""}
+    {extend_values:optional ""}
 }
 
 if { [exists_and_not_null add_person] } {
@@ -28,6 +29,11 @@ set aggregated_p 0
 if {[exists_and_not_null aggregate_attribute_id] } {
     set aggregated_p 1
 } 
+
+set extend_p 0
+if { [exists_and_not_null search_id] } {
+    set extend_p 1
+}
 
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]

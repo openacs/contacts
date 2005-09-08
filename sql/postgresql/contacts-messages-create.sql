@@ -50,7 +50,8 @@ create view contact_messages as
 
 create table contact_message_log (
         message_id              integer
-                                constraint contact_message_log_message_id_pk primary key,
+                                constraint contact_message_log_message_id_pk primary key
+				constraint contact_message_log_message_id_fk references acs_objects(object_id),
         message_type            varchar(20)
                                 constraint contact_message_log_message_type_fk references contact_message_types(message_type)
                                 constraint contact_message_log_message_type_nn not null,
@@ -72,3 +73,16 @@ create table contact_message_log (
 );
 
 
+
+select acs_object_type__create_type (
+   'contact_message_log',         -- content_type
+   'Contacts Message Log',        -- pretty_name 
+   'Contacts Messages Logs',      -- pretty_plural
+   'acs_object',                  -- supertype
+   'contact_message_log',         -- table_name
+   'object_id',                   -- id_column 
+   'contact_messages_log',        -- package_name
+   'f',                           -- abstract_p
+   NULL,                          -- type_extension_table
+   NULL                           -- name_method
+);

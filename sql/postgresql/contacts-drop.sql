@@ -8,6 +8,7 @@
 
 drop table contact_search_conditions;
 drop table contact_searches;
+drop table contact_extend_options;
 select drop_package('contact_search');
 select acs_object__delete(search_id) from contact_searches;
 select acs_object_type__drop_type('contact_search','t');
@@ -29,3 +30,5 @@ select acs_rel_type__drop_type('contact_rel','t');
 select drop_package('contact');
 select drop_package('contact_rel');
 select drop_package('contact_party_revision');
+
+drop sequence contact_extend_search_seq;
