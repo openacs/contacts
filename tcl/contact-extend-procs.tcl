@@ -54,17 +54,20 @@ ad_proc -public contact::extend::var_name_check {
 
 ad_proc -public contact::extend::get_options { 
     {-ignore_extends ""}
+    -search_id:required
 } {
     Returns a list of the form { pretty_name extend_id } of all available extend options in
-    contact_extend_options
+    contact_extend_options, if search_id is passed then ignore the extends in
+    contact_search_extend_map
 
     @param ignore_extends A list of extend_id's to ignore on the result
 } {
-    set extra_query ""
+    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id = $search_id)"
     if { ![empty_string_p $ignore_extends] } {
 	set ignore_extends [join $ignore_extends ","]
-	append extra_query "where extend_id not in ($ignore_extends)"
+	append extra_query "and extend_id not in ($ignore_extends)"
     }
+
     return [db_list_of_lists get_options " "]
 }
 

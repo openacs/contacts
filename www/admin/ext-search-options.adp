@@ -2,10 +2,27 @@
 <property name="title">@page_title;noquote@</property>
 <property name="context">@context;noquote@</property>
 
-<formtemplate id="add_option"></formtemplate>
+<if @search_id@ nil>
+    <formtemplate id="add_option"></formtemplate>
+</if>
 
 <br>
 <if @edit_p@ eq "f"> 
-    <h3>#contacts.Stored_extended#:</h3>
+    <if @search_id@ nil>
+       <h3>#contacts.Stored_extended#:</h3>
     <listtemplate name="ext_options"></listtemplate>
+    </if>
+    <else>
+       <if @ext_options:rowcount@ not eq 0>
+           <h3>#contacts.Stored_extended_default#:</h3>
+           <listtemplate name="ext_options"></listtemplate>
+           <br> 
+       </if>
+       <if @def_ext_options:rowcount@ not eq 0>
+           <h3>#contacts.Remove_default_options#:</h3>
+           <listtemplate name="def_ext_options"></listtemplate>
+       </if>
+    </else>
 </if>
+
+<a href="/contacts/?search_id=@search_id@">#contacts.Go_to_search_results#</a>

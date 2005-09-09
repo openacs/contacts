@@ -8,6 +8,7 @@ set _orderby "first_names,asc"
 set _format "normal"
 set _page_size "25"
 set _tasks_interval "7"
+set admin_p 0
 
 foreach required_param $required_param_list {
     set $required_param [ns_queryget $default_param]
@@ -35,10 +36,10 @@ if {[exists_and_not_null search_id]} {
     set group_where_clause "" 
     # Also we can extend this search.
     # Is to allow extend the list by any extend_options defined in contact_extend_options
-    set available_options [contact::extend::get_options -ignore_extends $extend_values]
+    set available_options [contact::extend::get_options -ignore_extends $extend_values -search_id $search_id]
     ad_form -name extend -form {
 	{extend_option:text(select),optional
-	    {label "Available Options" }
+	    {label "[_ contacts.Available_Options]" }
 	    {options {{" - - - - - - -" ""} $available_options}}
 	}
 	{search_id:text(hidden)
@@ -113,6 +114,7 @@ template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}grou
 template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
 template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
+    set admin_p 1
     template::multirow append bulk_acts "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }
 callback contacts::bulk_actions -multirow "bulk_acts"
@@ -163,6 +165,12 @@ set row_list [list \
 		  checkbox {} \
 		  contact {}]
 
+if { [exists_and_not_null search_id] } {
+    # We get all the default values for that are mapped to this search_id
+    set default_values [db_list_of_lists get_default_extends { }]
+    set extend_values [concat $default_values $extend_values]
+}
+
 # For each extend value we add the element to the list and to the query
 set extend_query ""
 foreach value $extend_values {
@@ -174,7 +182,10 @@ foreach value $extend_values {
     lappend row_list $name [list]
     append extend_query "( $sub_query ) as $name,"
 }
-
+set actions [list]
+if { $admin_p && [exists_and_not_null search_id] } {
+    set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
+}
 template::list::create \
     -html {width 100%} \
     -name "contacts" \
@@ -186,7 +197,7 @@ template::list::create \
     -page_size $page_size \
     -page_flush_p t \
     -page_query_name contacts_pagination \
-    -actions "" \
+    -actions $actions \
     -bulk_actions $bulk_actions \
     -bulk_action_method post \
     -bulk_action_export_vars { search_id return_url } \

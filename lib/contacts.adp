@@ -1,7 +1,9 @@
 <if @search_id@ not nil>
+    <if @available_options@ not nil>
     <br>
-    <b>You can extend this search by:</b>
-    <formtemplate id="extend" style=inline></formtemplate>
+    <b>#contacts.You_can_extend#</b>
+    <formtemplate id="extend" style=inline></formtemplate> 
+    </if>
     <br>
 </if>
 <br>

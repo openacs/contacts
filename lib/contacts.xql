@@ -36,4 +36,15 @@ $group_by_group_id
       </querytext>
 </fullquery>
 
+<fullquery name="get_default_extends">
+    <querytext>
+	select 
+		extend_id 
+	from 
+		contact_search_extend_map 
+	where 
+		search_id = :search_id 
+    </querytext>
+</fullquery>
+
 </queryset>

@@ -9,6 +9,7 @@ ad_page_contract {
     {edit_p "f"}
     {delete_p "f"}
     {orderby "var_name,asc"}
+    {search_id ""}
 }
 
 set page_title [_ contacts.Extended_search_opt]
@@ -89,9 +90,35 @@ ad_form  -extend -name "add_option" -new_data {
 set edit_url "ext-search-options?extend_id=@ext_options.extend_id@&edit_p=t"
 set delete_url "ext-search-options?extend_id=@ext_options.extend_id@&delete_p=t"
 
+set row_list [list]
+set bulk_actions [list]
+set extra_query ""
+if { ![exists_and_not_null search_id] } {
+    lappend row_list \
+	action_buttons [list]
+} else {
+    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id = $search_id)"
+    lappend bulk_actions "[_ contacts.Set_default]" set-default "[_ contacts.Stored_extended_default]"
+    lappend row_list \
+	checkbox [list]
+}
+
+lappend row_list \
+    var_name [list] \
+    pretty_name [list] \
+    subquery [list] \
+    description [list]
+
 template::list::create \
     -name ext_options \
+    -key extend_id \
+    -actions "" \
+    -html {width 100%} \
     -multirow ext_options \
+    -bulk_actions $bulk_actions \
+    -bulk_action_method post \
+    -bulk_action_export_vars { search_id } \
+    -selected_format "normal" \
     -elements {
 	action_buttons {
 	    display_template {
@@ -116,6 +143,8 @@ template::list::create \
 	    label "[_ contacts.Description]"
 	    html { width 25% }
 	}
+    } -filters {
+	search_id {}
     } -orderby {
 	var_name {
 	    label "[_ contacts.Var_name]"
@@ -127,6 +156,57 @@ template::list::create \
 	    orderby_asc "pretty_name asc"
 	    orderby_desc "pretty_name desc"
 	}
+    } -formats {
+	normal {
+	    label "[_ contacts.Table]"
+	    layout table
+	    row {
+		$row_list 
+	    }
+	}
     }
 
 db_multirow ext_options ext_options " "
+
+
+########################### Remove Default List ####################################
+
+set def_extra_query ""
+if { [exists_and_not_null search_id] } {
+    set def_extra_query "where extend_id in (select extend_id from contact_search_extend_map where search_id = $search_id)"
+}
+set def_bulk_actions [list "[_ contacts.Remove_default]" remove-default "[_ contacts.Remove_default_options]"]
+
+template::list::create \
+    -name def_ext_options \
+    -key extend_id \
+    -actions "" \
+    -html {width 100%} \
+    -multirow def_ext_options \
+    -bulk_actions $def_bulk_actions \
+    -bulk_action_method post \
+    -bulk_action_export_vars { search_id } \
+    -selected_format "normal" \
+    -elements {
+	var_name {
+	    label "[_ contacts.Var_name]"
+	    html { width 10% }
+	}
+	pretty_name {
+	    label "[_ contacts.Pretty_name]"
+	    html { width 10% }
+	}
+	subquery {
+	    label "[_ contacts.Subquery]"
+	    html { width 45% }
+	}
+	description {
+	    label "[_ contacts.Description]"
+	    html { width 25% }
+	}
+    } -filters {
+	search_id {}
+    }
+
+db_multirow def_ext_options def_ext_options " "
+
