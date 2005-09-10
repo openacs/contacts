@@ -249,3 +249,12 @@ ad_proc -public contacts::insert_map {
         (:group_id,:default_p,:package_id)}
 }
 
+ad_proc -public ::install::xml::action::contacts_pop_crm {
+    node
+} { 
+    Procedure to register the populate crm for the install.xml
+} {
+    set url [apm_required_attribute_value $node url]
+    array set sn_array [site_node::get -url $url]
+    contacts::populate::crm -package_id $sn_array(object_id)
+}
