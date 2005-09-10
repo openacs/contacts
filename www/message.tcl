@@ -15,6 +15,7 @@ ad_page_contract {
     {object_id:integer,multiple,optional}
     {file_ids ""}
     {item_id:integer ""}
+    {folder_id:integer ""}
     {signature_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
@@ -136,6 +137,7 @@ set form_elements {
     file_ids:text(hidden)
     party_ids:text(hidden)
     return_url:text(hidden)
+    folder_id:text(hidden)
     {to:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
 }
 
