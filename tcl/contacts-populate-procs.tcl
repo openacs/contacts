@@ -45,6 +45,8 @@ ad_proc -public contacts::populate::crm {
 #	set supplier_id [group::new -group_name "Supplier" "group"]
     set customers_id [group::new \
 			  -group_name "Customers" "group"]
+    set leads_id [group::new \
+			  -group_name "Leads" "group"]
 
     contact::group::map -group_id $customers_id -package_id $contacts_package_id
 
@@ -621,6 +623,14 @@ ad_proc -public contacts::populate::crm {
 		     -description "" \
 		     -description_mime_type ""]
 
+    set leads_list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "organization" \
+		     -list_name "${contacts_package_id}__${leads_id}" \
+		     -pretty_name "Organization - Leads" \
+		     -description "" \
+		     -description_mime_type ""]
+
     set attribute_id [attribute::new \
 			  -object_type "organization" \
 			  -attribute_name "clienttype" \
@@ -705,7 +715,15 @@ ad_proc -public contacts::populate::crm {
 		     -package_key "contacts" \
 		     -object_type "person" \
 		     -list_name "${contacts_package_id}__${customers_id}" \
-		     -pretty_name "1247__1264" \
+		     -pretty_name "Person - Customer" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set leads_list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "person" \
+		     -list_name "${contacts_package_id}__${leads_id}" \
+		     -pretty_name "Person - Leads" \
 		     -description "" \
 		     -description_mime_type ""]
 
