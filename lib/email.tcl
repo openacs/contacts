@@ -66,6 +66,9 @@ ad_form -action message \
     -form $form_elements \
     -on_request {
     } -new_request {
+	if {[exists_and_not_null folder_id]} {
+	    callback contacts::email_subject -folder_id $folder_id
+	}
  	if {[exists_and_not_null item_id]} {
 	    contact::message::get -item_id $item_id -array message_info
 	    set subject $message_info(description)

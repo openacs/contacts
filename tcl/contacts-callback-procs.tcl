@@ -45,6 +45,11 @@ ad_proc -public -callback contacts::bulk_actions {
 } {
 }
 
+ad_proc -public -callback contacts::email_subject {
+    {-folder_id:required}
+} {
+}
+
 ad_proc -public -callback contact::append_attribute {
     {-multirow_name:required}
     {-name:required}
