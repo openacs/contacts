@@ -985,34 +985,6 @@ ad_proc -public contacts::populate::crm {
 		     -description "" \
 		     -description_mime_type ""]
 
-    set attribute_id [attribute::new \
-			  -object_type "contact_rels_employment" \
-			  -attribute_name "employed_since" \
-			  -datatype "string" \
-			  -pretty_name "Employment Since" \
-			  -pretty_plural "Employments since" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "textbox" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "1" \
-	-required_p "f" \
-	-section_heading ""
-
     # Contact Rels Subsidiary
 
     set list_id [ams::list::new \
