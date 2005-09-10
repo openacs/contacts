@@ -52,14 +52,16 @@ if { $aggregated_p } {
 if { [exists_and_not_null search_id] } {
     contact::search::log -search_id $search_id
 }
-set search_options [concat [list [list [_ contacts.All_Contacts] ""]] [db_list_of_lists public_searches {}]]
 
+set public_searches [lang::util::localize_list_of_lists -list [db_list_of_lists public_searches {}]]
+set search_options [concat [list [list [_ contacts.All_Contacts] ""]] $public_searches]
 set searchcount 1
 db_foreach my_recent_searches {} {
     lappend search_options [list "${searchcount}) ${recent_title}" ${recent_search_id}]
     incr searchcount
 }
 
+lang::util::localize_list_of_lists -list $search_options
 
 
 
