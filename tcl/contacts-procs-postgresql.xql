@@ -12,13 +12,14 @@
 <fullquery name="contact::groups.get_groups">
   <querytext>
     select groups.group_id,
-           groups.group_name,
+           acs_objects.title as group_name,
            ( select count(distinct gamm.member_id) from group_approved_member_map gamm where gamm.group_id = groups.group_id ) as member_count,
            ( select count(distinct gcm.component_id) from group_component_map gcm where gcm.group_id = groups.group_id) as component_count,
-           CASE WHEN package_id is not null THEN '1' ELSE '0' END as mapped_p,
+           CASE WHEN contact_groups.package_id is not null THEN '1' ELSE '0' END as mapped_p,
            CASE WHEN default_p THEN '1' ELSE '0' END as default_p
-      from groups left join contact_groups on ( groups.group_id = contact_groups.group_id )
+      from groups left join contact_groups on ( groups.group_id = contact_groups.group_id ), acs_objects
      where groups.group_id not in ('-1','[contacts::default_group]')
+	and groups.group_id = acs_objects.object_id
        and groups.group_id not in ( select gcm.component_id from group_component_map gcm where gcm.group_id != -1 )
        $filter_clause
      order by mapped_p desc, CASE WHEN contact_groups.default_p THEN '000000000' ELSE upper(groups.group_name) END
