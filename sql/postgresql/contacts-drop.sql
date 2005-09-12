@@ -6,6 +6,7 @@
 --
 --
 
+drop table contact_search_extend_map;
 drop table contact_search_conditions;
 drop table contact_searches;
 drop table contact_extend_options;
