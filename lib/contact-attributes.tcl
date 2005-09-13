@@ -37,7 +37,11 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
         lappend ams_groups $group_id
     }
 }
-set revision_id [contact::live_revision -party_id $party_id]
+
+if { ![exists_and_not_null revision_id] } {
+    set revision_id [contact::live_revision -party_id $party_id]
+}
+
 
 
 # The categories multirow contains all categories for all trees and is
