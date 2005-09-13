@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d10" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d11" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -53,10 +53,13 @@
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
   <msg key="Attributes">Attributes</msg>
+  <msg key="Available_Options">Available Options</msg>
   <msg key="Belongs_to">Belongs to</msg>
   <msg key="Body">Body</msg>
   <msg key="Bulk_Update">Bulk Update</msg>
   <msg key="Cancel">Cancel</msg>
+  <msg key="Changed_date">Changed Date:</msg>
+  <msg key="Changes">Changes</msg>
   <msg key="Clear">Clear</msg>
   <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
@@ -138,6 +141,7 @@
   <msg key="From">From</msg>
   <msg key="Get">Get</msg>
   <msg key="Go">Go</msg>
+  <msg key="Go_to_search_results">Go to search results</msg>
   <msg key="Group">Group</msg>
   <msg key="Group_-">Group -&gt;</msg>
   <msg key="Group_Name">Group Name</msg>
@@ -165,6 +169,7 @@
   <msg key="last">last</msg>
   <msg key="Last_Name">Last Name</msg>
   <msg key="Last_updated">Last updated</msg>
+  <msg key="Latest">Latest</msg>
   <msg key="Letter">Letter</msg>
   <msg key="letter">Letter</msg>
   <msg key="Letterhead">Letterhead</msg>
@@ -337,6 +342,7 @@
   <msg key="Messages">Messages</msg>
   <msg key="messages">messages</msg>
   <msg key="mine-">mine-</msg>
+  <msg key="Modify_by">Modify By:</msg>
   <msg key="My_Messages">My Messages</msg>
   <msg key="My_Searches">My Searches</msg>
   <msg key="My_Signatures">My Signatures</msg>
@@ -399,6 +405,8 @@
   <msg key="Relationship_Updated">Relationship Updated</msg>
   <msg key="Relationships">Relationships</msg>
   <msg key="relationships">relationships</msg>
+  <msg key="Remove_default">Remove Default</msg>
+  <msg key="Remove_default_options">Remove extended options set as default for search_id #%search_id%</msg>
   <msg key="Remove_From_Group">Remove From Group</msg>
   <msg key="Remove_from_Groups">Remove from Group</msg>
   <msg key="Remove_From_to_Group">Remove from Group</msg>
@@ -428,6 +436,8 @@
   <msg key="Send">Send</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
   <msg key="Send_Email">Send Email</msg>
+  <msg key="Set_default">Set Default</msg>
+  <msg key="Set_default_extend">Set default</msg>
   <msg key="Settings">Settings</msg>
   <msg key="Shared_Searches">Shared Searches</msg>
   <msg key="Show">Show</msg>
@@ -439,6 +449,7 @@
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Stored Extended Options</msg>
+  <msg key="Stored_extended_default">Extended Options to set as default for search_id #%search_id%</msg>
   <msg key="Subject">Subject</msg>
   <msg key="Subject_is_required">Subject is required</msg>
   <msg key="Subquery">Subquery</msg>
@@ -478,9 +489,11 @@
   <msg key="View_all_roles">View all roles</msg>
   <msg key="View_next">View next</msg>
   <msg key="Visit_Club">Visit Club</msg>
+  <msg key="Watch_all_changes">Watch all changes</msg>
   <msg key="which_match">which match</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">with</msg>
+  <msg key="You_can_extend">You can extend this search by:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Your message was sent to: &lt;strong&gt;%recipients%&lt;/strong&gt;</msg>
   <msg key="your_signatures">your signatures</msg>
 </message_catalog>
