@@ -113,9 +113,15 @@ ad_proc -public contact::name_not_cached {
     if {[contact::person_p -party_id $party_id]} {
 	return [person::name -person_id $party_id]
     } else {
-	# if there is an org the name is returned otherwise null is
-	# returned
-        return [db_string get_org_name {select name from organizations where organization_id = :party_id} -default {}]
+	# if there is an org the name is returned otherwise we search for a grou,
+	# if there is no group null is returned
+	set name [db_string get_org_name {select name from organizations where organization_id = :party_id} -default ""]
+	if { [empty_string_p $name] } {
+	    set name [db_string get_group_name {select group_name from groups where group_id = :party_id} -default {}]
+	} else {
+	    return $name
+	}
+
     }
 }
 
