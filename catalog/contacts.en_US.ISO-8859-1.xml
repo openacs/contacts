@@ -381,6 +381,7 @@
   <msg key="people_or_organizations">people or organizations</msg>
   <msg key="Percent">Percent:</msg>
   <msg key="Permissions">Permissions</msg>
+  <msg key="Permissions_for_default_group">Permissions for default group</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Person Form</msg>
   <msg key="Pretty_name">Pretty Name</msg>
