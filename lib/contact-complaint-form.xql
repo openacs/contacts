@@ -14,6 +14,18 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_groups">
+    <querytext>
+	select
+		group_id,
+		group_name
+	from
+		groups
+	order by
+		group_name asc
+    </querytext>
+</fullquery>
+
 <fullquery name="get_projects">
     <querytext>
 	select
