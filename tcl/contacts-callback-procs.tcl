@@ -30,6 +30,7 @@ ad_proc -public -callback contact::organization_new {
 ad_proc -public -callback contact::person_new {
     {-package_id:required}
     {-contact_id:required}
+    {-party_id:required}
 } {
 }
 

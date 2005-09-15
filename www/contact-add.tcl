@@ -239,9 +239,8 @@ ad_form -extend -name party_ae \
 	    }
 	    
 	    category::map_object -remove_old -object_id $party_id $cat_ids
-
 	    
-	    callback contact::person_new -package_id $package_id -contact_id $party_id
+	    callback contact::person_new -package_id $package_id -contact_id $object_id_two -party_id $party_id
 	    
 	} else {
 	    
