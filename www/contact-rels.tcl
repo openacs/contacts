@@ -174,7 +174,7 @@ ad_form -name "search" -method "GET" -export {party_id} -form {
 } -on_submit {
     if {[exists_and_not_null add]} {
 	set default_group [contacts::default_group]
-	if {[contact::organization_p -party_id $party_id]} {
+	if {[organization::organization_p -party_id $party_id]} {
 	    ad_returnredirect [export_vars -base "/contacts/add/person" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]
 	} else {
 	    ad_returnredirect [export_vars -base "/contacts/add/organization" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]

@@ -27,7 +27,7 @@ set default_group [contacts::default_group]
 
 db_foreach get_relationships {} {
     set contact_url [contact::url -party_id $other_party_id]
-    if {[contact::organization_p -party_id $party_id]} {
+    if {[organization::organization_p -party_id $party_id]} {
 	set other_object_type "person"
     } else {
 	set other_object_type "organization"
