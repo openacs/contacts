@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d8" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d13" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
@@ -385,7 +385,7 @@ Deutsch(DE) 	</msg>
   <msg key="Public_Page">Öffentliche Seite</msg>
   <msg key="Public_Searches">Öffentlich verfügbare Suchen</msg>
   <msg key="Query">Abfrage</msg>
-  <msg key="READ_THESE">LESEN SIE DIESES BITTE</msg>
+  <msg key="READ_THESE">LESEN SIE BITTE DIESES</msg>
   <msg key="Recipients">Empfänger</msg>
   <msg key="Relationship">Beziehung</msg>
   <msg key="Relationship_Added">Beziehung hinzugefügt</msg>
