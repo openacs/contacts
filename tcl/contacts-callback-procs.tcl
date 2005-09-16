@@ -27,12 +27,33 @@ ad_proc -public -callback contact::organization_new {
 } {
 }
 
-ad_proc -public -callback contact::person_new {
-    {-package_id:required}
-    {-contact_id:required}
-    {-party_id:required}
+ad_proc -public -callback contact::person_new_group {
+    {-person_id:required}
+    {-group_id:required}
 } {
-}
+    This is a callback that is executed when you add a new person to a group.
+    This will enable other packages to check if the person is added into a special group and then
+    do something with them accordingly.
+} -
+
+ad_proc -public -callback contact::organization_new_group {
+    {-organization_id:required}
+    {-group_id:required}
+} {
+    This is a callback that is executed when you add a new organization to a group.
+    This will enable other packages to check if the organization is added into a special group and then
+    do something with them accordingly.
+} -
+
+ad_proc -public -callback contact::person_new_rel {
+    {-party_id:required}
+    {-object_id_two:required}
+    {-rel_type:required}
+} {
+    This is a callback that is executed when you add a new person in a relationship to an organization.
+    This will enable other packages to check if the person is added into a special relationship with the 
+    organization and then do something with them accordingly.
+} -
 
 ad_proc -public -callback contact::history {
     {-party_id:required}
@@ -132,3 +153,29 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     }
 }
 
+
+ad_proc -public -callback dotlrn_community::add_members -impl contacts_employees {
+    {-community_id}
+} {
+    Callback to add the employees of an organization to the club as members
+
+    @author Malte Sussdorff (sussdorff@sussdorff.de)
+    @creation-date 2005-06-15
+    
+    @param community_id The ID of the community
+
+    @return 
+    
+    @error 
+} {
+    
+    # Get list of employees and register them within the community
+    set organization_id [lindex [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"] 0]
+    
+    set employee_list [contact::util::get_employees -organization_id $organization_id]
+    foreach employee_id $employee_list {
+	# Just to be on the save side, we actually check if the user is already in .LRN
+	dotlrn::user_add -user_id $employee_id
+	dotlrn_club::add_user -community_id $club_id -user_id $employee_id
+    }
+}

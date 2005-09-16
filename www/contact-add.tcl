@@ -226,7 +226,8 @@ ad_form -extend -name party_ae \
                     -group_id $group_id \
                     -user_id $party_id \
                     -rel_type "membership_rel"
-
+		
+		callback contact::person_new_group -person_id $party_id -group_id $group_id
 		set element_name "category_ids$group_id"
 		if {$group_id < 0} {
 		    set element_name "category_ids[expr - $group_id]"
@@ -240,7 +241,7 @@ ad_form -extend -name party_ae \
 	    
 	    category::map_object -remove_old -object_id $party_id $cat_ids
 	    
-	    callback contact::person_new -package_id $package_id -contact_id $object_id_two -party_id $party_id
+
 	    
 	} else {
 	    
@@ -254,6 +255,7 @@ ad_form -extend -name party_ae \
 		    # special procedure for organizations at the moment.
 		    set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,'organization_rel',:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
 		    db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
+		    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
 		}
 	    }
 
@@ -296,7 +298,7 @@ ad_form -extend -name party_ae \
                      :creation_user,
                      :creation_ip  
                     )"]
-	    
+
 	    if {[exists_and_not_null rel_type]} {
 		ams::ad_form::save -package_key "contacts" \
 		    -object_type $rel_type \
@@ -304,6 +306,8 @@ ad_form -extend -name party_ae \
 		    -form_name "party_ae" \
 		    -object_id $rel_id
 	    }
+	    
+	    callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id
 	}
 
 	# Add the user to the
