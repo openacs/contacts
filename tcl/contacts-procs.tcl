@@ -110,7 +110,7 @@ ad_proc -public contact::name_not_cached {
 } {
     this returns the contact's name
 } {
-    if {[contact::person_p -party_id $party_id]} {
+    if {[person::person_p -party_id $party_id]} {
 	return [person::name -person_id $party_id]
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
@@ -187,9 +187,9 @@ ad_proc -public contact::type {
 } {
     if {[contact::user_p -party_id $party_id]} {
         return "user"
-    } elseif {[contact::person_p -party_id $party_id]} {
+    } elseif {[person::person_p -party_id $party_id]} {
 	return "person"
-    } elseif {[contact::organization_p -party_id $party_id]} {
+    } elseif {[organization::organization_p -party_id $party_id]} {
 	return "organization"
     } else {
 	return ""
@@ -202,29 +202,9 @@ ad_proc -public contact::exists_p {
     does this contact exist?
 } {
     # persons can be organizations so we need to do the check this way
-    if {[contact::person_p -party_id $party_id]} {
+    if {[person::person_p -party_id $party_id]} {
 	return 1
-    } elseif {[contact::organization_p -party_id $party_id]} {
-	return 1
-    } else {
-	return 0
-    }
-}
-
-ad_proc -public contact::person_p {
-    {-party_id:required}
-} {
-    is this party a person? Cached
-} {
-    return [util_memoize [list ::contact::person_p_not_cached -party_id $party_id]]
-}
-
-ad_proc -public contact::person_p_not_cached {
-    {-party_id:required}
-} {
-    is this party a person? Cached
-} {
-    if {[db_0or1row contact_person_exists_p {select '1' from persons where person_id = :party_id}]} {
+    } elseif {[organization::organization_p -party_id $party_id]} {
 	return 1
     } else {
 	return 0
@@ -248,30 +228,6 @@ ad_proc -public contact::user_p_not_cached {
 	return 1
     } else {
 	return 0
-    }
-}
-
-ad_proc -public contact::organization_p {
-    {-party_id:required}
-} {
-    is this party an organization? Cached
-} {
-    return [util_memoize [list ::contact::organization_p_not_cached -party_id $party_id]]
-}
-
-ad_proc -public contact::organization_p_not_cached {
-    {-party_id:required}
-} {
-    is this party and organization?
-} {
-    if {[contact::person_p -party_id $party_id]} {
-	return 0
-    } else {
-	if {[db_0or1row contact_org_exists_p {select '1' from organizations where organization_id = :party_id}]} {
-	    return 1
-	} else {
-	    return 0
-	}
     }
 }
 
