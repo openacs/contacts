@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d13" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d14" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
@@ -53,10 +53,13 @@
   <msg key="Attribute">Attribut</msg>
   <msg key="Attribute_-">Attribut -&amp;gt;</msg>
   <msg key="Attributes">Attribute</msg>
+  <msg key="Available_Options">Verfügbare Optionen</msg>
   <msg key="Belongs_to">Gehört zu</msg>
   <msg key="Body">Haupttext</msg>
   <msg key="Bulk_Update">Massen Update</msg>
   <msg key="Cancel">Abbrechen</msg>
+  <msg key="Changed_date">Geändertes Datum:</msg>
+  <msg key="Changes">Änderungen</msg>
   <msg key="Clear">Leeren</msg>
   <msg key="Clear_the_currently_selected_Category">Die zurzeit markierte Kategorie löschen</msg>
   <msg key="Clear_the_currently_selected_Search">Den zurzeit markierte Suche löschen</msg>
@@ -103,6 +106,7 @@
   <msg key="Delete">Löschen</msg>
   <msg key="Delete_from">Löschen</msg>
   <msg key="Description">Beschreibung:</msg>
+  <msg key="description_help">Eine kurze Beschreibung, was die (Unter)Abfrage macht</msg>
   <msg key="Details">Details</msg>
   <msg key="does_not_contain_-">enthält nicht -&amp;gt;</msg>
   <msg key="does_not_exists">existiert nicht</msg>
@@ -124,6 +128,8 @@
   <msg key="exists">existiert</msg>
   <msg key="exists_at_least">existieren mindestens</msg>
   <msg key="exists_at_most">existieren höchstens</msg>
+  <msg key="ext_del_message">Option erweitern # %extend_id% gelöscht.</msg>
+  <msg key="Extended_search_opt">Erweiterte Suchoptionen</msg>
   <msg key="False">falsch</msg>
   <msg key="File">Datei</msg>
   <msg key="Files">Dateien</msg>
@@ -134,6 +140,7 @@
   <msg key="From">Von</msg>
   <msg key="Get">Lade</msg>
   <msg key="Go">Suche</msg>
+  <msg key="Go_to_search_results">Zu den Suchergebnissen gehen</msg>
   <msg key="Group">Gruppe</msg>
   <msg key="Group_-">Gruppe -&amp;gt;</msg>
   <msg key="Group_Name">Gruppenname</msg>
@@ -161,6 +168,7 @@
   <msg key="last">letztes</msg>
   <msg key="Last_Name">Nachnamen</msg>
   <msg key="Last_updated">Letzte Änderung</msg>
+  <msg key="Latest">Spätester</msg>
   <msg key="Letter">Brief</msg>
   <msg key="letter">Brief</msg>
   <msg key="Letterhead">Briefkopf</msg>
@@ -334,6 +342,7 @@ Deutsch(DE) 	</msg>
   <msg key="Messages">Vorlagen</msg>
   <msg key="messages">Mitteilungen</msg>
   <msg key="mine-">mein-</msg>
+  <msg key="Modify_by">Modifiziert durch:</msg>
   <msg key="My_Messages">Meine Nachrichten:</msg>
   <msg key="My_Searches">Meine Suchen</msg>
   <msg key="My_Signatures">Meine Signaturen</msg>
@@ -372,6 +381,7 @@ Deutsch(DE) 	</msg>
   <msg key="people_or_organizations">Personen oder Organisationen</msg>
   <msg key="Percent">Rabatt in Prozent:</msg>
   <msg key="Permissions">Berechtigungen</msg>
+  <msg key="Permissions_for_default_group">Zugriffsrechte für Standardgruppe</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Personen Formblatt</msg>
   <msg key="Preview">Voransicht</msg>
@@ -394,6 +404,8 @@ Deutsch(DE) 	</msg>
   <msg key="Relationship_Updated">Beziehung upgedatet</msg>
   <msg key="Relationships">Beziehungen</msg>
   <msg key="relationships">Beziehungen</msg>
+  <msg key="Remove_default">Standard (Default) entfernen</msg>
+  <msg key="Remove_default_options">Entferne erweirterte Optionen, die als Standard für die search_id #%search_id% gesetzt sind</msg>
   <msg key="Remove_From_Group">Von Gruppe entfernen</msg>
   <msg key="Remove_from_Groups">Von Gruppe entfernen</msg>
   <msg key="Remove_From_to_Group">Von Gruppe entfernen</msg>
@@ -423,6 +435,8 @@ Deutsch(DE) 	</msg>
   <msg key="Send">Senden</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Eine e-Mail Nachricht an die markierten Kontakte schicken</msg>
   <msg key="Send_Email">e-Mail senden</msg>
+  <msg key="Set_default">Standard (Default) setzen</msg>
+  <msg key="Set_default_extend">Standard (Default) setzen</msg>
   <msg key="Settings">Einstellungen</msg>
   <msg key="Shared_Searches">Gemeinsam genutzte Suchen</msg>
   <msg key="Show">Anzeigen:</msg>
@@ -433,8 +447,12 @@ Deutsch(DE) 	</msg>
   <msg key="Sort_by">Sortieren nach:</msg>
   <msg key="stateprovince_is_-">Bundesland ist -&gt;</msg>
   <msg key="Status">Status</msg>
+  <msg key="Stored_extended">Gespeicherte erweiterte Optionen</msg>
+  <msg key="Stored_extended_default">Erweiterte Optionen, die als Standard für die search_id  #%search_id% gesetzt werden können</msg>
   <msg key="Subject">Betreff</msg>
   <msg key="Subject_is_required">Betreff muss ausgefüllt werden</msg>
+  <msg key="Subquery">(Unter)Abfrage</msg>
+  <msg key="subquery_help">Die (Unter)Abfrage, die durchgeführt wird, um das Ergebnis zu holen.</msg>
   <msg key="Summary">Zusammenfassung</msg>
   <msg key="Summary_View">Überblick</msg>
   <msg key="Supplier">Freelancer:</msg>
@@ -449,6 +467,7 @@ Deutsch(DE) 	</msg>
   <msg key="The_search_-title-_was_copied_to_your_searches">Die Suche &quot;%title%&quot; wurde zu Ihren Suchen kopiert</msg>
   <msg key="The_search_-title-_was_deleted">Die Suche &quot;%title%&quot; wurde gelöscht</msg>
   <msg key="The_search_-title-_was_made_public">Die Suche &quot;%title%&quot; wurde öffentlich zur Verfügung gestellt</msg>
+  <msg key="this_var_name">Dieser &quot;Variablen Name&quot; existiert schon</msg>
   <msg key="Times">Zeiten</msg>
   <msg key="Title">Titel</msg>
   <msg key="Title_1">Titel:</msg>
@@ -464,12 +483,16 @@ Deutsch(DE) 	</msg>
   <msg key="Upload_More">Mehrere Dateien uploaden</msg>
   <msg key="User_Account_Information">Informationen zu dem User Account</msg>
   <msg key="valid">Gültig</msg>
+  <msg key="Var_name">Variablen Name</msg>
+  <msg key="var_name_help">Name der Variable, die in der erweiterten Suche verwendent werden soll.</msg>
   <msg key="View_all_roles">Alle Rollen ansehen</msg>
   <msg key="View_next">Nächstes sehen</msg>
   <msg key="Visit_Club">Zum Kundenportal</msg>
+  <msg key="Watch_all_changes">Alle Veränderungen ansehen</msg>
   <msg key="which_match">die übereinstimmen mit</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">mit</msg>
+  <msg key="You_can_extend">Sie können diese Suche ausweiten durch:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Ihre Nachricht wurde an: &lt;strong&gt;%recipients%&lt;/strong&gt; gesendet.</msg>
   <msg key="your_signatures">Ihre Signaturen</msg>
 </message_catalog>
