@@ -558,8 +558,10 @@ ad_proc -public contacts::get_values {
     set revision_id [contact::live_revision -party_id $party_id]
     set values [ams::values -package_key "contacts" -object_type $object_type -list_name $list_name -object_id $revision_id]
     array set return_array [list]
+
+    # Never forget to localize the values retrieved from ams.
     foreach {section attribute pretty_name value} $values {
-	set return_array($attribute) $value 
+	set return_array($attribute) [lang::util::localize $value]
     }
     if {![empty_string_p $attribute_name]} {
 	return $return_array($attribute_name) 
