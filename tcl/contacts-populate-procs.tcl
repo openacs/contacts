@@ -995,6 +995,8 @@ ad_proc -public contacts::populate::crm {
 	""
     #   Contact Rels Employement 
 
+    lang::message::register -update_sync de_DE acs-translations role_parent_company "Kundenberater"
+
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "contact_rels_employment" \
