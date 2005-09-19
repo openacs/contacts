@@ -138,9 +138,8 @@ ad_form -action message \
 	    set locale [lang::user::site_wide_locale -user_id $party_id]
 	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
 	    set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
-	    set revision_id [contact::live_revision -party_id 10309]
+	    set revision_id [contact::live_revision -party_id $party_id]
 	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
-	    ns_log Notice "$salutation"
 	    if {[empty_string_p $mailing_address]} {
 		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
 		break

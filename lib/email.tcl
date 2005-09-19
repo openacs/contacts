@@ -101,7 +101,6 @@ ad_form -action message \
 	    set filename ""
 	}
 	set package_id [ad_conn package_id]
-
 	if {$filename != "" } {
 	    set tmp_filename [template::util::file::get_property tmp_filename $upload_file]
 	    set mime_type [template::util::file::get_property mime_type $upload_file]
@@ -111,7 +110,7 @@ ad_form -action message \
 	    if {![exists_and_not_null title]} {
 		regsub -all ".${extension}\$" $filename "" title
 	    }
-	    set filename [contact::util::generate_filename \
+#	    set filename [contact::util::generate_filename \
 			      -title $title \
 			      -extension $extension \
 			      -party_id $party_id \
@@ -140,7 +139,7 @@ ad_form -action message \
 	    set name [contact::name -party_id $party_id]
 	    set first_names [lindex $name 0]
 	    set last_name [lindex $name 1]
-	    set date [lc_time_fmt [dt_sysdate] "%q"]
+	    set date [dt_sysdate]
 	    set to $name
 	    set to_addr [contact::email -party_id $party_id]
 	    if {[empty_string_p $to_addr]} {
@@ -148,14 +147,21 @@ ad_form -action message \
 		break
 	    }
 	    set values [list]
-	    foreach element [list first_names last_name name date] {
+	    set locale [lang::user::site_wide_locale -user_id $party_id]
+	    if {[empty_string_p $locale]} {
+		set locale [lang::user::site_wide_locale -user_id $user_id]
+	    }
+	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
+	    set revision_id [contact::live_revision -party_id $party_id]
+	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
+	    foreach element [list first_names last_name name date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    template::multirow append messages $message_type $to_addr [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content -values $values] $party_id $title $to
 
 	    # Link the file to all parties
 	    if {[exists_and_not_null revision_id]} {
-		application_data_link::new -this_object_id $revision_id -target_object_id $party_id $to
+		application_data_link::new -this_object_id $revision_id -target_object_id $party_id
 	    }
 	}
 	
