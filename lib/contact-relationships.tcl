@@ -27,10 +27,10 @@ set default_group [contacts::default_group]
 
 db_foreach get_relationships {} {
     set contact_url [contact::url -party_id $other_party_id]
-    if {[organization::organization_p -party_id $party_id]} {
-	set other_object_type "person"
-    } else {
+    if {[organization::organization_p -party_id $other_party_id]} {
 	set other_object_type "organization"
+    } else {
+	set other_object_type "person"
     } 
     set relation_url [export_vars -base "/contacts/add/$other_object_type" -url {{group_ids $default_group} {object_id_two "$party_id"} rel_type}]    
     set role_singular [lang::util::localize $role_singular]

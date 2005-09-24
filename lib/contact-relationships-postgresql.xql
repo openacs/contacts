@@ -10,7 +10,6 @@ select rel_id, other_name, other_party_id, role_singular, role_plural, rel_type,
                 CASE WHEN object_id_one = :party_id THEN role_two ELSE role_one END as role,
                 CASE WHEN object_id_one = :party_id THEN acs_rel_type__role_pretty_name(role_two) ELSE acs_rel_type__role_pretty_name(role_one) END as role_singular,
                 CASE WHEN object_id_one = :party_id THEN acs_rel_type__role_pretty_plural(role_two) ELSE acs_rel_type__role_pretty_name(role_two) END as role_plural,
-                role_one, role_two,
                 acs_rels.rel_id, acs_rels.rel_type
            from acs_rels,
                 acs_rel_types
