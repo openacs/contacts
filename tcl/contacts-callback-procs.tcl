@@ -55,6 +55,16 @@ ad_proc -public -callback contact::person_new_rel {
     organization and then do something with them accordingly.
 } -
 
+ad_proc -public -callback contact::organization_new_rel {
+    {-party_id:required}
+    {-object_id_two:required}
+    {-rel_type:required}
+} {
+    This is a callback that is executed when you add a new organization in a relationship.
+    This will enable other packages to check if the organization is added into a special relationship
+    and then do something with them accordingly.
+} -
+
 ad_proc -public -callback contact::history {
     {-party_id:required}
     {-multirow:required}
@@ -174,8 +184,11 @@ ad_proc -public -callback dotlrn_community::add_members -impl contacts_employees
     
     set employee_list [contact::util::get_employees -organization_id $organization_id]
     foreach employee_id $employee_list {
-	# Just to be on the save side, we actually check if the user is already in .LRN
-	dotlrn::user_add -user_id $employee_id
-	dotlrn_club::add_user -community_id $club_id -user_id $employee_id
+	# Only add the user if the user is already in the system as a user, not a person.
+	if {[contact::user_p $employee_id]} {
+	    # Just to be on the save side, we actually check if the user is already in .LRN
+	    dotlrn::user_add -user_id $employee_id
+	    dotlrn_club::add_user -community_id $club_id -user_id $employee_id
+	}
     }
 }
