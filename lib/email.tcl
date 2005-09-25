@@ -152,8 +152,8 @@ ad_form -action message \
 		set locale [lang::user::site_wide_locale -user_id $user_id]
 	    }
 	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
-	    set revision_id [contact::live_revision -party_id $party_id]
-	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
+	    set party_revision_id [contact::live_revision -party_id $party_id]
+	    set salutation [ams::value -attribute_name "salutation" -object_id $party_revision_id -locale $locale]
 	    foreach element [list first_names last_name name date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
