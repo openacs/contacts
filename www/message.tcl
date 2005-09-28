@@ -47,6 +47,8 @@ set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
 set context [list $title]
 
+set using_emp_email_p 0
+
 set recipients  [list]
 foreach party_id $party_ids {
     set contact_name   [contact::name -party_id $party_id]
@@ -82,16 +84,52 @@ foreach recipient $sorted_recipients {
             lappend party_ids $party_id
             lappend recipients $contact_link
         } else {
-            lappend invalid_party_ids $party_id
-            lappend invalid_recipients $contact_link
+	    # We are going to check if there is an employee relationship
+	    # if there is we are going to check if the employer has an
+	    # email adrres, if it does we are going to use that address
+	    set employer_id [relation::get_object_two -object_id_one $party_id \
+				 -rel_type "contact_rels_employment"]
+
+	    if { ![empty_string_p $employer_id] } {
+		set emp_addr [contact::email -party_id $employer_id]
+		if { ![empty_string_p $emp_addr] } {
+		    lappend party_ids $party_id
+		    lappend recipients $contact_link
+		    set using_emp_email_p 1
+		} else {
+		    lappend invalid_party_ids $party_id
+		    lappend invalid_recipients $contact_link
+		}
+	    } else {
+		lappend invalid_party_ids $party_id
+		lappend invalid_recipients $contact_link
+	    }
         }
     } else {
         if { $email_p || $letter_p } {
             lappend party_ids $party_id
             lappend recipients $contact_link
         } else {
-            lappend invalid_party_ids $party_id
-            lappend invalid_recipients $contact_link
+	    # We are going to check if there is an employee relationship
+	    # if there is we are going to check if the employer has an
+	    # email adrres, if it does we are going to use that address
+	    set employer_id [relation::get_object_two -object_id_one $party_id \
+				 -rel_type "contact_rels_employment"]
+
+	    if { ![empty_string_p $employer_id] } {
+		set emp_addr [contact::email -party_id $employer_id]
+		if { ![empty_string_p $emp_addr] } {
+		    lappend party_ids $party_id
+		    lappend recipients $contact_link
+		    set using_emp_email_p 1
+		} else {
+		    lappend invalid_party_ids $party_id
+		    lappend invalid_recipients $contact_link
+		}
+	    } else {
+		lappend invalid_party_ids $party_id
+		lappend invalid_recipients $contact_link
+	    }
         }
     }
 }

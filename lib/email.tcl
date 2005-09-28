@@ -143,8 +143,21 @@ ad_form -action message \
 	    set to $name
 	    set to_addr [contact::email -party_id $party_id]
 	    if {[empty_string_p $to_addr]} {
-		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
-		break
+		# We are going to check if this party_id has an employer and if this
+		# employer has an email
+		set employer_id [relation::get_object_two -object_id_one $party_id \
+				     -rel_type "contact_rels_employment"]
+		if { ![empty_string_p $employer_id] } {
+		    # Get the employer email adress
+		    set to_addr [contact::email -party_id $employer_id]
+		    if {[empty_string_p $to_addr]} {
+			ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
+			break
+		    } 
+		} else {
+		    ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
+		    break
+		}
 	    }
 	    set values [list]
 	    set locale [lang::user::site_wide_locale -user_id $party_id]

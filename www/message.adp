@@ -15,12 +15,15 @@
 </else>
 <property name="focus">comment_add.comment</property>
 
+<if @using_emp_email_p@>
+    #contacts.This_contact_doesnt#
+</if>    
+
 <if @party_ids@ ne "">
   <if @message_type@ eq "">
     <formtemplate id="message"></formtemplate>
   </if>
   <else>
-    
     <include 
         src=/packages/contacts/lib/@message_type@
         return_url=@return_url@ 
