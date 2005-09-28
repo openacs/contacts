@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d14" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d15" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -468,6 +468,7 @@
   <msg key="The_search_-title-_was_copied_to_your_searches">The search &quot;%title%&quot; was copied to your searches</msg>
   <msg key="The_search_-title-_was_deleted">The search &quot;%title%&quot; was deleted</msg>
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
+  <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use it's employer email (%emp_addr%)</msg>
   <msg key="this_var_name">This &quot;Variable Name&quot; is already present</msg>
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>
