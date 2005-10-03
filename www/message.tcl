@@ -17,6 +17,9 @@ ad_page_contract {
     {item_id:integer ""}
     {folder_id:integer ""}
     {signature_id:integer ""}
+    {subject ""}
+    {content_body ""}
+    {to:integer,multiple,optional ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { [lsearch [list email letter] $message_type] < 0 } {
@@ -29,6 +32,7 @@ ad_page_contract {
 	}
     }
 }
+
 
 if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
     set message_type [lindex [split $message "."] 0]
@@ -176,7 +180,7 @@ set form_elements {
     party_ids:text(hidden)
     return_url:text(hidden)
     folder_id:text(hidden)
-    {to:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
+    {to_name:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
 }
 
 
@@ -301,3 +305,10 @@ ad_form -action message \
     } -on_submit {
     }
 set party_ids $new_party_ids
+
+if {[exists_and_not_null signature_id]} {
+    set signature [contact::signature::get -signature_id $signature_id]
+} else {
+    set signature ""
+}
+

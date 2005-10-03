@@ -24,20 +24,33 @@
     <formtemplate id="message"></formtemplate>
   </if>
   <else>
-    <include 
-        src=/packages/contacts/lib/@message_type@
-        return_url=@return_url@ 
-        party_ids=@party_ids@ 
-        file_ids=@file_ids@ 
-	item_id=@item_id@
-        signature_id=@signature_id@ 
-        recipients=@recipients;noquote@
-        footer_id=@footer_id@
-        header_id=@header_id@
-        folder_id=@folder_id@
-        >
+    <if @message_type@ eq "email">
+
+    	<include 	
+        	src=/packages/acs-mail-lite/lib/email
+        	return_url=@return_url@ 
+	        party_ids=@party_ids@ 
+		no_callback_p="f"
+		action="message"
+		signature_id=@signature_id@
+	        >
+	</if>
+	<else>
+    	<include 	
+        	src=/packages/contacts/lib/@message_type@
+        	return_url=@return_url@ 
+	        party_ids=@party_ids@ 
+	        file_ids=@file_ids@ 
+		item_id=@item_id@
+	        signature_id=@signature_id@ 
+	        recipients=@recipients;noquote@
+	        footer_id=@footer_id@
+	        header_id=@header_id@
+	        folder_id=@folder_id@
+	        >
+	</else>
   </else>
 </if>
 <if @party_count@ eq 1>
-    <include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@">
+   <include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@">
 </if>
