@@ -49,6 +49,7 @@
   <msg key="area_code_is_-">area code is -&gt;</msg>
   <msg key="area_code_is_not_-">area code is not -&gt;</msg>
   <msg key="Art_of_Relationship">Type of Relationship</msg>
+  <msg key="Associated_files">Associated Files:</msg>
   <msg key="at">at</msg>
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
@@ -58,8 +59,10 @@
   <msg key="Body">Body</msg>
   <msg key="Bulk_Update">Bulk Update</msg>
   <msg key="Cancel">Cancel</msg>
+  <msg key="cc_help">Send copy to multiple addresses separated by &quot;;&quot;</msg>
   <msg key="Changed_date">Changed Date:</msg>
   <msg key="Changes">Changes</msg>
+  <msg key="check_uncheck">Check/Uncheck</msg>
   <msg key="Clear">Clear</msg>
   <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
