@@ -209,6 +209,7 @@ ad_form -extend -name party_ae \
             set party_id [party::new -party_id $party_id -form_id add_party person]
             # party::new does not correctly save email address
             party::update -party_id $party_id -email $email -url $url
+	    callback contact::person_new -package_id $package_id -person_id $party_id
             
             # in order to create a user we need a valid unique username (i.e. their email address).
             # the on_submit block has already validated that this is in fact a valid and unique 

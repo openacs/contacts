@@ -146,6 +146,8 @@ ad_form -extend -name party_ae \
 	category::map_object -remove_old -object_id $party_id $cat_ids
 	if {$object_type == "organization"} {
 	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
+	} else {
+	    callback contact::person_new -package_id $package_id -person_id $party_id
 	}
     } -after_submit {
 	contact::flush -party_id $party_id
