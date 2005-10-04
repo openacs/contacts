@@ -45,7 +45,7 @@ if { ![exists_and_not_null supplier_id]} {
 	lappend user_options [list $fullname $user_id]
     }
     db_foreach get_groups { } {
-	lappend user_options [list $name $group_id]
+	lappend user_options [list $group_name $group_id]
     }
     ad_form -extend -name complaint_form -form {
 	{supplier_id:text(select)
