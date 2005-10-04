@@ -1,6 +1,7 @@
 # customer_id. Party ID of the customer for which the complaint was made.
-# supplier_id. Party ID of the supplier who caused the complaint
-# project_id. Alternative for the customer_id, if you know the project_id
+# supplier_id. Party ID of the supplier who caused the complaint. 
+#              If supplier_id equals "-100" then a null value is inserted
+# project_id.  Alternative for the customer_id, if you know the project_id
 
 if { ![info exist return_url] } {
     set return_url [get_referrer]
@@ -42,7 +43,6 @@ ad_form -extend -name complaint_form -form {
 }
 
 if { ![exists_and_not_null supplier_id]} {
-
     set user_options [list]
     db_foreach get_users { } {
 	lappend user_options [list $fullname $user_id]
@@ -51,14 +51,18 @@ if { ![exists_and_not_null supplier_id]} {
 	lappend user_options [list $group_name $group_id]
     }
     ad_form -extend -name complaint_form -form {
-	{supplier_id:text(select)
+	{supplier_id:text(select),optional
 	    {label "[_ contacts.Supplier]"}
 	    {options $user_options}
 	}
     }
 } else {
-    
-    set supplier_name [contact::name -party_id $supplier_id]
+    set supplier_name ""
+    if { ![string equal $supplier_id "-100"] } {
+	set supplier_name [contact::name -party_id $supplier_id]
+    } else {
+	set supplier_id ""
+    }
     ad_form -extend -name complaint_form -form {
 	{supplier_id:text(hidden)
 	    {value $supplier_id}
