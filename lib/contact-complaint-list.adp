@@ -9,7 +9,7 @@
     <td valign="top" width="80%">
 	<listtemplate name="complaint"></listtemplate>	
     </td>
-</if>
+    </if>
   </tr>
 </table>
 

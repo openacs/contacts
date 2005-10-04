@@ -1,6 +1,7 @@
 # filter_p:     if set to 1, the filter selection will be displayed
 # customer_id:  customer_id for which we want to see the complaints
 # supplier_id:  supplier_id for which we want to see the complaints
+# row_list:     list of elements to be displayed
 
 set required_param_list [list]
 set optional_param_list [list filter_p]
@@ -26,6 +27,7 @@ foreach optional_unset $optional_unset_list {
     }
 }
 
+
 set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
 set elements [list \
 		  title [list label [_ contacts.Title_1] \
@@ -40,8 +42,18 @@ set elements [list \
 		  description [list label [_ contacts.Description]]\
 		 ]
 
+if {![exists_and_not_null row_list] } {
+    set rows [list title {} customer {} supplier {} turnover {} percent {} state {} object_id {} description {}]
+} else {
+    set rows [list]
+    foreach element $row_list {
+	lappend rows [list $element]
+	lappend rows [list]
+    }
+}
 set customer_list [list]
 set supplier_list [list]
+
 
 db_foreach get_users { } {
     if { [string equal [lsearch $customer_list [list $customer $c_id]] "-1"] } {
@@ -56,6 +68,7 @@ template::list::create \
     -name complaint \
     -multirow complaint \
     -key complaint_id \
+    -selected_format normal \
     -filters {
 	customer_id {
 	    label "[_ contacts.Customer]"
@@ -72,7 +85,14 @@ template::list::create \
 	    }
 	}
     } \
-    -elements $elements
+    -elements $elements \
+    -formats {
+        normal {
+            label "Table"
+            layout table
+            row $rows
+        }
+    }
 
 
 db_multirow -extend { customer supplier title description } complaint get_complaints { } {
