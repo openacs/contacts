@@ -6,6 +6,9 @@ if { ![info exist return_url] } {
     set return_url [get_referrer]
 }
 
+if { ![info exist mode] } {
+    set mode "edit"
+}
 
 if { ![exists_and_not_null complaint_id] } {
     if { [info exist complaint_id] } {
@@ -16,7 +19,7 @@ if { ![exists_and_not_null complaint_id] } {
     set complaint_rev_id $complaint_id
 }
 
-ad_form -name complaint_form -form {
+ad_form -mode $mode -name complaint_form -form {
     complaint_id:key
     {title:text(text)
 	{label "[_ contacts.Title_1]"}

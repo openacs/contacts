@@ -10,6 +10,7 @@ ad_page_contract {
     {supplier_id ""}
     {return_url ""}
     {object_id ""}
+    {mode "edit"}
 }
 
 set page_title "[_ contacts.Edit_complaint]"

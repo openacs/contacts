@@ -32,7 +32,8 @@ set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@
 set elements [list \
 		  title [list label [_ contacts.Title_1] \
 			     display_template \
-			     "<a href=\"$edit_url\"><img border=0 src=\"/resources/Edit16.gif\"></a>@complaint.title@"]\
+			     "<a href=\"$edit_url\"><img border=0 src=\"/resources/Edit16.gif\"></a>
+                              <a href=\"${edit_url}&mode=display\">@complaint.title@</a>"] \
 		  customer [list label [_ contacts.Customer]]\
 		  supplier [list label [_ contacts.Supplier]]\
 		  turnover [list label [_ contacts.Turnover]]\
