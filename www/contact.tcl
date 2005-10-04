@@ -80,5 +80,29 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
     set invoices_enabled_p 0
 }
 
+# We are going to get a list of all members of the group Freelancer
+# that have worked in a project for customer_id (party_id in this case).
+# So first we get all projects were the party_id is customer
+
+set project_list [db_list get_projects { select item_id from pm_projectsx where customer_id = :party_id }]
+
+# Now we search for all the members of the Freelancer
+# group that are assigned to one of this projects.
+
+# Get the group members list
+set group_id [group::get_id -group_name "Freelancer"]
+set group_members_list [group::get_members -group_id $group_id]
+
+# Now we create the select menu to use
+set select_menu "<select name=\"supplier_id\">"
+append select_menu "<option value=\"-100\" selected> - - - - - -</option>"
+db_foreach get_members {  } {
+    append select_menu "<option value=\"$supplier_id\">[contact::name -party_id $supplier_id]</option>"
+}
+append select_menu "</select>"
+
+
+
+
 
 ad_return_template

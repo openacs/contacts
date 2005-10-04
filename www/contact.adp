@@ -48,11 +48,23 @@
 	<include src="/packages/invoices/lib/projects-billable" organization_id="@party_id@" elements="checkbox project_id title amount_open" package_id="@iv_package_id@" base_url="@iv_base_url@" />
 	<include src="/packages/glossar/lib/glossar-list" owner_id=@party_id@ orderby=@orderby@ customer_id=@party_id@ format=table></include>
       </if>
+	<br>
+	<h3 class="contact-title">#contacts.Complaints#:</h3>
+	<include src="/packages/contacts/lib/contact-complaint-list" 
+	    customer_id=@party_id@
+	    row_list="title supplier state description"
+	>
+	<form action="/contacts/add-edit-complaint">
+	#contacts.Add_complaint_to#: @select_menu;noquote@
+	     <input type="hidden" name="customer_id" value="@party_id@">
+	     <input type="submit" value="#contacts.Add_1#">
+	</form>
     </if>
     <if @update_date@ not nil>
       <p class="last-updated">#contacts.Last_updated# @update_date@</p>
     </if>
   </div>
 </div>
+
 
 
