@@ -9,6 +9,7 @@ ad_page_contract {
     customer_id:notnull
     {supplier_id ""}
     {return_url ""}
+    {object_id ""}
 }
 
 set page_title "[_ contacts.Edit_complaint]"
