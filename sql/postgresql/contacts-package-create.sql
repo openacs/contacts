@@ -238,3 +238,57 @@ begin
         return v_member_p;
 end;' language 'plpgsql';
 
+
+-- create functions for organization_rels
+select define_function_args('organization_rel__new','rel_id,rel_type;organization_rel,object_id_one,object_id_two,creation_user,creation_ip');
+
+create or replace function organization_rel__new (integer,varchar,integer,integer,integer,varchar)
+returns integer as '
+declare
+  new__rel_id            alias for $1;  -- default null  
+  rel_type               alias for $2;  -- default ''organization_rel''
+  object_id_one          alias for $3;  
+  object_id_two          alias for $4;  
+  creation_user          alias for $5;  -- default null
+  creation_ip            alias for $6;  -- default null
+  v_rel_id               integer;       
+begin
+    v_rel_id := acs_rel__new (
+      new__rel_id,
+      rel_type,
+      object_id_one,
+      object_id_two,
+      object_id_one,
+      creation_user,
+      creation_ip
+    );
+
+    return v_rel_id;
+   
+end;' language 'plpgsql';
+
+-- function new
+create or replace function organization_rel__new (integer,integer)
+returns integer as '
+declare
+  object_id_one          alias for $1;  
+  object_id_two          alias for $2;  
+begin
+        return organization_rel__new(null,
+                                    ''organization_rel'',
+                                    object_id_one,
+                                    object_id_two,
+                                    null,
+                                    null);
+end;' language 'plpgsql';
+
+-- procedure delete
+create or replace function organization_rel__delete (integer)
+returns integer as '
+declare
+  rel_id                 alias for $1;  
+begin
+    PERFORM acs_rel__delete(rel_id);
+
+    return 0; 
+end;' language 'plpgsql';
