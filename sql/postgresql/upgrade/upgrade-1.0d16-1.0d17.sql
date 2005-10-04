@@ -1,0 +1,1 @@
+ALTER TABLE contact_complaint_tracking DROP CONSTRAINT contact_complaint_tracking_supplier_fk;
