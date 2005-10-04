@@ -83,6 +83,7 @@ ad_form -extend -name complaint_form -form {
 
 ad_form -extend -name complaint_form -form {
     {object_id:text(hidden)
+	{value $object_id}
     }
     {project:text(inform)
 	{label "[_ contacts.Object]"}
@@ -142,11 +143,15 @@ ad_form -extend -name complaint_form -form {
 
 
 } -new_request {
-    set project "[pm::project::name -project_item_id $object_id]"
+    if { [exists_and_not_null $object_id]} {
+	set project "[pm::project::name -project_item_id $object_id]"
+    }
 } -edit_request {
 
     db_1row get_revision_info { }
-    set project "[pm::project::name -project_item_id $object_id]"
+    if { [exists_and_not_null object_id] } {
+	set project "[pm::project::name -project_item_id $object_id]"
+    }
 
 } -after_submit {
     ad_returnredirect $return_url
