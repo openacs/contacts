@@ -94,6 +94,7 @@ if {$object_type == "organization"} {
 	
 	# Get the group members list
 	set group_id [group::get_id -group_name "Freelancer"]
+	set group_members_list [group::get_members -group_id $group_id]
 		
 	# Now we create the select menu to use
 	set select_menu "<select name=\"supplier_id\">"
