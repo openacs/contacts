@@ -48,6 +48,7 @@
 	<include src="/packages/invoices/lib/projects-billable" organization_id="@party_id@" elements="checkbox project_id title amount_open" package_id="@iv_package_id@" base_url="@iv_base_url@" />
 	<include src="/packages/glossar/lib/glossar-list" owner_id=@party_id@ orderby=@orderby@ customer_id=@party_id@ format=table></include>
       </if>
+      <if @pm_installed_p@>
 	<br>
 	<h3 class="contact-title">#contacts.Complaints#:</h3>
 	<include src="/packages/contacts/lib/contact-complaint-list" 
@@ -59,6 +60,16 @@
 	     <input type="hidden" name="customer_id" value="@party_id@">
 	     <input type="submit" value="#contacts.Add_1#">
 	</form>
+	<br>
+	<h3 class="contact-title">#contacts.Freelancers#:</h3>
+	<include src="/packages/project-manager/lib/customer-group-list" 
+	    customer_id=@party_id@
+	    group_name="Freelancer"
+	    elements="name project_name deadline"
+	    cgl_orderby=@cgl_orderby;noquote@
+	    page=@page@
+	>
+      </if>
     </if>
     <if @update_date@ not nil>
       <p class="last-updated">#contacts.Last_updated# @update_date@</p>

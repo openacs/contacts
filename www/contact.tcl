@@ -8,6 +8,8 @@ ad_page_contract {
 } {
     {party_id:integer,notnull}
     {orderby ""}
+    {cgl_orderby ""}
+    {page "1"}
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {
@@ -80,13 +82,15 @@ if { [string is false [empty_string_p [info procs "::application_data_link::get_
     set invoices_enabled_p 0
 }
 
+# We check if the project-manager package is installed, otherwise the queries break
+set pm_installed_p [apm_package_enabled_p "project-manager"]
 
-if {$object_type == "organization"} {
+if { $object_type == "organization" && $pm_installed_p} {
     # We are going to get a list of all members of the group Freelancer
     # that have worked in a project for customer_id (party_id in this case).
     # So first we get all projects were the party_id is customer
     
-    set project_list [db_list get_projects { select item_id from pm_projectsx where customer_id = :party_id }]
+    set project_list [db_list get_projects { }]
     
     if {![empty_string_p $project_list]} {
 	# Now we search for all the members of the Freelancer

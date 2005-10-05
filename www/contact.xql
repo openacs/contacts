@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="get_projects">
+    <querytext>
+	select 
+		item_id 
+	from 
+		pm_projectsx 
+	where 
+		customer_id = :party_id 
+    </querytext>
+</fullquery>
+
 <fullquery name="get_members">
     <querytext>
 	select
