@@ -195,38 +195,37 @@ ad_form -extend -name party_ae \
     } -new_data {
 
 	if { $object_type == "person" } {
-
+	    
 	    if { ![exists_and_not_null url] } {
 		set url ""
 	    }
 
-            # Initialize Person
-            template::form create add_party
-            template::element create add_party email -value "$email"
-            template::element create add_party first_names -value "$first_names"
-            template::element create add_party last_name -value "$last_name"
-            template::element create add_party url -value "$url"
-            set party_id [party::new -party_id $party_id -form_id add_party person]
-            # party::new does not correctly save email address
-            party::update -party_id $party_id -email $email -url $url
-	    callback contact::person_new -package_id $package_id -person_id $party_id
+	    # Initialize Person
+	    template::form create add_party
+	    template::element create add_party email -value "$email"
+	    template::element create add_party first_names -value "$first_names"
+	    template::element create add_party last_name -value "$last_name"
+	    template::element create add_party url -value "$url"
+	    set party_id [party::new -party_id $party_id -form_id add_party person]
+	    # party::new does not correctly save email address
+	    party::update -party_id $party_id -email $email -url $url
             
-            # in order to create a user we need a valid unique username (i.e. their email address).
-            # the on_submit block has already validated that this is in fact a valid and unique 
-            # email address which will serve as their username
-            if { $create_user_p == "t" } {
-                contact::person_upgrade_to_user -person_id $party_id
-            }
-            
+	    # in order to create a user we need a valid unique username (i.e. their email address).
+	    # the on_submit block has already validated that this is in fact a valid and unique 
+	    # email address which will serve as their username
+	    if { $create_user_p == "t" } {
+		contact::person_upgrade_to_user -person_id $party_id
+	    }
+	    callback contact::person_add -package_id $package_id -person_id $party_id
 
 	    # Add the new categories and enter the Party into the groups
 	    set cat_ids [list]
 
-            foreach group_id $group_ids {
-                group::add_member \
-                    -group_id $group_id \
-                    -user_id $party_id \
-                    -rel_type "membership_rel"
+	    foreach group_id $group_ids {
+		group::add_member \
+		    -group_id $group_id \
+		    -user_id $party_id \
+		    -rel_type "membership_rel"
 		
 		callback contact::person_new_group -person_id $party_id -group_id $group_id
 		set element_name "category_ids$group_id"
@@ -235,9 +234,9 @@ ad_form -extend -name party_ae \
 		}
 		
 		set cat_ids [concat $cat_ids \
-			     [category::ad_form::get_categories \
-				  -container_object_id $group_id \
-				  -element_name $element_name]]
+				 [category::ad_form::get_categories \
+				      -container_object_id $group_id \
+				      -element_name $element_name]]
 	    }
 	    
 	    category::map_object -remove_old -object_id $party_id $cat_ids
@@ -259,20 +258,20 @@ ad_form -extend -name party_ae \
 		    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
 		}
 	    }
-
+	    
 	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
 	}
 	
 	# Save the contact information
 	# No clue why this is not part of the db_transaction though ....
 	contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
-        set revision_id [contact::revision::new -party_id $party_id]
-        foreach group_id $group_ids {
-            ams::ad_form::save -package_key "contacts" \
-                -object_type $object_type \
-                -list_name "${package_id}__${group_id}" \
-                -form_name "party_ae" \
-                -object_id $revision_id
+	set revision_id [contact::revision::new -party_id $party_id]
+	foreach group_id $group_ids {
+	    ams::ad_form::save -package_key "contacts" \
+		-object_type $object_type \
+		-list_name "${package_id}__${group_id}" \
+		-form_name "party_ae" \
+		-object_id $revision_id
 	    # execute group specific callbacks
 	    group::get -group_id $group_id -array group_array
 	    set group_name ${group_array(group_name)}
@@ -283,7 +282,7 @@ ad_form -extend -name party_ae \
 		callback contact::${object_type}_${group_array(group_name)}_new -package_id $package_id -contact_id $party_id
 	    }
 	}
-	
+	    
 	# Insert the relationship
 	if {[exists_and_not_null rel_type] && [exists_and_not_null object_id_two]} {
 	    set rel_id {}
@@ -299,7 +298,7 @@ ad_form -extend -name party_ae \
                      :creation_user,
                      :creation_ip  
                     )"]
-
+		
 	    if {[exists_and_not_null rel_type]} {
 		ams::ad_form::save -package_key "contacts" \
 		    -object_type $rel_type \
@@ -312,9 +311,10 @@ ad_form -extend -name party_ae \
 	}
 
 	# Add the user to the
-        set contact_link [contact::link -party_id $party_id]
-        set object_type [_ contacts.$object_type]
+	set contact_link [contact::link -party_id $party_id]
+	set object_type [_ contacts.$object_type]
 	util_user_message -html -message "[_ contacts.lt_The_-object_type-_-contact_link-_was_added]"
+
 
     } -after_submit {
 	contact::flush -party_id $party_id

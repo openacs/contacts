@@ -27,7 +27,7 @@ ad_proc -public -callback contact::organization_new {
 } {
 }
 
-ad_proc -public -callback contact::person_new {
+ad_proc -public -callback contact::person_add {
     {-package_id:required}
     {-person_id:required}
 } {

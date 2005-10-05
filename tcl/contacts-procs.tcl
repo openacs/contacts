@@ -566,7 +566,7 @@ ad_proc -public contacts::get_values {
 } {
     
     if {[empty_string_p $contacts_package_id]} {
-	set contacts_package_id [ad_conn contacts_package_id]
+	set contacts_package_id [ad_conn package_id]
     }
 
     if {[empty_string_p $group_id]} {
