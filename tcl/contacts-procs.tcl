@@ -584,6 +584,7 @@ ad_proc -public contacts::get_values {
     foreach {section attribute pretty_name value} $values {
 	set return_array($attribute) [lang::util::localize $value]
     }
+
     if {![empty_string_p $attribute_name]} {
 	return $return_array($attribute_name) 
     } else {

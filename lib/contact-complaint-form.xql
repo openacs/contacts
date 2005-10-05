@@ -44,7 +44,7 @@
 		cr.title, 
 		cr.description 
 	from 
-		contact_complaint_tracking cct, 
+		contact_complaint_track cct, 
 		cr_revisions cr 
 	where 
 		complaint_id = :complaint_id 

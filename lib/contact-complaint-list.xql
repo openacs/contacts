@@ -7,7 +7,7 @@
 	select 
 		cct.*, cr.title, cr.description
 	from
-		contact_complaint_tracking cct, cr_items ci, cr_revisions cr
+		contact_complaint_track cct, cr_items ci, cr_revisions cr
 	where
 		ci.latest_revision = cct.complaint_id
 	        and cr.revision_id = cct.complaint_id
@@ -23,7 +23,7 @@
 		( select first_names ||' '|| last_name from cc_users where user_id = customer_id) as customer,
 		( select first_names ||' '|| last_name from cc_users where user_id = supplier_id) as supplier
 	from
-		contact_complaint_tracking cct
+		contact_complaint_track cct
     </querytext>
 </fullquery>
 

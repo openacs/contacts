@@ -16,7 +16,7 @@ ad_proc -public contact::complaint::new {
     {-description ""}
     -supplier_id:required
     -paid:required
-    -object_id:required
+    -complaint_object_id:required
     {-state "open"}
 } {
     Inserts a new complaint. Creates a new revision if complaint_id is not present, 
@@ -30,7 +30,7 @@ ad_proc -public contact::complaint::new {
     @param description
     @param supplier_id  
     @param paid
-    @param object_id    The object_id you are making the complaint
+    @param complaint_object_id  The complaint is being made over this object_id 
 
 } {
     if { [empty_string_p $complaint_id] } {

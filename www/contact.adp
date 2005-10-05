@@ -53,7 +53,7 @@
 	<h3 class="contact-title">#contacts.Complaints#:</h3>
 	<include src="/packages/contacts/lib/contact-complaint-list" 
 	    customer_id=@party_id@
-	    row_list="title supplier state description"
+	    elements="title supplier state description"
 	>
 	<form action="/contacts/add-edit-complaint">
 	#contacts.Add_complaint_to#: @select_menu;noquote@

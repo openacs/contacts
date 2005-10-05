@@ -258,3 +258,101 @@ ad_proc -public ::install::xml::action::contacts_pop_crm {
     array set sn_array [site_node::get -url $url]
     contacts::populate::crm -package_id $sn_array(object_id)
 }
+
+
+ad_proc -public contacts::install::package_upgrade {
+    {-from_version_name:required}
+    {-to_version_name:required}
+} {
+    @author Miguel Marin (miguelmarin@viaro.net)
+    @author Viaro Networks www.viaro.net
+    @creation-date 2005-10-05
+} {
+    apm_upgrade_logic \
+        -from_version_name $from_version_name \
+        -to_version_name $to_version_name \
+        -spec {
+	    1.0d18 1.0d19 {
+
+		content::type::new -content_type "contact_complaint" \
+		    -pretty_name "Contact Complaint" \
+		    -pretty_plural "Contact Complaints" \
+		    -table_name "contact_complaint_track" \
+		    -id_column "complaint_id"
+		
+		# now set up the attributes that by default we need for the complaints
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "customer_id" \
+		    -datatype "integer" \
+		    -pretty_name "Customer ID" \
+		    -sort_order 1 \
+		    -column_spec "integer constraint contact_complaint_track_customer_fk
+                                  references parties(party_id) on delete cascade"
+		
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "turnover" \
+		    -datatype "money" \
+		    -pretty_name "Turnover" \
+		    -sort_order 2 \
+		    -column_spec "float"
+
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "percent" \
+		    -datatype "integer" \
+		    -pretty_name "Percent" \
+		    -sort_order 3 \
+		    -column_spec "integer"
+
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "supplier_id" \
+		    -datatype "integer" \
+		    -pretty_name "Supplier ID" \
+		    -sort_order 4 \
+		    -column_spec "integer"
+		
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "paid" \
+		    -datatype "money" \
+		    -pretty_name "Paid" \
+		    -sort_order 5 \
+		    -column_spec "float"
+
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "complaint_object_id" \
+		    -datatype "integer" \
+		    -pretty_name "Complaint Object ID" \
+		    -sort_order 6 \
+		    -column_spec "integer constraint contact_complaint_track_complaint_object_id_fk 
+                                  references acs_objects(object_id) on delete cascade"
+		
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "state" \
+		    -datatype "string" \
+		    -pretty_name "State" \
+		    -sort_order 7 \
+		    -column_spec "varchar(7) constraint cct_state_ck
+                                  check (state in ('valid','invalid','open'))"
+		
+		# Now we need to copy all information on contact_complaint_tracking table (the one we are taking out)
+		# into the new one called contact_complaint_track with the new fields. This is simple since
+		# all the collumns have the same datatype, just changed some names.
+		
+		db_dml insert_data {
+		    insert into 
+		    contact_complaint_track 
+		    (complaint_id,customer_id,turnover,percent,supplier_id,paid,complaint_object_id,state) 
+		    select * from contact_complaint_tracking
+		}
+		
+		# Now we just delete the table contact_complaint_tracking
+		db_dml drop_table { drop table contact_complaint_tracking } 
+	    }
+	}
+}

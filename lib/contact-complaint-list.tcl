@@ -1,10 +1,10 @@
 # filter_p:     if set to 1, the filter selection will be displayed
 # customer_id:  customer_id for which we want to see the complaints
 # supplier_id:  supplier_id for which we want to see the complaints
-# row_list:     list of elements to be displayed
+# elements:     list of elements to be displayed
 
 set required_param_list [list]
-set optional_param_list [list filter_p]
+set optional_param_list [list filter_p elements]
 set optional_unset_list [list customer_id supplier_id]
 
 foreach required_param $required_param_list {
@@ -27,9 +27,20 @@ foreach optional_unset $optional_unset_list {
     }
 }
 
+# Here we specified which elements we will show
+set rows_list [list]
+if {![exists_and_not_null elements] } {
+    set rows_list [list title {} customer {} supplier {} turnover {} percent {} state {} complaint_object_id {} description {}]
+} else {
+    foreach element $elements {
+	lappend rows_list [list $element]
+	lappend rows_list [list]
+    }
+}
 
+# This are the elements of the template::list
 set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
-set elements [list \
+set elements_list [list \
 		  title [list label [_ contacts.Title_1] \
 			     display_template \
 			     "<a href=\"$edit_url\"><img border=0 src=\"/resources/Edit16.gif\"></a>
@@ -43,22 +54,13 @@ set elements [list \
 		  turnover [list label [_ contacts.Turnover]]\
 		  percent [list label [_ contacts.Percent]]\
 		  state [list label "[_ contacts.Status]:"]\
-		  object_id [list label [_ contacts.Object_id]]\
+		  complaint_object_id [list label [_ contacts.Object_id]]\
 		  description [list label [_ contacts.Description]]\
 		 ]
 
-if {![exists_and_not_null row_list] } {
-    set rows [list title {} customer {} supplier {} turnover {} percent {} state {} object_id {} description {}]
-} else {
-    set rows [list]
-    foreach element $row_list {
-	lappend rows [list $element]
-	lappend rows [list]
-    }
-}
+
 set customer_list [list]
 set supplier_list [list]
-
 
 db_foreach get_users { } {
     if { [string equal [lsearch $customer_list [list $customer $c_id]] "-1"] } {
@@ -90,12 +92,12 @@ template::list::create \
 	    }
 	}
     } \
-    -elements $elements \
+    -elements $elements_list \
     -formats {
         normal {
             label "Table"
             layout table
-            row $rows
+            row $rows_list
         }
     }
 
