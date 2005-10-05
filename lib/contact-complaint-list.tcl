@@ -34,8 +34,12 @@ set elements [list \
 			     display_template \
 			     "<a href=\"$edit_url\"><img border=0 src=\"/resources/Edit16.gif\"></a>
                               <a href=\"${edit_url}&mode=display\">@complaint.title@</a>"] \
-		  customer [list label [_ contacts.Customer]]\
-		  supplier [list label [_ contacts.Supplier]]\
+		  customer [list label [_ contacts.Customer] \
+			       display_template \
+			       "<a href=\"@complaint.customer_url@\">@complaint.customer@</a>"]\
+		  supplier [list label [_ contacts.Supplier] \
+			       display_template \
+			       "<a href=\"@complaint.supplier_url@\">@complaint.supplier@</a>"]\
 		  turnover [list label [_ contacts.Turnover]]\
 		  percent [list label [_ contacts.Percent]]\
 		  state [list label "[_ contacts.Status]:"]\
@@ -96,8 +100,9 @@ template::list::create \
     }
 
 
-db_multirow -extend { customer supplier title description } complaint get_complaints { } {
+db_multirow -extend { customer customer_url supplier supplier_url } complaint get_complaints { } {
     set customer "[contact::name -party_id $customer_id]"
     set supplier "[contact::name -party_id $supplier_id]"
-    db_1row get_revision_info { }
+    set customer_url "/contacts/$customer_id"
+    set supplier_url "/contacts/$supplier_id"
 }
