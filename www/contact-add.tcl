@@ -106,15 +106,6 @@ if {[exists_and_not_null rel_type]} {
 # Furthermore set the title.
 
 if { $object_type == "person" } {
-     ad_form -extend -name party_ae \
-	 -form {
-	     {create_user_p:text(checkbox),optional
-		 {label ""} 
-		 {options {{"[_ contacts.Create_a_user_account_for_this_person]" "t"}}} 
-		 {values ""}
-                 {section "[_ contacts.User_Account_Information]"}
-	     }
-	 }
     set title "[_ contacts.Add_a_Person]"
 } else {
     set title "[_ contacts.Add_an_Organization]"
@@ -157,17 +148,6 @@ ad_form -extend -name party_ae \
 	    if { ![exists_and_not_null last_name] } {
 		template::element::set_error party_ae last_name "[_ contacts.lt_Last_Name_is_required]"
 	    }
-            if { $create_user_p == "t" } {
-                if { ![exists_and_not_null email] } {
-                    template::element::set_error party_ae email "[_ contacts.lt_Email_Address_is_required_for_users]"
-                } else {
-                    set other_user_id [acs_user::get_by_username -username $email]
-                    if { ![empty_string_p $other_user_id] } {
-                        set another_user [contact::link -party_id $other_user_id]
-                        template::element::set_error party_ae email "[_ contacts.lt_-another_user-_already_uses_this_username]"
-                    }
-                }
-            }
 	} else {
 	    if { ![exists_and_not_null name] } {
 		template::element::set_error party_ae name "[_ contacts.Name_is_required]"
@@ -213,9 +193,6 @@ ad_form -extend -name party_ae \
 	    # in order to create a user we need a valid unique username (i.e. their email address).
 	    # the on_submit block has already validated that this is in fact a valid and unique 
 	    # email address which will serve as their username
-	    if { $create_user_p == "t" } {
-		contact::person_upgrade_to_user -person_id $party_id
-	    }
 	    callback contact::person_add -package_id $package_id -person_id $party_id
 
 	    # Add the new categories and enter the Party into the groups
@@ -333,8 +310,4 @@ ad_form -extend -name party_ae \
 	ad_script_abort
     }
 
-if { $object_type == "person" && [parameter::get -boolean -parameter "AllPeopleAreUsers" -default "0"] } {
-    template::element set_properties party_ae create_user_p widget hidden
-    template::element set_value party_ae create_user_p "1"
-}
 ad_return_template
