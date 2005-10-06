@@ -121,6 +121,9 @@ ad_form -extend -name party_ae \
 
 	contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
         set revision_id [contact::revision::new -party_id $party_id]
+
+	
+
         foreach form $ams_forms {
             ams::ad_form::save -package_key "contacts" \
                 -object_type $object_type \
@@ -128,6 +131,31 @@ ad_form -extend -name party_ae \
                 -form_name "party_ae" \
                 -object_id $revision_id
         }
+	
+	# We need to flush the cache for every attribute_id that this party has
+	set flush_attribute_list [db_list_of_lists get_attribute_ids {
+	    select
+	    distinct
+	    ams_a.attribute_id
+	    from
+	    ams_attribute_values ams_a,
+	    ams_attribute_values ams_b,
+	    acs_objects o
+	    where
+	    ams_a.object_id = ams_b.object_id
+	    and ams_b.object_id = o.object_id
+	    and o.context_id = :party_id
+	}]
+	
+	foreach attr_id $flush_attribute_list {
+	    util_memoize_flush [list ams::values_not_cached \
+				    -package_key "contacts" \
+				    -object_type $object_type \
+				    -object_id $attr_id]
+	}
+	
+
+	
 	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was updated"
 
 	set cat_ids [list]
