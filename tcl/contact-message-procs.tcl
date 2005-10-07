@@ -108,19 +108,21 @@ ad_proc -private contact::message::log {
     set creation_ip [ad_conn peeraddr]
     set package_id [ad_conn package_id]
     # We make every message logged in this table an acs_object
-    set object_id [db_string create_acs_object { select acs_object__new (
-									 null,
-									 'contact_message_log',
-									 :sent_date,
-									 :sender_id,
-									 :creation_ip,
-									 :package_id
-									 ) } ]
-    db_dml log_message {
-	insert into contact_message_log
-	( message_id, message_type, sender_id, recipient_id, sent_date, title, description, content, content_format)
-        values
-        ( :object_id, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
+    if { ![string equal $message_type "email"] } {
+	set object_id [db_string create_acs_object { select acs_object__new (
+									     null,
+									     'contact_message_log',
+									     :sent_date,
+									     :sender_id,
+									     :creation_ip,
+									     :package_id
+									     ) } ]
+	db_dml log_message {
+	    insert into contact_message_log
+	    ( message_id, message_type, sender_id, recipient_id, sent_date, title, description, content, content_format)
+	    values
+	    ( :object_id, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
+	}
     }
 }
 
