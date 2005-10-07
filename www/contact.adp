@@ -27,7 +27,7 @@
       size="small"
       recent_on_top_p="1" />
     <if @pm_package_id@>
-      <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@    elements="planned_end_date category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@pm_base_url@" customer_id="@party_id@" status_id="1" fmt="%x %r">
+      <include src=/packages/project-manager/lib/projects orderby=@orderby;noquote@ elements="planned_end_date category_id" package_id=@pm_package_id@ actions_p="1" bulk_p="1" assignee_id="" filter_p="0" base_url="@pm_base_url@" customer_id="@party_id@" status_id="1" fmt="%x %r">
 </if>
     <if @projects_enabled_p@>
       <if @project_url@ ne "">
@@ -68,6 +68,16 @@
 	    elements="name project_name deadline"
 	    cgl_orderby=@cgl_orderby;noquote@
 	    page=@page@
+	>
+	<br>
+        <include src="/packages/project-manager/lib/tasks"
+		display_mode="list"
+		elements="task_item_id title slack_time project_item_id percent_complete"
+		is_observer_p="f"
+		orderby="title,asc"
+		status_id="1"
+		party_id=@dotlrn_club_id@
+		assign_group_p="1"
 	>
       </if>
     </if>
