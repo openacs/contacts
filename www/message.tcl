@@ -18,7 +18,7 @@ ad_page_contract {
     {folder_id:integer ""}
     {signature_id:integer ""}
     {subject ""}
-    {content_body ""}
+    {content_body:html ""}
     {to:integer,multiple,optional ""}
 } -validate {
     valid_message_type -requires {message_type} {
