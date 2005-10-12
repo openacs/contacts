@@ -5,16 +5,16 @@
     <package-name>Contacts</package-name>
     <pretty-plural>Contacts</pretty-plural>
     <initial-install-p>f</initial-install-p>
-    <singleton-p>t</singleton-p>
+    <singleton-p>f</singleton-p>
     
-    <version name="1.0d20" url="http://openacs.org/repository/download/apm/contacts-1.0d20.apm">
+    <version name="1.0d21" url="http://openacs.org/repository/download/apm/contacts-1.0d21.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
         <release-date>2005-10-12</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.0d20"/>
+        <provides url="contacts" version="1.0d21"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
         <requires url="ams" version="1.0d"/>
         <requires url="categories" version="1.0d6"/>
@@ -37,6 +37,7 @@
 " section_name="Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ConverttoJpg"  default="1" description="0 for no, 1 for yes. Flag to convert images to jpegs automatically" section_name="Photos"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DefaultPageSize"  default="50" description="The default page size for this contacts instance. Acceptable values are 0, 25, 50, 100 or 500. If set to 0 there will be no pagination which can be incredibly slow when you have more than a few hundred contacts."/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DefaultPortletLayout"  default="/packages/contacts/lib/portlet" description="The src of the template of the portlet to use in the includes." section_name="Templates"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DefaultViewAttributes"  default="{email} {home_phone} {(h)} {work_phone} {(w)} {mobile_phone} {(m)}" description="The default attributes to view on the main contact page. This should be a list of attribute_name display_code to show for the attribute, the display code will only show up if the person/contact has a value for that attribute."/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="EmailAttachmentsAllowed"  default="1" description="1 for yes, 0 for now. Are email attachments allowed when sending messages?"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ForceSearchBeforeAdd"  default="0" description="1 for yes, 0 for no. Should we force users to search all contacts before they are allowed to add a person or organization? This is not an actual software force but the &quot;add person&quot; and &quot;add organization&quot; buttons will only be displayed after a search on &quot;all contacts.&quot;"/>
