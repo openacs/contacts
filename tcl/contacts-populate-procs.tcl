@@ -52,6 +52,7 @@ ad_proc -public contacts::populate::crm {
     lang::message::register -update_sync de_DE acs-translations "group_title_${leads_id}" "Leads"
 
     contact::group::map -group_id $customers_id -package_id $contacts_package_id
+    contact::group::map -group_id $leads_id -package_id $contacts_package_id
 
     # Hopefully all is now setup to map the groups accordingly.
 
