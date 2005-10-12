@@ -22,6 +22,7 @@ set object_type [contact::type -party_id $party_id]
 set user_id [ad_conn user_id]
 set package_url [ad_conn package_url]
 
+set master_src [parameter::get -parameter "ContactMaster"]
 
 # Code for quickly adding an employee
 
