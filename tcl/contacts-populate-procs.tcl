@@ -45,8 +45,11 @@ ad_proc -public contacts::populate::crm {
 #	set supplier_id [group::new -group_name "Supplier" "group"]
     set customers_id [group::new \
 			  -group_name "Customers" "group"]
+    lang::message::register -update_sync de_DE acs-translations "group_title_${customers_id}" "Kunden"
+
     set leads_id [group::new \
 			  -group_name "Leads" "group"]
+    lang::message::register -update_sync de_DE acs-translations "group_title_${leads_id}" "Leads"
 
     contact::group::map -group_id $customers_id -package_id $contacts_package_id
 
@@ -80,8 +83,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
     
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: First Name(s)"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: First Name(s)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Vorname(n)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Vornamen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -111,8 +114,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Last Name"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Last Names"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Nachname"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Nachnamen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -142,8 +145,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Salutation"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Salutations"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Anrede"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Anreden"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -161,37 +164,37 @@ ad_proc -public contacts::populate::crm {
 		       -attribute_id $attribute_id \
 		       -option "Dear Mr. "]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear Mr."
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrter Herr"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Dear Mrs. "]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear Mrs."
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrte Frau"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Dear Ms. "]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear Ms."
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrte Frau"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Dear "]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrter Herr / Frau"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Dear Professor"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear Professor"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrter Professor"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Dear Dr."]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Dear Dr."
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Sehr geehrter Dr."
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
@@ -209,8 +212,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Title"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Titles"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Titel"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Titel"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -240,8 +243,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Home Address"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Home Addresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Privatanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Privatanschriften"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -271,8 +274,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Home Phone"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Home Phones"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Telefonnummer (privat)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Telefonnummer (privat)"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -302,8 +305,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Private Fax No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Private Fax Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Faxnummer (Privat)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Faxnummer (Privat)"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -333,8 +336,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Private Mobile No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Private Mobile Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Mobilnummer (Privat)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Mobilnummern (Privat)"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -364,8 +367,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Email Address"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Email Addresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Addresse"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Addresse"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -395,8 +398,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Birthdate"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Birthdates"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Geburtstag"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Geburtstage"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -434,8 +437,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company Name"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Organization Names"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenname"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmennamen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -465,8 +468,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Short Company Name"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Short Company Names"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenkuerzel"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenkuerzel"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -497,8 +500,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company Name Extensions"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Company Name Extensions"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Erweiterung Firmenname"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Erweiterung Firmenname"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -528,8 +531,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company Address"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Company Addresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenanschrift"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -540,6 +543,37 @@ ad_proc -public contacts::populate::crm {
 	-list_id $list_id \
 	-attribute_id $attribute_id \
 	-sort_order "30" \
+	-required_p "f" \
+	-section_heading ""
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "email" \
+			  -datatype "string" \
+			  -pretty_name "Email Address" \
+			  -pretty_plural "Email Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "0" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "type_specific" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Adresse"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adresse"
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "email" \
+	-dynamic_p "f"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "34" \
 	-required_p "f" \
 	-section_heading ""
 
@@ -559,8 +593,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company URL"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Company URLs"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Webseite"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Webseiten"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -590,8 +624,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company Phone No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Company Phone Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Telefonnummer (Firma)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Telefonnummern (Firma)"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -621,8 +655,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Company Fax No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Company Fax Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Faxnummer (Firma)"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Faxnummern (Firma)"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -652,8 +686,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Industry Sector"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Industry Sectors"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Branche"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Branchen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -671,19 +705,19 @@ ad_proc -public contacts::populate::crm {
 		       -attribute_id $attribute_id \
 		       -option "Agency - Full Service"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Agency - Full Service"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Full Service Agentur"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Agency - Special"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Agency - Special"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Spezialagentur"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Agency - PR"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Agency - PR"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "PR-Agentur"
 
     #     Organization - Customer
 
@@ -719,8 +753,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Type of Customer"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Types of Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Kundentyp"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Kundentypen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -738,31 +772,31 @@ ad_proc -public contacts::populate::crm {
 		       -attribute_id $attribute_id \
 		       -option "VIP Customer"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: VIP Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "VIP Kunde"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Good Customer"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Good Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Guter Kunde"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Normal Customer"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Normal Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Normaler Kunde"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Sporadic Customer"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Sporadic Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Gelegentlicher Kunde"
 
     set option_id [ams::option::new \
 		       -attribute_id $attribute_id \
 		       -option "Follow-up Customer"]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "GERMAN:: Follow-up Customer"
+    lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "Follow-Up Kunde"
 
     set attribute_id [attribute::new \
 			  -object_type "organization" \
@@ -780,8 +814,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Customer Since"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Customers Since"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Kunde seit"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Kunde seit"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -831,8 +865,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Department"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Departments"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Abteilung"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Abteilungen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -862,8 +896,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Job Title"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Job Titles"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Position"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Positionen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -893,8 +927,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Direct Phone No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Direct Phone Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Durchwahl"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Durchwahlen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -924,8 +958,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Other Tel. No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Other Tel. Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Andere Telefonnummer"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Andere Telefonnummern"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -955,8 +989,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Direct Fax No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Direct Fax Numbers"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Direkte Faxnummer"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Direkte Faxnummern"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -986,8 +1020,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Mobile Phone No."
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Mobile Phones"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Mobilfunk Nummer"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Mobilfunk Nummer"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1017,8 +1051,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: E-Mail Adress"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: E-Mail Adresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Adresse"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adresse"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1048,8 +1082,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Delivery Address"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Delivery Addresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Lieferanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Lieferanschrift"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1079,8 +1113,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Visit Adress"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Visit Adresses"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Besuchsanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Besuchsanschrift"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -1098,37 +1132,37 @@ ad_proc -public contacts::populate::crm {
 
     rel_types::create_role -role "parent_company" -pretty_name "Parent Company" -pretty_plural "Parent Companies"
     rel_types::create_role -role "subsidiary" -pretty_name "Subsidiary" -pretty_plural "Subsidiaries"
-    rel_types::new -table_name "contact_rels_subsidiary" -create_table_p "t" -supertype "contact_rel" -role_one "parent_company" -role_two "subsidiary" \
-	"contact_rels_subsidiary" \
-	"Contact Rel Subsidiary" \
-	"Contact Rels Subsidiary" \
-	"organization" \
-	"0" \
-	"" \
-	"organization" \
-	"0" \
-	""
+#    rel_types::new -table_name "contact_rels_subsidiary" -create_table_p "t" -supertype "contact_rel" -role_one "parent_company" -role_two "subsidiary" \
+#	"contact_rels_subsidiary" \
+#	"Contact Rel Subsidiary" \
+#	"Contact Rels Subsidiary" \
+#	"organization" \
+#	"0" \
+#	"" \
+#	"organization" \
+#	"0" \
+#	""
     #   Contact Rels Employement 
 
     lang::message::register -update_sync de_DE acs-translations role_parent_company "Kundenberater"
 
-    set list_id [ams::list::new \
-		     -package_key "contacts" \
-		     -object_type "contact_rels_employment" \
-		     -list_name "$contacts_package_id" \
-		     -pretty_name "Contact Rels Employement" \
-		     -description "" \
-		     -description_mime_type ""]
+#    set list_id [ams::list::new \
+#		     -package_key "contacts" \
+#		     -object_type "contact_rels_employment" \
+#		     -list_name "$contacts_package_id" \
+#		     -pretty_name "Contact Rels Employement" \
+#		     -description "" \
+#		     -description_mime_type ""]
 
     # Contact Rels Subsidiary
 
-    set list_id [ams::list::new \
-		     -package_key "contacts" \
-		     -object_type "contact_rels_subsidiary" \
-		     -list_name "$contacts_package_id" \
-		     -pretty_name "Contact Rels Subsidiary" \
-		     -description "" \
-		     -description_mime_type ""]
+#    set list_id [ams::list::new \
+#		     -package_key "contacts" \
+#		     -object_type "contact_rels_subsidiary" \
+#		     -list_name "$contacts_package_id" \
+#		     -pretty_name "Contact Rels Subsidiary" \
+#		     -description "" \
+#		     -description_mime_type ""]
 
     set attribute_id [attribute::new \
 			  -object_type "contact_rels_subsidiary" \
@@ -1146,8 +1180,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "GERMAN:: Shares"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "GERMAN:: Shares"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Anteil"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Anteile"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
