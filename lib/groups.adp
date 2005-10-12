@@ -9,11 +9,15 @@
 <if @groups:rowcount@ gt 0>
 <h3 class="contact-title"><if @hide_form_p@ true><a href="./groups"></if>#contacts.Groups#<if @hide_form_p@ true></a></if></h3>
 <ul>
+<table>
 <multiple name="groups">
-<if @groups.sub_p@>(</if><else><li></else>
-@groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a>
+<tr><td align="right">
+   <if @groups.sub_p@>(</if><else><li></else>
+   @groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a>
 <if @groups.sub_p@>)</if>
+</td></tr>
 </multiple>
+</table>
 </ul>
 </if>
 <else>
