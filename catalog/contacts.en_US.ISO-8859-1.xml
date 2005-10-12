@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d17" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d21" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -146,6 +146,7 @@
   <msg key="Freelancers">Freelancers</msg>
   <msg key="From">From</msg>
   <msg key="Get">Get</msg>
+  <msg key="Glossars">Glossars</msg>
   <msg key="Go">Go</msg>
   <msg key="Go_to_search_results">Go to search results</msg>
   <msg key="Group">Group</msg>
@@ -365,6 +366,7 @@
   <msg key="Object_id">Object_id</msg>
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
+  <msg key="Offers">Offers</msg>
   <msg key="open">Open</msg>
   <msg key="or">or</msg>
   <msg key="Ordering">Ordering</msg>
@@ -398,6 +400,8 @@
   <msg key="Processes">Processes</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Project">Project:</msg>
+  <msg key="Projects">Projects</msg>
+  <msg key="Projects_tasks">Project Tasks</msg>
   <msg key="Public">Public</msg>
   <msg key="Public_Messages">Public Messages</msg>
   <msg key="Public_Page">Public Page</msg>
