@@ -31,6 +31,7 @@ if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 
+
 set path_info [ad_conn path_info]
 if { $path_info == "add/person" } {
     set object_type "person"
@@ -136,7 +137,7 @@ ad_form -extend -name party_ae \
 	}
     } -new_request {
 	foreach group $group_ids {
-	    if { [permission::permission_p -object_id $group -party_id $user_id -privilege "create"] } {
+	    if { ![permission::permission_p -object_id $group -party_id $user_id -privilege "create"] } {
 		ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 		ad_script_abort
 	    }
