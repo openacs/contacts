@@ -391,13 +391,18 @@ ad_proc -public contact::groups {
     # set filter_clause ""
     set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
     db_foreach get_groups {} {
-        if {$mapped_p 
-	    || $all_p} {
+	# We check if the group has the required privilege 
+	# specified on privilege_required switch, if not then
+	# we just simple continue with the next one
+	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege $privilege_required] } {
+	    continue
+	}
+
+        if { $mapped_p || $all_p} {
             lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p]
-            if {$component_count > 0 
-		&& ( $expand == "all" || $expand == $group_id ) } {
+            if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
-		    if {$mapped_p || $all_p} {
+		    if { $mapped_p || $all_p} {
 			lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]
 		    }
 		}
