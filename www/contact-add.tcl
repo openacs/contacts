@@ -18,7 +18,7 @@ ad_page_contract {
 	}
     }
 }
-
+set master_src [parameter::get -parameter "ContactsMaster"]
 set default_group [contacts::default_group]
 
 
@@ -134,7 +134,20 @@ ad_form -extend -name party_ae \
 	if { [llength $missing_elements] > 0 } {
             ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required_]<ul><li>[join $missing_elements "</li><li>"]</li></ul>"
 	}
+    } -new_request {
+	foreach group $group_ids {
+	    if { [permission::permission_p -object_id $group -party_id $user_id -privilege "create"] } {
+		ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
+		ad_script_abort
+	    }
+	}
     } -edit_request {
+	foreach group $group_ids {
+	    if { ![permission::permission_p -object_id $group -party_id $user_id -privilege "write"] } {
+		ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
+		ad_script_abort
+	    }
+	}
     } -on_submit {
 
 	# for orgs name needs to be unique
