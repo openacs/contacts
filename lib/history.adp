@@ -1,5 +1,3 @@
-<h3>#contacts.History#</h3>
-
 <if @form@ eq top>
 <formtemplate id="comment_add" style="../../../contacts/resources/forms/inline"></formtemplate>
 </if>
