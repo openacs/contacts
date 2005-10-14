@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d21" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d22" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -74,6 +74,7 @@
   <msg key="complaint_description_help">Extensive description of the complaint, especially why it was given.</msg>
   <msg key="complaint_paid_help">How much was paid to the supplier</msg>
   <msg key="complaint_percent_help">Rebate in percent that has had to be given due to the complaint</msg>
+  <msg key="complaint_refund_help">Amount paid back to the customer</msg>
   <msg key="complaint_status_help">What is the status of the complaint</msg>
   <msg key="complaint_title_help">Short name for identifying the complaint</msg>
   <msg key="complaint_turnover_help">Turnover that was made with the customer with regards to the complaint</msg>
@@ -107,6 +108,7 @@
   <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
   <msg key="Customer">Customer:</msg>
+  <msg key="Customer_has_no_employees">Customer has no employees.</msg>
   <msg key="Date">Date</msg>
   <msg key="days">days</msg>
   <msg key="Delete">Delete</msg>
@@ -409,6 +411,7 @@
   <msg key="Query">Query</msg>
   <msg key="READ_THESE">READ THESE</msg>
   <msg key="Recipients">Recipients</msg>
+  <msg key="Refund">Refund</msg>
   <msg key="Relationship">Relationship</msg>
   <msg key="Relationship_Added">Relationship Added</msg>
   <msg key="Relationship_Deleted">Relationship Deleted</msg>
