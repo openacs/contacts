@@ -18,7 +18,11 @@
       <include
 	src="/packages/contacts/lib/tasks-tasks-portlet"
 	party_id="@party_id@"
-	hide_form_p="t" />
+	hide_form_p="t"
+	page="@page@"
+	tasks_orderby="@tasks_orderby@"
+	page_flush_p="0"
+	page_size="15" />	
 	<br />
     </if>
     <include

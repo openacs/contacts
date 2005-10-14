@@ -9,6 +9,7 @@ ad_page_contract {
     {party_id:integer,notnull}
     {orderby ""}
     {cgl_orderby ""}
+    {tasks_orderby ""}
     {page "1"}
 } -validate {
     contact_exists -requires {party_id} {

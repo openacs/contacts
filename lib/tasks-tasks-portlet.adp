@@ -11,7 +11,11 @@
 	     <include
         	src="/packages/tasks/lib/tasks"
 	        party_id="@party_id@"
-        	hide_form_p="t" />
+        	hide_form_p="t" 
+		page="@page@"
+		tasks_orderby="@tasks_orderby@"
+		page_flush_p="@page_flush_p@"
+		page_size="@page_size@" />	
         </td>
       </tr>
     </table>
