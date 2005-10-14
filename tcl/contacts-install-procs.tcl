@@ -60,6 +60,74 @@ ad_proc -public contacts::install::package_install {
 	"organization" \
 	"0" \
 	""
+
+    # Creation of contact_complaint_track table
+    content::type::new -content_type "contact_complaint" \
+	-pretty_name "Contact Complaint" \
+	-pretty_plural "Contact Complaints" \
+	-table_name "contact_complaint_track" \
+	-id_column "complaint_id"
+    
+    # now set up the attributes that by default we need for the complaints
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "customer_id" \
+	-datatype "integer" \
+	-pretty_name "Customer ID" \
+	-sort_order 1 \
+	-column_spec "integer constraint contact_complaint_track_customer_fk
+                                  references parties(party_id) on delete cascade"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "turnover" \
+	-datatype "money" \
+	-pretty_name "Turnover" \
+	-sort_order 2 \
+	-column_spec "float"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "percent" \
+	-datatype "integer" \
+	-pretty_name "Percent" \
+	-sort_order 3 \
+	-column_spec "integer"
+
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "supplier_id" \
+	-datatype "integer" \
+	-pretty_name "Supplier ID" \
+	-sort_order 4 \
+	-column_spec "integer"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "paid" \
+	-datatype "money" \
+	-pretty_name "Paid" \
+	-sort_order 5 \
+	-column_spec "float"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "complaint_object_id" \
+	-datatype "integer" \
+	-pretty_name "Complaint Object ID" \
+	-sort_order 6 \
+	-column_spec "integer constraint contact_complaint_track_complaint_object_id_fk 
+                                  references acs_objects(object_id) on delete cascade"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "state" \
+	-datatype "string" \
+	-pretty_name "State" \
+	-sort_order 7 \
+	-column_spec "varchar(7) constraint cct_state_ck
+                                  check (state in ('valid','invalid','open'))"
+    
 }
 
 ad_proc -public contacts::install::package_instantiate {
