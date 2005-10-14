@@ -2,6 +2,18 @@
 
 <queryset>
 
+<fullquery name="get_employees">
+    <querytext>
+	select
+		r.object_id_one as emp_id
+	from
+		acs_rels r
+	where
+		r.object_id_two = :customer_id
+		and rel_type = 'contact_rels_employment'
+    </querytext>
+</fullquery>
+
 <fullquery name="get_users">
     <querytext>
 	select

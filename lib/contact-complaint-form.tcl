@@ -42,6 +42,35 @@ ad_form -extend -name complaint_form -form {
     }
 }
 
+if { [exists_and_not_null customer_id]} {
+    # We get all the employees of this customer_id
+    set emp_options [list]
+    lappend emp_options [list "- - - - - -" ""]
+    db_foreach get_employees { } {
+	set emp_name [contact::name -party_id $emp_id]
+	append emp_name " ([contact::email -party_id $emp_id])"
+	lappend emp_options [list $emp_name $emp_id]
+    }
+    ad_form -extend -name complaint_form -form {
+	{employee_id:text(select),optional
+	    {label "[_ contacts.Employee]:"}
+	    {options $emp_options}
+	    {value ""}
+	}
+    }
+} else {
+    ad_form -extend -name complaint_form -form {
+	{employee_id:text(hidden)
+	    {label "[_ contacts.Employee]:"}
+	    {value ""}
+	}
+	{employee_inform:text(inform)
+	    {label "[_ contacts.Employee]:"}
+	    {value "[_ contacts.Customer_has_no_employees]"}
+	}
+    }
+}
+
 if { ![exists_and_not_null supplier_id]} {
     set user_options [list]
     db_foreach get_users { } {
@@ -75,12 +104,12 @@ if { ![exists_and_not_null supplier_id]} {
 }
 
 ad_form -extend -name complaint_form -form {
-    {turnover:text(text)
+    {turnover:text(text),optional
 	{label "[_ contacts.Turnover]"}
 	{html {size 10}}
         {help_text "[_ contacts.complaint_turnover_help]"}
     }
-    {percent:text(text)
+    {percent:text(text),optional
 	{label "[_ contacts.Percent]"}
 	{html {size 2}}
 	{after_html "%"}
@@ -98,17 +127,21 @@ ad_form -extend -name complaint_form -form {
 }
 
 ad_form -extend -name complaint_form -form {
-    {paid:text(text)
+    {paid:text(text),optional
 	{label "[_ contacts.Paid]"}
 	{html {size 10}}
         {help_text "[_ contacts.complaint_paid_help]"}
 
     }
-    {state:text(select)
+    {refund_amount:text(text),optional
+	{label "[_ contacts.Refund]:"}
+	{html {size 10}}
+	{help_text "[_ contacts.complaint_refund_help]"}
+    }
+    {state:text(select),optional
 	{label "[_ contacts.Status]"}
 	{options { { [_ contacts.open] open } { [_ contacts.valid] valid } { [_ contacts.invalid] invalid } }}
         {help_text "[_ contacts.complaint_status_help]"}
-
     }
     {description:text(textarea)
 	{label "[_ contacts.Description]"}
@@ -131,8 +164,10 @@ ad_form -extend -name complaint_form -form {
 	-supplier_id $supplier_id \
 	-paid $paid \
 	-complaint_object_id $complaint_object_id \
-	-state $state
-
+	-state $state \
+	-employee_id $employee_id \
+	-refund_amount $refund_amount 
+    
 
 } -edit_data {
     
@@ -146,8 +181,9 @@ ad_form -extend -name complaint_form -form {
 	-supplier_id $supplier_id \
 	-paid $paid \
 	-complaint_object_id $complaint_object_id \
-	-state $state
-
+	-state $state \
+	-employee_id $employee_id \
+	-refund_amount $refund_amount 
 
 } -new_request {
     if { [exists_and_not_null complaint_object_id]} {

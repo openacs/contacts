@@ -5,10 +5,10 @@
 <fullquery name="contact::complaint::new.insert_complaint">
     <querytext>
 	insert into
-		contact_complaint_track 
-		(complaint_id,customer_id,turnover,percent,supplier_id,paid,complaint_object_id,state)
-		values
-		(:complaint_id,:customer_id,:turnover,:percent,:supplier_id,:paid,:complaint_object_id,:state)
+  	   contact_complaint_track 
+	   (complaint_id,customer_id,turnover,percent,supplier_id,paid,complaint_object_id,state,employee_id,refund_amount)
+	   values
+           (:complaint_id,:customer_id,:turnover,:percent,:supplier_id,:paid,:complaint_object_id,:state,:employee_id,:refund_amount)
     </querytext>
 </fullquery>
 

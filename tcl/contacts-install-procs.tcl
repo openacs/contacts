@@ -127,6 +127,23 @@ ad_proc -public contacts::install::package_install {
 	-sort_order 7 \
 	-column_spec "varchar(7) constraint cct_state_ck
                                   check (state in ('valid','invalid','open'))"
+
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "employee_id" \
+	-datatype "integer" \
+	-pretty_name "Employee ID" \
+	-sort_order 8 \
+	-column_spec "integer constraint contact_complaint_track_employee_fk
+                                  references parties(party_id) on delete cascade"
+    
+    content::type::attribute::new \
+	-content_type "contact_complaint" \
+	-attribute_name "refund" \
+	-datatype "money" \
+	-pretty_name "Refund" \
+	-sort_order 9 \
+	-column_spec "float"
     
 }
 
@@ -421,6 +438,27 @@ ad_proc -public contacts::install::package_upgrade {
 		
 		# Now we just delete the table contact_complaint_tracking
 		db_dml drop_table { drop table contact_complaint_tracking } 
+	    }
+	    
+	    1.0d21 1.0d22 {
+
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "employee_id" \
+		    -datatype "integer" \
+		    -pretty_name "Employee ID" \
+		    -sort_order 8 \
+		    -column_spec "integer constraint contact_complaint_track_employee_fk
+                                  references parties(party_id) on delete cascade"
+
+		content::type::attribute::new \
+		    -content_type "contact_complaint" \
+		    -attribute_name "refund_amount" \
+		    -datatype "money" \
+		    -pretty_name "Refund" \
+		    -sort_order 9 \
+		    -column_spec "float"
+
 	    }
 	}
 }
