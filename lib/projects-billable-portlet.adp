@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title"><a href="/invoices">#invoices.Billable_Projects#</a></property>
+<property name="portlet_title"><a href="/invoices/projects-billable?organization_id=@organization_id@"">#invoices.Billable_Projects#</a></property>
 
 <table width="100%">
 <tr>
@@ -11,7 +11,8 @@
                 organization_id="@organization_id@"
                 elements="@elements@"
                 package_id="@package_id@"
-                base_url="@base_url@" />
+                base_url="@base_url@"
+		no_actions_p="1" />
         </td>
       </tr>
     </table>
