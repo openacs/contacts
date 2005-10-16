@@ -33,6 +33,8 @@
 		no_callback_p="f"
 		action="message"
 		signature_id=@signature_id@
+                file_ids="@file_ids@"
+                object_id="@context_id@"
 	        >
 	</if>
 	<else>

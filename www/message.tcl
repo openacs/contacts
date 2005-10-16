@@ -5,6 +5,7 @@ ad_page_contract {
     @creation-date 2004-07-28
     @cvs-id $Id$
 } {
+    {object_id:integer,multiple,optional}
     {party_id:integer,multiple,optional}
     {party_ids:optional}
     {message_type ""}
@@ -12,7 +13,6 @@ ad_page_contract {
     {header_id:integer ""}
     {footer_id:integer ""}
     {return_url "./"}
-    {object_id:integer,multiple,optional}
     {file_ids ""}
     {item_id:integer ""}
     {folder_id:integer ""}
@@ -20,15 +20,11 @@ ad_page_contract {
     {subject ""}
     {content_body:html ""}
     {to:integer,multiple,optional ""}
+    {context_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { [lsearch [list email letter] $message_type] < 0 } {
 	    ad_complain "[_ contacts.lt_Your_provided_an_inva]"
-	}
-    }
-    valid_party_submission {
-	if { ![exists_and_not_null party_id] && ![exists_and_not_null party_ids] } { 
-	    ad_complain "[_ contacts.lt_Your_need_to_provide_]"
 	}
     }
 }
@@ -42,6 +38,13 @@ if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
 if { [exists_and_not_null party_id] } {
     set party_ids [list]
     foreach party_id $party_id {
+	lappend party_ids $party_id
+    }
+}
+
+if { [exists_and_not_null to] } {
+    set party_ids [list]
+    foreach party_id $to {
 	lappend party_ids $party_id
     }
 }
@@ -166,13 +169,20 @@ if {[exists_and_not_null object_id]} {
 		lappend file_list $revision_id
 	    }
 	} else {
-	    lappend file_list $object
+	    set revision_id [content::item::get_best_revision -item_id $object]
+	    if {[empty_string_p $revision_id]} {
+		# so already is a revision
+		lappend file_list $object
+	    } else {
+		# append revision of content item
+		lappend file_list $revision_id
+	    }
 	}
     }
 }
 
 if {[exists_and_not_null file_list]} {
-    set file_ids [join $file_list ","]
+    set file_ids [join $file_list " "]
 }
 
 set form_elements {
