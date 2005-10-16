@@ -54,7 +54,9 @@ set elements_list [list \
 		  turnover [list label [_ contacts.Turnover]]\
 		  percent [list label [_ contacts.Percent]]\
 		  state [list label "[_ contacts.Status]:"]\
-		  complaint_object_id [list label [_ contacts.Object_id]]\
+		  complaint_object_id [list label [_ contacts.Object_id] \
+					  display_template \
+					  "<a href=\"@complaint.object_url@\">@complaint.complaint_object_id@</a>"]\
 		  description [list label [_ contacts.Description]]\
 		 ]
 
@@ -102,9 +104,10 @@ template::list::create \
     }
 
 
-db_multirow -extend { customer customer_url supplier supplier_url } complaint get_complaints { } {
+db_multirow -extend { customer customer_url supplier supplier_url object_url} complaint get_complaints { } {
     set customer "[contact::name -party_id $customer_id]"
     set supplier "[contact::name -party_id $supplier_id]"
     set customer_url "/contacts/$customer_id"
     set supplier_url "/contacts/$supplier_id"
+    set object_url "/o/$complaint_object_id"
 }
