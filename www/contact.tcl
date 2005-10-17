@@ -93,7 +93,9 @@ if { $object_type == "organization" && $pm_installed_p} {
     # So first we get all projects were the party_id is customer
     
     set project_list [db_list get_projects { }]
-    
+    # Default value for select menu
+    set select_menu "<select name=\"supplier_id\"><option value=\"-100\" selected> - - - - - -</option></select>"
+
     if {![empty_string_p $project_list]} {
 	# Now we search for all the members of the Freelancer
 	# group that are assigned to one of this projects.
@@ -101,16 +103,16 @@ if { $object_type == "organization" && $pm_installed_p} {
 	# Get the group members list
 	set group_id [group::get_id -group_name "Freelancer"]
 	set group_members_list [group::get_members -group_id $group_id]
-		
-	# Now we create the select menu to use
-	set select_menu "<select name=\"supplier_id\">"
-	append select_menu "<option value=\"-100\" selected> - - - - - -</option>"
-	db_foreach get_members {  } {
-	    append select_menu "<option value=\"$supplier_id\">[contact::name -party_id $supplier_id]</option>"
+	if { ![string equal [llength $group_members_list] "0"] } {
+	    # Now we create the select menu to use
+	    # since there is at least one member to the group
+	    set select_menu "<select name=\"supplier_id\">"
+	    append select_menu "<option value=\"-100\" selected> - - - - - -</option>"
+	    db_foreach get_members {  } {
+		append select_menu "<option value=\"$supplier_id\">[contact::name -party_id $supplier_id]</option>"
+	    }
+	    append select_menu "</select>"
 	}
-	append select_menu "</select>"
-    } else {
-	set select_menu ""
     }
 }
 
