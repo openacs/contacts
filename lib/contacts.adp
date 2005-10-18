@@ -1,10 +1,16 @@
 <if @search_id@ not nil>
-    <if @available_options@ not nil>
     <br>
-    <b>#contacts.You_can_extend#</b>
-    <formtemplate id="extend" style=inline></formtemplate> 
-    </if>
-    <br>
+    <table>
+	<tr><td><b>#contacts.You_can_extend#</b></td></tr>
+	<tr>
+    	<if @available_options@ not nil>
+	   <td><formtemplate id="extend" style="inline"></formtemplate></td>
+           <td>&nbsp;&nbsp;&nbsp;</td>
+        </if>
+	<td><formtemplate id="ams_attributes" style="inline"></formtemplate></td>
+	</tr>
+    </table>
 </if>
+
 <br>
 <listtemplate name="contacts"></listtemplate>
