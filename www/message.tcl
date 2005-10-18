@@ -20,6 +20,7 @@ ad_page_contract {
     {subject ""}
     {content_body:html ""}
     {to:integer,multiple,optional ""}
+    {page:optional 1}
     {context_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {

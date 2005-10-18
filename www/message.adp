@@ -54,5 +54,5 @@
   </else>
 </if>
 <if @party_count@ eq 1>
-   <include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@">
+   <include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@" page="@page@">
 </if>
