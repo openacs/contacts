@@ -9,6 +9,7 @@
 	base_url="/contacts/" 
 	extend_p="@extend_p@" 
 	extend_values="@extend_values@"
+	attribute_values="@attribute_values@"
    >
 </else>
         

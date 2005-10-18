@@ -15,6 +15,7 @@ ad_page_contract {
     {add_organization:optional}
     {aggregate_attribute_id ""}
     {extend_values:optional ""}
+    {attribute_values:optional ""}
 }
 
 if { [exists_and_not_null add_person] } {
