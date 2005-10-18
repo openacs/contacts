@@ -96,8 +96,20 @@ ad_proc -private contact::message::log {
     {-description ""}
     {-content:required}
     {-content_format "text/plain"}
+    {-item_id ""}
 } {
-    Does a mailing address exist for this party
+    Logs a message into contact_message_log table.
+
+    @param message_type  The message_type of this message (e.g email, letter).
+    @param sender_id     The party_id of the sender of the message.
+    @recipient_id        The party_id of the reciever of the message.
+    @sent_date           The date when the message was sent. Default to now.
+    @title               The title of the logged message.
+    @description         The description of the logged message.
+    @content             The content of the message.
+    @content_format      The format of the content.
+    @item_id             The item_id of the message from the default messages.
+    
 } {
     if { ![exists_and_not_null sender_id] } {
 	set sender_id [ad_conn user_id]
@@ -107,22 +119,22 @@ ad_proc -private contact::message::log {
     }
     set creation_ip [ad_conn peeraddr]
     set package_id [ad_conn package_id]
-    # We make every message logged in this table an acs_object
+
+    # First we check the parameter to see if the emails are going to be logged or not,
+    # if they are then we check if the message is a default one (message_id).
+
     if { ![string equal $message_type "email"] } {
-	set object_id [db_string create_acs_object { select acs_object__new (
-									     null,
-									     'contact_message_log',
-									     :sent_date,
-									     :sender_id,
-									     :creation_ip,
-									     :package_id
-									     ) } ]
-	db_dml log_message {
-	    insert into contact_message_log
-	    ( message_id, message_type, sender_id, recipient_id, sent_date, title, description, content, content_format)
-	    values
-	    ( :object_id, :message_type, :sender_id, :recipient_id, :sent_date, :title, :description, :content, :content_format)
-	}
+
+	# We make every message logged in this table an acs_object
+	set object_id [db_string create_acs_object { }]
+	db_dml log_message { }
+	
+    } elseif { [parameter::get -parameter "LogEmailsP"] && [exists_and_not_null item_id] } {
+	
+	# We log all emails that used a default email message.
+	set object_id $item_id
+	db_dml log_message { }
+	
     }
 }
 
