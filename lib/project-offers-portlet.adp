@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title">#contacts.Offers#</property>
+<property name="portlet_title">#contacts.Projects#</property>
 
 
 <table width="100%">
@@ -13,7 +13,7 @@
                 elements="@elements@"
                 package_id="@package_id@"
                 base_url="@base_url@"
-		status_id="@status_id@" />
+		status_id="1" />
         </td>
       </tr>
     </table>

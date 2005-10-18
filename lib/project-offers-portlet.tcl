@@ -1,4 +1,4 @@
-# Portlet for displaying all projects which have the status offer along with the offer-list
+# Portlet for displaying all offer-item lists of projects that have the status Open
 
 foreach optional_param {status_id} {
     if {![info exists $optional_param]} {
