@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="1.0d22" url="http://openacs.org/repository/download/apm/contacts-1.0d22.apm">
+    <version name="1.0d23" url="http://openacs.org/repository/download/apm/contacts-1.0d23.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2005-10-14</release-date>
+        <release-date>2005-10-18</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.0d22"/>
+        <provides url="contacts" version="1.0d23"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
         <requires url="ams" version="1.0d"/>
         <requires url="categories" version="1.0d6"/>
@@ -50,6 +50,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="History"  default="/packages/contacts/templates/history" description="The template src for history page" section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ImageMagickPath"  default="/usr/local/bin" description="Absolute path from computer root to directory containing ImageMagick executables" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Index"  default="/packages/contacts/templates/index" description="The template src for the index page" section_name="Portal Templates"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="LogEmailsP"  default="t" description="Boolean that indicates if messages of type &quot;email&quot; are going to be logged or not on the contact_message_log"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="MailingAddressAttributeIdOrder"  description="A list of attribute_ids for postal addresses in order of priority. In doing a letter mail merge the first attribute_id in this list that a contact has a value for will be used as the mailing address. If no attribute_ids are specified all postal_address attribute_ids will be used in alphabetical order."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Message"  default="/packages/contacts/templates/message" description="The template src for the message page" section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PortraitSize"  default="200x200" description="Max dimensions for portrait" section_name="Photos"/>
