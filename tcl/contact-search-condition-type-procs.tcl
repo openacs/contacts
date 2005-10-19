@@ -426,6 +426,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                             }
                         }
                         ams_value__time {
+			    set value_pretty [lc_time_fmt $value "%q"]
                             set interval "$value [string tolower [lindex $var_list 3]]"
                             switch $operand {
                                 less_than {
@@ -919,26 +920,33 @@ group by party_id
 where rel_count >= $times )"
 		}
                 in_search {
+                    set role [lindex $var_list 0]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_in_the_search_search_link]
-  		    set output_code "party_id in 
-( select party_id from
-(
-select distinct party_id from
-$union_reverse rels
-) rel_count_and_id
-where [contact::party_id_in_sub_search_clause -search_id $search_id] )"
+                    set output_code "
+party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+                from acs_rels, acs_rel_types
+               where acs_rels.rel_type = acs_rel_types.rel_type
+                 and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
+                 and ( acs_rel_types.role_two = '$role' or acs_rel_types.role_one = '$role' )
+                 and [contact::party_id_in_sub_search_clause -search_id $search_id -party_id "CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_two ELSE acs_rels.object_id_one END"]
+            )
+"
+
                 }
                 not_in_search {
+                    set role [lindex $var_list 0]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_not_in_the_search_search_link]
-  		    set output_code "party_id in 
-( select party_id from
-(
-select distinct party_id from
-$union_reverse rels
-) rel_count_and_id
-where [contact::party_id_in_sub_search_clause -search_id $search_id -not] )"
+                    set output_code "
+party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+                from acs_rels, acs_rel_types
+               where acs_rels.rel_type = acs_rel_types.rel_type
+                 and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
+                 and ( acs_rel_types.role_two = '$role' or acs_rel_types.role_one = '$role' )
+                 and [contact::party_id_in_sub_search_clause -not -search_id $search_id -party_id "CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_two ELSE acs_rels.object_id_one END"]
+            )
+"
                 }
             }
             if { $request == "pretty" } {
