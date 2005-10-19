@@ -132,7 +132,7 @@ ad_proc -private contact::message::log {
     } elseif { [parameter::get -parameter "LogEmailsP"] && [exists_and_not_null item_id] } {
 	
 	# We log all emails that used a default email message.
-	set object_id $item_id
+	set object_id [db_string create_acs_object { }]
 	db_dml log_message { }
 	
     }
