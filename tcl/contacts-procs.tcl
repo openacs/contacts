@@ -546,6 +546,8 @@ ad_proc -public contact::groups {
             }
         }
     }
+    set group_list [ams::util::localize_list_of_lists -list $group_list]
+
     switch $output {
         list {
             set list_output [list]
