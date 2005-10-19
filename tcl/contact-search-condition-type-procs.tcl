@@ -89,6 +89,7 @@ ad_proc -private contacts::search::condition_type::attribute {
     {-prefix ""}
     {-without_arrow_p "f"}
     {-only_multiple_p "f"}
+    {-null_display "- - - - - -"}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
     @param without_arrow_p Show the elementes in the select menu without the "->"
@@ -123,7 +124,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                 switch $value_method {
                     ams_value__options {
                         set operand_options [list \
-						 [list "- - - - - -" ""] \
+						 [list "$null_display" ""] \
                                                  [list "[_ contacts.is_-]" "selected"] \
                                                  [list "[_ contacts.is_not_-]" "not_selected"] \
                                             ]
@@ -135,7 +136,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__telecom_number {
                         set operand_options [list \
-						 [list "- - - - - -" ""] \
+						 [list "$null_display" ""] \
                                                  [list "[_ contacts.area_code_is_-]" "area_code_equals"] \
                                                  [list "[_ contacts.area_code_is_not_-]" "not_area_code_equals"] \
                                                  [list "[_ contacts.country_code_is_-]" "country_code_equals"] \
@@ -147,7 +148,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__text {
                         set operand_options [list \
-						 [list "- - - - - -" ""] \
+						 [list "$null_display" ""] \
                                                  [list "[_ contacts.contains_-]" "contains"] \
                                                  [list "[_ contacts.does_not_contain_-]" "not_contains"] \
                                                 ]
@@ -157,7 +158,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__postal_address {
                         set operand_options [list \
-						 [list "- - - - - -" ""] \
+						 [list "$null_display" ""] \
                                                  [list "[_ contacts.country_is_-]" "country_is"] \
                                                  [list "[_ contacts.country_is_not_-]" "country_is_not"] \
                                                  [list "[_ contacts.stateprovince_is_-]" "state_is"] \
@@ -187,7 +188,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                     }
                     ams_value__time {
                         set operand_options [list \
-						 [list "- - - - - -" ""] \
+						 [list "$null_display" ""] \
                                                  [list "[_ contacts.is_less_than_-]" "less_than"] \
                                                  [list "[_ contacts.is_more_than_-]" "more_than"] \
                                                  [list "[_ contacts.is_after_-]" "after"] \
@@ -230,7 +231,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 		set attribute_options [contacts::attribute::options_attribute]
 	    }
             set sorted_options [ams::util::localize_and_sort_list_of_lists -list $attribute_options]
-            set attribute_options [list [list "- - - -" ""]]
+            set attribute_options [list [list "$null_display" ""]]
             foreach op $sorted_options {
 		if { $without_arrow_p } {
 		    lappend attribute_options [list "[lindex $op 0]" "[lindex $op 1]"]
@@ -438,22 +439,30 @@ ad_proc -private contacts::search::condition_type::attribute {
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < ( now() - '$interval'::interval ) )"
                                 }
                                 after {
+				    #
+				    # its a lot cleaner to not try and do a hack as below to get the date formatted in a lang key, instead change the key to use value_pretty
+				    #
+				    set value_pretty [lc_time_fmt $value "%q"]
                                     set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
 				    # We need to evalute the date_part since the i18N message doesn't
 				    # execute the tcl code.
-				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
-				    set date_result [eval $date_part]
-				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
+#				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
+#				    set date_result [eval $date_part]
+#				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
 
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time > '$value'::timestamptz )"
                                 }
                                 before {
+				    #
+				    # its a lot cleaner to not try and do a hack as below to get the date formatted in a lang key, instead change the key to use value_pretty
+				    #
+				    set value_pretty [lc_time_fmt $value "%q"]
 				    # We need to evalute the date_part since the i18N message doesn't
 				    # execute the tcl code.
                                     set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
-				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
-				    set date_result [eval $date_part]
-				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
+#				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
+#				    set date_result [eval $date_part]
+#				    regsub -nocase {\[lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*\]} $output_pretty $date_result output_pretty				    
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < '$value'::timestamptz )"
                                 }
                             }
@@ -700,7 +709,7 @@ ad_proc -private contacts::search::condition_type::group {
             switch $operand {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
-                    set output_code "group_distinct_member_map.group_id = '$group_id'"
+                    set output_code "$party_id in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
