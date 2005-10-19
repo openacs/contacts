@@ -19,6 +19,9 @@ ad_page_contract {
     {owner_id ""}
     {aggregate_attribute_id ""}
     {aggregate ""}
+    {attribute_values ""}
+    {attribute_option ""}
+    {attribute_names ""}
 } -validate {
     valid_object_type -requires {object_type} {
         if { [lsearch [list party person organization] $object_type] < 0 } {
@@ -49,6 +52,7 @@ ad_page_contract {
 }
 
 
+
 if { [exists_and_not_null aggregate] } {
     ad_returnredirect "[export_vars -base ./ -url {search_id aggregate_attribute_id}]"
 }
@@ -77,6 +81,104 @@ if { [exists_and_not_null search_id] } {
         set search_exists_p 1
     }
 }
+
+
+####################################################
+if { [exists_and_not_null attribute_names] } {
+    set show_names [join $attribute_names ", "]
+}
+if { $search_exists_p } {
+    # Figure out if the search was over a person, organization or both
+    set search_for [db_string get_search_for { } -default ""]
+    
+    set search_for_clause ""
+    
+    # Get the var list of the search if type equals group
+    # so we can retrieve the default attributes of the group
+    # also.
+    set var_list [db_string get_var_list { } -default ""]
+    
+    # We get the default attributes of persons, organizations or both and of the group
+    # if there is a condition for the gorup in the search (when var_list not null)
+    switch $search_for {
+	person {
+	    
+	    if { ![empty_string_p $var_list] } {
+		# Default attributes for the group and persons
+		set group_id [lindex [split $var_list " "] 1]
+		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
+	    } else {
+		# Default attributes for person only
+		set search_for_clause "and l.list_name like '%__-2' "
+	    }
+	    append search_for_clause "and object_type = 'person'"
+	    
+	    }
+	organization {
+	    
+	    if { ![empty_string_p $var_list] } {
+		# Default attributes for the group and organizations
+		set group_id [lindex [split $var_list " "] 1]
+		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
+	    } else {
+		# Default attributes for organization
+		set search_for_clause "and l.list_name like '%__-2' "
+		}
+	    append search_for_clause "and object_type = 'organization'"
+	}
+	party {
+	    if { ![empty_string_p $var_list] } {
+		# Default attributes for the group, persons and organizations
+		set group_id [lindex [split $var_list " "] 1]
+		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
+	    }
+	}
+    }
+	
+    # Now we are going to create the select options
+    set attribute_values_query ""
+    if { [exists_and_not_null attribute_values] } {
+	set attribute_values_query "and lam.attribute_id not in ([template::util::tcl_to_sql_list $attribute_values])"
+    }
+    set attribute_options [db_list_of_lists get_ams_options " "]
+    set ams_options [list [list "- - - - - - - - - -" ""]]
+    foreach attribute $attribute_options {
+	set attribute_name [lang::util::localize [db_string get_ams_pretty_name { }]]
+	lappend ams_options [list $attribute_name $attribute]
+	}
+    
+    ad_form -name extend_attributes -has_submit 1 -form {
+	{attribute_option:text(select),optional
+	    {label "Extend result list by:"}
+	    {options { $ams_options }}
+	    {html { onChange "document.extend_attributes.submit();" }}
+	}
+	{search_id:text(hidden)
+	    {value "$search_id"}
+	}
+	{attribute_values:text(hidden)
+	    {value "$attribute_values"}
+	}
+	{attribute_names:text(hidden)
+	    {value "$attribute_names"}
+	}
+    } -on_submit {
+	# We clear the list when no value is submited, otherwise
+        # we acumulate the extend values.
+        if { [empty_string_p $attribute_option] } {
+            set attribute_values [list]
+	    set attribute_names [list]
+        } else {
+	    set attribute $attribute_option
+            lappend attribute_values [list $attribute]
+	    lappend attribute_names [lang::util::localize [db_string get_ams_pretty_name { }]]
+        }
+        ad_returnredirect [export_vars -base "search" {search_id attribute_values attribute_names}]
+    }
+}
+
+####################################################
+
 
 set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
 set object_type_pretty_name(person)       [_ contacts.People]

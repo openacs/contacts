@@ -86,5 +86,53 @@
 
       </querytext>
 </fullquery>
+
+<fullquery name="get_search_for">
+    <querytext>
+	select 
+		object_type
+	from 
+		contact_searches
+	where 
+		search_id = :search_id
+    </querytext>
+</fullquery>
+
+<fullquery name="get_var_list">
+    <querytext>	
+	select
+		var_list
+	from
+		contact_search_conditions
+	where
+		type = 'group'
+		and search_id = :search_id
+    </querytext>
+</fullquery>
+
+<fullquery name="get_ams_options">
+    <querytext>
+	select 
+		lam.attribute_id 
+	from 
+		ams_list_attribute_map lam,
+		ams_lists l
+	where 
+		lam.list_id = l.list_id
+		$search_for_clause
+		$attribute_values_query
+    </querytext> 
+</fullquery>
+
+<fullquery name="get_ams_pretty_name">
+    <querytext>
+	select
+		a.pretty_name
+	from
+	    	ams_attributes a
+	where
+	    	a.attribute_id = :attribute
+    </querytext>
+</fullquery>
  
 </queryset>
