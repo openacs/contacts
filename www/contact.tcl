@@ -11,6 +11,8 @@ ad_page_contract {
     {cgl_orderby ""}
     {tasks_orderby ""}
     {page "1"}
+    {emp_f ""}
+
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] } {

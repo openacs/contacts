@@ -17,7 +17,9 @@
 		page="@page@"
 		tasks_orderby="@tasks_orderby@"
 		page_flush_p="@page_flush_p@"
-		page_size="@page_size@" />	
+		page_size="@page_size@" 
+		show_filters_p="@show_filters_p@"
+		emp_f="@emp_f@" />	
         </td>
       </tr>
     </table>

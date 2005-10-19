@@ -22,7 +22,9 @@
 	page="@page@"
 	tasks_orderby="@tasks_orderby@"
 	page_flush_p="0"
-	page_size="15" />	
+	page_size="15" 
+	show_filters_p="1"
+	emp_f="@emp_f@" />	
 	<br />
     </if>
     <include
