@@ -20,6 +20,14 @@ ad_proc -public -callback contact::contact_form {
 } {
 }
 
+ad_proc -public -callback contact::contact_form_validate {
+    {-package_id:required}
+    {-form:required}
+    {-object_type:required}
+    {-party_id}
+} {
+}
+
 ad_proc -public -callback contact::organization_new {
     {-package_id:required}
     {-contact_id:required}
