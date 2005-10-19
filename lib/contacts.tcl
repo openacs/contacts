@@ -186,7 +186,7 @@ set elements [list \
 				   <if @contacts.email@ not nil or @contacts.url@ not nil>
 				       <span class="contact-attributes">
 				       <if @contacts.email@ not nil>
-                                           <a href="@contacts.contact_url@message">@contacts.email@</a>
+                                           <a href="@contacts.message_url@">@contacts.email@</a>
 		                       </if>
 		                       <if @contacts.url@ not nil>
                                             <if @contacts.email@ not nil>
@@ -304,10 +304,11 @@ template::list::create \
 	}
     }
 
-set extend "$attr_extend contact_url name"
+set extend "$attr_extend contact_url message_url name"
 
 db_multirow -extend $extend -unclobber contacts contacts_select " " {
     set contact_url [contact::url -party_id $party_id]
+    set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
     set name [contact::name -party_id $party_id]
     foreach attr $attr_extend {
 	set attribute_id [lindex [split $attr "_"] 0]

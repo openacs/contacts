@@ -14,6 +14,7 @@ namespace eval contact::group:: {}
 namespace eval contact::revision:: {}
 namespace eval contact::special_attributes:: {}
 namespace eval contact::rels:: {}
+namespace eval contact::employee {}
 
 
 ad_proc -public contacts::default_group {
@@ -86,6 +87,125 @@ ad_proc -private contact::util::get_file_extension {
     return $contact_list
 }
 
+ad_proc -public contact::util::get_employers {
+    {-employee_id:required}
+} {
+    Get employers of an employee
+
+    @author Al-Faisal El-Dajani (faisal.dajani@gmail.com)
+    @param employee_id The ID of the employee whom you want to know his/her employer
+    @creation-date 2005-10-17
+    @return List of lists, each containing the ID and name of an employer, or an empty list if no employers exist.
+} {
+    set contact_list [list]
+    db_foreach select_employer_ids {
+	select CASE WHEN object_id_one = :employee_id
+                    THEN object_id_two
+                    ELSE object_id_one END as other_party_id
+	from acs_rels, acs_rel_types
+	where acs_rels.rel_type = acs_rel_types.rel_type
+	and ( object_id_one = :employee_id or object_id_two = :employee_id )
+	and acs_rels.rel_type = 'contact_rels_employment'
+    } {
+	set organization_name [contact::name -party_id $other_party_id]
+	lappend contact_list [list $other_party_id $organization_name]
+    }
+
+    return $contact_list
+}
+
+ad_proc -public contact::employee::get {
+    {-employee_id:required}
+    {-array:required}
+    {-organization_id}
+} {
+    Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists.
+
+    @author Al-Faisal El-Dajani (faisal.dajanim@gmail.com)
+    @creation-date 2005-10-18
+    @param employee_id The ID of the employee whose information you wish to retrieve.
+    @param array Name of array to upvar contents into.
+    @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
+    @return 1 if user exists, 0 otherwise.
+} {
+    ns_log notice "start processing"
+    upvar $array local_array
+    set employer_exist_p 0
+    set employee_attributes [list "first_names" "last_name" "salutation" "person_title" "home_phone" "private_fax" "email"]
+    set employer_attributes [list "name" "company_phone" "company_fax" "email"]
+
+    # Check if ID belongs to an employee, if not return 0
+    if {![person::person_p -party_id $employee_id]} {
+	ns_log notice "The ID specified does not belong to an employee"
+	return 0
+    }
+
+    # Get employers, if any
+    set employers [list]
+    set employers [contact::util::get_employers -employee_id $employee_id]
+
+    # If employer(s) exist
+    if {[llength $employers] > 0} {
+	if {[exists_and_not_null organization_id]} {
+	    # If user sepcified to get information for a certain employer, check if the specified employer exists. If employer specified is not an employer, no organization info will be returned.
+	    foreach single_employer $employers {
+		if {$organization_id == [lindex $single_employer 0]} {
+		    set employer $single_employer
+		    set employer_exist_p 1
+		    break
+		}
+	    }
+	} else {
+	    # If user didn't specify a certain employer, get first employer.
+	    set employer [lindex $employers 0]
+	    set employer_exist_p 1
+	}
+	# Get best/last revision
+	set employee_id [content::item::get_best_revision -item_id $employee_id]
+	set employer_id [content::item::get_best_revision -item_id [lindex $employer 0]]
+    }
+
+    # Set the attributes
+    foreach attribute $employee_attributes {
+	set value [ams::value \
+		       -object_id $employee_id \
+		       -attribute_name $attribute
+		  ]
+	set local_array($attribute) $value
+    }
+    if {$employer_exist_p} {
+	foreach attribute $employer_attributes {
+	    set value [ams::value \
+			   -object_id $employer_id \
+			   -attribute_name $attribute
+		      ]
+	    set $attribute $value
+	}
+
+	# Check if employee email, phone, and fax exist. If not, set them to employer values.
+	if {![exists_and_not_null $local_array(email)]} {
+	    set local_array(email) $email
+	}
+	if {![exists_and_not_null $local_array(home_phone)]} {
+	    set local_array(home_phone) $company_phone
+	}
+	if {![exists_and_not_null $local_array(private_fax)]} {
+	    set local_array(private_fax) $company_fax
+	}
+    }
+
+    set local_array(company_name) $name
+    set address_id [attribute::id -object_type "organization" -attribute_name "company_address"]
+    contacts::postal_address::get -address_id $address_id -array address_array
+    set local_array(company_address) $address_array(delivery_address)
+    set local_array(company_municipality) $address_array(municipality)
+    set local_array(company_region) $address_array(region)
+    set local_array(company_postal_code) $address_array(postal_code)
+    set local_array(company_country_code) $address_array(country_code)
+
+    return 1
+}
+
 ad_proc -public contact::util::get_employee_organization {
     {-employee_id:required}
 } {
@@ -132,7 +252,24 @@ ad_proc -public contact::name_not_cached {
     this returns the contact's name
 } {
     if {[person::person_p -party_id $party_id]} {
-	return [person::name -person_id $party_id]
+	set person_info [person::name -person_id $party_id]
+	set ok [parameter::get -parameter DisplayEmployersP -package_id [apm_package_id_from_key "contacts"]]
+	if {$ok} {
+	    set organizations [contact::util::get_employers -employee_id $party_id]
+	    if {[llength $organizations] > 0} {
+		append person_info " ("
+		foreach organization $organizations {
+		    set organization_url [contact::url -party_id [lindex $organization 0]]
+		    set organization_name [lindex $organization 1]
+		    append person_info "<a href=\"$organization_url\">$organization_name</a>"
+		    append person_info ", "
+		}
+		# for some reason the following line does not work
+		set $person_info [string trimright $person_info ", "]
+		append person_info ")"
+	    }
+	}
+	return $person_info
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
 	# if there is no group null is returned
