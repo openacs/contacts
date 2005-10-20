@@ -16,7 +16,7 @@
             <form action="/contacts/">
 	        @show_names@ 	
   	        ( <a href="search?search_id=@search_id@">Clear</a> )
-	        <input type="hidden" name="attribute_values" value="@attribute_values@">
+	        <input type="hidden" name="attr_val_name" value="@attr_val_name@">
 	        <input type="hidden" name="search_id" value="@search_id@">
 		<input type="submit" value="Go" style="font-size: 8px;">
             </form>

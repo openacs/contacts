@@ -22,6 +22,7 @@ ad_page_contract {
     {attribute_values ""}
     {attribute_option ""}
     {attribute_names ""}
+    {attr_val_name ""}
 } -validate {
     valid_object_type -requires {object_type} {
         if { [lsearch [list party person organization] $object_type] < 0 } {
@@ -83,7 +84,7 @@ if { [exists_and_not_null search_id] } {
 }
 
 
-####################################################
+# To extend the reusl list using default attributes
 if { [exists_and_not_null attribute_names] } {
     set show_names [join $attribute_names ", "]
 }
@@ -162,22 +163,27 @@ if { $search_exists_p } {
 	{attribute_names:text(hidden)
 	    {value "$attribute_names"}
 	}
+	{attr_val_name:text(hidden)
+	    {value "$attr_val_name"}
+	}
     } -on_submit {
 	# We clear the list when no value is submited, otherwise
         # we acumulate the extend values.
         if { [empty_string_p $attribute_option] } {
             set attribute_values [list]
 	    set attribute_names [list]
+	    set attr_val_name [list]
         } else {
 	    set attribute $attribute_option
-            lappend attribute_values [list $attribute]
-	    lappend attribute_names [lang::util::localize [db_string get_ams_pretty_name { }]]
+	    ams::attribute::get -attribute_id $attribute -array attr_info
+	    set name $attr_info(attribute_name)
+	    lappend attribute_names "[_ acs-translations.ams_attribute_${attribute}_pretty_name]"
+            lappend attribute_values $attribute
+	    lappend attr_val_name [list $attribute $name]
         }
-        ad_returnredirect [export_vars -base "search" {search_id attribute_values attribute_names}]
+        ad_returnredirect [export_vars -base "search" {search_id attribute_values attribute_names attr_val_name}]
     }
 }
-
-####################################################
 
 
 set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
