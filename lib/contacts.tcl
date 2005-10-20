@@ -1,5 +1,5 @@
 set required_param_list [list]
-set optional_param_list [list base_url extend_p extend_values attribute_values]
+set optional_param_list [list base_url extend_p extend_values attr_val_name]
 set default_param_list  [list orderby format query page page_size package_id search_id group_id]
 set optional_unset_list [list]
 
@@ -53,9 +53,6 @@ if {[exists_and_not_null search_id]} {
 	{extend_values:text(hidden)
 	    {value "$extend_values"}
 	}
-	{attribute_values:text(hidden)
-	    {value $attribute_values}
-	}
     } -on_submit {
 	# We clear the list when no value is submited, otherwise
 	# we acumulate the extend values.
@@ -64,45 +61,8 @@ if {[exists_and_not_null search_id]} {
 	} else {
 	    lappend extend_values [list $extend_option] 
 	}
-	ad_returnredirect [export_vars -base "?" {search_id extend_values attribute_values}]
+	ad_returnredirect [export_vars -base "?" {search_id extend_values attr_val_name}]
     }
-    
-    # Now we are going to do the same for ams_attributes
-    set attribute_values_query ""
-    if { [exists_and_not_null attribute_values] } {
-	set attribute_values_query "and lam.attribute_id not in ([template::util::tcl_to_sql_list $attribute_values])"
-    }
-    set attribute_options [db_list_of_lists get_ams_options " "]
-    set ams_options [list [list "- - - - - - - - - -" ""]]
-    foreach attribute $attribute_options {
-	lappend ams_options [list [lang::util::localize [db_string get_ams_pretty_name { }]] $attribute]
-    }
-    
-    ad_form -name ams_attributes -form {
-	{attribute_id:text(select),optional
-	    {label "[_ contacts.Available_Attributes]:"}
-	    {options { $ams_options }}
-	}
-	{search_id:text(hidden)
-	    {value "$search_id"}
-	}
-	{attribute_values:text(hidden)
-	    {value "$attribute_values"}
-	}
-	{extend_values:text(hidden)
-	    {value $extend_values}
-	}
-    } -on_submit {
-	# We clear the list when no value is submited, otherwise
-	# we acumulate the attribute values.
-	if { [empty_string_p $attribute_id] } {
-	    set attribute_values [list]
-	} else {
-	    lappend attribute_values [list $attribute_id] 
-	}
-	ad_returnredirect [export_vars -base "?" {search_id extend_values attribute_values}]
-    }
-
 } else {
     set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
 }
@@ -226,16 +186,13 @@ foreach value $extend_values {
 }
 
 # This is for the attributes
-set attr_extend [list]
-foreach attribute $attribute_values {
-    db_1row get_ams_info { }
-    set pretty_name [lang::util::localize $pretty_name]
-    lappend elements ${attribute}_$name [list label "$pretty_name" display_col ${attribute}_$name]
-    lappend row_list ${attribute}_$name [list]
-    lappend attr_extend "${attribute}_$name"
+set extend_attr [list]
+foreach attribute $attr_val_name {
+    set attr_id   [lindex $attribute 0]
+    lappend row_list $attr_id [list]
+    lappend elements $attr_id [list label "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"]
+    lappend extend_attr $attr_id
 }
-set attr_extend [join $attr_extend " "]
-
 
 set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
@@ -304,17 +261,17 @@ template::list::create \
 	}
     }
 
-set extend "$attr_extend contact_url message_url name orga_info"
+set extend_list "$extend_attr contact_url message_url name orga_info"
 
-db_multirow -extend $extend -unclobber contacts contacts_select " " {
+db_multirow -extend $extend_list -unclobber contacts contacts_select " " {
     set contact_url [contact::url -party_id $party_id]
     set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
     set name [contact::name -party_id $party_id]
-    foreach attr $attr_extend {
-	set attribute_id [lindex [split $attr "_"] 0]
-	set attribute_name [string range $attr [expr [string length $attribute_id] + 1] [string length $attr]]
-	set attr_object_id [db_string get_attr_object_id { } -default ""]
-	set $attr [ams::value -object_id $attr_object_id -attribute_id $attribute_id -attribute_name $attribute_name]
+    foreach attribute $attr_val_name {
+	set attr_id   [lindex $attribute 0]
+	set attr_name [lindex $attribute 1]
+	set contact_party_revision [contact::live_revision -party_id $party_id]
+	set $attr_id  [ams::value -object_id $contact_party_revision -attribute_id $attr_id -attribute_name "$attr_name"]
     }
     
     set display_employers_p [parameter::get -parameter DisplayEmployersP -package_id [apm_package_id_from_key "contacts"] -default "0"]

@@ -7,7 +7,6 @@
 	   <td><formtemplate id="extend" style="inline"></formtemplate></td>
            <td>&nbsp;&nbsp;&nbsp;</td>
         </if>
-	<td><formtemplate id="ams_attributes" style="inline"></formtemplate></td>
 	</tr>
     </table>
 </if>
