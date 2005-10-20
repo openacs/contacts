@@ -179,7 +179,7 @@ set elements [list \
 			       {<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>} \
 			       display_template \
 			       { 
-				   <a href="@contacts.contact_url@">@contacts.name@</a> 
+				   <a href="@contacts.contact_url@">@contacts.name;noquote@</a>@contacts.orga_info;noquote@
 				   <span class="contact-editlink">
 				   \[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]
 				   </span>
@@ -304,7 +304,7 @@ template::list::create \
 	}
     }
 
-set extend "$attr_extend contact_url message_url name"
+set extend "$attr_extend contact_url message_url name orga_info"
 
 db_multirow -extend $extend -unclobber contacts contacts_select " " {
     set contact_url [contact::url -party_id $party_id]
@@ -316,6 +316,26 @@ db_multirow -extend $extend -unclobber contacts contacts_select " " {
 	set attr_object_id [db_string get_attr_object_id { } -default ""]
 	set $attr [ams::value -object_id $attr_object_id -attribute_id $attribute_id -attribute_name $attribute_name]
     }
+    
+    set display_employers_p [parameter::get -parameter DisplayEmployersP -package_id [apm_package_id_from_key "contacts"] -default "0"]
+
+    if {$display_employers_p && [person::person_p -party_id $party_id]} {
+	# We want to display the names of the organization behind the employees name
+	set organizations [contact::util::get_employers -employee_id $party_id]
+	if {[llength $organizations] > 0} {
+	    set orga_info {}
+	    foreach organization $organizations {
+		set organization_url [contact::url -party_id [lindex $organization 0]]
+		set organization_name [lindex $organization 1]
+		lappend orga_info "<a href=\"$organization_url\">$organization_name</a>"
+	    }
+	    
+	    if {![empty_string_p $orga_info]} {
+		set orga_info " - ([join $orga_info ", "])"
+	    }
+	}
+    }
+
 }
 
 if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {

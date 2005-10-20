@@ -253,22 +253,6 @@ ad_proc -public contact::name_not_cached {
 } {
     if {[person::person_p -party_id $party_id]} {
 	set person_info [person::name -person_id $party_id]
-	set ok [parameter::get -parameter DisplayEmployersP -package_id [apm_package_id_from_key "contacts"]]
-	if {$ok} {
-	    set organizations [contact::util::get_employers -employee_id $party_id]
-	    if {[llength $organizations] > 0} {
-		append person_info " ("
-		foreach organization $organizations {
-		    set organization_url [contact::url -party_id [lindex $organization 0]]
-		    set organization_name [lindex $organization 1]
-		    append person_info "<a href=\"$organization_url\">$organization_name</a>"
-		    append person_info ", "
-		}
-		# for some reason the following line does not work
-		set $person_info [string trimright $person_info ", "]
-		append person_info ")"
-	    }
-	}
 	return $person_info
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
