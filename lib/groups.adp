@@ -5,9 +5,9 @@
 <else>
 <p>#contacts.lt_You_cannot_add_this_c#</p>
 </else>
+<h3 class="contact-title"><if @hide_form_p@ true><a href="./groups"></if>#contacts.Groups#<if @hide_form_p@ true></a></if></h3>
 </if>
 <if @groups:rowcount@ gt 0>
-<h3 class="contact-title"><if @hide_form_p@ true><a href="./groups"></if>#contacts.Groups#<if @hide_form_p@ true></a></if></h3>
 <ul>
 <table width="100%">
 <multiple name="groups">

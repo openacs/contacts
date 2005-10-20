@@ -8,7 +8,8 @@
     <table border="0" cellpadding="1" cellspacing="1" width="100%">
       <tr>
         <td>
-	    <include src="/packages/contacts/lib/groups" party_id="@party_id@">
+	    <include src="/packages/contacts/lib/groups" party_id="@party_id@"
+	    hide_form_p="@hide_form_p@">
         </td>
       </tr>
     </table>
