@@ -47,7 +47,7 @@ if { [exists_and_not_null customer_id]} {
     set emp_options [list]
     lappend emp_options [list "- - - - - -" ""]
     set employee_list [contact::util::get_employees -organization_id $customer_id]
-    foreach employee_id $employee_list {
+    foreach emp_id $employee_list {
 	set emp_name [contact::name -party_id $emp_id]
 	append emp_name " ([contact::email -party_id $emp_id])"
 	lappend emp_options [list $emp_name $emp_id]

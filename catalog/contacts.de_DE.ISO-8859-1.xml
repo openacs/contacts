@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d16" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d30" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
@@ -75,6 +75,7 @@
   <msg key="complaint_status_help">Was ist der Status der Beschwerde</msg>
   <msg key="complaint_title_help">Kurze Bezeichnung, um die Beschwerde zu identifizieren</msg>
   <msg key="complaint_turnover_help">Umsatz, der mit dem Kunden im Bezug auf diese Beschwerde gemacht wurde </msg>
+  <msg key="Complaints">Beschwerden/Reklamationen:</msg>
   <msg key="Configuration_Error">KOnfigurationsfehler</msg>
   <msg key="Contact">Kontakt</msg>
   <msg key="Contact_-">Kontakt -&amp;gt;</msg>
@@ -114,7 +115,7 @@
   <msg key="does_not_contain_-">enthält nicht -&amp;gt;</msg>
   <msg key="does_not_exists">existiert nicht</msg>
   <msg key="Done">Erledigt</msg>
-  <msg key="Edit">Ändern</msg>
+  <msg key="Edit">Bearbeiten</msg>
   <msg key="Edit_a_Signature">Eine Signatur verändern</msg>
   <msg key="Edit_complaint">Beschwerde verändern</msg>
   <msg key="Edit_Details">Details ändern</msg>
@@ -142,6 +143,7 @@
   <msg key="Footer">Fußzeile</msg>
   <msg key="From">Von</msg>
   <msg key="Get">Lade</msg>
+  <msg key="Glossars">Glossare</msg>
   <msg key="Go">Suche</msg>
   <msg key="Go_to_search_results">Zu den Suchergebnissen gehen</msg>
   <msg key="Group">Gruppe</msg>
@@ -156,7 +158,7 @@
   <msg key="History">Historie</msg>
   <msg key="In_Searches">Suchen</msg>
   <msg key="in_the_search">in der Suche</msg>
-  <msg key="invalid">ungültig</msg>
+  <msg key="invalid">Unberechtigt</msg>
   <msg key="Invalid_Object_Type">ungültiger Objekttyp</msg>
   <msg key="irrelevant">irrelevant</msg>
   <msg key="is_-">ist -&gt;</msg>
@@ -362,6 +364,7 @@ Deutsch(DE) 	</msg>
   <msg key="Object_id">object_id</msg>
   <msg key="odd">ungerade</msg>
   <msg key="of">von</msg>
+  <msg key="Offers">Angebote</msg>
   <msg key="open">Offen</msg>
   <msg key="or">oder</msg>
   <msg key="Ordering">Reihenfolge</msg>
@@ -395,6 +398,7 @@ Deutsch(DE) 	</msg>
   <msg key="Processes">Prozesse</msg>
   <msg key="PROJECT">PROJEKT</msg>
   <msg key="Project">Projekt:</msg>
+  <msg key="Projects">Projekte</msg>
   <msg key="Public">Öffentlicher</msg>
   <msg key="Public_Messages">Öffentliche Nachrichten</msg>
   <msg key="Public_Page">Öffentliche Seite</msg>
@@ -458,9 +462,9 @@ Deutsch(DE) 	</msg>
   <msg key="Subject_is_required">Betreff muss ausgefüllt werden</msg>
   <msg key="Subquery">(Unter)Abfrage</msg>
   <msg key="subquery_help">Die (Unter)Abfrage, die durchgeführt wird, um das Ergebnis zu holen.</msg>
-  <msg key="Summary">Zusammenfassung</msg>
+  <msg key="Summary">Übersicht</msg>
   <msg key="Summary_View">Überblick</msg>
-  <msg key="Supplier">Freelancer:</msg>
+  <msg key="Supplier">Bearbeiter:</msg>
   <msg key="Table">Tabelle</msg>
   <msg key="Tasks">Aufgaben</msg>
   <msg key="The_action_specified_is_invalid">Die spezifizierte Aktion ist ungültig</msg>
@@ -476,10 +480,10 @@ Deutsch(DE) 	</msg>
   <msg key="this_var_name">Dieser &quot;Variablen Name&quot; existiert schon</msg>
   <msg key="Times">Zeiten</msg>
   <msg key="Title">Titel</msg>
-  <msg key="Title_1">Titel:</msg>
+  <msg key="Title_1">Grund:</msg>
   <msg key="To">zu</msg>
   <msg key="True">richtig</msg>
-  <msg key="Turnover">Umsatz:</msg>
+  <msg key="Turnover">Auftragswert:</msg>
   <msg key="Type">Typ</msg>
   <msg key="Update">Update</msg>
   <msg key="Update_filenames">Update Dateinamen</msg>
@@ -488,7 +492,7 @@ Deutsch(DE) 	</msg>
   <msg key="Upload_File">Datei hochladen</msg>
   <msg key="Upload_More">Mehrere Dateien uploaden</msg>
   <msg key="User_Account_Information">Informationen zu dem User Account</msg>
-  <msg key="valid">Gültig</msg>
+  <msg key="valid">Berechtigt</msg>
   <msg key="Var_name">Variablen Name</msg>
   <msg key="var_name_help">Name der Variable, die in der erweiterten Suche verwendent werden soll.</msg>
   <msg key="View_all_roles">Alle Rollen ansehen</msg>

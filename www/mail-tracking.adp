@@ -1,2 +1,3 @@
+<master src="/packages/contacts/lib/contact-master" />
 <property name="party_id">@party_id@</property>
-<include src="/packages/contacts/lib/mail-tracking-portlet" recipient_id="@party_id@">
+<include src="/packages/mail-tracking/lib/messages" recipient_id="@party_id@">

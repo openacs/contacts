@@ -9,7 +9,7 @@
         <td>
 	    <include
       		src="/packages/mail-tracking/lib/messages"
-      		party_id="@party_id@"
+      		recipient_id="@party_id@"
         </td>
       </tr>
     </table>

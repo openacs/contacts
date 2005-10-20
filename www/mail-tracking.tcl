@@ -3,14 +3,17 @@ ad_page_contract {
     @author Al-Faisal El-Dajani (faisal.dajani@gmail.com)
     @creation-date 2005-10-18
 } {
-    {party_id:integer}
+    {party_id ""}
+}
 
-} -validate {
-    contact_exists -requires {party_id} {
-	if {![contact::exists_p -party_id $party_id]} {
-	    ad_complain "[_ contacts.lt_The_contact_specified]"
-	}
+foreach optional_param {sender_id recipient_id page page_size page_flush_p orderby object_id} {
+    if {![info exists $optional_param]} {
+	set $optional_param {}
     }
 }
-#??
+
+if {![exists_and_not_null party_id]} {
+    set party_id $sender_id
+}
+
 ad_return_template
