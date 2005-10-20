@@ -31,7 +31,11 @@ if {$rel_type == "organization_rel"} {
     set ip_addr [ad_conn peeraddr]
     set rel_id [db_exec_plsql add_organization_rel {}]
     db_dml insert_state {}
-    # relation_add -member_state "approved" $rel_type $group_id $party_id
+    
+    # Execute the callback for the organization depending on the group they are added to.
+    # We use this callback to add the organization to .LRN if it is a Customer
+    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
+	
 } else {
     group::add_member \
 	-group_id $group_id \

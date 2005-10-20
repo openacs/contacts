@@ -71,6 +71,9 @@ ad_form -action group-parties-add \
                             set rel_type "membership_rel"
                         }
                         organization {
+			    # Execute the callback for the organization depending on the group they are added to.
+			    # We use this callback to add the organization to .LRN if it is a Customer
+			    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
                             set rel_type "organization_rel"
                         }
                     }
@@ -92,6 +95,7 @@ ad_form -action group-parties-add \
 			db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
 		    }
 
+		    
                 }
             }
 	}
