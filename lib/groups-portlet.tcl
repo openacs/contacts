@@ -5,3 +5,5 @@ foreach optional_param {hide_form_p} {
 }
 
 set portlet_layout [parameter::get -parameter "DefaultPortletLayout"]
+
+set groups_url "[site_node::get_package_url -package_key "contacts"]${party_id}/groups"

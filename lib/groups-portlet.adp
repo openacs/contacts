@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title">#contacts.Groups#</property>
+<property name="portlet_title"><a href="@groups_url@">#contacts.Groups#</a></property>
 
 
 <table width="100%">

@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title">Attributes</property>
+<property name="portlet_title"><a href="@attributes_url@">Attributes</a></property>
 
 
 <table width="100%">
