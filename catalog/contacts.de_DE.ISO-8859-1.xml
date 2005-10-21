@@ -8,10 +8,12 @@
   <msg key="Action">Aktion</msg>
   <msg key="Actions">Aktionen</msg>
   <msg key="Add">Hinzufügen:</msg>
+  <msg key="Add_1">Hinzufügen</msg>
   <msg key="Add_a_Group">Eine Gruppe hinzufügen</msg>
   <msg key="Add_a_Person">Eine Person hinzufügen</msg>
   <msg key="Add_an_Organization">Eine Organisation hinzufügen</msg>
   <msg key="Add_Comment">Einen Kommentar hinzufügen</msg>
+  <msg key="Add_complaint_to">Eine Beschwerde hinzufügen für</msg>
   <msg key="Add_Condition">Bedingung hinzufügen</msg>
   <msg key="Add_Email_Message">e-Mail Nachricht hinzufügen</msg>
   <msg key="Add_Group">Gruppe hinzufügen</msg>
@@ -54,6 +56,7 @@
   <msg key="Attribute">Attribut</msg>
   <msg key="Attribute_-">Attribut -&amp;gt;</msg>
   <msg key="Attributes">Attribute</msg>
+  <msg key="Available_Attributes">Verfügbare Attribute</msg>
   <msg key="Available_Options">Verfügbare Optionen</msg>
   <msg key="Belongs_to">Gehört zu</msg>
   <msg key="Body">Haupttext</msg>
@@ -72,6 +75,7 @@
   <msg key="complaint_description_help">Umfangreiche Beschreibung der Beschwerde, besonders warum die Beschwerde eingereicht wurde.</msg>
   <msg key="complaint_paid_help">Wie viel wurde an den Lieferanten gezahlt</msg>
   <msg key="complaint_percent_help">Rabatt in Prozent, der aufgrund einer Beschwerde gegeben werden musste</msg>
+  <msg key="complaint_refund_help">Betrag der an den Kunden zurück gezahlt wurde</msg>
   <msg key="complaint_status_help">Was ist der Status der Beschwerde</msg>
   <msg key="complaint_title_help">Kurze Bezeichnung, um die Beschwerde zu identifizieren</msg>
   <msg key="complaint_turnover_help">Umsatz, der mit dem Kunden im Bezug auf diese Beschwerde gemacht wurde </msg>
@@ -89,6 +93,7 @@
   <msg key="contacts">Kontakte</msg>
   <msg key="contains_-">enthält -&amp;gt;</msg>
   <msg key="Copy">Kopieren</msg>
+  <msg key="Country">Land</msg>
   <msg key="country_code_is_-">Landeskennziffer ist -&gt;</msg>
   <msg key="country_is_-">Land ist -&gt;</msg>
   <msg key="country_is_not_-">Land ist nicht -&gt;</msg>
@@ -105,6 +110,7 @@
   <msg key="CSV">CSV</msg>
   <msg key="Current">Derzeitig</msg>
   <msg key="Customer">Kunde:</msg>
+  <msg key="Customer_has_no_employees">Kunde hat keine Angestellten</msg>
   <msg key="Date">Datum</msg>
   <msg key="days">Tage</msg>
   <msg key="Delete">Löschen</msg>
@@ -141,6 +147,7 @@
   <msg key="First_Name">Vorname</msg>
   <msg key="First_Names">Vornamen</msg>
   <msg key="Footer">Fußzeile</msg>
+  <msg key="Freelancers">Freelancer</msg>
   <msg key="From">Von</msg>
   <msg key="Get">Lade</msg>
   <msg key="Glossars">Glossare</msg>
@@ -348,6 +355,7 @@ Deutsch(DE) 	</msg>
   <msg key="messages">Mitteilungen</msg>
   <msg key="mine-">mein-</msg>
   <msg key="Modify_by">Modifiziert durch:</msg>
+  <msg key="More">Mehr</msg>
   <msg key="My_Messages">Meine Nachrichten:</msg>
   <msg key="My_Searches">Meine Suchen</msg>
   <msg key="My_Signatures">Meine Signaturen</msg>
@@ -399,6 +407,7 @@ Deutsch(DE) 	</msg>
   <msg key="PROJECT">PROJEKT</msg>
   <msg key="Project">Projekt:</msg>
   <msg key="Projects">Projekte</msg>
+  <msg key="Projects_tasks">Projektaufgaben</msg>
   <msg key="Public">Öffentlicher</msg>
   <msg key="Public_Messages">Öffentliche Nachrichten</msg>
   <msg key="Public_Page">Öffentliche Seite</msg>
@@ -406,6 +415,7 @@ Deutsch(DE) 	</msg>
   <msg key="Query">Abfrage</msg>
   <msg key="READ_THESE">LESEN SIE BITTE DIESES</msg>
   <msg key="Recipients">Empfänger</msg>
+  <msg key="Refund">Rückerstattung</msg>
   <msg key="Relationship">Beziehung</msg>
   <msg key="Relationship_Added">Beziehung hinzugefügt</msg>
   <msg key="Relationship_Deleted">Beziehung gelöscht</msg>

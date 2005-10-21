@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d24" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d30" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -353,6 +353,7 @@
   <msg key="messages">messages</msg>
   <msg key="mine-">mine-</msg>
   <msg key="Modify_by">Modify By:</msg>
+  <msg key="More">More</msg>
   <msg key="My_Messages">My Messages</msg>
   <msg key="My_Searches">My Searches</msg>
   <msg key="My_Signatures">My Signatures</msg>
