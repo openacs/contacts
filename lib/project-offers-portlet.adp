@@ -13,7 +13,8 @@
                 elements="@elements@"
                 package_id="@package_id@"
                 base_url="@base_url@"
-		status_id="1" />
+		status_id="1" 
+		actions="@actions@"/>
         </td>
       </tr>
     </table>
