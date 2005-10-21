@@ -284,7 +284,6 @@ if { [string is false [exists_and_not_null message]] } {
 	    {options {$signature_list}}
 	}
     }
-    
 }
 
 if {[exists_and_not_null footer_options]} {
