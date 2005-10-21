@@ -4,6 +4,7 @@ ad_page_contract {
     @creation-date 2005-10-18
 } {
     {party_id ""}
+    {page "1"}
 }
 
 foreach optional_param {sender_id recipient_id page page_size page_flush_p orderby object_id} {
