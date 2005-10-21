@@ -83,12 +83,18 @@ if { ![exists_and_not_null group_id] } {
 switch $orderby {
     "first_names,asc" {
         set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set sort_item "lower(first_names)"
     }
     "last_name,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set sort_item "lower(last_name)"
     }
     "organization,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization]"
+	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
+	set sort_item "lower(organizations.name)"
     }
 }
 

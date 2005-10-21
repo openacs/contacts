@@ -4,12 +4,10 @@
 <fullquery name="contacts_pagination">
     <querytext>
 	select 
-		parties.party_id
+		distinct parties.party_id, $sort_item
   	from 
 		parties
-      	left join persons on (parties.party_id = persons.person_id)
-      	left join organizations on (parties.party_id =
-      	organizations.organization_id)
+	$left_join
       	left join cr_items on (parties.party_id = cr_items.item_id) 
       	left join cr_revisions on (cr_items.latest_revision =
       	cr_revisions.revision_id ), group_distinct_member_map
