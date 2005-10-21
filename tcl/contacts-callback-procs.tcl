@@ -167,7 +167,7 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 	and r.rel_type = 'application_data_link'
 	and r.object_id_two = p.item_id
     	and p.content_type = 'pm_project'
-    } -default "0"]
+    } -default ""]
 
     if {[empty_string_p $project_id]} {
 	# no project -> mail to all organization contacts
