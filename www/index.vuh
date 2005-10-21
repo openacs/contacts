@@ -40,6 +40,7 @@ if { $party_is_contact_p } {
 	       complaint     { set file "complaint" }
 	       history       { set file "history" }
 	       changes       { set file "changes" }
+	       mail-tracking { set file "mail-tracking" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }
            set form_supplied_party_id [ns_queryget party_id] 
