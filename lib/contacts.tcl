@@ -186,7 +186,7 @@ foreach value $extend_values {
     set name        [lindex $extend_info 0]
     set pretty_name [lindex $extend_info 1]
     set sub_query   [lindex $extend_info 2]
-    lappend elements $name [list label "$pretty_name" display_col $name]
+    lappend elements $name [list label "$pretty_name" display_template "@contacts.${name};noquote@"]
     lappend row_list $name [list]
     append extend_query "( $sub_query ) as $name,"
 }
@@ -196,7 +196,7 @@ set extend_attr [list]
 foreach attribute $attr_val_name {
     set attr_id   [lindex $attribute 0]
     lappend row_list $attr_id [list]
-    lappend elements $attr_id [list label "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"]
+    lappend elements $attr_id [list label "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]" display_template "@contacts.${attr_id};noquote@"]
     lappend extend_attr $attr_id
 }
 
