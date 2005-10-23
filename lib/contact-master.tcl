@@ -3,7 +3,7 @@
 #    @cvs-id $Id$
 
 
-set contact_master_template [parameter::get -parameter "ContactMaster" -default "/packages/contacts/lib/contact-master"]
+set contact_master_template [parameter::get_from_package_key -package_key "contacts" -parameter "ContactMaster" -default "/packages/contacts/lib/contact-master"]
 if { $contact_master_template != "/packages/contacts/lib/contact-master" } {
     ad_return_template
 }

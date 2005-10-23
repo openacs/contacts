@@ -18,7 +18,6 @@ if { [string is integer $party_id] } {
 set action [lindex $file_list 1]
 
 
-
 if { $party_is_contact_p } {
         if { [llength $file_list] == "1" } {
                 # we need to redirect the user to their "correct" summary page otherwise
@@ -26,7 +25,8 @@ if { $party_is_contact_p } {
                 ad_returnredirect "[ad_conn package_url]${party_id}/"
                 ad_script_abort
         }
-        set valid_pages [list "" edit files groups relationships comments message history changes]
+        set valid_pages [list "" edit files groups relationships comments message history changes mail-tracking]
+
         if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
            switch $action {
                edit          { set file "contact-edit" }
@@ -43,6 +43,7 @@ if { $party_is_contact_p } {
 	       mail-tracking { set file "mail-tracking" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }
+
            set form_supplied_party_id [ns_queryget party_id] 
            if { [exists_and_not_null form_supplied_party_id] } {
                 if { $form_supplied_party_id != $party_id } {
