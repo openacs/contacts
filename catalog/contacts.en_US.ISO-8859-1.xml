@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d30" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d25" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -62,6 +62,7 @@
   <msg key="Body">Body</msg>
   <msg key="Bulk_Update">Bulk Update</msg>
   <msg key="Cancel">Cancel</msg>
+  <msg key="CC">CC</msg>
   <msg key="cc_help">Send copy to multiple addresses separated by &quot;;&quot;</msg>
   <msg key="Changed_date">Changed Date:</msg>
   <msg key="Changes">Changes</msg>
@@ -282,7 +283,7 @@
   <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
-  <msg key="lt_remember_that_you_can">remember that you can use &lt;a href=&quot;message-help&quot;&gt;mail merge substitutions&lt;/a&gt;. the most common wildcards are \{name\} \{first_names\}, \{last_name\}, \{home_address\} and \{date\}</msg>
+  <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {home_address} and {date}</msg>
   <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
   <msg key="lt_role_exists">%role% exists</msg>
@@ -310,6 +311,7 @@
   <msg key="lt_The_second_contact_sp">The second contact specified does not exist</msg>
   <msg key="lt_The_second_role_speci">The second role specified does not exist</msg>
   <msg key="lt_There_was_a_problem_w">There was a problem with your input. this type of relationship cannot exist.</msg>
+  <msg key="lt_there_was_an_error_processing">There was an error processing your request</msg>
   <msg key="lt_This_action_cannot_be">This action cannot be taken for unmapped groups</msg>
   <msg key="lt_This_contact_is_not_p">This contact is not part of any groups</msg>
   <msg key="lt_This_group_is_already">This group is already the default</msg>
@@ -353,7 +355,6 @@
   <msg key="messages">messages</msg>
   <msg key="mine-">mine-</msg>
   <msg key="Modify_by">Modify By:</msg>
-  <msg key="More">More</msg>
   <msg key="My_Messages">My Messages</msg>
   <msg key="My_Searches">My Searches</msg>
   <msg key="My_Signatures">My Signatures</msg>
@@ -498,6 +499,7 @@
   <msg key="Updated_By">Updated By</msg>
   <msg key="Updated_On">Updated On</msg>
   <msg key="Upload_File">Upload File</msg>
+  <msg key="Upload_file">Upload File</msg>
   <msg key="Upload_More">Upload More</msg>
   <msg key="User_Account_Information">User Account Information</msg>
   <msg key="valid">Valid</msg>
