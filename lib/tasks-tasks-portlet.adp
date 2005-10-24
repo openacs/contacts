@@ -11,7 +11,7 @@
 	     <include
         	src="/packages/tasks/lib/tasks"
 	        party_id="@party_id@"
-                row_list="@row_list@"
+                elements="@elements@"
                 package_id="@package_id@"
         	hide_form_p="t" 
 		page="@page@"
