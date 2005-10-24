@@ -27,7 +27,7 @@
     <if @message_type@ eq "email">
 
     	<include 	
-        	src=/packages/acs-mail-lite/lib/email
+        	src=/packages/contacts/lib/email
         	return_url=@return_url@ 
 	        party_ids=@party_ids@ 
 		no_callback_p="f"
