@@ -142,7 +142,7 @@ if { ![exists_and_not_null action] } {
     set action [ad_conn url]
 }
 
-set edit_buttons [list [list [_ acs-mail-lite.Send] send]]
+set edit_buttons [list [list [_ contacts.Send] send]]
 
 ad_form -action $action \
     -html {enctype multipart/form-data} \
@@ -227,11 +227,11 @@ ad_form -action $action \
                     # Get the employer email adress
                     set to_addr [cc_email_from_party -party_id $employer_id]
                     if {[empty_string_p $to_addr]} {
-                        ad_return_error [_ acs-kernel.common_Error] [_ acs-mail-lite.lt_there_was_an_error_processing] 
+                        ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing] 
 			break
                     }
                 } else {
-                    ad_return_error [_ acs-mail-lite.Error] [_ acs-mail-lite.lt_there_was_an_error_processing]
+                    ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
                     break
                 }
             }
@@ -239,7 +239,7 @@ ad_form -action $action \
 	    foreach element [list first_names last_name name date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
-	    template::multirow append messages $message_type $to_addr $party_id [acs_mail_lite::message_interpolate -text $subject -values $values] [acs_mail_lite::message_interpolate -text $content_body -values $values]
+	    template::multirow append messages $message_type $to_addr $party_id [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
 	    
 	    # Link the files to all parties
 	    if {[exists_and_not_null revision_id]} {
@@ -270,7 +270,7 @@ ad_form -action $action \
 	    if {![empty_string_p $salutation]} {
 		lappend values [list "{salutation}" $salutation]
 	    }
-	    template::multirow append messages $message_type $to_addr "" [acs_mail_lite::message_interpolate -text $subject -values $values] [acs_mail_lite::message_interpolate -text $content_body -values $values]
+	    template::multirow append messages $message_type $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
 	    
 	}
 	
@@ -411,7 +411,7 @@ ad_form -action $action \
 	}
 	
 	set recipients [join $recipients_addr ", "]
-        util_user_message -html -message "[_ acs-mail-lite.Your_message_was_sent_to]"
+        util_user_message -html -message "[_ contacts.Your_message_was_sent_to]"
 	
     } -after_submit {
 	ad_returnredirect $return_url
