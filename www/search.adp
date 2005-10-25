@@ -14,11 +14,11 @@
         <td>
 	    <small>
             <form action="/contacts/">
-	        @show_names@ 	
-  	        ( <a href="search?search_id=@search_id@">Clear</a> )
+	        <b>@show_default_names;noquote@</b> @show_names;noquote@ 	
+  	        ( <a href="search?search_id=@search_id@">#contacts.Clear#</a> )
 	        <input type="hidden" name="attr_val_name" value="@attr_val_name@">
 	        <input type="hidden" name="search_id" value="@search_id@">
-		<input type="submit" value="Go" style="font-size: 8px;">
+		<input type="submit" value="#contacts.Go#" style="font-size: 8px;">
             </form>
             </small>
         </td>

@@ -53,6 +53,9 @@ if {[exists_and_not_null search_id]} {
 	{extend_values:text(hidden)
 	    {value "$extend_values"}
 	}
+	{attr_val_name:text(hidden)
+	    {value "$attr_val_name"}
+	}
     } -on_submit {
 	# We clear the list when no value is submited, otherwise
 	# we acumulate the extend values.
@@ -190,6 +193,43 @@ foreach value $extend_values {
     lappend row_list $name [list]
     append extend_query "( $sub_query ) as $name,"
 }
+
+
+# We are going to extend the list also by the attributes specified in the
+# parameters, if there is any. Only when attr_val_name is empty and exists a 
+# search_id, otherwise we would have duplicates since when attr_val_name is 
+# present then the default attributes specified on the parameter already come 
+# in this list.
+
+if { ![exists_and_not_null attr_val_name] && [exists_and_not_null search_id] } {
+
+    set object_type [db_string get_object_type { select object_type from contact_searches where search_id = :search_id}]
+    switch $object_type {
+	person { 
+	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
+	}
+	organization { 
+	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
+	}
+	party { 
+	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
+	}
+    }
+    
+    # We are going to take all the blank spaces and split the list by ";"
+    regsub -all " " $default_attr_extend "" default_attr_extend
+    set default_attr_extend [split $default_attr_extend ";"]
+
+    foreach attr $default_attr_extend {
+	set attr_id [attribute::id -object_type "person" -attribute_name "$attr"]
+        if { [empty_string_p $attr_id] } {
+	    # Is not a person attribute is an organization attribute
+            set attr_id [attribute::id -object_type "organization" -attribute_name "$attr"]
+        }
+	lappend attr_val_name [list $attr_id $attr]
+    }
+}
+
 
 # This is for the attributes
 set extend_attr [list]

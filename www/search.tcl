@@ -84,10 +84,6 @@ if { [exists_and_not_null search_id] } {
 }
 
 
-# To extend the reusl list using default attributes
-if { [exists_and_not_null attribute_names] } {
-    set show_names [join $attribute_names ", "]
-}
 if { $search_exists_p } {
     # Figure out if the search was over a person, organization or both
     set search_for [db_string get_search_for { } -default ""]
@@ -114,6 +110,9 @@ if { $search_exists_p } {
 	    }
 	    append search_for_clause "and object_type = 'person'"
 	    
+	    # We are going to take the default attributes from the parameter
+	    set default_extend_attributes [parameter::get -parameter "DefaultPersonAttributeExtension"]
+	    
 	    }
 	organization {
 	    
@@ -126,6 +125,9 @@ if { $search_exists_p } {
 		set search_for_clause "and l.list_name like '%__-2' "
 		}
 	    append search_for_clause "and object_type = 'organization'"
+
+	    # We are going to take the default attributes from the parameter
+	    set default_extend_attributes [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
 	}
 	party {
 	    if { ![empty_string_p $var_list] } {
@@ -133,9 +135,46 @@ if { $search_exists_p } {
 		set group_id [lindex [split $var_list " "] 1]
 		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
 	    }
+
+	    # We are going to take the default attributes from the parameter
+	    set default_extend_attributes [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	}
     }
 	
+    set show_default_names ""
+    set show_names ""
+    # We add the default attributes, first we take out all spaces
+    # and then split by ";"
+    regsub -all " " $default_extend_attributes "" default_extend_attributes
+    set default_extend_attributes [split $default_extend_attributes ";"]
+
+    foreach attr $default_extend_attributes {
+	# Now we get the attribute_id
+	set attr_id [attribute::id -object_type "person" -attribute_name "$attr"]
+	if { [empty_string_p $attr_id] } {
+	    set attr_id [attribute::id -object_type "organization" -attribute_name "$attr"]
+	}
+
+	# We need to check if the attribute is not already present
+	# in the list, otherwise we could have duplicated.
+	lappend attribute_values $attr_id
+	lappend default_names "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"
+	
+	if { [string equal [lsearch -exact $attr_val_name "[list $attr_id $attr]"] "-1"] } {
+	    lappend attr_val_name [list $attr_id $attr]
+	}
+    }
+
+    # To extend the reult list using default attributes
+    if { [exists_and_not_null default_names] } {
+	set show_default_names "[join $default_names ", "], "
+    }
+
+    # To extend the reult list using the selected attributes
+    if { [exists_and_not_null attribute_names] } {
+	set show_names [join $attribute_names ", "]
+    }
+
     # Now we are going to create the select options
     set attribute_values_query ""
     if { [exists_and_not_null attribute_values] } {
@@ -150,7 +189,7 @@ if { $search_exists_p } {
     
     ad_form -name extend_attributes -has_submit 1 -form {
 	{attribute_option:text(select),optional
-	    {label "Extend result list by:"}
+	    {label "[_ contacts.Extend_result_list_by]:"}
 	    {options { $ams_options }}
 	    {html { onChange "document.extend_attributes.submit();" }}
 	}
