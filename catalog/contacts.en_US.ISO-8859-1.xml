@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d25" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.0d26" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -139,6 +139,7 @@
   <msg key="exists_at_least">exists at least</msg>
   <msg key="exists_at_most">exists at most</msg>
   <msg key="ext_del_message">Extend Option # %extend_id% deleted.</msg>
+  <msg key="Extend_result_list_by">Extend result list by</msg>
   <msg key="Extended_search_opt">Extended Search Options</msg>
   <msg key="False">False</msg>
   <msg key="File">File</msg>
