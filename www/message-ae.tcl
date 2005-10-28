@@ -61,7 +61,7 @@ switch $message_type {
     email {
 	append form_elements {
 	    {description:text(text) {label "[_ contacts.Subject]"} {html {size 55 maxlength 1000}}}
-	    {content:text(textarea) {label "[_ contacts.Body]"} {html {cols 55 rows 18}}}
+	    {content:text(textarea) {label "[_ contacts.Body]"} {html {cols 70 rows 24}}}
 	}
     }
     letter {

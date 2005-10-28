@@ -18,30 +18,14 @@
 <if @using_emp_email_p@>
     #contacts.This_contact_doesnt#
 </if>    
-
 <if @party_ids@ ne "">
   <if @message_type@ eq "">
     <formtemplate id="message"></formtemplate>
   </if>
   <else>
-    <if @message_type@ eq "email">
-
-    	<include 	
-        	src=/packages/contacts/lib/email
-        	return_url=@return_url@ 
-	        party_ids=@party_ids@ 
-		no_callback_p="f"
-		action="message"
-		signature_id=@signature_id@
-                file_ids="@file_ids@"
-                object_id="@context_id@"
-		item_id="@item_id@"
-	        >
-	</if>
-	<else>
     	<include 	
         	src=/packages/contacts/lib/@message_type@
-        	return_url=@return_url@ 
+        	return_url=@return_url;noquote@ 
 	        party_ids=@party_ids@ 
 	        file_ids=@file_ids@ 
 		item_id=@item_id@
@@ -51,6 +35,5 @@
 	        header_id=@header_id@
 	        folder_id=@folder_id@
 	        >
-	</else>
   </else>
 </if>

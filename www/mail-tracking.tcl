@@ -8,7 +8,7 @@ ad_page_contract {
     {page "1"}
 }
 
-foreach optional_param {sender_id recipient_id page page_size page_flush_p orderby object_id} {
+foreach optional_param {sender_id recipient_id page page_size page_flush_p orderby object_id emp_mail_f} {
     if {![info exists $optional_param]} {
 	set $optional_param {}
     }

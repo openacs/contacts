@@ -30,7 +30,6 @@ ad_page_contract {
     }
 }
 
-
 if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
     set message_type [lindex [split $message "."] 0]
     set item_id [lindex [split $message "."] 1]
