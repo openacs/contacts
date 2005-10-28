@@ -37,10 +37,8 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
     }
 }
 
-foreach form $ams_forms {
-    append form_elements " "
-    append form_elements [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name $form]
-}
+
+append form_elements " [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_names $ams_forms]"
 
 ad_form -name party_ae \
     -mode "edit" \

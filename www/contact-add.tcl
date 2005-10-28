@@ -72,12 +72,16 @@ ad_form -name party_ae \
     -edit_buttons [list [list "[_ acs-kernel.common_Save]" save] ]\
     -form $form_elements
 
+# List to get the elements to the form
+set list_names [list]
+
 foreach group $group_list {
     set group_id [lindex $group 1]
     if { [lsearch $group_ids $group_id] >= 0 } {
-
-	ad_form -extend -name party_ae -form [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_name "${package_id}__${group_id}"]
 	
+	# Adding the list_name to get the elements in the form
+	lappend list_names [list ${package_id}__${group_id}]
+
 	# Add the category widget(s)
 	set element_name "category_ids$group_id"
 	if {$group_id < 0} {
@@ -92,6 +96,13 @@ foreach group $group_list {
 	
     }
 }
+
+# Creating the form
+ad_form -extend -name party_ae -form [ams::ad_form::elements \
+					  -package_key "contacts" \
+					  -object_type $object_type \
+					  -list_names $list_names]
+
 
 # Append relationship attributes
 
