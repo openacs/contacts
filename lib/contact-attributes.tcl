@@ -67,15 +67,10 @@ if {[llength $tree_list]>0} {
 # value.
 
 multirow create attributes section attribute value
-
+set list_names [list]
 foreach group_id $ams_groups {
     set form "${package_id}__${group_id}"
-    set values [ams::values -package_key "contacts" -object_type $object_type -list_name $form -object_id $revision_id -format "html"]
-    foreach {section attribute_name pretty_name value} $values {
-        if { [lsearch $hidden_attributes $attribute_name] < 0 } {
-            multirow append attributes $section $pretty_name $value
-        }
-    }
+    lappend list_names [list $form]
 
     # Using the predefined multirow categories above, get the
     # mapped categories of the party in the mapped trees of the group
@@ -84,6 +79,22 @@ foreach group_id $ams_groups {
     }
     
 }
+
+# We are going to get the values of all the list at the same time
+# with no duplicates
+set values [ams::values \
+		-package_key "contacts" \
+		-object_type $object_type \
+		-list_names $list_names \
+		-object_id $revision_id \
+		-format "html"]
+
+foreach {section attribute_name pretty_name value} $values {
+    if { [lsearch $hidden_attributes $attribute_name] < 0 } {
+	multirow append attributes $section $pretty_name $value
+    }
+}
+
 set append_list [list]
 callback contact::append_attribute -multirow_name append_list -name [contact::name -party_id $party_id]
 foreach append $append_list {
