@@ -425,38 +425,45 @@ ad_proc -private contact::person_upgrade_to_user {
     set user_id $person_id
     set username [contact::email -party_id $person_id]
     set authority_id [auth::authority::local]
-    db_transaction {
-	db_dml upgrade_user {update acs_objects set object_type = 'user' where object_id = :user_id;
-	    
-	    insert into users
-	    (user_id, authority_id, username, email_verified_p)
-	    values
-	    (:user_id, :authority_id, :username, 't');
-	    
-	    insert into user_preferences
-	    (user_id)
-	    values
-	    (:user_id);}
-    
-	# we reset the password in admin mode. this means that an email
-	# will not automatically be sent.
-	auth::password::reset -authority_id [auth::authority::local] -username $username -admin
-	group::add_member \
-	    -group_id "-2" \
-	    -user_id $person_id \
-	    -rel_type "membership_rel"
-	
-	# Grant the user to update the password on himself
-	permission::grant -party_id $user_id -object_id $user_id -privilege write
 
-	# add him to dotlrn (I'M LAZY)
-	#dotlrn::user_add -user_id $user_id
-	
-    } on_error {
-	error "There was an error in contact::person_upgrade_to_user: $errmsg"
+    # Make sure that we do not upgrade an already existing user
+    if {![contact::user_p -party_id $person_id]} {
+	db_transaction {
+	    db_dml upgrade_user {update acs_objects set object_type = 'user' where object_id = :user_id;
+		
+		insert into users
+		(user_id, authority_id, username, email_verified_p)
+		values
+		(:user_id, :authority_id, :username, 't');
+		
+	    }
+
+	    # Make sure that we we did not store user preferences before
+	    if {![db_string user_prefs_p "select 1 from user_preferences where user_id = :user_id" -default "0"]} {
+		db_dml update_user_prefs {insert into user_preferences
+		    (user_id)
+		    values
+		    (:user_id);
+		}
+	    }
+	    
+	    # we reset the password in admin mode. this means that an email
+	    # will not automatically be sent.
+	    auth::password::reset -authority_id [auth::authority::local] -username $username -admin
+	    group::add_member \
+		-group_id "-2" \
+		-user_id $person_id \
+		-rel_type "membership_rel"
+	    
+	    # Grant the user to update the password on himself
+	    permission::grant -party_id $user_id -object_id $user_id -privilege write
+
+	    return 1
+	} on_error {
+	    error "There was an error in contact::person_upgrade_to_user: $errmsg"
+	    return 0
+	}
     }
-
-    # I'm too lazy to write 
 }
 
 ad_proc -private contact::group::new {

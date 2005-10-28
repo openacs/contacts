@@ -185,16 +185,22 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 	    and i.item_id = :project_id
 	}
     }
-	
+
+    # A lot of upvar magic is used here to set the variables in the folder-chunk.tcl
+    # context. 
     if {[exists_and_not_null contact_list]} {
 	upvar $bulk_variable local_var
 	upvar $var_export_list local_list
 	upvar party_ids contact_ids_loc
 	set contact_ids_loc $contact_list
-	upvar return_url return_loc
-	# set return_loc "/contacts/$party_id"
-	lappend local_var "Mail to contact" "/contacts/message" "Mail to contact"
+
+	lappend local_var "[_ contacts.Mail_to_contact]" "/contacts/message" "[_ contacts.Mail_to_contact]"
 	lappend local_list "party_ids"
+	
+	# Add the message type automatically
+	# lappend local_list "message_type"
+	# upvar message_type message_type_loc
+	# set message_type_loc "email"
 
 	if {![empty_string_p $project_id]} {
 	    lappend local_list "context_id"
