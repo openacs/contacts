@@ -5,5 +5,5 @@ foreach optional_param {party_id query search_id tasks_interval page page_size p
 }
 
 set portlet_layout [parameter::get -parameter "DefaultPortletLayout"]
-set elements "checkbox deleted_p priority title process_title date creation_user contact_name"
+set elements "checkbox deleted_p priority title process_title date assignee contact_name"
 set package_id [apm_package_id_from_key tasks]
