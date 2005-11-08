@@ -70,7 +70,7 @@
 
 	<include src="/packages/contacts/lib/projects-billable-portlet" 
 		organization_id="@party_id@" 
-		elements="checkbox project_id title amount_open" 
+		elements="project_id title amount_open" 
 		package_id="@iv_package_id@" 
 		base_url="@iv_base_url@" />
 	<br />
