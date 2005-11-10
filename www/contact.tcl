@@ -12,6 +12,7 @@ ad_page_contract {
     {tasks_orderby ""}
     {page "1"}
     {emp_f ""}
+    {pt_orderby ""}
 
 } -validate {
     contact_exists -requires {party_id} {
@@ -118,6 +119,6 @@ if { $object_type == "organization" && $pm_installed_p} {
     }
 }
 
-
+set freelancer_p [group::member_p -user_id $party_id -group_name "Freelancer"]
 
 ad_return_template

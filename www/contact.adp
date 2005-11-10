@@ -49,7 +49,19 @@
 	status_id="1" 
 	fmt="%x %r">
 	<br />
-</if>
+    </if>
+    <if @pm_installed_p@>
+	<if @freelancer_p@>
+		<include src="/packages/contacts/lib/ap-tasks-portlet"
+		    from_party_id="@party_id@"
+		    page="@page@"
+		    page_size="15"	
+		    orderby_p="t"
+		    pt_orderby="@pt_orderby@"
+		    elements="task_item_id title project_item_id priority slack_time"
+		/>
+        </if>
+    </if>
     <if @projects_enabled_p@>
       <if @project_url@ ne "">
 	  <include
