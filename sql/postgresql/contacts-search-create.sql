@@ -171,6 +171,8 @@ create table contact_search_extend_map (
 			constraint contact_search_extend_map_extend_id_fk
 			references contact_extend_options (extend_id)
 			on delete cascade,
-			constraint contact_search_extend_map_pk
-			primary key (search_id,extend_id)
+	attribute_id	integer
+			constraint contact_search_extend_map_attribute_id_fk
+			references acs_attributes (attribute_id)
+			on delete cascade
 );
