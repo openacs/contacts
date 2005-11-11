@@ -5,15 +5,50 @@ ad_page_contract {
     @author Viaro Network www.viaro.net
     @creation-date 2005-09-08
 } {
-    extend_id:multiple,notnull
+    extend_id:multiple,optional
+    attribute_id:multiple,optional
     search_id:integer,notnull
 }
 
-foreach value $extend_id {
-    db_dml map_extend_id {
-	insert into contact_search_extend_map (search_id,extend_id)
-	values (:search_id, :value)
+
+if { [exists_and_not_null extend_id] } {
+    foreach value $extend_id {
+	set already_p [db_string get_already_p {
+	    select
+	    1
+	    from 
+	    contact_search_extend_map
+	    where
+	    extend_id = :value
+	    and search_id = :search_id
+	} -default 0]
+	if { !$already_p  } {
+	    db_dml map_extend_id {
+		insert into contact_search_extend_map (search_id,extend_id)
+		values (:search_id, :value)
+	    }
+	}
     }
 }
 
-ad_returnredirect [get_referrer]
+if { [exists_and_not_null attribute_id] } {
+    foreach value $attribute_id {
+	set already_p [db_string get_already_p {
+	    select
+	    1
+	    from 
+	    contact_search_extend_map
+	    where
+	    attribute_id = :value
+	    and search_id = :search_id
+	} -default 0]
+	if { !$already_p  } {
+	    db_dml map_extend_id {
+		insert into contact_search_extend_map (search_id,attribute_id)
+		values (:search_id, :value)
+	    }
+	}
+    }
+}
+
+ad_returnredirect search-list

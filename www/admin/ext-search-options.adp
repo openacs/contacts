@@ -3,6 +3,11 @@
 <property name="context">@context;noquote@</property>
 
 <if @search_id@ nil>
+    <ul>
+	<li><a href="search-list">Set Default Attributes or Extended options.</a>
+    </ul>
+    <br>
+    <h3>Create New Extended Search Option:</h3>
     <formtemplate id="add_option"></formtemplate>
 </if>
 

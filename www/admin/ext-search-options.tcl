@@ -9,7 +9,7 @@ ad_page_contract {
     {edit_p "f"}
     {delete_p "f"}
     {orderby "var_name,asc"}
-    {search_id ""}
+    {search_id:multiple ""}
 }
 
 set page_title [_ contacts.Extended_search_opt]
@@ -97,7 +97,7 @@ if { ![exists_and_not_null search_id] } {
     lappend row_list \
 	action_buttons [list]
 } else {
-    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id = $search_id)"
+    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id in ([template::util::tcl_to_sql_list $search_id]))" 
     lappend bulk_actions "[_ contacts.Set_default]" set-default "[_ contacts.Stored_extended_default]"
     lappend row_list \
 	checkbox [list]
@@ -173,7 +173,7 @@ db_multirow ext_options ext_options " "
 
 set def_extra_query ""
 if { [exists_and_not_null search_id] } {
-    set def_extra_query "where extend_id in (select extend_id from contact_search_extend_map where search_id = $search_id)"
+    set def_extra_query "where extend_id in (select extend_id from contact_search_extend_map where search_id in ([template::util::tcl_to_sql_list $search_id]))"
 }
 set def_bulk_actions [list "[_ contacts.Remove_default]" remove-default "[_ contacts.Remove_default_options]"]
 

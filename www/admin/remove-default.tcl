@@ -5,14 +5,25 @@ ad_page_contract {
     @author Viaro Network www.viaro.net
     @creation-date 2005-09-08
 } {
-    extend_id:multiple,notnull
+    extend_id:multiple,optional
+    attribute_id:multiple,optional
     search_id:integer,notnull
 }
 
-foreach value $extend_id {
-    db_dml unmap_extend_id {
-	delete from contact_search_extend_map where search_id = :search_id and extend_id = :value
+if { [exists_and_not_null extend_id] } {
+    foreach value $extend_id {
+	db_dml unmap_extend_id {
+	    delete from contact_search_extend_map where search_id = :search_id and extend_id = :value
+	}
     }
 }
 
-ad_returnredirect [get_referrer]
+if { [exists_and_not_null attribute_id] } {
+    foreach value $attribute_id {
+	db_dml unmap_extend_id {
+	    delete from contact_search_extend_map where search_id = :search_id and attribute_id = :value
+	}
+    }
+}
+
+ad_returnredirect search-list
