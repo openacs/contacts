@@ -64,6 +64,7 @@ namespace eval contacts::attribute {
     } {
 	set options [db_list_of_lists get_option_attributes { }]
 	lappend options [list "[_ contacts.Country]" "-1"]
+	lappend options [list "[_ contacts.Relationship]" "-2"]
 	return $options
     }
 
