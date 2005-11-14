@@ -146,4 +146,32 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_extend_options">
+    <querytext>
+	select
+    		ceo.pretty_name,
+    		ceo.extend_id
+   	from 
+    		contact_extend_options ceo,
+		contact_search_extend_map csem
+    	where 
+    		ceo.aggregated_p = 't'
+		and csem.extend_id = ceo.extend_id
+		and csem.search_id = :search_id
+    </querytext>
+</fullquery>
+
+<fullquery name="get_extend_name">
+    <querytext>
+	select
+		pretty_name,
+		var_name,
+		subquery
+	from 
+		contact_extend_options
+	where 
+		extend_id = :extend_id
+    </querytext>
+</fullquery>
+
 </queryset>

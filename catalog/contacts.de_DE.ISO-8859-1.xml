@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.0d30" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d4" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
@@ -83,8 +83,8 @@
   <msg key="Configuration_Error">KOnfigurationsfehler</msg>
   <msg key="Contact">Kontakt</msg>
   <msg key="Contact_-">Kontakt -&amp;gt;</msg>
-  <msg key="contact_is_in_-">KOntakt ist in -&gt;</msg>
-  <msg key="contact_is_not_in_-">Kontajt ist nicht in -&gt;</msg>
+  <msg key="contact_is_in_-">Kontakt ist in -&gt;</msg>
+  <msg key="contact_is_not_in_-">Kontakt ist nicht in -&gt;</msg>
   <msg key="Contact_Relationship">Kontakt Beziehung</msg>
   <msg key="Contact_Type">Kontakttyp</msg>
   <msg key="Contact_Type_One">Kontakttyp eins</msg>
@@ -139,6 +139,7 @@
   <msg key="exists_at_least">existieren mindestens</msg>
   <msg key="exists_at_most">existieren höchstens</msg>
   <msg key="ext_del_message">Option erweitern # %extend_id% gelöscht.</msg>
+  <msg key="Extend_result_list_by">Die Ergebnisliste um die folgende Attribute erweitern</msg>
   <msg key="Extended_search_opt">Erweiterte Suchoptionen</msg>
   <msg key="False">falsch</msg>
   <msg key="File">Datei</msg>
@@ -345,6 +346,7 @@ Deutsch(DE) 	</msg>
   <msg key="Mail">Mailing</msg>
   <msg key="Mail_Merge">Adresszusammenstellung</msg>
   <msg key="Mail_Merge_Results">Resultate der Mail Zusammenfassung (mail merge)</msg>
+  <msg key="Mail_to_contact">Dateien an Kontakt schicken</msg>
   <msg key="Make_Current">aktuell machen</msg>
   <msg key="Make_Public">veröffentlichen</msg>
   <msg key="Make_the_checked_contacts_current">Die markierten Kontakte aktuell machen</msg>
@@ -355,7 +357,6 @@ Deutsch(DE) 	</msg>
   <msg key="messages">Mitteilungen</msg>
   <msg key="mine-">mein-</msg>
   <msg key="Modify_by">Modifiziert durch:</msg>
-  <msg key="More">Mehr</msg>
   <msg key="My_Messages">Meine Nachrichten:</msg>
   <msg key="My_Searches">Meine Suchen</msg>
   <msg key="My_Signatures">Meine Signaturen</msg>

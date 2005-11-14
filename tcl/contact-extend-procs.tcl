@@ -22,6 +22,7 @@ ad_proc -public contact::extend::new {
     -pretty_name:required
     -subquery:required
     {-description ""}
+    {-aggregated_p "f"}
 } {
     Creates a new contact extend option
 } {
@@ -36,6 +37,7 @@ ad_proc -public contact::extend::update {
     -pretty_name:required
     -subquery:required
     {-description ""}
+    {-aggregated_p "f"}
 } {
     Updates one contact extend option
 } {

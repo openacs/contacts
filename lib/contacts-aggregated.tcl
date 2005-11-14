@@ -1,5 +1,5 @@
 set required_param_list [list attr_id search_id]
-set optional_param_list [list base_url]
+set optional_param_list [list base_url extend_id]
 set optional_unset_list [list]
 
 foreach required_param $required_param_list {
@@ -22,7 +22,6 @@ foreach unset_param $optional_unset_list {
 
 # Get the search message
 set message [contact::search_pretty -search_id $search_id]
-
 
 switch '$attr_id' {
     '-1' {
@@ -57,24 +56,45 @@ set search_clause [contact::search_clause -and \
 		       -party_id "parties.party_id" \
 		       -revision_id "revision_id"]
 
+set extend_pretty_name ""
+if { [exists_and_not_null extend_id] } {
+    set extend_info [db_list_of_lists get_extend_name { }]
+    set extend_pretty_name [lindex [lindex $extend_info 0] 0]
+    set extend_var_name    [lindex [lindex $extend_info 0] 1]
+    set extend_subquery    [lindex [lindex $extend_info 0] 2]
+    set elements [list \
+		      option [list \
+				  label "<b>$attr_name</b>"] \
+		      result [list \
+				  display_template {
+				      @contacts.result@
+				  }] \
+		      $extend_var_name [list \
+					    label "<b>$extend_pretty_name</b>" \
+					    display_template {
+						"Query Result TODO"
+					    }]]
+} else {
+    set elements [list \
+		      option [list \
+				  label "<b>$attr_name</b>"] \
+		      result [list \
+				  display_template {
+				      @contacts.result@
+				  }
+			     ]]
+}
+
+
 template::list::create  \
     -name "contacts" \
     -multirow contacts \
     -row_pretty_plural "" \
     -actions "" \
     -bulk_actions "" \
-    -elements {
-	option {
-	    label "<b>$attr_name</b>"
-	}
-	result {
-	    display_template {
-		@contacts.result@
-	    }
-	}
-    }
+    -elements $elements
 
-db_multirow -extend { result } contacts $query_name { } {
+db_multirow -extend { result } contacts $query_name " " {
     # We get the value_id here and not in the options query since
     # the value_id is only present when one attribute is associated
     # to one option, and we want to see every option.
@@ -100,6 +120,9 @@ ad_form -name aggregate -has_submit "1" -form {
     {search_id:integer(hidden)
 	{value $search_id}
     }
+    {aggregate_extend_id:text(hidden)
+	{value $extend_id}
+    }
     {aggregate_attribute_id:integer(select)
 	{label "[_ contacts.Aggregate_by]" }
 	{value $attr_id}
@@ -108,4 +131,26 @@ ad_form -name aggregate -has_submit "1" -form {
     }
 }
 
+set extend_options [db_list_of_lists get_extend_options { }]
+
+if { [string equal [llength $extend_options] 0] } {
+    set extend_id ""
+}
+
+set extend_options [linsert $extend_options 0 [list "- - - - - - " ""]]
+
+ad_form -name extend -has_submit "1" -form {
+    {search_id:integer(hidden)
+	{value $search_id}
+    }
+    {aggregate_attribute_id:integer(hidden)
+	{value $attr_id}
+    }
+    {aggregate_extend_id:text(select)
+	{label "[_ contacts.Extend_result_list_by]" }
+	{options $extend_options}
+	{html { onChange document.extend.submit();}}
+	{value $extend_id}
+    }
+}
 

@@ -156,6 +156,7 @@ create table contact_extend_options (
 	var_name	varchar(100) unique not null,
 	pretty_name	varchar(100) not null,
 	subquery 	varchar(5000) not null,
+	aggregated_p    char default 'f' constraint check_aggregate_p check (aggregated_p in ('t','f')),
 	description     varchar(500)
 );
 

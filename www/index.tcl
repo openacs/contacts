@@ -14,6 +14,7 @@ ad_page_contract {
     {add_person:optional}
     {add_organization:optional}
     {aggregate_attribute_id ""}
+    {aggregate_extend_id ""}
     {extend_values:optional ""}
     {attr_val_name:optional ""}
 }

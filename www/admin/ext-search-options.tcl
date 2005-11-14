@@ -10,6 +10,7 @@ ad_page_contract {
     {delete_p "f"}
     {orderby "var_name,asc"}
     {search_id:multiple ""}
+    {aggregated_p "f"}
 }
 
 set page_title [_ contacts.Extended_search_opt]
@@ -50,6 +51,12 @@ ad_form  -extend -name "add_option" -form {
 	{html {cols 40 rows 4}}
 	{help_text "[_ contacts.subquery_help]"}
     }
+    {aggregated_p:text(radio)
+	{label "Aggregated:"}
+	{options { {[_ contacts.True] t} {[_ contacts.False] f}}}
+	{value $aggregated_p}
+	{help_text "[_ contacts.aggregated_help]"}
+    }
     {description:text(textarea),optional,nospell
 	{label "[_ contacts.Description]"}
 	{html {cols 40 rows 2}}
@@ -72,7 +79,8 @@ ad_form  -extend -name "add_option" -new_data {
 	-var_name $var_name \
 	-pretty_name $pretty_name \
 	-subquery $subquery \
-	-description $description
+	-description $description \
+	-aggregated_p $aggregated_p
 
 } -select_query {
     select * from contact_extend_options where extend_id = :extend_id
@@ -82,7 +90,8 @@ ad_form  -extend -name "add_option" -new_data {
 	-var_name $var_name \
 	-pretty_name $pretty_name \
 	-subquery $subquery \
-	-description $description
+	-description $description \
+	-aggregated_p $aggregated_p
 } -after_submit {
     ad_returnredirect "ext-search-options"
 }
@@ -107,6 +116,7 @@ lappend row_list \
     var_name [list] \
     pretty_name [list] \
     subquery [list] \
+    aggregated_p [list] \
     description [list]
 
 template::list::create \
@@ -137,7 +147,10 @@ template::list::create \
 	}
 	subquery {
 	    label "[_ contacts.Subquery]"
-	    html { width 45% }
+	    html { width 35% }
+	}
+	aggregated_p {
+	    label "[_ contacts.Aggregated]"
 	}
 	description {
 	    label "[_ contacts.Description]"
@@ -198,7 +211,10 @@ template::list::create \
 	}
 	subquery {
 	    label "[_ contacts.Subquery]"
-	    html { width 45% }
+	    html { width 35% }
+	}
+	aggregated_p {	
+	    label "[_ contacts.Aggregated]"
 	}
 	description {
 	    label "[_ contacts.Description]"

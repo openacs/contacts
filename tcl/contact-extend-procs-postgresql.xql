@@ -12,15 +12,19 @@
 
 <fullquery name="contact::extend::new.new_extend_option">
     <querytext>
-	insert into contact_extend_options (extend_id,var_name,pretty_name,subquery,description)
-        values (:extend_id,:var_name,:pretty_name,:subquery,:description)
+	insert into contact_extend_options (extend_id,var_name,pretty_name,subquery,description,aggregated_p)
+        values (:extend_id,:var_name,:pretty_name,:subquery,:description,:aggregated_p)
     </querytext>
 </fullquery>
 
 <fullquery name="contact::extend::update.update_extend_option">
     <querytext>
       	update contact_extend_options
-        set var_name = :var_name, pretty_name = :pretty_name, subquery = :subquery, description = :description
+        set var_name = :var_name, 
+	    pretty_name = :pretty_name, 
+            subquery = :subquery, 
+            description = :description, 
+            aggregated_p = :aggregated_p
         where extend_id = :extend_id
     </querytext>
 </fullquery>

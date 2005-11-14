@@ -27,7 +27,7 @@
            <h3>#contacts.Remove_default_options#:</h3>
            <listtemplate name="def_ext_options"></listtemplate>
        </if>
+       <a href="/contacts/?search_id=@search_id@">#contacts.Go_to_search_results#</a>
     </else>
 </if>
 
-<a href="/contacts/?search_id=@search_id@">#contacts.Go_to_search_results#</a>

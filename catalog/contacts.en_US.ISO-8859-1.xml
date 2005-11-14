@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d1" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d4" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -38,7 +38,9 @@
   <msg key="Advanced_Searches">Advanced Searches</msg>
   <msg key="Aggregate">Aggregate</msg>
   <msg key="Aggregate_by">Aggregate by</msg>
+  <msg key="Aggregated">Aggregated</msg>
   <msg key="aggregated_by">aggregated by:</msg>
+  <msg key="aggregated_help">Set it to true if you want to use this extend in &quot;Aggregated Result Page&quot;</msg>
   <msg key="All">All</msg>
   <msg key="All__Edit">All / Edit</msg>
   <msg key="All_Contacts">All Contacts</msg>
@@ -140,6 +142,7 @@
   <msg key="exists_at_most">exists at most</msg>
   <msg key="ext_del_message">Extend Option # %extend_id% deleted.</msg>
   <msg key="Extend_result_list_by">Extend result list by</msg>
+  <msg key="extended_by">extended by:</msg>
   <msg key="Extended_search_opt">Extended Search Options</msg>
   <msg key="False">False</msg>
   <msg key="File">File</msg>
@@ -239,6 +242,7 @@
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
   <msg key="lt_Contact_Rels_Employme">Contact Rels Employment</msg>
   <msg key="lt_Contact_updated_in_th">Contact updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_contacts_was_removed_from_group">The contact was removed from the group</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
   <msg key="lt_created_in_the_last_-">created in the last -&gt;</msg>
@@ -346,6 +350,7 @@
   <msg key="Mail">Mail</msg>
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
+  <msg key="Mail_to_contact">Mail to contact</msg>
   <msg key="Make_Current">Make Current</msg>
   <msg key="Make_Public">Make Public</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
