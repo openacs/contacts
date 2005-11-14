@@ -28,6 +28,7 @@
 <fullquery name="get_ams_options">
     <querytext>
         select
+		distinct
                 lam.attribute_id,
 		a.pretty_name
         from

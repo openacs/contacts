@@ -307,7 +307,7 @@ if { $search_exists_p } {
 	}
     }
 
-    append form_elements [contacts::search::condition_type::attribute \
+   append form_elements [contacts::search::condition_type::attribute \
 			      -request ad_form_widgets \
 			      -prefix "aggregate_" \
 			      -without_arrow_p "t" \

@@ -48,4 +48,15 @@ $group_by_group_id
     </querytext>
 </fullquery>
 
+<fullquery name="get_object_type">
+    <querytext>
+	select 
+		object_type 
+	from 
+		contact_searches 
+	where 
+		search_id = :search_id
+    </querytext>
+</fullquery>
+
 </queryset>

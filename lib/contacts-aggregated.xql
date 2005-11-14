@@ -105,5 +105,45 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_relationship_options">
+    <querytext>
+	select
+		distinct
+		ot.pretty_name as option,
+		rt.rel_type
+	from
+		acs_rel_types rt,
+		acs_object_types ot,
+		parties p
+	where	
+		rt.rel_type like 'contact_rels_%'
+		and rt.rel_type = ot.object_type
+    </querytext>
+</fullquery>
+
+<fullquery name="get_relationship_results">
+    <querytext>
+    	select 
+		count(t.party_id)
+    	from 
+		(
+		select	
+			distinct
+		        CASE WHEN r.object_id_one = parties.party_id 
+			THEN r.object_id_one
+			ELSE r.object_id_two END as party_id
+		from
+			acs_rels r
+		where
+			r.rel_type = :rel_type
+		) t,
+		cr_items ci,
+		cr_revisions cr
+	where 
+		t.party_id =  ci.item_id
+		and ci.latest_revision = cr.revision_id
+		$search_clause
+    </querytext>
+</fullquery>
 
 </queryset>

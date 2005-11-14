@@ -24,20 +24,31 @@ foreach unset_param $optional_unset_list {
 set message [contact::search_pretty -search_id $search_id]
 
 
-# We check if the attr_id is -1, if it is we are going
-# to search for the country in home_address or company_addres
-if { [string equal $attr_id "-1"] } {
-    set attr_name "[_ contacts.Country]"
-    set query_name get_countries_options
-    set result_query get_countries_results
-    set country_p 1
-} else {
-    # Get the attribute name and the options for that attribute
-    set attr_name [attribute::pretty_name -attribute_id $attr_id]
-    set query_name get_attribute_options
-    set result_query get_results
-    set country_p 0
+switch '$attr_id' {
+    '-1' {
+	# Search for the country in home_address 
+	# or company_addres
+	set attr_name "[_ contacts.Country]"
+	set query_name get_countries_options
+	set result_query get_countries_results
+	set attribute_p 0
+    } 
+    '-2' {
+	# Search for Relationship's
+	set attr_name "[_ contacts.Relationship]"
+	set query_name get_relationship_options
+	set result_query get_relationship_results
+	set attribute_p 0
+    }
+    default {
+	# Get the attribute name and the options for that attribute
+	set attr_name [attribute::pretty_name -attribute_id $attr_id]
+	set query_name get_attribute_options
+	set result_query get_results
+	set attribute_p 1
+    }
 }
+
 
 # Get the search_clasue used in the advanced search
 set search_clause [contact::search_clause -and \
@@ -67,10 +78,14 @@ db_multirow -extend { result } contacts $query_name { } {
     # We get the value_id here and not in the options query since
     # the value_id is only present when one attribute is associated
     # to one option, and we want to see every option.
-    if { !$country_p } {
+    set option_string [lang::util::localize $option]
+    if { [string equal "Contact Rel " [string range $option_string 0 11]] } {
+	set option [string range $option_string 12 [string length $option_string]]
+    }
+    if { $attribute_p } {
 	set value_id [db_string get_value_id { } -default 0]
     }
-    set result [db_string $result_query " " -default 0]
+    set result "[db_string $result_query " " -default 0]"
 }
 
 
@@ -81,7 +96,7 @@ foreach option [contacts::attribute::options_attribute] {
     lappend select_options [list [lang::util::localize [lindex $option 0]] [lindex $option 1]]
 }
 
-ad_form -name aggregate -form {
+ad_form -name aggregate -has_submit "1" -form {
     {search_id:integer(hidden)
 	{value $search_id}
     }
@@ -89,6 +104,7 @@ ad_form -name aggregate -form {
 	{label "[_ contacts.Aggregate_by]" }
 	{value $attr_id}
 	{options $select_options}
+	{html { onChange document.aggregate.submit();}}
     }
 }
 
