@@ -47,7 +47,8 @@
 		extend_id
 	from 
 		contact_extend_options
-	$extra_query
+		$extra_query
+		and aggregated_p = :aggregated_p
     </querytext>
 </fullquery>
 
@@ -57,7 +58,8 @@
 		var_name,
 		pretty_name, 
 		subquery,
-		description
+		description,
+		aggregated_p
 	from 
 		contact_extend_options
 	where

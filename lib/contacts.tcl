@@ -40,7 +40,9 @@ if {[exists_and_not_null search_id]} {
     # Is to allow extend the list by any extend_options defined in contact_extend_options
     set available_options [concat \
 			       [list [list "- - - - - - - -" ""]] \
-			       [contact::extend::get_options -ignore_extends $extend_values -search_id $search_id]]
+			       [contact::extend::get_options \
+				    -ignore_extends $extend_values \
+				    -search_id $search_id -aggregated_p "f"]]
 
     ad_form -name extend -form {
 	{extend_option:text(select),optional

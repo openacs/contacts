@@ -40,11 +40,14 @@ $group_by_group_id
 <fullquery name="get_default_extends">
     <querytext>
 	select 
-		extend_id 
+		csem.extend_id 
 	from 
-		contact_search_extend_map 
+		contact_search_extend_map csem,
+		contact_extend_options ceo
 	where 
-		search_id = :search_id 
+		ceo.extend_id = csem.extend_id
+		and ceo.aggregated_p = 'f'
+		and csem.search_id = :search_id 
     </querytext>
 </fullquery>
 

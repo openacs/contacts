@@ -141,6 +141,7 @@
   <msg key="exists_at_least">exists at least</msg>
   <msg key="exists_at_most">exists at most</msg>
   <msg key="ext_del_message">Extend Option # %extend_id% deleted.</msg>
+  <msg key="extend_error_msg">The &quot;Extended Query&quot; return an error</msg>
   <msg key="Extend_result_list_by">Extend result list by</msg>
   <msg key="extended_by">extended by:</msg>
   <msg key="Extended_search_opt">Extended Search Options</msg>

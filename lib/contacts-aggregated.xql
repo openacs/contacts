@@ -174,4 +174,96 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_extend_results">
+    <querytext>
+	$extend_subquery
+	and party_id in (
+          select 	
+		parties.party_id
+	  from 
+                parties
+                left join organizations on (parties.party_id = organizations.organization_id)
+                left join cr_items on (parties.party_id = cr_items.item_id)
+                left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ), 
+                group_distinct_member_map
+                where parties.party_id = group_distinct_member_map.member_id
+                $search_clause
+          ) 
+          and parties.party_id in (
+          select
+               distinct
+               p.party_id
+          from
+              ams_attribute_values a,
+              cr_items i,
+              parties p
+          where
+              a.object_id = i.latest_revision and
+              i.item_id = p.party_id
+              and a.value_id = $value_id )
+
+    </querytext>
+</fullquery>
+
+<fullquery name="get_countries_extend_results">
+    <querytext>
+	$extend_subquery
+    	and party_id in (
+          select 	
+		parties.party_id
+	  from 
+                parties
+                left join organizations on (parties.party_id = organizations.organization_id)
+                left join cr_items on (parties.party_id = cr_items.item_id)
+                left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ), 
+                group_distinct_member_map
+                where parties.party_id = group_distinct_member_map.member_id
+                $search_clause
+          ) 
+          and parties.party_id in (
+			select	
+			       	p.party_id
+			from
+			       	parties p,
+				ams_attribute_values a,
+				postal_addresses pa,
+				cr_items i,
+				cr_revisions r
+			where
+				i.item_id = p.party_id
+				and r.revision_id = i.latest_revision
+				and r.revision_id = a.object_id
+				and a.value_id = pa.address_id
+				and pa.country_code = :iso
+			)
+    </querytext>
+</fullquery>
+
+<fullquery name="get_relationship_extend_results">
+    <querytext>
+	$extend_subquery
+	and party_id in (
+    	select 
+		t.party_id
+    	from 
+		(
+		select	
+			distinct
+		        CASE WHEN r.object_id_one = parties.party_id 
+			THEN r.object_id_one
+			ELSE r.object_id_two END as party_id
+		from
+			acs_rels r
+		where
+			r.rel_type = :rel_type
+		) t,
+		cr_items ci,
+		cr_revisions cr
+	where 
+		t.party_id =  ci.item_id
+		and ci.latest_revision = cr.revision_id
+		$search_clause )
+    </querytext>
+</fullquery>
+
 </queryset>
