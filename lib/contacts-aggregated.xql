@@ -161,19 +161,6 @@
     </querytext>
 </fullquery>
 
-<fullquery name="get_extend_name">
-    <querytext>
-	select
-		pretty_name,
-		var_name,
-		subquery
-	from 
-		contact_extend_options
-	where 
-		extend_id = :extend_id
-    </querytext>
-</fullquery>
-
 <fullquery name="get_extend_results">
     <querytext>
 	$extend_subquery

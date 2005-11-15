@@ -67,9 +67,9 @@ set search_clause [contact::search_clause -and \
 # we add the element dynamically to the list
 set extend_pretty_name ""
 if { [exists_and_not_null extend_id] } {
-    set extend_info [db_list_of_lists get_extend_name { }]
-    set extend_pretty_name [lindex [lindex $extend_info 0] 0]
-    set extend_var_name    [lindex [lindex $extend_info 0] 1]
+    set extend_info [contact::extend::option_info -extend_id $extend_id]
+    set extend_var_name    [lindex [lindex $extend_info 0] 0]
+    set extend_pretty_name [lindex [lindex $extend_info 0] 1]
     set extend_subquery    [lindex [lindex $extend_info 0] 2]
     set elements [list \
 		      option [list \
