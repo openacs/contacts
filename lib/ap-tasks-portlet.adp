@@ -8,11 +8,12 @@
     <table border="0" cellpadding="1" cellspacing="1" width="100%">
       <tr>
         <td>
-	    <include src="/packages/project-manager/lib/all-party-tasks"
-                from_party_id="@from_party_id@"
+	    <include src="/packages/project-manager/lib/tasks"
+                filter_party_id="@from_party_id@"
 		page="@page@"
 		page_size="@page_size@"
 		orderby_p="@orderby_p@"
+		display_mode="list"
 		pt_orderby="@pt_orderby@"
 		elements="@elements@"
 	    />
