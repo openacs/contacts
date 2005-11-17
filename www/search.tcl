@@ -157,9 +157,11 @@ if { $search_exists_p } {
 
 	# We need to check if the attribute is not already present
 	# in the list, otherwise we could have duplicated.
-	lappend attribute_values $attr_id
-	lappend default_names "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"
-	
+	if { ![empty_string_p $attr_id] } {
+	    lappend attribute_values $attr_id
+	    lappend default_names "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"
+	}
+
 	if { [string equal [lsearch -exact $attr_val_name "[list $attr_id $attr]"] "-1"] } {
 	    lappend attr_val_name [list $attr_id $attr]
 	}
@@ -264,7 +266,11 @@ if { $search_exists_p } {
     db_foreach selectqueries {
         select condition_id, type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
     } {
-        lappend conditions "[contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list] <a href=\"[export_vars -base search-condition-delete -url {condition_id}]\"><img src=\"/resources/acs-subsite/Delete16.gif\" width=\"16\" height=\"16\" border=\"0\"></a>"
+	set condition_name [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
+	if { [empty_string_p $condition_name] } {
+	    set condition_name  "[_ contacts.Employee]"
+	}
+        lappend conditions "$condition_name <a href=\"[export_vars -base search-condition-delete -url {condition_id}]\"><img src=\"/resources/acs-subsite/Delete16.gif\" width=\"16\" height=\"16\" border=\"0\"></a>"
     }
     if { [llength $conditions] > 0 } {
 	set query_pretty "<ul><li>[join $conditions {</li><li>}]</li></ul>"
@@ -280,6 +286,12 @@ if { [exists_and_not_null object_type] } {
 
     # QUERY TYPE
     set type_options [contacts::search::condition_types]
+    
+    # We are going to add one extra element to show all employees
+    # and its organization
+    if {[string equal $object_type "party"] } {
+	lappend type_options [list "[_ contacts.Employees]" employees]
+    }
 
     append form_elements {
         {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
@@ -296,7 +308,9 @@ set form_elements [concat \
 lappend form_elements  [list next:text(submit) [list label [_ acs-kernel.common_OK]] [list value "ok"]]
 
 if { $search_exists_p } {
-    set results_count [contact::search::results_count -search_id $search_id]
+    
+    set results_count [contact::search::results_count -search_id $search_id] 
+
     append form_elements {
         {title:text(text),optional {label "<br><br>[_ contacts.save_this_search_]"} {html {size 40 maxlength 255}}}
         {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
@@ -307,7 +321,7 @@ if { $search_exists_p } {
 	}
     }
 
-   append form_elements [contacts::search::condition_type::attribute \
+    append form_elements [contacts::search::condition_type::attribute \
 			      -request ad_form_widgets \
 			      -prefix "aggregate_" \
 			      -without_arrow_p "t" \
@@ -327,12 +341,23 @@ ad_form -name "advanced_search" -method "GET" -form $form_elements \
         if { [contact::search::exists_p -search_id $search_id] } {
             contact::search::update -search_id $search_id -title $title -owner_id $owner_id -all_or_any $all_or_any
         }
-        set form_var_list [contacts::search::condition_type -type $type -request form_var_list -form_name advanced_search]
+
+	if { ![string equal $type "employees"] } {
+	    set form_var_list [contacts::search::condition_type \
+				   -type $type \
+				   -request form_var_list \
+				   -form_name advanced_search]
+	} else {
+	    set form_var_list "employees"
+	}
+
         if { $form_var_list != "" } {
             if { [string is false [contact::search::exists_p -search_id $search_id]] } {
                 set search_id [contact::search::new -search_id $search_id -title $title -owner_id $owner_id -all_or_any $all_or_any -object_type $object_type]
             }
+
             contact::search::condition::new -search_id $search_id -type $type -var_list $form_var_list
+
         }
     } -after_submit {
         if { $form_var_list != "" || [exists_and_not_null save] } {
