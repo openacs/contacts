@@ -32,8 +32,16 @@ foreach default_param $default_param_list {
     }
 }
 
-# If we do not have a search_id, limit the list to only users in the default group.
+# This is for showing the employee_id and employeer relationship
+set type_list [db_list get_object_type { }] 
 
+if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
+    set page_query_name "employees_pagination"
+} else {
+    set page_query_name "contacts_pagination"
+}
+
+# If we do not have a search_id, limit the list to only users in the default group.
 if {[exists_and_not_null search_id]} {
     set group_where_clause "" 
     # Also we can extend this search.
@@ -205,7 +213,7 @@ foreach value $extend_values {
 
 if { ![exists_and_not_null attr_val_name] && [exists_and_not_null search_id] } {
 
-    set object_type [db_string get_object_type { }]
+    set object_type [db_string get_search_object_type { }]
     switch $object_type {
 	person { 
 	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
@@ -256,7 +264,7 @@ template::list::create \
     -key party_id \
     -page_size $page_size \
     -page_flush_p t \
-    -page_query_name contacts_pagination \
+    -page_query_name $page_query_name \
     -actions $actions \
     -bulk_actions $bulk_actions \
     -bulk_action_method post \
@@ -311,37 +319,100 @@ template::list::create \
 
 set extend_list "$extend_attr contact_url message_url name orga_info"
 
-db_multirow -extend $extend_list -unclobber contacts contacts_select " " {
-    set contact_url [contact::url -party_id $party_id]
-    set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
-    set name [contact::name -party_id $party_id]
-    foreach attribute $attr_val_name {
-	set attr_id   [lindex $attribute 0]
-	set attr_name [lindex $attribute 1]
-	set contact_party_revision [contact::live_revision -party_id $party_id]
-	set $attr_id  [ams::value -object_id $contact_party_revision -attribute_id $attr_id -attribute_name "$attr_name"]
-    }
-    
-    set display_employers_p [parameter::get -parameter DisplayEmployersP -package_id [apm_package_id_from_key "contacts"] -default "0"]
+if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
+    # We use this multirow since is going to retrive the attribute values
+    # for the employee and the employer
 
-    if {$display_employers_p && [person::person_p -party_id $party_id]} {
-	# We want to display the names of the organization behind the employees name
-	set organizations [contact::util::get_employers -employee_id $party_id]
-	if {[llength $organizations] > 0} {
-	    set orga_info {}
-	    foreach organization $organizations {
-		set organization_url [contact::url -party_id [lindex $organization 0]]
-		set organization_name [lindex $organization 1]
-		lappend orga_info "<a href=\"$organization_url\">$organization_name</a>"
-	    }
+    db_multirow -extend $extend_list -unclobber contacts employees_select " " {
+	set contact_url [contact::url -party_id $party_id]
+	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
+	set name "[contact::name -party_id $party_id]"
+
+	foreach attribute $attr_val_name {
+	    set attr_id   [lindex $attribute 0]
+	    set attr_name [lindex $attribute 1]
+	    set contact_party_revision [contact::live_revision -party_id $party_id]
+	    set $attr_id  [ams::value \
+			       -object_id $contact_party_revision \
+			       -attribute_id $attr_id \
+			       -attribute_name "$attr_name"]
 	    
-	    if {![empty_string_p $orga_info]} {
-		set orga_info " - ([join $orga_info ", "])"
+	    if { ![exists_and_not_null $attr_id] } {
+		set contact_party_revision [contact::live_revision -party_id $employee_id]
+		set $attr_id  [ams::value \
+				   -object_id $contact_party_revision \
+				   -attribute_id $attr_id \
+				   -attribute_name "$attr_name"]
 	    }
 	}
+	
+	set display_employers_p [parameter::get \
+				     -parameter DisplayEmployersP \
+				     -package_id [apm_package_id_from_key "contacts"] \
+				     -default "0"]
+	
+	if {$display_employers_p && [person::person_p -party_id $party_id]} {
+	    # We want to display the names of the organization behind the employees name
+	    set organizations [contact::util::get_employers -employee_id $party_id]
+	    if {[llength $organizations] > 0} {
+		set orga_info {}
+		foreach organization $organizations {
+		    set organization_url [contact::url -party_id [lindex $organization 0]]
+		    set organization_name [lindex $organization 1]
+		    lappend orga_info "<a href=\"$organization_url\">$organization_name</a>"
+		}
+		
+		if {![empty_string_p $orga_info]} {
+		    set orga_info " - ([join $orga_info ", "])"
+		}
+	    }
+	}
+	
     }
 
+
+} else {
+
+    db_multirow -extend $extend_list -unclobber contacts contacts_select " " {
+	set contact_url [contact::url -party_id $party_id]
+	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
+	set name "[contact::name -party_id $party_id]"
+	foreach attribute $attr_val_name {
+	    set attr_id   [lindex $attribute 0]
+	    set attr_name [lindex $attribute 1]
+	    set contact_party_revision [contact::live_revision -party_id $party_id]
+	    set $attr_id  [ams::value \
+			       -object_id $contact_party_revision \
+			       -attribute_id $attr_id \
+			       -attribute_name "$attr_name"]
+	}
+	
+	set display_employers_p [parameter::get \
+				     -parameter DisplayEmployersP \
+				     -package_id [apm_package_id_from_key "contacts"] \
+				     -default "0"]
+	
+	if {$display_employers_p && [person::person_p -party_id $party_id]} {
+	    # We want to display the names of the organization behind the employees name
+	    set organizations [contact::util::get_employers -employee_id $party_id]
+	    if {[llength $organizations] > 0} {
+		set orga_info {}
+		foreach organization $organizations {
+		    set organization_url [contact::url -party_id [lindex $organization 0]]
+		    set organization_name [lindex $organization 1]
+		    lappend orga_info "<a href=\"$organization_url\">$organization_name</a>"
+		}
+		
+		if {![empty_string_p $orga_info]} {
+		    set orga_info " - ([join $orga_info ", "])"
+		}
+	    }
+	}
+	
+    }
+    
 }
+
 
 if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
     # Redirecting the user directly to the one resulted contact
