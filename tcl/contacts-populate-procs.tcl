@@ -1133,37 +1133,26 @@ ad_proc -public contacts::populate::crm {
 
     rel_types::create_role -role "parent_company" -pretty_name "Parent Company" -pretty_plural "Parent Companies"
     rel_types::create_role -role "subsidiary" -pretty_name "Subsidiary" -pretty_plural "Subsidiaries"
-#    rel_types::new -table_name "contact_rels_subsidiary" -create_table_p "t" -supertype "contact_rel" -role_one "parent_company" -role_two "subsidiary" \
-#	"contact_rels_subsidiary" \
-#	"Contact Rel Subsidiary" \
-#	"Contact Rels Subsidiary" \
-#	"organization" \
-#	"0" \
-#	"" \
-#	"organization" \
-#	"0" \
-#	""
-    #   Contact Rels Employement 
-
-    lang::message::register -update_sync de_DE acs-translations role_parent_company "Kundenberater"
-
-#    set list_id [ams::list::new \
-#		     -package_key "contacts" \
-#		     -object_type "contact_rels_employment" \
-#		     -list_name "$contacts_package_id" \
-#		     -pretty_name "Contact Rels Employement" \
-#		     -description "" \
-#		     -description_mime_type ""]
+    rel_types::new -table_name "contact_rels_subsidiary" -create_table_p "t" -supertype "contact_rel" -role_one "parent_company" -role_two "subsidiary" \
+	"contact_rels_subsidiary" \
+	"Contact Rel Subsidiary" \
+	"Contact Rels Subsidiary" \
+	"organization" \
+	"0" \
+	"" \
+	"organization" \
+	"0" \
+	""
 
     # Contact Rels Subsidiary
 
-#    set list_id [ams::list::new \
-#		     -package_key "contacts" \
-#		     -object_type "contact_rels_subsidiary" \
-#		     -list_name "$contacts_package_id" \
-#		     -pretty_name "Contact Rels Subsidiary" \
-#		     -description "" \
-#		     -description_mime_type ""]
+    set list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "contact_rels_subsidiary" \
+		     -list_name "$contacts_package_id" \
+		     -pretty_name "Contact Rels Subsidiary" \
+		     -description "" \
+		     -description_mime_type ""]
 
     set attribute_id [attribute::new \
 			  -object_type "contact_rels_subsidiary" \
