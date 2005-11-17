@@ -26,16 +26,21 @@ template::list::create \
     -key search_id \
     -elements {
         title {
-	    label {#contacts.Title#}
+	    label {[_ contacts.Title]}
 	    display_col title
             link_url_eval "../search?search_id=$search_id"
 	}
+	owner {
+	    display_template {
+		by @searches.owner@
+	    }
+	}
         query {
-	    label {#contacts.Query#}
+	    label { [_ contacts.Query]}
             display_col query;noquote
         }
         results {
-	    label {#contacts.Results#}
+	    label {[_ contacts.Results]}
             display_col results
             link_url_eval $search_url
         }
@@ -69,8 +74,12 @@ set return_url [export_vars -base searches -url {owner_id}]
 set search_ids [list]
 set admin_p [permission::permission_p -object_id $package_id -privilege "admin"]
 
-db_multirow -extend {query search_url make_public_url delete_url copy_url results} -unclobber searches select_searches {} {
+db_multirow -extend {query search_url make_public_url delete_url copy_url results owner} -unclobber searches select_searches {} {
     set search_url [export_vars -base ../ -url {search_id}]
+    set owner [contact::name -party_id $owner_id]
+    if { [empty_string_p $owner] } {
+	set owner "Public"
+    }
 
     lappend search_ids $search_id
 }

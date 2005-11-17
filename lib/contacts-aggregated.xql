@@ -1,6 +1,39 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="get_saved_extend_ids">
+    <querytext>
+	select
+		ceo.extend_id
+	from
+		contact_search_extend_map cse,
+		contact_extend_options ceo
+	where 
+		cse.search_id = :search_id
+		and ceo.extend_id = cse.extend_id
+		and ceo.aggregated_p = 't'
+    </querytext>
+</fullquery>
+
+<fullquery name="check">
+    <querytext>
+	select 
+		1
+	from
+		contact_search_extend_map
+	where
+		search_id = :search_id
+		and extend_id = :extend
+    </querytext>
+</fullquery>
+
+<fullquery name="insert_extend">
+    <querytext>
+	insert into contact_search_extend_map (search_id, extend_id, attribute_id)
+	values (:search_id, :extend, null)
+    </querytext>
+</fullquery>
+
 <fullquery name="get_attribute_options">
     <querytext>
 	select 
@@ -150,14 +183,19 @@
     <querytext>
 	select
     		ceo.pretty_name,
-    		ceo.extend_id
+    		ceo.extend_id as e_id
    	from 
-    		contact_extend_options ceo,
-		contact_search_extend_map csem
+		contact_extend_options ceo
     	where 
     		ceo.aggregated_p = 't'
-		and csem.extend_id = ceo.extend_id
-		and csem.search_id = :search_id
+		and ceo.extend_id not in ( 
+			select 
+				extend_id 
+			from 
+				contact_search_extend_map 
+			where 
+				search_id = :search_id
+		)
     </querytext>
 </fullquery>
 
@@ -188,7 +226,6 @@
               a.object_id = i.latest_revision and
               i.item_id = p.party_id
               and a.value_id = $value_id )
-
     </querytext>
 </fullquery>
 

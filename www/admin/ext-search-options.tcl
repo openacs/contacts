@@ -106,7 +106,7 @@ if { ![exists_and_not_null search_id] } {
     lappend row_list \
 	action_buttons [list]
 } else {
-    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id in ([template::util::tcl_to_sql_list $search_id]))" 
+    set extra_query "where extend_id not in (select extend_id from contact_search_extend_map where search_id in ([template::util::tcl_to_sql_list $search_id])) and aggregated_p ='f'" 
     lappend bulk_actions "[_ contacts.Set_default]" set-default "[_ contacts.Stored_extended_default]"
     lappend row_list \
 	checkbox [list]

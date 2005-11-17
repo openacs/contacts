@@ -65,46 +65,34 @@ set search_clause [contact::search_clause -and \
 
 # If we are extending the result list then 
 # we add the element dynamically to the list
-set extend_pretty_name ""
+
+set elements [list \
+		  option [list \
+			      label "<b>$attr_name</b>"] \
+		  result [list \
+			      display_template {
+				  @contacts.result@
+			      }]]
+
+set extend_list [list result]
+
+
+set saved_extend_ids [db_list get_saved_extend_ids { }]
+foreach extend $extend_id {
+    lappend saved_extend_ids $extend
+}
+
+set extend_id $saved_extend_ids
+
 if { [exists_and_not_null extend_id] } {
-    set extend_info [contact::extend::option_info -extend_id $extend_id]
-    set extend_var_name    [lindex [lindex $extend_info 0] 0]
-    set extend_pretty_name [lindex [lindex $extend_info 0] 1]
-    set extend_subquery    [lindex [lindex $extend_info 0] 2]
-    set elements [list \
-		      option [list \
-				  label "<b>$attr_name</b>"] \
-		      result [list \
-				  display_template {
-				      @contacts.result@
-				  }] \
-		      $extend_var_name [list \
-					    label "<b>$extend_pretty_name</b>" \
-					    display_template {
-						<if @contacts.$extend_var_name@ not nil>
-						@contacts.$extend_var_name@
-						</if>
-						<else>
-						   0.00
-						</else>
-					    }]]
-
-    # For the db_multirow extend variables
-    set extend_list [list result $extend_var_name]
-
-} else {
-    set elements [list \
-		      option [list \
-				  label "<b>$attr_name</b>"] \
-		      result [list \
-				  display_template {
-				      @contacts.result@
-				  }
-			     ]]
-
-    # For the db_multirow extend variables
-    set extend_list [list result]
-
+    foreach extend $extend_id {
+	set extend_info [contact::extend::option_info -extend_id $extend]
+	set extend_var_name    [lindex [lindex $extend_info 0] 0]
+	set extend_pretty_name [lindex [lindex $extend_info 0] 1]
+	lappend elements $extend_var_name [list label "<b>$extend_pretty_name</b>"]
+	# For the db_multirow extend variables
+	lappend extend_list $extend_var_name
+    }
 }
 
 # We create the list
@@ -115,7 +103,6 @@ template::list::create  \
     -actions "" \
     -bulk_actions "" \
     -elements $elements
-
 
 db_multirow -extend $extend_list contacts $query_name " " {
     # We get the value_id here and not in the options query since
@@ -136,19 +123,30 @@ db_multirow -extend $extend_list contacts $query_name " " {
     set result [db_string $result_query " " -default 0]
 
     # Get the extend_var_name value for the extend attribute
-    if {[exists_and_not_null extend_var_name] } {
-	if { [catch { set $extend_var_name [db_string $extend_result_query " " -default 0] } errMsg] } {
-	    # We got an error so we are going to return to the user
-	    set title "[_ contacts.extend_error_msg]"
-	    set error_pos [string first "ERROR: " $errMsg]
-	    set sql_pos [string first "SQL: " $errMsg]
-	    set error [string range $errMsg [expr $error_pos + 7] [expr $sql_pos - 1]]
-	    set sql [string range $errMsg [expr $sql_pos + 5] [string length $errMsg]]
-	    ad_return_error $title "<b>[_ contacts.Error]:</b><br> $error <br><br><b>SQL:</b><br>$sql<br>"
-	    ad_script_abort
+    if {[exists_and_not_null extend_id] } {
+
+	foreach extend $extend_id {
+	    set extend_info [contact::extend::option_info -extend_id $extend]
+	    set extend_var_name    [lindex [lindex $extend_info 0] 0]
+	    set extend_subquery    [lindex [lindex $extend_info 0] 2]
+	    if { [catch {  set $extend_var_name [db_string $extend_result_query " " -default 0]
+		set value [db_string $extend_result_query " " -default 0] } errMsg] } {
+		# We got an error so we are going to return to the user
+		set title "[_ contacts.extend_error_msg]"
+		set error_pos [string first "ERROR: " $errMsg]
+		set sql_pos [string first "SQL: " $errMsg]
+		set error [string range $errMsg [expr $error_pos + 7] [expr $sql_pos - 1]]
+		set sql [string range $errMsg [expr $sql_pos + 5] [string length $errMsg]]
+		ad_return_error $title "<b>[_ contacts.Error]:</b><br> $error <br><br><b>SQL:</b><br>$sql<br>"
+		ad_script_abort
+	    }
+	    if { [empty_string_p $value] } {
+		set $extend_var_name "0.00"
+	    }
 	}
     }
 }
+
 
 
 # This is for the display of the forms
@@ -191,11 +189,32 @@ ad_form -name extend -has_submit "1" -form {
     {aggregate_attribute_id:integer(hidden)
 	{value $attr_id}
     }
-    {aggregate_extend_id:text(select)
-	{label "[_ contacts.Extend_result_list_by]" }
+    {aggregate_extend_id:text(multiselect),optional
+	{label "<div align=top>[_ contacts.Extend_result_list_by]:</div>" }
 	{options $extend_options}
 	{html { onChange document.extend.submit();}}
 	{value $extend_id}
     }
 }
 
+
+ad_form -has_submit 1 -name save -form {
+    {search_id:integer(hidden)
+	{value $search_id}
+    }
+    {aggregate_attribute_id:integer(hidden)
+	{value $attr_id}
+    }
+    {extend_id:text(hidden)
+	{value $extend_id}
+    }
+} -on_submit {
+    foreach extend $extend_id {
+	set already_p [db_string check { } -default 0]
+	if { !$already_p } {
+	    db_dml insert_extend { }
+	}
+    }
+} -after_submit {
+    ad_returnredirect "?search_id=$search_id&aggregate_attribute_id=$aggregate_attribute_id"
+}

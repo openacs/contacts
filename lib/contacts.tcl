@@ -213,7 +213,7 @@ foreach value $extend_values {
 
 if { ![exists_and_not_null attr_val_name] && [exists_and_not_null search_id] } {
 
-    set object_type [db_string get_search_object_type { }]
+    set object_type [db_string get_object_type { }]
     switch $object_type {
 	person { 
 	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]

@@ -20,4 +20,7 @@
 <br>
 
 <listtemplate name="contacts"></listtemplate>
-
+<br>
+<formtemplate id="save">
+<input type="submit" value="Save">
+</formtemplate>
