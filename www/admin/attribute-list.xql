@@ -30,7 +30,8 @@
         select
 		distinct
                 lam.attribute_id,
-		a.pretty_name
+		a.pretty_name,
+		a.attribute_name
         from
                 ams_list_attribute_map lam,
                 ams_lists l,
@@ -38,9 +39,30 @@
         where
                 lam.list_id = l.list_id
 		and lam.attribute_id = a.attribute_id
+                [template::list::page_where_clause -and -name "ams_options" -key "lam.attribute_id"]
+		$extend_query
                 $search_for_clause
-	order by
-		pretty_name asc
+                [template::list::orderby_clause -name "ams_options" -orderby]
+    </querytext>
+</fullquery>
+
+<fullquery name="get_ams_options_pagination">
+    <querytext>
+        select
+		distinct
+                lam.attribute_id,
+		a.pretty_name,
+		a.attribute_name	
+        from
+                ams_list_attribute_map lam,
+                ams_lists l,
+		ams_attributes a
+        where
+                lam.list_id = l.list_id
+		and lam.attribute_id = a.attribute_id
+		$extend_query
+                $search_for_clause
+                [template::list::orderby_clause -name "ams_options" -orderby]
     </querytext>
 </fullquery>
 

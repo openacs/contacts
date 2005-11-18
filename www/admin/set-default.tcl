@@ -29,6 +29,7 @@ if { [exists_and_not_null extend_id] } {
 	    }
 	}
     }
+    ad_returnredirect ext-search-options?search_id=$search_id
 }
 
 if { [exists_and_not_null attribute_id] } {
@@ -49,6 +50,6 @@ if { [exists_and_not_null attribute_id] } {
 	    }
 	}
     }
+    ad_returnredirect attribute-list?search_id=$search_id
 }
 
-ad_returnredirect search-list

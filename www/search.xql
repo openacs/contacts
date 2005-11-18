@@ -135,4 +135,16 @@
     </querytext>
 </fullquery>
  
+<fullquery name="get_extend_mapped_attributes">
+    <querytext>
+	select
+		attribute_id
+	from
+		contact_search_extend_map
+	where
+		search_id = :search_id
+		and attribute_id is not null
+    </querytext>
+</fullquery>
+
 </queryset>

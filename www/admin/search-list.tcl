@@ -12,6 +12,10 @@ ad_page_contract {
 } -validate {
 }
 
+set page_title [_ contacts.Search_List]
+
+
+
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
 if { ![exists_and_not_null owner_id] } {

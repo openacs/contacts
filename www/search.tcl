@@ -140,13 +140,27 @@ if { $search_exists_p } {
 	    set default_extend_attributes [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	}
     }
-	
+
     set show_default_names ""
     set show_names ""
     # We add the default attributes, first we take out all spaces
     # and then split by ";"
     regsub -all " " $default_extend_attributes "" default_extend_attributes
     set default_extend_attributes [split $default_extend_attributes ";"]
+
+    # Now we are going to add the mapped attributes in the contact_search_extend_map
+    set ema_list [db_list get_extend_mapped_attributes { }]
+
+    foreach extend_attribute_id $ema_list {
+	# We check that the attribute is nor already in the default list
+	# to avoid duplicates
+	ams::attribute::get -attribute_id $extend_attribute_id -array ea_info
+	set attribute_name $ea_info(attribute_name)
+	
+	if { [string equal [lsearch $default_extend_attributes $attribute_name] "-1"] } {
+	    lappend default_extend_attributes $attribute_name
+	}
+    }
 
     foreach attr $default_extend_attributes {
 	# Now we get the attribute_id
@@ -167,7 +181,7 @@ if { $search_exists_p } {
 	}
     }
 
-    # To extend the reult list using default attributes
+    # To extend the result list using default attributes
     if { [exists_and_not_null default_names] } {
 	set show_default_names "[join $default_names ", "], "
     }
