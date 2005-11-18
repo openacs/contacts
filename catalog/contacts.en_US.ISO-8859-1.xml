@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d5" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d6" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -57,6 +57,7 @@
   <msg key="at">at</msg>
   <msg key="Attribute">Attribute</msg>
   <msg key="Attribute_-">Attribute -&gt;</msg>
+  <msg key="Attribute_Name">Attribute Name</msg>
   <msg key="Attributes">Attributes</msg>
   <msg key="Available_Attributes">Available Attributes</msg>
   <msg key="Available_Options">Available Options</msg>
@@ -115,6 +116,8 @@
   <msg key="Customer_has_no_employees">Customer has no employees.</msg>
   <msg key="Date">Date</msg>
   <msg key="days">days</msg>
+  <msg key="Default">Default</msg>
+  <msg key="Default_attributes">Default attributes</msg>
   <msg key="Delete">Delete</msg>
   <msg key="Delete_from">Delete</msg>
   <msg key="Description">Description:</msg>
@@ -455,6 +458,7 @@
   <msg key="Search_for_all_object_type_where">Search for all &lt;strong&gt;%object_type%&lt;/strong&gt; where</msg>
   <msg key="Search_for_all_object_type_who_are">Search for all %object_type% who are</msg>
   <msg key="Search_Help">Search Help</msg>
+  <msg key="Search_List">Search List</msg>
   <msg key="searches">searches</msg>
   <msg key="Select">Select</msg>
   <msg key="Send">Send</msg>
