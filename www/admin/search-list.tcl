@@ -8,6 +8,7 @@ ad_page_contract {
     orderby:optional
     {owner_id:optional}
     {format "normal"}
+    page:optional
 } -validate {
 }
 
@@ -20,6 +21,9 @@ if { ![exists_and_not_null owner_id] } {
 template::list::create \
     -name "searches" \
     -key search_id \
+    -page_size 10 \
+    -page_flush_p 0 \
+    -page_query_name select_searches_pagination \
     -multirow "searches" \
     -row_pretty_plural "[_ contacts.searches]" \
     -selected_format $format \
@@ -31,6 +35,7 @@ template::list::create \
             link_url_eval "../search?search_id=$search_id"
 	}
 	owner {
+	    label {[_ contacts.Owner]}
 	    display_template {
 		by @searches.owner@
 	    }
@@ -52,6 +57,17 @@ template::list::create \
             }
         }
     } -orderby {
+	default_value title
+	title {
+	    label {[_ contacts.Title]}
+	    orderby_desc "order_title desc"
+	    orderby_asc "order_title asc"
+	}
+	owner {
+	    label {[_ contacts.Owner]}
+	    orderby_desc "owner_id desc, order_title asc"
+	    orderby_asc "owner_id asc, order_title asc"
+	}
     } -formats {
 	normal {
 	    label "[_ contacts.Table]"
@@ -76,7 +92,7 @@ set admin_p [permission::permission_p -object_id $package_id -privilege "admin"]
 
 db_multirow -extend {query search_url make_public_url delete_url copy_url results owner} -unclobber searches select_searches {} {
     set search_url [export_vars -base ../ -url {search_id}]
-    set owner [contact::name -party_id $owner_id]
+    set owner [contact::name -party_id $search_owner_id]
     if { [empty_string_p $owner] } {
 	set owner "Public"
     }
