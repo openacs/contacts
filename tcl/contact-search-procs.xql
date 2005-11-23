@@ -43,6 +43,28 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::results_count_not_cached.get_condition_type">
+  <querytext>
+	select
+                distinct type
+        from
+                contact_search_conditions
+        where
+                search_id = :search_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results_count_not_cached.select_employees_results_count">
+  <querytext>
+        select
+                count(object_id_one)
+        from
+                acs_rels
+        where
+                rel_type = 'contact_rels_employment'
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::where_clause_not_cached.get_search_info">
   <querytext>
     select title,

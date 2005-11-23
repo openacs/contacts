@@ -160,13 +160,19 @@ ad_proc -public contact::search::results_count_not_cached {
 } {
     
     # If we do not have a search_id, limit the list to only users in the default group.
-    
+    set type_list [list]
     if {[exists_and_not_null search_id]} {
         set group_where_clause ""
+	set type_list [db_list get_condition_type {}]
     } else {
         set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
     }
-    return [db_string select_results_count {}]
+
+    if { [string equal [lsearch -exact $type_list "employees"] "-1"] } {
+        return [db_string select_results_count {}]
+    } else {
+        return [db_string select_employees_results_count {}]
+    }
 }
 
 ad_proc -private contact::party_id_in_sub_search_clause {
@@ -264,13 +270,18 @@ ad_proc -public contact::search_pretty_not_cached {
     set db_conditions [db_list_of_lists select_conditions {}]
     set conditions [list]
     foreach condition $db_conditions {
-        lappend conditions [contacts::search::condition_type \
-				-type [lindex $condition 0] \
-				-request pretty \
-				-var_list [lindex $condition 1] \
-			       ]
+	if { ![string equal [lindex $condition 0] "employees"] } {
+	    lappend conditions [contacts::search::condition_type \
+				    -type [lindex $condition 0] \
+				    -request pretty \
+				    -var_list [lindex $condition 1] \
+				   ]
+	} else {
+	    lappend conditions employees
+	}
     }
 
+    
     if { [llength $conditions] > 0 } {
 
 	contact::search::get -search_id $search_id -array "search_info"
@@ -282,14 +293,19 @@ ad_proc -public contact::search_pretty_not_cached {
 	} else {
 	    set object_type [_ contacts.people_or_organizations]
 	}
-
-        set results "[_ contacts.Search_for_all_object_type_where]\n"
-
+	
+	if { [llength conditions] == 1 && [string equal $conditions "employees"] } {
+	    set results "[_ contacts.search_for_employee]"
+	} else {
+	    set results "[_ contacts.Search_for_all_object_type_where]\n"
+	}
+	
 	if { $search_info(all_or_any) == "all" } {
 	    append results [join $conditions "\n[_ contacts.and] "]
 	} else {
 	    append results [join $conditions "\n[_ contacts.or] "]
 	}
+
 
 	if { $format == "text/html" } { 
 	    set results [ad_enhanced_text_to_html $results]
