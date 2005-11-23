@@ -147,4 +147,19 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_em">
+    <querytext>
+	select 
+		title, 
+		owner_id, 
+		all_or_any, 
+		object_type 
+	from 
+		contact_searches 
+	where 
+		search_id = :search_id 
+    </querytext>
+</fullquery>
+
+
 </queryset>

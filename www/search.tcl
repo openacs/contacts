@@ -78,7 +78,7 @@ set search_exists_p 0
 # set query_pretty [list]
 if { [exists_and_not_null search_id] } {
     if { [contact::search::exists_p -search_id $search_id] } {
-        db_1row get_em { select title, owner_id, all_or_any, object_type from contact_searches where search_id = :search_id }
+        db_1row get_em { }
         set search_exists_p 1
     }
 }
@@ -274,7 +274,6 @@ if { [exists_and_not_null object_type] } {
 }
 
 
-
 if { $search_exists_p } {
     set conditions [list]
     db_foreach selectqueries {
@@ -282,7 +281,7 @@ if { $search_exists_p } {
     } {
 	set condition_name [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
 	if { [empty_string_p $condition_name] } {
-	    set condition_name  "[_ contacts.Employee]"
+	    set condition_name  "[_ contacts.Employees]"
 	}
         lappend conditions "$condition_name <a href=\"[export_vars -base search-condition-delete -url {condition_id}]\"><img src=\"/resources/acs-subsite/Delete16.gif\" width=\"16\" height=\"16\" border=\"0\"></a>"
     }
@@ -295,31 +294,43 @@ if { $search_exists_p } {
     lappend form_elements [list query_pretty:text(inform),optional [list label {}] [list value $query_pretty]]
 }
 
-
+# The employee search only works without other attribute so 
+# we are going to remove the option "Employee" where is already
+# a condition_name and we are going to remove the attributes
+# where the condition_name equals employee
+set employee_p 0
 if { [exists_and_not_null object_type] } {
-
     # QUERY TYPE
     set type_options [contacts::search::condition_types]
     
     # We are going to add one extra element to show all employees
     # and its organization
-    if {[string equal $object_type "party"] } {
+    if { [string equal $object_type "party"] && ![exists_and_not_null condition_name] } {
 	lappend type_options [list "[_ contacts.Employees]" employees]
     }
 
-    append form_elements {
-        {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
+    if { [exists_and_not_null condition_name] && [string equal $condition_name [_ contacts.Employees]] } {
+	set employee_p 1
+    }
+    if { !$employee_p } {
+	# Show the attribute options of the search
+	append form_elements {
+	    {type:text(select),optional {label {}} {options $type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
+	}
     }
 }
 
 
-# get condition types widgets
+#get condition types widgets
 set form_elements [concat \
-                       $form_elements \
-                       [contacts::search::condition_type -type $type -request ad_form_widgets -form_name advanced_search -object_type $object_type] \
-                      ]
+		       $form_elements \
+			   [contacts::search::condition_type -type $type -request ad_form_widgets -form_name advanced_search -object_type $object_type] \
+		      ]
+if { !$employee_p } {
+    # Show the Ok button
+    lappend form_elements  [list next:text(submit) [list label [_ acs-kernel.common_OK]] [list value "ok"]]
+}
 
-lappend form_elements  [list next:text(submit) [list label [_ acs-kernel.common_OK]] [list value "ok"]]
 
 if { $search_exists_p } {
     

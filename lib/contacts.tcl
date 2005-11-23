@@ -33,7 +33,7 @@ foreach default_param $default_param_list {
 }
 
 # This is for showing the employee_id and employeer relationship
-set type_list [db_list get_object_type { }] 
+set type_list [db_list get_condition_type { }] 
 
 if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
     set page_query_name "employees_pagination"

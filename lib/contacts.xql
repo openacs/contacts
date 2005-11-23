@@ -51,12 +51,62 @@ $group_by_group_id
     </querytext>
 </fullquery>
 
-<fullquery name="get_object_type">
+<fullquery name="employees_select">
+    <querytext>
+	select distinct
+	$extend_query
+	rel.object_id_one as party_id,
+	rel.object_id_two as employee_id
+  	from 
+	acs_rels rel,
+	parties p
+ 	where 
+	rel.rel_type = 'contact_rels_employment'
+	and rel.object_id_one = p.party_id
+	[template::list::page_where_clause -and -name "contacts" -key "party_id"]
+    </querytext>
+</fullquery>
+
+<fullquery name="employees_pagination">
+    <querytext>
+	select 
+	rel.object_id_one as party_id,
+	rel.object_id_two as employee_id
+  	from 
+	acs_rels rel
+ 	where 
+	rel.rel_type = 'contact_rels_employment'
+    </querytext>
+</fullquery>
+
+<fullquery name="get_search_object_type">
     <querytext>
 	select 
 		object_type 
 	from 
 		contact_searches 
+	where 
+		search_id = :search_id
+    </querytext>
+</fullquery>
+
+<fullquery name="get_object_type">
+    <querytext>
+	select 
+		object_type 
+	from 
+		contact_searches
+	where 
+		search_id = :search_id
+    </querytext>
+</fullquery>
+
+<fullquery name="get_condition_type">
+    <querytext>
+	select 
+		type 
+	from
+		contact_search_conditions
 	where 
 		search_id = :search_id
     </querytext>
