@@ -19,7 +19,8 @@ create table contact_searches (
         object_type             varchar(1000)
                                 constraint contact_searches_object_type_nn not null,
         deleted_p               boolean default 'f'
-                                constraint contact_searches_deleted_p_nn not null
+                                constraint contact_searches_deleted_p_nn not null,
+	aggregated_attribute    integer
 );
 
 -- create the content type
