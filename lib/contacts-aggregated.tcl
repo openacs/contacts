@@ -215,6 +215,7 @@ ad_form -has_submit 1 -name save -form {
 	    db_dml insert_extend { }
 	}
     }
+    db_dml update_search { }
 } -after_submit {
     ad_returnredirect "?search_id=$search_id&aggregate_attribute_id=$aggregate_attribute_id"
 }

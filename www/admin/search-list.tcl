@@ -35,8 +35,9 @@ template::list::create \
     -elements {
         title {
 	    label {[_ contacts.Title]}
-	    display_col title
-            link_url_eval "../search?search_id=$search_id"
+	    display_template {
+                <a href="@searches.search_link@">@searches.title@</a>
+            }
 	}
 	owner {
 	    label {[_ contacts.Owner]}
@@ -94,7 +95,15 @@ set return_url [export_vars -base searches -url {owner_id}]
 set search_ids [list]
 set admin_p [permission::permission_p -object_id $package_id -privilege "admin"]
 
-db_multirow -extend {query search_url make_public_url delete_url copy_url results owner} -unclobber searches select_searches {} {
+db_multirow -extend {query search_url make_public_url delete_url copy_url results owner search_link} -unclobber searches select_searches {} {
+
+    set aggregated_attribute [db_string get_saved_p { } -default ""]
+    if { [exists_and_not_null aggregated_attribute] } {
+        set search_link ".?search_id=$search_id&aggregate_attribute_id=$aggregated_attribute"
+    } else {
+	set search_link "search?search_id=$search_id"
+    }
+
     set search_url [export_vars -base ../ -url {search_id}]
     set owner [contact::name -party_id $search_owner_id]
     if { [empty_string_p $owner] } {

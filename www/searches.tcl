@@ -27,9 +27,10 @@ template::list::create \
     -key search_id \
     -elements {
         title {
-	    label {#contacts.Title#}
-	    display_col title
-            link_url_eval "search?search_id=$search_id"
+	    label {[_ contacts.Title]}
+	    display_template {
+		<a href="@searches.search_link@">@searches.title@</a>
+	    }
 	}
         query {
 	    label {#contacts.Query#}
@@ -83,7 +84,13 @@ set return_url [export_vars -base searches -url {owner_id}]
 set search_ids [list]
 set admin_p [permission::permission_p -object_id $package_id -privilege "admin"]
 
-db_multirow -extend {query search_url make_public_url delete_url copy_url results} -unclobber searches select_searches {} {
+db_multirow -extend {query search_url make_public_url delete_url copy_url results search_link} -unclobber searches select_searches {} {
+    set aggregated_attribute [db_string get_saved_p { } -default ""]
+    if { [exists_and_not_null aggregated_attribute] } { 
+	set search_link ".?search_id=$search_id&aggregate_attribute_id=$aggregated_attribute"
+    } else {
+	set search_link "search?search_id=$search_id"
+    }
     if { $owner_id != $package_id && $admin_p } {
         set make_public_url [export_vars -base search-action -url {search_id {owner_id $package_id} {action move} return_url}]
     }

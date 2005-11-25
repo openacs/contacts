@@ -50,4 +50,16 @@
     </querytext>
 </fullquery>
 
+<fullquery name="get_saved_p">
+    <querytext>
+        select
+                aggregated_attribute
+        from
+                contact_searches
+        where
+                search_id = :search_id
+		and aggreagated_attribute is not null
+    </querytext>
+</fullquery>
+
 </queryset>

@@ -34,6 +34,13 @@
     </querytext>
 </fullquery>
 
+<fullquery name="update_search">
+    <querytext>
+	update contact_searches set aggregated_attribute = :aggregate_attribute_id 
+	where search_id = :search_id
+    </querytext>
+</fullquery>
+
 <fullquery name="get_attribute_options">
     <querytext>
 	select 
