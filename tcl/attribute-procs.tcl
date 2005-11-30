@@ -57,8 +57,16 @@ namespace eval contacts::attribute {
 
     }
 
-
-
+    ad_proc -public options_attribute { 
+    } {
+	Returns a list of only the attributes that have
+	multiple choices of the format {pretty_name attribute_id}
+    } {
+	set options [db_list_of_lists get_option_attributes { }]
+	lappend options [list "[_ contacts.Country]" "-1"]
+	lappend options [list "[_ contacts.Relationship]" "-2"]
+	return $options
+    }
 
 }
 

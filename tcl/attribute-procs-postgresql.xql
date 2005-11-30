@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <queryset>
 
-<rdbms><type>postgresql</type><version>7.2</version></rdbms>
 
 <fullquery name="contacts::attribute::create.create_attribute">
   <querytext>
@@ -118,5 +117,19 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contacts::attribute::options_attribute.get_option_attributes">
+  <querytext>
+	select 
+		distinct 
+		a.pretty_name,
+		ot.attribute_id
+	from 
+		ams_option_types ot,
+		ams_attributes a
+	where
+		ot.attribute_id = a.attribute_id
+		order by a.pretty_name asc
+  </querytext>
+</fullquery>
 
 </queryset>

@@ -1,0 +1,112 @@
+/* Comments Print Style Sheet
+
+    @author Matthew Geddert openacs@geddert.com
+    @creation-date 2005-05-15
+    @cvs-id $Id$
+
+----------------------------------------------- */
+
+body {
+  background-color: #FFF;
+  font-size: 10pt;
+  line-height: 14pt;
+  font-family: Times, Times New Roman, Garamond, Bodoni, Minion Web, ITC Stone Serif, MS Georgia, Bitstream Cyberbit,serif;
+  padding: 0;
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+@media screen {
+	#header {
+	  background-color: #DDD;
+	  border-bottom: 1px solid #AAA;
+	  padding: 1em;
+	  font-weight: bolder;
+	}
+	#header p {
+	  padding: 0;
+	  margin: 0;
+	}
+        #header a {
+	  text-decoration: underline;
+          color: #F00;
+        }
+	.message {
+          clear: both;
+	  padding: 5px;
+	  margin: 20px 10px 20px 10px;
+	  border: 3px outset #666;
+	  max-width: 50em;
+	}
+	.date {
+          text-align: right;
+	}
+	.mailing-address {
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          padding: 0;
+          margin: 2em 0 0 0;
+	}
+        .content {
+          padding: 0;
+          margin: 2em 0 0 0;
+        }
+        #letterhead .content,
+        #letterhead .mailing-address {
+          margin-left: 50px;
+        }
+}
+
+@media print {
+
+	body {
+	  font-size: 11pt;
+          line-height: 14pt;
+          padding: 0;
+          margin: 0;
+   	}
+	#header {
+	  display: none;
+	}
+	.message {
+	  page-break-after: always;
+        }
+	.date {
+	  position: relative;
+          text-align: right;
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          line-height: 11pt;
+	  top: 0;
+          right: 0;
+          padding: 0;
+	  padding-right: 0.5cm;
+          margin: 0;
+	}
+	.mailing-address {
+	  position: relative;
+          top: 3.6cm;
+          left: 0cm;
+          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
+          font-size: 80%;
+          line-height: 11pt;
+          padding: 0;
+          margin: 0;
+	}
+        .content {
+	  position: relative;
+          top: 5cm;
+          left: 0cm;
+        }
+        #letterhead .content,
+        #letterhead .mailing-address {
+          left: 2.9cm;
+	  padding-right: 2.9cm;
+        }
+}
+@page {
+  margin: 2.6cm;
+}

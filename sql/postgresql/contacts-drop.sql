@@ -6,30 +6,30 @@
 --
 --
 
+drop table contact_search_extend_map;
+drop table contact_search_conditions;
+drop table contact_searches;
+drop table contact_extend_options;
+select drop_package('contact_search');
+select acs_object__delete(search_id) from contact_searches;
+select acs_object_type__drop_type('contact_search','t');
 
--- The view structure.
-\i views-drop.sql
+drop view contact_rel_types;
+drop table contact_signatures;
+drop table contact_groups;
+drop table contact_rels;
+drop table organization_rels;
+drop table contact_complaint_track;
 
--- The attribute structure.
-\i attributes-drop.sql
+select content_type__drop_type ('contact_party_revision','t','t');
+--drop table contact_party_revisions;
+select acs_rel_type__drop_type('organization_rel','t');
+select acs_rel_type__drop_type(object_type,'t') from acs_object_types where supertype = 'contact_rel';
+select acs_rel_type__drop_type('contact_rel','t');
 
-
-drop view contacts;
-drop table contact_archives;
-drop table contact_object_types;
-
+-- procedure drop_type
 select drop_package('contact');
+select drop_package('contact_rel');
+select drop_package('contact_party_revision');
 
-delete from acs_objects where object_type = 'contact_object_type';
-create function inline_0 ()
-returns integer as '
-begin
-
-  PERFORM acs_object_type__drop_type (''contact_object_type'',''f'');
-
-  return 0;
-end;' language 'plpgsql';
-
-select inline_0 ();
-drop function inline_0 ();
-
+drop sequence contact_extend_search_seq;

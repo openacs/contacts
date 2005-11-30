@@ -1,3 +1,0 @@
-<listtemplate name="attributes"></listtemplate>
-
-

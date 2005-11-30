@@ -1,18 +1,31 @@
 <?xml version="1.0"?>
 <queryset>
 
-<partialquery name="get_contact_info">
-  <querytext>
-select contacts.*, sort_$sortby as contact_name
-  from contacts
- where party_id is not null
-       [template::list::filter_where_clauses -and -name entries]
-       [template::list::orderby_clause -orderby -name entries]
-       limit $num_rows offset $start_row
-  </querytext>
-</partialquery>
+<fullquery name="public_searches">
+      <querytext>
+    select title,
+           search_id
+      from contact_searches
+     where owner_id = :package_id
+       and title is not null
+       and not deleted_p
+     order by lower(title)
+      </querytext>
+</fullquery>
 
+<fullquery name="my_recent_searches">
+      <querytext>
+    select cs.title as recent_title,
+           cs.search_id as recent_search_id
+      from contact_searches cs, contact_search_log csl
+     where csl.user_id = :user_id
+       and cs.search_id = csl.search_id
+       and cs.title is not null
+       and cs.owner_id != :package_id
+       and not cs.deleted_p
+     order by last_search desc
+     limit 10
+      </querytext>
+</fullquery>
 
 </queryset>
-
-
