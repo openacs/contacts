@@ -139,9 +139,9 @@ ad_proc -public contacts::install::package_install {
     
     content::type::attribute::new \
 	-content_type "contact_complaint" \
-	-attribute_name "refund" \
+	-attribute_name "refund_amount" \
 	-datatype "money" \
-	-pretty_name "Refund" \
+	-pretty_name "Refund Amount" \
 	-sort_order 9 \
 	-column_spec "float"
     
