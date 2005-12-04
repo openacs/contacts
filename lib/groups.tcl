@@ -31,10 +31,10 @@ if { [string is false $hide_form_p] } {
         set add_label [_ contacts.Add_to_Group]
         ad_form -name add_to_group -action "${package_url}group-party-add" \
             -form {
-                    party_id:integer(hidden)
-                    return_url:text(hidden),optional
-                    {group_id:integer(select) {label {}} {options $group_options}}
-                    {save:text(submit),optional {label {$add_label}}}
+		party_id:integer(hidden)
+		return_url:text(hidden),optional
+		{group_id:integer(select) {label {}} {options "[lang::util::localize_list_of_lists -list $group_options]"}}
+		{save:text(submit),optional {label {$add_label}}}
             } -on_request {
             } -after_submit {
             }
