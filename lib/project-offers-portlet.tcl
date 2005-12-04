@@ -18,4 +18,6 @@ if {[exists_and_not_null organization_id]} {
 
 if {[exists_and_not_null pm_base_url]} {
     set actions [list "[_ project-manager.Projects]" $pm_base_url "[_ project-manager.Projects]" "[_ project-manager.Add_project]" "[export_vars -base "${pm_base_url}/add-edit" -url {{customer_id $organization_id}}]" "[_ project-manager.Add_project]"]
+} else {
+    set actions ""
 }
