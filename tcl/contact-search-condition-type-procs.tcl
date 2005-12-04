@@ -686,7 +686,15 @@ ad_proc -private contacts::search::condition_type::group {
                                      [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
                                     ]
 
-            set group_options [contact::groups -expand "all" -privilege_required "read"]
+            set group_options_old [contact::groups -expand "all" -privilege_required "read"]
+	    set group_options [list]
+	    foreach group $group_options_old {
+		set group_name [lang::util::localize [lindex $group 0]]
+		set group_id [lindex $group 1]
+		set group_numbers [lindex $group 2]
+		lappend group_options [list "$group_name" $group_id $group_numbers]
+	    }
+
             lappend form_elements [list ${prefix}operand:text(select) [list label {}] [list options $operand_options] [list value $operand]]
             lappend form_elements [list ${prefix}group_id:integer(select) [list label {}] [list options $group_options] [list value $group_id]]
             return $form_elements
@@ -709,11 +717,11 @@ ad_proc -private contacts::search::condition_type::group {
             switch $operand {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
-                    set output_code "$party_id in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
+                    set output_code "group_id = $group_id"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
-                    set output_code "$party_id not in ( select member_id from group_distinct_member_map where group_id = '$group_id')"
+                    set output_code "group_id != $group_id"
                 }
             }
             if { $request == "pretty" } {
