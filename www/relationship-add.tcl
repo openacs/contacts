@@ -47,7 +47,7 @@ set contact_type_two [contact::type -party_id $party_two]
 if { $contact_type_two == "user" } {
     set contact_type_two "person"
 }
-set secondary_role_pretty [db_string get_secondary_role_pretty {}]
+set secondary_role_pretty [lang::util::localize [db_string get_secondary_role_pretty {}]]
 if { ![exists_and_not_null rel_type] } {
     set options_list [db_list_of_lists get_rel_types {}]
     set options_length [llength $options_list]
