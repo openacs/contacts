@@ -22,7 +22,7 @@ template::list::create \
         edit {
 	    label {}
 	    display_template {
-		<a href="group-ae?group_id=@groups.group_id@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a>
+		<a href="@groups.edit_url@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a>
 	    }
 	}
         group_name {
@@ -85,7 +85,7 @@ template::list::create \
     }
 
 
-multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url
+multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url
 
 set return_url [ad_conn url]
 foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all] {
@@ -109,8 +109,12 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
                           -pretty_name "${package_id}__${group_id}" \
                           -return_url $return_url \
                           -return_url_label "[_ contacts.Return_to_title]"]
+
+    # The edit_url allows you to change the name of a group. As this is stored in I18N format, we change it accordingly there
+    set edit_url [export_vars -base "/acs-lang/admin/edit-localized-message" {{package_key acs-translations} {locale "[ad_conn locale]"} {message_key "group_title_${group_id}"} {return_url [ad_return_url]}}]
+
     set categories_url [export_vars -base "/categories/cadmin/object-map" -url {{object_id $group_id}}]
-    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url
+    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url
 
 
 }

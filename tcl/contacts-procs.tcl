@@ -513,6 +513,18 @@ ad_proc -public contact::groups {
     {-no_member_count:boolean}
 } {
 } {
+    return [util_memoize [list contact::groups_not_cached -expand $expand -indent_with $indent_with -privilege_required $privilege_required -output $output -all_p $all_p -no_member_count_p $no_member_count_p]]
+}
+
+ad_proc -public contact::groups_not_cached {
+    {-expand "all"}
+    {-indent_with "..."}
+    {-privilege_required "read"}
+    {-output "list"}
+    {-all_p ""}
+    {-no_member_count_p ""}
+} {
+} {
     set user_id [ad_conn user_id]
     set group_list [list]
     # Filter clause
@@ -527,7 +539,7 @@ ad_proc -public contact::groups {
 	}
 
         if { $mapped_p || $all_p} {
-            lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p]
+            lappend group_list [list $group_name $group_id $member_count "1" $mapped_p $default_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
 		    if { $mapped_p || $all_p} {
@@ -537,8 +549,7 @@ ad_proc -public contact::groups {
             }
         }
     }
-    set group_list [ams::util::localize_list_of_lists -list $group_list]
-
+    
     switch $output {
         list {
             set list_output [list]

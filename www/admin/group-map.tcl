@@ -47,7 +47,8 @@ ad_page_contract {
     }
 }
 
-
+# First flush our cache for the contact::groups as we change something here
+util_memoize_flush_regexp [list contact::groups_not_cached .*]
 
 set package_id [ad_conn package_id]
 
