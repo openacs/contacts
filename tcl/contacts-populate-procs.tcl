@@ -832,6 +832,37 @@ ad_proc -public contacts::populate::crm {
 
     callback contacts::populate::organization::customer_attributes -list_id $list_id
 
+    set attribute_id [attribute::new \
+              -object_type "organization" \
+              -attribute_name "invoice_specialities" \
+              -datatype "text" \
+              -pretty_name "Invoice Specialitieso" \
+              -pretty_plural "Invoice Specialities*" \
+              -table_name "" \
+              -column_name "" \
+              -default_value "" \
+              -min_n_values "1" \
+              -max_n_values "1" \
+              -sort_order "1" \
+              -storage "generic" \
+              -static_p "f" \
+			  -if_does_not_exist]
+
+ams::attribute::new \
+              -attribute_id $attribute_id \
+              -widget "textarea" \
+              -dynamic_p "t"
+
+ams::list::attribute::map \
+              -list_id $list_id \
+              -attribute_id $attribute_id \
+              -sort_order "111" \
+              -required_p "f" \
+              -section_heading ""
+    
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Rechnungsbesonderheiten"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Rechnungsbesonderheiten"
+
     # Person - Customer
 
     set list_id [ams::list::new \
