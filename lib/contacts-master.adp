@@ -5,6 +5,7 @@
   <property name="header_stuff">
     <link href="/resources/contacts/contacts.css" rel="stylesheet" type="text/css">
   </property>
+  <property name="navbar_list">@navbar@</property>
   <if @focus@ not nil>
     <property name="focus">@focus@</property>
   </if>

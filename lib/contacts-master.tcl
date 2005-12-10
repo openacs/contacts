@@ -48,6 +48,7 @@ set page_query [ad_conn query]
 # Convert the list to a multirow and add the selected_p attribute
 multirow create links label url selected_p
 
+set navbar {}
 foreach {url label} $link_list {
     set selected_p 0
 
@@ -59,6 +60,7 @@ foreach {url label} $link_list {
 	    set title $label
 	}
     }
+    lappend navbar [list [subst $url] $label]
     multirow append links $label [subst $url] $selected_p
 }
 
