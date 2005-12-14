@@ -254,6 +254,7 @@ set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
     set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
 }
+
 template::list::create \
     -html {width 100%} \
     -name "contacts" \

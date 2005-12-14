@@ -73,9 +73,11 @@ $group_by_group_id
 	rel.object_id_one as party_id,
 	rel.object_id_two as employee_id
   	from 
-	acs_rels rel
+	acs_rels rel, persons p
  	where 
 	rel.rel_type = 'contact_rels_employment'
+	and person_id = object_id_one
+	order by last_name
     </querytext>
 </fullquery>
 
