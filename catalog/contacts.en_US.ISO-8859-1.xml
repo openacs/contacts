@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d8" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d9" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -105,11 +105,13 @@
   <msg key="Create_a_role">Create a role</msg>
   <msg key="Create_a_Signature">Create a Signature</msg>
   <msg key="Create_a_user_account_for_this_person">Create a user account for this person</msg>
+  <msg key="Create_Club">Create Club</msg>
   <msg key="create_email">Create Email</msg>
   <msg key="create_letter">Create Letter</msg>
   <msg key="create_project">Create project</msg>
   <msg key="Create_role">Create role</msg>
   <msg key="Create_user">Create User</msg>
+  <msg key="Creating_Club">Creating Club</msg>
   <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
   <msg key="Customer">Customer:</msg>
@@ -333,6 +335,8 @@
   <msg key="lt_Unable_to_retrieve_gr">Unable to retrieve group_id</msg>
   <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Upgrade this person to a user</msg>
+  <msg key="lt_We_are_creating_the_c">We are creating the club for this organization. Please wait, this might take a while ...</msg>
+  <msg key="lt_We_will_continue_auto">We will continue automatically</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">You cannot add this contact to more groups.</msg>
   <msg key="lt_You_cannot_make_sub_g">You cannot make sub groups the default group</msg>
