@@ -91,6 +91,14 @@ ad_proc -public contact::util::get_employers {
     {-employee_id:required}
 } {
     Get employers of an employee
+} {
+    return [util_memoize [list contact::util::get_employers_not_cached -employee_id $employee_id]]
+}
+
+ad_proc -public contact::util::get_employers_not_cached {
+    {-employee_id:required}
+} {
+    Get employers of an employee
 
     @author Al-Faisal El-Dajani (faisal.dajani@gmail.com)
     @param employee_id The ID of the employee whom you want to know his/her employer
@@ -227,6 +235,28 @@ ad_proc -public contact::util::get_employee_organization {
     return $contact_list
 }
 
+ad_proc -public contact::salutation {
+    {-party_id:required}
+    {-type "salutation"}
+} {
+    Returns the appropriate salutation string for a party depending on a couple of factors
+    
+    @param party_id Party_id of the Party you need the salutation for. If it is an organiztion, return "Dear ladies and gentlemen", if type = salution, or nothing otherwise
+    @param type Type of salutation to return. Can be "salutation" or "letterhead".
+} {
+    
+    # As we are dealing with attributes, we need to get the latest revivision of the party.
+    set party_id_rev [content::item::get_best_revision -item_id $party_id]
+    set salutation "[ams::value -object_id $party_id_rev -attribute_name "salutation"]"
+    
+    if {[contact::organization_p -party_id $party_id]} {
+	if {[string eq $type "salutation"]} {
+	    return "$salutation"
+	}
+    } else {
+    }
+}
+
 ad_proc -private contact::flush {
     {-party_id:required}
 } {
@@ -252,8 +282,15 @@ ad_proc -public contact::name_not_cached {
     this returns the contact's name
 } {
     if {[person::person_p -party_id $party_id]} {
-	set person_info [person::name -person_id $party_id]
-	return $person_info
+	
+	if {[parameter::get -parameter "ChangePersonNameOrder" -default 1]} {
+	    return [db_string get_person_name {select last_name||', '||first_names as person_name
+		from persons
+		where person_id = :party_id} -default ""]
+	} else {
+	    return [person::name -person_id $party_id]
+	}	    
+
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
 	# if there is no group null is returned
