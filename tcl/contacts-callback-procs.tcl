@@ -161,10 +161,9 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     # Try to retrieve the project_id from the folder
     set project_id [db_string get_project_id_from_folder {
 	select r.object_id_two as project_id
-	from acs_rels r, cr_items i, cr_items p
+	from acs_data_links r, cr_items i, cr_items p
 	where i.item_id = :folder_id
 	and r.object_id_one = i.parent_id
-	and r.rel_type = 'application_data_link'
 	and r.object_id_two = p.item_id
     	and p.content_type = 'pm_project'
     } -default ""]
