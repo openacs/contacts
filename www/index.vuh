@@ -25,7 +25,7 @@ if { $party_is_contact_p } {
                 ad_returnredirect "[ad_conn package_url]${party_id}/"
                 ad_script_abort
         }
-        set valid_pages [list "" edit files groups relationships comments message history changes mail-tracking]
+        set valid_pages [list "" edit files groups relationships comments message history changes mail-tracking create-club]
 
         if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
            switch $action {
@@ -41,6 +41,7 @@ if { $party_is_contact_p } {
 	       history       { set file "history" }
 	       changes       { set file "changes" }
 	       mail-tracking { set file "mail-tracking" }
+	       create-club   { set file "create-club" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }
 
