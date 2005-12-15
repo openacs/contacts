@@ -17,8 +17,10 @@ ad_proc -public -callback contact::contact_form {
     {-object_type:required}
     {-party_id}
     {-group_ids ""}
+    {-rel_type ""}
 } {
-}
+    Form when adding a new contact. This is especially used when presetting values
+} -
 
 ad_proc -public -callback contact::contact_form_validate {
     {-package_id:required}

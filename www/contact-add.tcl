@@ -125,7 +125,7 @@ if { $object_type == "person" } {
 
 set context [list $title]
 
-callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type -group_ids $group_ids
+callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type -group_ids $group_ids -rel_type $rel_type
 
 ad_form -extend -name party_ae \
     -on_request {
@@ -177,11 +177,15 @@ ad_form -extend -name party_ae \
 	    if { ![exists_and_not_null name] } {
 		template::element::set_error party_ae name "[_ contacts.Name_is_required]"
 	    } else {
-                set other_organization_id [organization::get_by_name -name $name]
-                if { ![empty_string_p $other_organization_id] } {
-                    set another_organization [contact::link -party_id $other_organization_id]
-                    template::element::set_error party_ae name "[_ contacts.lt_-another_organization-_already_uses_this_name]"
-                }
+                # We (cognovis) got rid of the unique constraints on organization name as this does not make any sense
+                # An organization could be in multiple locations and independend units of the same large organization could be
+                # different organizations / customers. After all we deal with seperate business units and these should be treated seperately.
+                
+#                set other_organization_id [organization::get_by_name -name $name]
+#                if { ![empty_string_p $other_organization_id] } {
+#                    set another_organization [contact::link -party_id $other_organization_id]
+#                    template::element::set_error party_ae name "[_ contacts.lt_-another_organization-_already_uses_this_name]"
+#                }
             }
 	}
 

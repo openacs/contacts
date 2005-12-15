@@ -200,6 +200,7 @@
   <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
   <msg key="lt_--_Recent_Searches_--">-- Recent Searches --</msg>
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
+  <msg key="lt_-contact_link-_was_upgraded_to_a_user">Contact was upgraded to a user</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
   <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
