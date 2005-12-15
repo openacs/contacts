@@ -76,6 +76,9 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
         db_dml insert_contact_rel {}
 	#	callback contact::insert_contact_rel -package_id $package_id -form party_ae -object_type $object_type
         util_user_message -message "[_ contacts.Relationship_Added]"
+
+	# flush cache for employee data
+	util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
     } else {
         util_user_message -message "[_ contacts.Relationship_Updated]"
     }

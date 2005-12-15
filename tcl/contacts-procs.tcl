@@ -266,6 +266,9 @@ ad_proc -private contact::flush {
     util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
     util_memoize_flush "::contact::name_not_cached -party_id $party_id"
     util_memoize_flush "::contact::email_not_cached -party_id $party_id"
+    util_memoize_flush "::contact::salutation_not_cached -party_id $party_id -type salutation"
+    util_memoize_flush "::contact::salutation_not_cached -party_id $party_id -type letter"
+    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
 }
 
 ad_proc -public contact::name {

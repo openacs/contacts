@@ -836,8 +836,8 @@ ad_proc -public contacts::populate::crm {
               -object_type "organization" \
               -attribute_name "invoice_specialities" \
               -datatype "text" \
-              -pretty_name "Invoice Specialitieso" \
-              -pretty_plural "Invoice Specialities*" \
+              -pretty_name "Invoice Specialities" \
+              -pretty_plural "Invoice Specialities" \
               -table_name "" \
               -column_name "" \
               -default_value "" \

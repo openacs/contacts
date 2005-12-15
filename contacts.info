@@ -5,7 +5,7 @@
     <package-name>Contacts</package-name>
     <pretty-plural>Contacts</pretty-plural>
     <initial-install-p>f</initial-install-p>
-    <singleton-p>f</singleton-p>
+    <singleton-p>t</singleton-p>
     
     <version name="1.1d9" url="http://openacs.org/repository/download/apm/contacts-1.1d9.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
@@ -24,14 +24,15 @@
 
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
-            <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
             <callback type="after-upgrade"  proc="contacts::install::package_upgrade"/>
+            <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
         </callbacks>
         <parameters>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AcceptableFileUploadMIMETypes"  default="*" description="* for any. CSV of acceptable MIME Types for File Upload" section_name="File Upload"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AcceptablePhotoUploadMIMETypes"  default="image/jpeg,image/gif,image/png,image/bmp,image/tiff" description="CSV of acceptable MIME Types for Photo Upload" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AddEditComplaint"  default="/packages/contacts/templates/ae-complaint" description="The template for the display of the complaint form" section_name="Portal Templates"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="AllPeopleAreUsers"  default="0" description="1 if true, 0 if false. If set to 1 all newly created people will be users. If set to 0 you will be asked whether or not a user account should be created."/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ChangePersonNameOrder"  default="0" description="Changes the default name of a person displayed from &quot;First_names Last_name&quot; to &quot;Last_name, First_names&quot;"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Changes"  default="/packages/contacts/templates/changes" description="The template src for the changes portlet." section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Complaint"  default="/packages/contacts/templates/complaint" description="The template src for complaint page." section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ComplaintAE"  default="/packages/contacts/templates/complaint-ae" description="The template source for complaint-ae." section_name="Portal Templates"/>

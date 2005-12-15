@@ -17,7 +17,11 @@ ad_page_contract {
 }
 
 # ams::object_delete -object_id $rel_id
+db_1row get_object_id_one {}
 db_1row delete_rel {}
+
+# flush cache for employee data
+util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
 
 if { ![exists_and_not_null return_url] } {
     set return_url "$party_id/relationships"
