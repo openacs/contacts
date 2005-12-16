@@ -157,11 +157,14 @@ ad_proc -private contact::salutation_not_cached {
     set revision_id [content::item::get_best_revision -item_id $party_id]
     foreach attribute [list "first_names" "last_name" "salutation" "person_title"] {
 	set value($attribute) [ams::value -object_id $revision_id -attribute_name $attribute]
+	if {[string eq $attribute "first_names"]} {
+	    append value(first_names) " "
+	}
     }
 
     if {$type == "salutation"} {
 	# long salutation
-	return "$person(salutation) [string trim "$value(person_title) $value(first_names)$value(last_name)"]"
+	return "$value(salutation) [string trim "$value(person_title) $value(first_names)$value(last_name)"]"
     } else {
 	# short sticker salutation
 	return "- [string trim "$value(person_title) $value(first_names)$value(last_name)"] -"
