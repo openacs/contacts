@@ -9,7 +9,7 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contact::groups_not_cached.get_groups">
+<fullquery name="contact::groups_list_not_cached.get_groups">
   <querytext>
     select groups.group_id,
            acs_objects.title as group_name,
@@ -26,7 +26,7 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contact::groups_not_cached.get_components">
+<fullquery name="contact::groups.get_components">
   <querytext>
             select groups.group_id,
                    groups.group_name,

@@ -91,14 +91,6 @@ ad_proc -public contact::util::get_employers {
     {-employee_id:required}
 } {
     Get employers of an employee
-} {
-    return [util_memoize [list contact::util::get_employers_not_cached -employee_id $employee_id]]
-}
-
-ad_proc -public contact::util::get_employers_not_cached {
-    {-employee_id:required}
-} {
-    Get employers of an employee
 
     @author Al-Faisal El-Dajani (faisal.dajani@gmail.com)
     @param employee_id The ID of the employee whom you want to know his/her employer
@@ -122,12 +114,66 @@ ad_proc -public contact::util::get_employers_not_cached {
     return $contact_list
 }
 
+ad_proc -public contact::salutation {
+    {-party_id:required}
+    {-type salutation}
+} {
+    Get salutation string.
+
+    @author Timo Hentschel (timo@timohentschel.de)
+    @creation-date 2005-12-12
+    @param party_id The ID of the party whose information you wish to retrieve.
+    @param type either salutation or letter
+
+    @return salutation / sticker salutation string.
+} {
+    return [util_memoize [list ::contact::salutation_not_cached -party_id $party_id -type $type]]
+}
+
+ad_proc -private contact::salutation_not_cached {
+    {-party_id:required}
+    {-type salutation}
+} {
+    Get salutation string.
+
+    @author Timo Hentschel (timo@timohentschel.de)
+    @creation-date 2005-12-12
+    @param party_id The ID of the party whose information you wish to retrieve.
+    @param type either salutation or letter
+
+    @return salutation / sticker salutation string.
+} {
+    # Check if ID belongs to a person
+    if {![person::person_p -party_id $party_id]} {
+	if {$type == "salutation"} {
+	    # standard salutation
+	    return "Sehr geehrte Damen und Herren"
+	} else {
+	    # empty sticker salutation for organizations
+	    return
+	}
+    }
+
+    set revision_id [content::item::get_best_revision -item_id $party_id]
+    foreach attribute [list "first_names" "last_name" "salutation" "person_title"] {
+	set value($attribute) [ams::value -object_id $revision_id -attribute_name $attribute]
+    }
+
+    if {$type == "salutation"} {
+	# long salutation
+	return "$person(salutation) [string trim "$value(person_title) $value(first_names)$value(last_name)"]"
+    } else {
+	# short sticker salutation
+	return "- [string trim "$value(person_title) $value(first_names)$value(last_name)"] -"
+    }
+}
+
 ad_proc -public contact::employee::get {
     {-employee_id:required}
     {-array:required}
     {-organization_id}
 } {
-    Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists.
+    Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Cached.
 
     @author Al-Faisal El-Dajani (faisal.dajanim@gmail.com)
     @creation-date 2005-10-18
@@ -136,16 +182,38 @@ ad_proc -public contact::employee::get {
     @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
     @return 1 if user exists, 0 otherwise.
 } {
-    ns_log notice "start processing"
     upvar $array local_array
+    set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id]]
+
+    if {![empty_string_p $values]} {
+	array set local_array $values
+	return 1
+    } else {
+	return 0
+    }
+}
+
+ad_proc -private contact::employee::get_not_cached {
+    {-employee_id:required}
+    {-organization_id}
+} {
+    Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Uncached.
+
+    @author Al-Faisal El-Dajani (faisal.dajanim@gmail.com)
+    @creation-date 2005-10-18
+    @param employee_id The ID of the employee whose information you wish to retrieve.
+    @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
+    @return Array-list of data.
+} {
+    ns_log notice "start processing"
     set employer_exist_p 0
     set employee_attributes [list "first_names" "last_name" "salutation" "person_title" "home_phone" "private_fax" "email"]
     set employer_attributes [list "name" "company_phone" "company_fax" "email"]
 
-    # Check if ID belongs to an employee, if not return 0
+    # Check if ID belongs to an employee, if not return empty string
     if {![person::person_p -party_id $employee_id]} {
 	ns_log notice "The ID specified does not belong to an employee"
-	return 0
+	return
     }
 
     # Get employers, if any
@@ -180,6 +248,14 @@ ad_proc -public contact::employee::get {
 		       -attribute_name $attribute
 		  ]
 	set local_array($attribute) $value
+
+	set address_id [attribute::id -object_type "person" -attribute_name "home_address"]
+	contacts::postal_address::get -address_id $address_id -array home_address_array
+	set local_array(address) $home_address_array(delivery_address)
+	set local_array(municipality) $home_address_array(municipality)
+	set local_array(region) $home_address_array(region)
+	set local_array(postal_code) $home_address_array(postal_code)
+	set local_array(country_code) $home_address_array(country_code)
     }
     if {$employer_exist_p} {
 	foreach attribute $employer_attributes {
@@ -190,28 +266,30 @@ ad_proc -public contact::employee::get {
 	    set $attribute $value
 	}
 
+	set local_array(company_name) $name
 	# Check if employee email, phone, and fax exist. If not, set them to employer values.
-	if {![exists_and_not_null $local_array(email)]} {
+	if {![exists_and_not_null local_array(email)]} {
 	    set local_array(email) $email
 	}
-	if {![exists_and_not_null $local_array(home_phone)]} {
+	if {![exists_and_not_null local_array(home_phone)]} {
 	    set local_array(home_phone) $company_phone
 	}
-	if {![exists_and_not_null $local_array(private_fax)]} {
+	if {![exists_and_not_null local_array(private_fax)]} {
 	    set local_array(private_fax) $company_fax
+	}
+
+	if {![exists_and_not_null local_array(address)]} {
+	    set address_id [attribute::id -object_type "organization" -attribute_name "company_address"]
+	    contacts::postal_address::get -address_id $address_id -array address_array
+	    set local_array(address) $address_array(delivery_address)
+	    set local_array(municipality) $address_array(municipality)
+	    set local_array(region) $address_array(region)
+	    set local_array(postal_code) $address_array(postal_code)
+	    set local_array(country_code) $address_array(country_code)
 	}
     }
 
-    set local_array(company_name) $name
-    set address_id [attribute::id -object_type "organization" -attribute_name "company_address"]
-    contacts::postal_address::get -address_id $address_id -array address_array
-    set local_array(company_address) $address_array(delivery_address)
-    set local_array(company_municipality) $address_array(municipality)
-    set local_array(company_region) $address_array(region)
-    set local_array(company_postal_code) $address_array(postal_code)
-    set local_array(company_country_code) $address_array(country_code)
-
-    return 1
+    return [array get local_array]
 }
 
 ad_proc -public contact::util::get_employee_organization {
@@ -235,28 +313,6 @@ ad_proc -public contact::util::get_employee_organization {
     return $contact_list
 }
 
-ad_proc -public contact::salutation {
-    {-party_id:required}
-    {-type "salutation"}
-} {
-    Returns the appropriate salutation string for a party depending on a couple of factors
-    
-    @param party_id Party_id of the Party you need the salutation for. If it is an organiztion, return "Dear ladies and gentlemen", if type = salution, or nothing otherwise
-    @param type Type of salutation to return. Can be "salutation" or "letterhead".
-} {
-    
-    # As we are dealing with attributes, we need to get the latest revivision of the party.
-    set party_id_rev [content::item::get_best_revision -item_id $party_id]
-    set salutation "[ams::value -object_id $party_id_rev -attribute_name "salutation"]"
-    
-    if {[contact::organization_p -party_id $party_id]} {
-	if {[string eq $type "salutation"]} {
-	    return "$salutation"
-	}
-    } else {
-    }
-}
-
 ad_proc -private contact::flush {
     {-party_id:required}
 } {
@@ -266,9 +322,6 @@ ad_proc -private contact::flush {
     util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
     util_memoize_flush "::contact::name_not_cached -party_id $party_id"
     util_memoize_flush "::contact::email_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::salutation_not_cached -party_id $party_id -type salutation"
-    util_memoize_flush "::contact::salutation_not_cached -party_id $party_id -type letter"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
 }
 
 ad_proc -public contact::name {
@@ -285,15 +338,8 @@ ad_proc -public contact::name_not_cached {
     this returns the contact's name
 } {
     if {[person::person_p -party_id $party_id]} {
-	
-	if {[parameter::get -parameter "ChangePersonNameOrder" -default 1]} {
-	    return [db_string get_person_name {select last_name||', '||first_names as person_name
-		from persons
-		where person_id = :party_id} -default ""]
-	} else {
-	    return [person::name -person_id $party_id]
-	}	    
-
+	set person_info [person::name -person_id $party_id]
+	return $person_info
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
 	# if there is no group null is returned
@@ -544,6 +590,23 @@ ad_proc -public contact::group::parent {
     return [db_string get_parent {} -default {}]
 }
 
+ad_proc -public contact::groups_list {
+} {
+    Retrieve a list of all groups currently in the system
+} {
+    return [util_memoize [list contact::groups_list_not_cached]]
+}
+
+ad_proc -public contact::groups_list_not_cached {
+} {
+    Retrieve a list of all groups currently in the system
+} {
+    # Filter clause
+    # set filter_clause ""
+    set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
+    return [db_list_of_lists get_groups {}]
+}
+
 ad_proc -public contact::groups {
     {-expand "all"}
     {-indent_with "..."}
@@ -553,27 +616,14 @@ ad_proc -public contact::groups {
     {-no_member_count:boolean}
 } {
 } {
-    return [util_memoize [list contact::groups_not_cached -expand $expand -indent_with $indent_with -privilege_required $privilege_required -output $output -all_p $all_p -no_member_count_p $no_member_count_p]]
-}
-
-ad_proc -public contact::groups_not_cached {
-    {-expand "all"}
-    {-indent_with "..."}
-    {-privilege_required "read"}
-    {-output "list"}
-    {-all_p ""}
-    {-no_member_count_p ""}
-} {
-} {
     set user_id [ad_conn user_id]
     set group_list [list]
-    # Filter clause
-    # set filter_clause ""
-    set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
-    db_foreach get_groups {} {
+    foreach one_group [contact::groups_list] {
+	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p
 	# We check if the group has the required privilege 
 	# specified on privilege_required switch, if not then
 	# we just simple continue with the next one
+	ns_log Notice "$group_id"
 	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege $privilege_required] } {
 	    continue
 	}
@@ -589,7 +639,7 @@ ad_proc -public contact::groups_not_cached {
             }
         }
     }
-    
+
     switch $output {
         list {
             set list_output [list]
