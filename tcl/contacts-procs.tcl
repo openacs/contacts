@@ -606,7 +606,12 @@ ad_proc -public contact::groups_list_not_cached {
 } {
     # Filter clause
     # set filter_clause ""
-    set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
+    set dotlrn_installed_p [apm_package_installed_p dotlrn]
+    if { $dotlrn_installed_p } {
+        set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
+    } else {
+        set filter_clause ""
+    }
     return [db_list_of_lists get_groups {}]
 }
 
