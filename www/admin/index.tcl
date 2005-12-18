@@ -32,7 +32,6 @@ template::list::create \
         member_count {
             label {[_ contacts.Contacts]}
 	    display_col member_count
-            link_url_eval $group_url
         }
         mapped {
             label {Mapped}
