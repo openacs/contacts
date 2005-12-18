@@ -469,8 +469,8 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenkuerzel"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenkuerzel"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenkürzel"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenkürzel"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -502,7 +502,7 @@ ad_proc -public contacts::populate::crm {
 			  -if_does_not_exist]
 
     lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Erweiterung Firmenname"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Erweiterung Firmenname"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Erweiterungen Firmennamen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -533,7 +533,7 @@ ad_proc -public contacts::populate::crm {
 			  -if_does_not_exist]
 
     lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Firmenanschrift"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Firmenanschriften"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -564,7 +564,7 @@ ad_proc -public contacts::populate::crm {
 			  -if_does_not_exist]
 
     lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Adresse"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adresse"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adressen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -719,6 +719,39 @@ ad_proc -public contacts::populate::crm {
 		       -option "Agency - PR"]
 
     lang::message::register -update_sync de_DE acs-translations "ams_option_${option_id}" "PR-Agentur"
+
+
+    set attribute_id [attribute::new \
+			  -object_type "organization" \
+			  -attribute_name "collaboration_notes" \
+			  -datatype "text" \
+			  -pretty_name "Notes on Collaboration" \
+			  -pretty_plural "Notes on Collaboration" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Notizen zur Zusammenarbeit"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Notizen zur Zusammenarbeit"
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "textarea" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "70" \
+	-required_p "f" \
+	-section_heading ""
+
 
     #     Organization - Customer
 
@@ -912,6 +945,13 @@ ams::list::attribute::map \
 	-required_p "f" \
 	-section_heading ""
 
+    ams::list::attribute::map \
+	-list_id $leads_list_id \
+	-attribute_id $attribute_id \
+	-sort_order "10" \
+	-required_p "f" \
+	-section_heading ""
+
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "jobtitle" \
@@ -938,6 +978,13 @@ ams::list::attribute::map \
 
     ams::list::attribute::map \
 	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "20" \
+	-required_p "f" \
+	-section_heading ""
+
+    ams::list::attribute::map \
+	-list_id $leads_list_id \
 	-attribute_id $attribute_id \
 	-sort_order "20" \
 	-required_p "f" \
@@ -974,6 +1021,13 @@ ams::list::attribute::map \
 	-required_p "f" \
 	-section_heading ""
 
+    ams::list::attribute::map \
+	-list_id $leads_list_id \
+	-attribute_id $attribute_id \
+	-sort_order "30" \
+	-required_p "f" \
+	-section_heading ""
+
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "telephone_other" \
@@ -1000,6 +1054,13 @@ ams::list::attribute::map \
 
     ams::list::attribute::map \
 	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "40" \
+	-required_p "f" \
+	-section_heading ""
+
+    ams::list::attribute::map \
+	-list_id $leads_list_id \
 	-attribute_id $attribute_id \
 	-sort_order "40" \
 	-required_p "f" \
@@ -1036,6 +1097,13 @@ ams::list::attribute::map \
 	-required_p "f" \
 	-section_heading ""
 
+    ams::list::attribute::map \
+	-list_id $leads_list_id \
+	-attribute_id $attribute_id \
+	-sort_order "50" \
+	-required_p "f" \
+	-section_heading ""
+
     set attribute_id [attribute::new \
 			  -object_type "person" \
 			  -attribute_name "mobile_phone" \
@@ -1067,34 +1135,10 @@ ams::list::attribute::map \
 	-required_p "f" \
 	-section_heading ""
 
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "directemail" \
-			  -datatype "email" \
-			  -pretty_name "E-Mail Adress" \
-			  -pretty_plural "E-Mail Adresses" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Adresse"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adresse"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "email" \
-	-dynamic_p "t"
-
     ams::list::attribute::map \
-	-list_id $list_id \
+	-list_id $leads_list_id \
 	-attribute_id $attribute_id \
-	-sort_order "70" \
+	-sort_order "60" \
 	-required_p "f" \
 	-section_heading ""
 

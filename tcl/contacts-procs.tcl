@@ -210,7 +210,7 @@ ad_proc -private contact::employee::get_not_cached {
 } {
     ns_log notice "start processing"
     set employer_exist_p 0
-    set employee_attributes [list "first_names" "last_name" "salutation" "person_title" "home_phone" "private_fax" "email"]
+    set employee_attributes [list "first_names" "last_name" "salutation" "person_title" "directphoneno" "directfaxno" "email"]
     set employer_attributes [list "name" "company_phone" "company_fax" "email"]
 
     # Check if ID belongs to an employee, if not return empty string
@@ -274,11 +274,11 @@ ad_proc -private contact::employee::get_not_cached {
 	if {![exists_and_not_null local_array(email)]} {
 	    set local_array(email) $email
 	}
-	if {![exists_and_not_null local_array(home_phone)]} {
-	    set local_array(home_phone) $company_phone
+	if {![exists_and_not_null local_array(directphoneno)]} {
+	    set local_array(directphoneno) $company_phone
 	}
-	if {![exists_and_not_null local_array(private_fax)]} {
-	    set local_array(private_fax) $company_fax
+	if {![exists_and_not_null local_array(directfaxno)]} {
+	    set local_array(directfaxno) $company_fax
 	}
 
 	if {![exists_and_not_null local_array(address)]} {
