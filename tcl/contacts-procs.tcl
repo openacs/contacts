@@ -332,6 +332,8 @@ ad_proc -private contact::flush {
     util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
     util_memoize_flush "::contact::name_not_cached -party_id $party_id"
     util_memoize_flush "::contact::email_not_cached -party_id $party_id"
+    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
+    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
 }
 
 ad_proc -public contact::name {
@@ -638,7 +640,6 @@ ad_proc -public contact::groups {
 	# We check if the group has the required privilege 
 	# specified on privilege_required switch, if not then
 	# we just simple continue with the next one
-	ns_log Notice "$group_id"
 	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege $privilege_required] } {
 	    continue
 	}

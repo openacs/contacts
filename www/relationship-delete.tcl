@@ -22,6 +22,10 @@ db_1row delete_rel {}
 
 # flush cache for employee data
 util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
+util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $object_id_one *"
+util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
+util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
+
 
 if { ![exists_and_not_null return_url] } {
     set return_url "$party_id/relationships"

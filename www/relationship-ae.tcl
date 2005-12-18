@@ -79,6 +79,7 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 
 	# flush cache for employee data
 	util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
+	util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $object_id_one *"
     } else {
         util_user_message -message "[_ contacts.Relationship_Updated]"
     }
