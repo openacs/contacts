@@ -174,7 +174,7 @@ ad_proc -private contact::salutation_not_cached {
 ad_proc -public contact::employee::get {
     {-employee_id:required}
     {-array:required}
-    {-organization_id}
+    {-organization_id ""}
 } {
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Cached.
 
@@ -207,6 +207,19 @@ ad_proc -private contact::employee::get_not_cached {
     @param employee_id The ID of the employee whose information you wish to retrieve.
     @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
     @return Array-list of data.
+    @return first_names First Name of the person
+    @return last_name 
+    @return salutation
+    @return person_title
+    @return direct_phoneno Direct phone number of the person, use company one if non existing
+    @return directfaxno Direct Fax number, use company one if non existing
+    @return email email of the person or the company (if there is no email for this person) 
+    @return company_name name of the company (if there is an employing company)
+    @return address Street of the person (or company)
+    @return municipality
+    @return region
+    @return postal_code
+    @return country_code
 } {
     ns_log notice "start processing"
     set employer_exist_p 0
@@ -243,7 +256,7 @@ ad_proc -private contact::employee::get_not_cached {
 	set employee_id [content::item::get_best_revision -item_id $employee_id]
 	set employer_id [content::item::get_best_revision -item_id [lindex $employer 0]]
     }
-
+    
     # Set the attributes
     foreach attribute $employee_attributes {
 	set value [ams::value \
@@ -251,14 +264,14 @@ ad_proc -private contact::employee::get_not_cached {
 		       -attribute_name $attribute
 		  ]
 	set local_array($attribute) $value
-
-	set address_id [attribute::id -object_type "person" -attribute_name "home_address"]
-	contacts::postal_address::get -address_id $address_id -array home_address_array
-	set local_array(address) $home_address_array(delivery_address)
-	set local_array(municipality) $home_address_array(municipality)
-	set local_array(region) $home_address_array(region)
-	set local_array(postal_code) $home_address_array(postal_code)
-	set local_array(country_code) $home_address_array(country_code)
+	
+	if {[contacts::postal_address::get -attribute_name "home_address" -party_id $employee_id -array home_address_array]} {
+	    set local_array(address) $home_address_array(delivery_address)
+	    set local_array(municipality) $home_address_array(municipality)
+	    set local_array(region) $home_address_array(region)
+	    set local_array(postal_code) $home_address_array(postal_code)
+	    set local_array(country_code) $home_address_array(country_code)
+	}
     }
     if {$employer_exist_p} {
 	foreach attribute $employer_attributes {
@@ -282,13 +295,13 @@ ad_proc -private contact::employee::get_not_cached {
 	}
 
 	if {![exists_and_not_null local_array(address)]} {
-	    set address_id [attribute::id -object_type "organization" -attribute_name "company_address"]
-	    contacts::postal_address::get -address_id $address_id -array address_array
-	    set local_array(address) $address_array(delivery_address)
-	    set local_array(municipality) $address_array(municipality)
-	    set local_array(region) $address_array(region)
-	    set local_array(postal_code) $address_array(postal_code)
-	    set local_array(country_code) $address_array(country_code)
+	    if {[contacts::postal_address::get -attribute_name "company_address" -party_id [lindex $employer 0] -array address_array]} {
+		set local_array(address) $address_array(delivery_address)
+		set local_array(municipality) $address_array(municipality)
+		set local_array(region) $address_array(region)
+		set local_array(postal_code) $address_array(postal_code)
+		set local_array(country_code) $address_array(country_code)
+	    }
 	}
     }
 

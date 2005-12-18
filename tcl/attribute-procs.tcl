@@ -114,14 +114,32 @@ namespace eval contacts::postal_address {
     }
 
     ad_proc -public get {
-        {-address_id:required}
+        {-attribute_id}
+	{-attribute_name ""}
+	{-party_id:required}
         {-array:required}
     } {
         get the info from addresses
     } {
         upvar $array row
-
-        db_1row select_address_info {} -column_array row
+	if {[exists_and_not_null attribute_id]} {
+	    set where_clause "and aa.attribute_id = :attribute_id"
+	} else {
+	    set where_clause "and aa.attribute_name = :attribute_name"
+	}
+	set revision_id [contact::live_revision -party_id $party_id]
+        set value [db_string select_address_info {} -default ""]
+	if {[string eq "" $value]} {
+	    return 0
+	} else {
+	    set mailing_address_list [ams::widget \
+					  -widget postal_address \
+					  -request "value_list" \
+					  -value $value \
+					 ]
+	    template::util::list_of_lists_to_array $mailing_address_list row
+	    return 1
+	}
     }
 
 }

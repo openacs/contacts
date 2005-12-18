@@ -84,7 +84,11 @@
 
 <fullquery name="contacts::postal_address::get.select_address_info">
   <querytext>
-        select * from postal_addresses where address_id = :address_id
+select ams_attribute_value__value(aa.attribute_id,value_id) as value
+                     from ams_attribute_values aav, ams_attributes aa
+                     where aav.object_id = :revision_id
+                     and aa.attribute_id = aav.attribute_id 
+		    $where_clause
   </querytext>
 </fullquery>
 
