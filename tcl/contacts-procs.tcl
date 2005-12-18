@@ -184,6 +184,22 @@ ad_proc -public contact::employee::get {
     @param array Name of array to upvar contents into.
     @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
     @return 1 if user exists, 0 otherwise.
+
+    @return Array-list of data.
+    @return first_names First Name of the person
+    @return last_name 
+    @return salutation
+    @return person_title
+    @return direct_phoneno Direct phone number of the person, use company one if non existing
+    @return directfaxno Direct Fax number, use company one if non existing
+    @return email email of the person or the company (if there is no email for this person) 
+    @return name name of the company (if there is an employing company)
+    @return address Street of the person (or company)
+    @return municipality
+    @return region
+    @return postal_code
+    @return country_code
+
 } {
     upvar $array local_array
     set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id]]
@@ -200,26 +216,11 @@ ad_proc -private contact::employee::get_not_cached {
     {-employee_id:required}
     {-organization_id}
 } {
+    @author Malte Sussdorff (malte.sussdorff@cognovis.de)
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Uncached.
-
-    @author Al-Faisal El-Dajani (faisal.dajanim@gmail.com)
-    @creation-date 2005-10-18
     @param employee_id The ID of the employee whose information you wish to retrieve.
     @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
-    @return Array-list of data.
-    @return first_names First Name of the person
-    @return last_name 
-    @return salutation
-    @return person_title
-    @return direct_phoneno Direct phone number of the person, use company one if non existing
-    @return directfaxno Direct Fax number, use company one if non existing
-    @return email email of the person or the company (if there is no email for this person) 
-    @return company_name name of the company (if there is an employing company)
-    @return address Street of the person (or company)
-    @return municipality
-    @return region
-    @return postal_code
-    @return country_code
+
 } {
     ns_log notice "start processing"
     set employer_exist_p 0
@@ -256,52 +257,45 @@ ad_proc -private contact::employee::get_not_cached {
 	set employee_id [content::item::get_best_revision -item_id $employee_id]
 	set employer_id [content::item::get_best_revision -item_id [lindex $employer 0]]
     }
-    
-    # Set the attributes
-    foreach attribute $employee_attributes {
-	set value [ams::value \
-		       -object_id $employee_id \
-		       -attribute_name $attribute
-		  ]
-	set local_array($attribute) $value
-	
-	if {[contacts::postal_address::get -attribute_name "home_address" -party_id $employee_id -array home_address_array]} {
-	    set local_array(address) $home_address_array(delivery_address)
-	    set local_array(municipality) $home_address_array(municipality)
-	    set local_array(region) $home_address_array(region)
-	    set local_array(postal_code) $home_address_array(postal_code)
-	    set local_array(country_code) $home_address_array(country_code)
-	}
-    }
+
+    set company_address_p 0
     if {$employer_exist_p} {
 	foreach attribute $employer_attributes {
 	    set value [ams::value \
 			   -object_id $employer_id \
 			   -attribute_name $attribute
 		      ]
-	    set $attribute $value
+	    set local_array($attribute) $value
 	}
 
-	set local_array(company_name) $name
-	# Check if employee email, phone, and fax exist. If not, set them to employer values.
-	if {![exists_and_not_null local_array(email)]} {
-	    set local_array(email) $email
+	if {[contacts::postal_address::get -attribute_name "company_address" -party_id [lindex $employer 0] -array address_array]} {
+	    set local_array(address) $address_array(delivery_address)
+	    set local_array(municipality) $address_array(municipality)
+	    set local_array(region) $address_array(region)
+	    set local_array(postal_code) $address_array(postal_code)
+	    set local_array(country_code) $address_array(country_code)
+	    set company_address_p 1
 	}
-	if {![exists_and_not_null local_array(directphoneno)]} {
-	    set local_array(directphoneno) $company_phone
-	}
-	if {![exists_and_not_null local_array(directfaxno)]} {
-	    set local_array(directfaxno) $company_fax
-	}
+    }
+    
+    # Set the attributes
+    # This will overwrite company's attributes
+    foreach attribute $employee_attributes {
+	set value [ams::value \
+		       -object_id $employee_id \
+		       -attribute_name $attribute
+		  ]
+	set local_array($attribute) $value
+    }
 
-	if {![exists_and_not_null local_array(address)]} {
-	    if {[contacts::postal_address::get -attribute_name "company_address" -party_id [lindex $employer 0] -array address_array]} {
-		set local_array(address) $address_array(delivery_address)
-		set local_array(municipality) $address_array(municipality)
-		set local_array(region) $address_array(region)
-		set local_array(postal_code) $address_array(postal_code)
-		set local_array(country_code) $address_array(country_code)
-	    }
+    # As we are asking for employee information only use home_address if there is no company_address
+    if {$company_address_p == 0} {
+	if {[contacts::postal_address::get -attribute_name "home_address" -party_id $employee_id -array home_address_array]} {
+	    set local_array(address) $home_address_array(delivery_address)
+	    set local_array(municipality) $home_address_array(municipality)
+	    set local_array(region) $home_address_array(region)
+	    set local_array(postal_code) $home_address_array(postal_code)
+	    set local_array(country_code) $home_address_array(country_code)
 	}
     }
 
