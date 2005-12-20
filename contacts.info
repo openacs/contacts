@@ -16,6 +16,7 @@
 
         <provides url="contacts" version="1.1d9"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
+        <requires url="acs-datetime" version="4.2"/>
         <requires url="ams" version="1.0d7"/>
         <requires url="categories" version="1.0d6"/>
         <requires url="general-comments" version="4.1"/>
