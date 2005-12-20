@@ -39,10 +39,6 @@ ad_proc -public contacts::populate::crm {
 
     set registered_user_group_id [contacts::default_group -package_id $package_id]
 
-
-    set supplier_id [db_string freelancer_group "select group_id from groups where group_name =  'Supplier'"]
-
-#	set supplier_id [group::new -group_name "Supplier" "group"]
     set customers_id [group::new \
 			  -group_name "Customers" "group"]
     lang::message::register -update_sync de_DE acs-translations "group_title_${customers_id}" "Kunden"
