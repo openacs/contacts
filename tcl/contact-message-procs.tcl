@@ -327,14 +327,14 @@ ad_proc -public contact::oo::change_content {
     # Create a temporary directory
     set dir [ns_tmpnam]
     ns_mkdir $dir
-    set in_stream [file open ${dir}/content.xml]
+    set in_stream [open ${dir}/content.xml w]
     puts $in_stream $content
     flush $in_stream
     close $in_stream
     
     # The zip command should replace the content.xml in the zipfile which
     # happens to be the OpenOffice File. 
-    ns_cp "${oo_path}/$oo_filename" "${dir}/"
-    exec zip "${dir}/$oo_filename" "${dir}/content.xml"
+    ns_cp "${oo_path}/$oo_filename" "${dir}/$oo_filename"
+    exec zip -j "${dir}/$oo_filename" "${dir}/content.xml"
     return "${dir}/$oo_filename"
 }
