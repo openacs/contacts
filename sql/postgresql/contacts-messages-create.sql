@@ -16,6 +16,7 @@ insert into contact_message_types (message_type,pretty_name) values ('email','#c
 insert into contact_message_types (message_type,pretty_name) values ('letter','#contacts.Letter#');
 insert into contact_message_types (message_type,pretty_name) values ('header','#contacts.Header#');
 insert into contact_message_types (message_type,pretty_name) values ('footer','#contacts.Footer#');
+insert into contact_message_types (message_type,pretty_name) values ('oo_mailing','#contacts.oo_mailing#');
 
 
 create table contact_message_items (
@@ -29,7 +30,11 @@ create table contact_message_items (
                                 constraint contact_message_items_message_type_fk references contact_message_types(message_type)
                                 constraint contact_message_items_message_type_nn not null,
 	locale			varchar(30)
-				constraint contact_message_items_locale_fk references ad_locales(locale)
+				constraint contact_message_items_locale_fk references ad_locales(locale),
+        -- Spoiler contains the path to an image which can be inserted into the open office mailing document
+        spoiler                 varchar(500),
+        -- PS is the post scriptum, which is commonly used in mailings.
+        ps                      varchar(500),
 );
 
 create view contact_messages as 

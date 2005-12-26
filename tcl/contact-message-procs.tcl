@@ -10,6 +10,7 @@ ad_library {
 namespace eval contact:: {}
 namespace eval contact::message:: {}
 namespace eval contact::signature:: {}
+namespace eval contact::oo:: {}
 
 ad_proc -public contact::signature::get {
     {-signature_id:required}
@@ -45,6 +46,8 @@ ad_proc -private contact::message::save {
     {-content:required}
     {-content_format "text/plain"}
     {-locale ""}
+    {-spoiler ""}
+    {-ps ""}
 } {
     save a contact message
 } {
@@ -64,13 +67,13 @@ ad_proc -private contact::message::save {
 
 	db_dml insert_into_message_items {
 	    insert into contact_message_items
-	    ( item_id, owner_id, message_type, locale )
+	    ( item_id, owner_id, message_type, locale, spoiler, ps )
 	    values
-	    ( :item_id, :owner_id, :message_type, :locale )
+	    ( :item_id, :owner_id, :message_type, :locale, :spoiler, :ps )
 	}
     } else {
 	db_dml update_message_item {
-	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale where item_id = :item_id
+	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, spoiler = :spoiler, ps = :ps where item_id = :item_id
 	}
     }
 
@@ -255,3 +258,12 @@ ad_proc -private contact::message::interpolate {
     return $text
 }
 
+ad_proc -public contact::oo::convert {
+    {-content}
+} {
+    Returns a string which we can insert into the content.xml file
+} {
+    regsub -all "<br>" $content "<text:line-break/>" return
+    return $return
+}
+    

@@ -156,18 +156,16 @@ ad_proc -private contact::salutation_not_cached {
 
     set revision_id [content::item::get_best_revision -item_id $party_id]
     foreach attribute [list "first_names" "last_name" "salutation" "person_title"] {
-	set value($attribute) [ams::value -object_id $revision_id -attribute_name $attribute]
-	if {[string eq $attribute "first_names"]} {
-	    append value(first_names) " "
-	}
+	set value($attribute) [string trim [ams::value -object_id $revision_id -attribute_name $attribute]]
     }
 
+    set name [string trim "$value(first_names) $value(last_name)"]
     if {$type == "salutation"} {
 	# long salutation
-	return "$value(salutation) [string trim "$value(person_title) $value(first_names)$value(last_name)"]"
+	return "$value(salutation) [string trim "$value(person_title) $name"]"
     } else {
 	# short sticker salutation
-	return "- [string trim "$value(person_title) $value(first_names)$value(last_name)"] -"
+	return "- [string trim "$value(person_title) $name"] -"
     }
 }
 
@@ -188,12 +186,14 @@ ad_proc -public contact::employee::get {
     @return Array-list of data.
     @return first_names First Name of the person
     @return last_name 
-    @return salutation
+    @return salutation Salutation of the person
+    @return salutation_letter Salutation for a letterhead
     @return person_title
     @return direct_phoneno Direct phone number of the person, use company one if non existing
     @return directfaxno Direct Fax number, use company one if non existing
     @return email email of the person or the company (if there is no email for this person) 
     @return name name of the company (if there is an employing company)
+    @return company_name_ext Name extension of the company (if there is one)
     @return address Street of the person (or company)
     @return municipality
     @return region
@@ -224,8 +224,8 @@ ad_proc -private contact::employee::get_not_cached {
 } {
     ns_log notice "start processing"
     set employer_exist_p 0
-    set employee_attributes [list "first_names" "last_name" "salutation" "person_title" "directphoneno" "directfaxno" "email"]
-    set employer_attributes [list "name" "company_phone" "company_fax" "email"]
+    set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email"]
+    set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
 
     # Check if ID belongs to an employee, if not return empty string
     if {![person::person_p -party_id $employee_id]} {
@@ -265,6 +265,10 @@ ad_proc -private contact::employee::get_not_cached {
 			   -object_id $employer_id \
 			   -attribute_name $attribute
 		      ]
+	    switch $attribute {
+		company_phone { set attribute "directphoneno" }
+		company_fax   { set attribute "directfaxno" }
+	    }
 	    set local_array($attribute) $value
 	}
 
@@ -287,6 +291,10 @@ ad_proc -private contact::employee::get_not_cached {
 		  ]
 	set local_array($attribute) $value
     }
+
+    # Set the salutation
+    set local_array(salutation) [contact::salutation -party_id $employee_id -type salutation]
+    set local_array(salutation_letter) [contact::salutation -party_id $employee_id -type letter]
 
     # As we are asking for employee information only use home_address if there is no company_address
     if {$company_address_p == 0} {

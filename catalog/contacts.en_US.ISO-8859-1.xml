@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d9" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d10" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -200,7 +200,6 @@
   <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
   <msg key="lt_--_Recent_Searches_--">-- Recent Searches --</msg>
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
-  <msg key="lt_-contact_link-_was_upgraded_to_a_user">Contact was upgraded to a user</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
   <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
@@ -387,6 +386,7 @@
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
   <msg key="Offers">Offers</msg>
+  <msg key="oo_mailing">Open Office Mailing</msg>
   <msg key="open">Open</msg>
   <msg key="or">or</msg>
   <msg key="Ordering">Ordering</msg>
@@ -422,6 +422,8 @@
   <msg key="Project">Project:</msg>
   <msg key="Projects">Projects</msg>
   <msg key="Projects_tasks">Project Tasks</msg>
+  <msg key="PS">PostScriptum</msg>
+  <msg key="PS_help_text">PostScriptum to use after the signature</msg>
   <msg key="Public">Public</msg>
   <msg key="Public_Messages">Public Messages</msg>
   <msg key="Public_Page">Public Page</msg>
@@ -458,6 +460,7 @@
   <msg key="save_this_search_">Save this Search</msg>
   <msg key="Saved_Searches">Saved Searches</msg>
   <msg key="Search">Search</msg>
+  <msg key="search_contact">Search contact</msg>
   <msg key="Search_Existing">Search Existing</msg>
   <msg key="Search_for">Search for</msg>
   <msg key="Search_for_all_object_type_where">Search for all &lt;strong&gt;%object_type%&lt;/strong&gt; where</msg>
@@ -480,6 +483,8 @@
   <msg key="signatures">signatures</msg>
   <msg key="Sort_By">Sort By</msg>
   <msg key="Sort_by">Sort by</msg>
+  <msg key="Spoiler">Spoiler?</msg>
+  <msg key="Spoiler_help_text">Path to the file containing the image used as a spoiler</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Stored Extended Options</msg>

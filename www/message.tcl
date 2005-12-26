@@ -217,6 +217,7 @@ if { ![exists_and_not_null message_type] } {
     set package_id [ad_conn package_id]
     set letter_options ""
     set email_options ""
+    set oo_mailing_options ""
     db_foreach get_messages {
 	select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END as public_display,
 	title,
@@ -227,7 +228,8 @@ if { ![exists_and_not_null message_type] } {
 	or owner_id = :package_id
 	order by CASE WHEN owner_id = :package_id THEN '000000000' ELSE upper(contact__name(owner_id)) END, message_type, upper(title)
     } {
-	if {$message_type == "letter" || $message_type == "email"} {
+        # The oo_mailing message type is used if you have a mailing template as defined in /lib/oo_mailing
+	if {$message_type == "letter" || $message_type == "email" || $message_type == "oo_mailing"} {
 	    lappend ${message_type}_options [list "$public_display [set ${message_type}_text]:$title" "${message_type}.$item_id"]
 	} else {
 	    lappend ${message_type}_options [list "$public_display:$title" "$item_id"]
@@ -237,7 +239,8 @@ if { ![exists_and_not_null message_type] } {
     set message_options [concat \
 			     $message_options \
 			     $letter_options \
-			     $email_options]
+			     $email_options \
+                             $oo_mailing_options]
 
     if {[exists_and_not_null header_options]} {
 	lappend form_elements [list \

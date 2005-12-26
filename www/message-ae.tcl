@@ -69,6 +69,21 @@ switch $message_type {
 	    {content:richtext(richtext) {label "[_ contacts.Message]"} {html {cols 70 rows 24}}}
 	}
     }
+    oo_mailing {
+	append form_elements {
+	    {spoiler:text(text),optional
+                {label "[_ contacts.Spoiler]"} 
+                {help_text "[_ contacts.Spoiler_help_text]"}
+                {html {size 45 maxlength 1000}}
+            }
+	    {content:richtext(richtext) {label "[_ contacts.Message]"} {html {cols 70 rows 24}}}
+	    {ps:text(text),optional
+                {label "[_ contacts.PS]"} 
+                {help_text "[_ contacts.PS_help_text]"}
+                {html {size 45 maxlength 1000}}
+            }
+	}
+    }
     header {
 	append form_elements {
 	    {content:richtext(richtext) {label "[_ contacts.Header]"} {html {cols 70 rows 24}}}
@@ -115,8 +130,10 @@ ad_form -name "rel_type" \
 	    -description $description \
 	    -content $content \
 	    -content_format $content_format \
-	    -locale $locale
-
+	    -locale $locale \
+            -spoiler $spoiler \
+            -ps $ps
+           
     } -after_submit {
 	ad_returnredirect $return_url
 	ad_script_abort
