@@ -266,3 +266,75 @@ ad_proc -public contact::oo::convert {
     return $return
 }
     
+ad_proc -public contact::oo::import_oo_pdf {
+    -oo_filename:required
+    -oo_path:required
+    {-printer_name "pdfconv"}
+    {-title ""}
+    {-item_id ""}
+    {-parent_id ""}
+} {
+    Imports an OpenOffice file (.sxw / .odt) as a PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.
+    
+    @param oo_filename The name of the OpenOffice file that containst the data to be exported as PDF.
+    @param printer_name The name of the printer that is assigned as the PDF converter. Defaults to "pdfconv".
+    @param oo_path The directory which will contains the oo file. Defaults to current directory.
+    @param title Title which will be used for the resulting content item and file name if none was given in the item
+    @param item_id The item_id of the content item to which the content should be associated.
+    @param parent_id Needed to set the parent of this object
+    @return revision_id of the revision that contains the file
+} {
+    
+    # This exec command is missing all the good things about openacs
+    # Add the parameter to whatever package you put this procedure in.
+    set oowriter_bin [parameter::get -parameter "OOWriterBin" -default "/usr/local/bin/oowriter2"]
+    exec $oowriter_bin -invisibile -pt $printer_name "${oo_path}/${oo_filename}"
+    
+    # Strip the extension. Should probably be more generic (not only .odt)
+    set filename [string trimright $oo_filename ".odt"]
+    set tmp_filename "${oo_path}${filename}.pdf"
+    set tmp_filesize [file size $tmp_filename]
+    set mime_type "application/pdf"
+    if {[exists_and_not_null $item_id]} {
+	set parent_id [get_parent -item_id $item_id]
+    }
+    
+    # cr_import_content checks the item_id switch. If present, it creates a new revision of the item, else it creates a new item and assigns it the name specified in the object_name parameter (last parameter).
+    set revision_id [cr_import_content \
+			 -item_id $item_id \
+                         $parent_id \
+			 $tmp_filename \
+			 $tmp_filesize \
+			 $mime_type \
+			 $tmp_filename ]
+    content::item::set_live_revision -revision_id $revision_id
+    return revision_id
+}
+
+ad_proc -public contact::oo::change_content {
+    -oo_filename:required
+    -oo_path:required
+    -content:required
+} {
+    Takes the provided contents and places them in the content.xml file of the sxw file, effectivly changing the content of the file.
+    
+    @param oo_filename The file whose contents will be changed.
+    @param oo_path Path to the file containing the content
+    @param content The new content of the file.
+    @return The path to the new file.
+} {
+    
+    # Create a temporary directory
+    set dir [ns_tmpnam]
+    ns_mkdir $dir
+    set in_stream [file open ${dir}/content.xml]
+    puts $in_stream $content
+    flush $in_stream
+    close $in_stream
+    
+    # The zip command should replace the content.xml in the zipfile which
+    # happens to be the OpenOffice File. 
+    ns_cp "${oo_path}/$oo_filename" "${dir}/"
+    exec zip "${dir}/$oo_filename" "${dir}/content.xml"
+    return "${dir}/$oo_filename"
+}
