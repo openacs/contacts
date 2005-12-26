@@ -118,8 +118,18 @@ namespace eval contacts::postal_address {
 	{-attribute_name ""}
 	{-party_id:required}
         {-array:required}
+        {-locale:required}
     } {
-        get the info from addresses
+        get the info from addresses and store them in the array
+        
+        @return 1 if there successful, 0 otherwise.
+        @return address
+        @return municipality
+        @return country
+        @return country_code
+        @return postal_code
+        @return region
+        @return town_line
     } {
         upvar $array row
 	if {[exists_and_not_null attribute_id]} {
@@ -137,7 +147,50 @@ namespace eval contacts::postal_address {
 					  -request "value_list" \
 					  -value $value \
 					 ]
-	    template::util::list_of_lists_to_array $mailing_address_list row
+            # This sets the address, muncipality,region, postal_code, country_code
+            template::util::list_of_lists_to_array $mailing_address_list row
+
+            # Set the country right.
+	    set key "ams.country_$row(country_code)"
+	    if { [string is true [lang::message::message_exists_p $locale $key]] } {
+		set country [lang::message::lookup $locale $key]
+	    } else {
+		# cache the country codes
+		template::util::address::country_options_not_cached -locale $locale
+		
+		if { [string is true [lang::message::message_exists_p $locale $key]] } {
+		    set country [lang::message::lookup $locale $key]
+		} else {
+		    # we get the default en_US key which was created with the
+		    # template::util::address::country_options_not_cached proc
+		    set country [lang::message::lookup "en_US" $key]
+		}
+	    }
+            set row(country) $country
+
+            # Set the townline
+	    # Different formats depending on the country
+	    switch $country_code {
+		"US" {
+		    set row(town_line) "$municipality, $region $postal_code"
+		}
+		"DE" {
+		    set row(town_line) "$postal_code $municipality"
+		}
+                "UK" {
+		    set row(town_line) "$municipality, $region $postal_code"
+                }
+                "CH" {
+		    set row(town_line) "$postal_code $municipality"
+                }                    
+		default {
+		    if { [parameter::get_from_package_key -package_key "ams" -parameter "DefaultAdressLayoutP" -default 1] } {
+			set row(town_line) "$municipality $region $postal_code"
+		    } else {
+			set row(town_line) "$postal_code $municipality $region"
+		    }
+		}
+	    }
 	    return 1
 	}
     }
