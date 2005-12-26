@@ -184,6 +184,85 @@ ad_proc -private contact::message::mailing_address_exists_p_not_cached {
 }
 
 
+ad_proc -private contact::message::mailing_address_data {
+    {-party_id:required}
+    {-locale ""}
+} {
+    Does a mailing address exist for this party
+} {
+    if {[empty_string_p $locale]} {
+	if { [ad_conn isconnected] } {
+	    # We are in an HTTP connection (request) so use that locale
+	    set locale [ad_conn locale]
+	} else {
+	    # There is no HTTP connection - resort to system locale
+	    set locale [lang::system::locale]
+	}
+    }
+    set attribute_ids [contact::message::mailing_address_attribute_id_priority]
+    set revision_id [contact::live_revision -party_id $party_id]
+    set mailing_address {}
+    db_foreach mailing_address_values "
+                   select attribute_id,
+                          ams_attribute_value__value(attribute_id,value_id) as value
+                     from ams_attribute_values
+                    where object_id = :revision_id
+                      and attribute_id in ([join $attribute_ids ,])
+    " {
+	set attribute_value($attribute_id) $value
+    }
+
+    foreach attribute $attribute_ids {
+	if { [info exists attribute_value($attribute)] } {
+            foreach {delivery_address municipality region postal_code country_code additional_text postal_type} $value {}
+
+	    set key "ams.country_${country_code}"
+	    if { [string is true [lang::message::message_exists_p $locale $key]] } {
+		set country [lang::message::lookup $locale $key]
+	    } else {
+		# cache the country codes
+		template::util::address::country_options_not_cached -locale $locale
+		
+		if { [string is true [lang::message::message_exists_p $locale $key]] } {
+		    set country [lang::message::lookup $locale $key]
+		} else {
+		    # we get the default en_US key which was created with the
+		    # template::util::address::country_options_not_cached proc
+		    set country [lang::message::lookup "en_US" $key]
+		}
+	    }
+
+	    set address(street) $delivery_address
+	    set address(country_code) $country_code
+	    set address(country) $country
+
+	    # Different formats depending on the country
+	    switch $country_code {
+		"US" {
+		    set address(town_line) "$municipality, $region $postal_code"
+		}
+		"DE" {
+		    set address(town_line) "$postal_code $municipality"
+		}
+		default {
+		    if { [parameter::get_from_package_key -package_key "ams" -parameter "DefaultAdressLayoutP" -default 1] } {
+			set address(town_line) "$municipality $region $postal_code"
+		    } else {
+			set address(town_line) "$postal_code $municipality $region"
+		    }
+		}
+	    }
+            break
+        }
+    }
+
+    if {[array exists address]} {
+	return [array get address]
+    } else {
+	return
+    }
+}
+
 ad_proc -private contact::message::mailing_address {
     {-party_id:required}
     {-format "text/plain"}
