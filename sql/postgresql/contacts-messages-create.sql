@@ -42,6 +42,8 @@ create view contact_messages as
            cmi.owner_id,
            cmi.message_type,
 	   cmi.locale,
+           cmi.spoiler,
+           cmi.ps
            cr.title,
            cr.description,
            cr.content,
