@@ -184,24 +184,24 @@ namespace eval contacts::postal_address {
 
             # Set the townline
 	    # Different formats depending on the country
-	    switch $country_code {
+	    switch $row(country_code) {
 		"US" {
-		    set row(town_line) "$municipality, $region $postal_code"
+		    set row(town_line) "$row(municipality), $row(region) $row(postal_code)"
 		}
 		"DE" {
-		    set row(town_line) "$postal_code $municipality"
+		    set row(town_line) "$row(postal_code) $row(municipality)"
 		}
                 "UK" {
-		    set row(town_line) "$municipality, $region $postal_code"
+		    set row(town_line) "$row(municipality), $row(region) $row(postal_code)"
                 }
                 "CH" {
-		    set row(town_line) "$postal_code $municipality"
+		    set row(town_line) "$row(postal_code) $row(municipality)"
                 }                    
 		default {
 		    if { [parameter::get_from_package_key -package_key "ams" -parameter "DefaultAdressLayoutP" -default 1] } {
-			set row(town_line) "$municipality $region $postal_code"
+			set row(town_line) "$row(municipality) $row(region) $row(postal_code)"
 		    } else {
-			set row(town_line) "$postal_code $municipality $region"
+			set row(town_line) "$row(postal_code) $row(municipality) $row(region)"
 		    }
 		}
 	    }
