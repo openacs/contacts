@@ -199,6 +199,8 @@ ad_proc -public contact::employee::get {
     @return region
     @return postal_code
     @return country_code
+    @return country Name of the country in the user's locale
+    @return town_line TownLine in the format used in the country of the party
 
 } {
     upvar $array local_array
@@ -278,6 +280,8 @@ ad_proc -private contact::employee::get_not_cached {
 	    set local_array(region) $address_array(region)
 	    set local_array(postal_code) $address_array(postal_code)
 	    set local_array(country_code) $address_array(country_code)
+            set local_array(country) $address_array(country)
+            set local_array(town_line) $address_array(town_line)
 	    set company_address_p 1
 	}
     }
@@ -304,6 +308,8 @@ ad_proc -private contact::employee::get_not_cached {
 	    set local_array(region) $home_address_array(region)
 	    set local_array(postal_code) $home_address_array(postal_code)
 	    set local_array(country_code) $home_address_array(country_code)
+            set local_array(country) $home_address_array(country)
+            set local_array(town_line) $home_address_array(town_line)
 	}
     }
 
