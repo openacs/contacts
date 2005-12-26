@@ -1,3 +1,4 @@
+insert into contact_message_types (message_type,pretty_name) values ('oo_mailing','#contacts.oo_mailing#');
 alter table contact_message_items add column spoiler varchar(500);
 alter table contact_message_items add column ps varchar(500);
 drop view contact_messages;
