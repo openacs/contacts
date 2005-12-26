@@ -118,7 +118,7 @@ namespace eval contacts::postal_address {
 	{-attribute_name ""}
 	{-party_id:required}
         {-array:required}
-        {-locale:required}
+        {-locale ""}
     } {
         get the info from addresses and store them in the array
         
@@ -150,8 +150,22 @@ namespace eval contacts::postal_address {
             # This sets the address, muncipality,region, postal_code, country_code
             template::util::list_of_lists_to_array $mailing_address_list row
 
+            # Now define the locale. This should not be set (usually), as you should always rely on the 
+            # locale of the session, (as the country name should be in the language of the user), 
+            # but who knows.
+            if {$locale eq ""} {
+                if { [ad_conn isconnected] } {
+                    # We are in an HTTP connection (request) so use that locale
+                    set locale [ad_conn locale]
+                } else {
+                    # There is no HTTP connection - resort to system locale
+                    set locale [lang::system::locale]
+                }
+            }
+
             # Set the country right.
 	    set key "ams.country_$row(country_code)"
+
 	    if { [string is true [lang::message::message_exists_p $locale $key]] } {
 		set country [lang::message::lookup $locale $key]
 	    } else {
