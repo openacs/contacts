@@ -267,8 +267,7 @@ ad_proc -public contact::oo::convert {
 }
     
 ad_proc -public contact::oo::import_oo_pdf {
-    -oo_filename:required
-    -oo_path:required
+    -oo_file:required
     {-printer_name "pdfconv"}
     {-title ""}
     {-item_id ""}
@@ -276,9 +275,8 @@ ad_proc -public contact::oo::import_oo_pdf {
 } {
     Imports an OpenOffice file (.sxw / .odt) as a PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.
     
-    @param oo_filename The name of the OpenOffice file that containst the data to be exported as PDF.
+    @param oo_file The full path to the OpenOffice file that containst the data to be exported as PDF.
     @param printer_name The name of the printer that is assigned as the PDF converter. Defaults to "pdfconv".
-    @param oo_path The directory which will contains the oo file. Defaults to current directory.
     @param title Title which will be used for the resulting content item and file name if none was given in the item
     @param item_id The item_id of the content item to which the content should be associated.
     @param parent_id Needed to set the parent of this object
@@ -288,12 +286,11 @@ ad_proc -public contact::oo::import_oo_pdf {
     # This exec command is missing all the good things about openacs
     # Add the parameter to whatever package you put this procedure in.
     set oowriter_bin [parameter::get -parameter "OOWriterBin" -default "/usr/local/bin/oowriter2"]
-    exec $oowriter_bin -invisibile -pt $printer_name "${oo_path}/${oo_filename}"
+    exec $oowriter_bin -invisible -pt $printer_name $oo_file
     
-    # Strip the extension. Should probably be more generic (not only .odt)
-    set filename [string trimright $oo_filename ".odt"]
-    set tmp_filename "${oo_path}${filename}.pdf"
-    set tmp_filesize [file size $tmp_filename]
+    # Strip the extension.
+    set pdf_filename "[file rootname $oo_file].pdf"
+    set pdf_filesize [file size $pdf_filename]
     set mime_type "application/pdf"
     if {[exists_and_not_null $item_id]} {
 	set parent_id [get_parent -item_id $item_id]
@@ -303,38 +300,49 @@ ad_proc -public contact::oo::import_oo_pdf {
     set revision_id [cr_import_content \
 			 -item_id $item_id \
                          $parent_id \
-			 $tmp_filename \
-			 $tmp_filesize \
+			 $pdf_filename \
+			 $pdf_filesize \
 			 $mime_type \
-			 $tmp_filename ]
+			 $pdf_filename ]
     content::item::set_live_revision -revision_id $revision_id
     return revision_id
 }
 
 ad_proc -public contact::oo::change_content {
-    -oo_filename:required
-    -oo_path:required
-    -content:required
+    -path:required
+    -document_filename:required
+    -contents:requried
 } {
     Takes the provided contents and places them in the content.xml file of the sxw file, effectivly changing the content of the file.
-    
-    @param oo_filename The file whose contents will be changed.
-    @param oo_path Path to the file containing the content
-    @param content The new content of the file.
+
+    @param path Path to the file containing the content
+    @param document_filename The open-office file whose contents will be changed.
+    @param contents This is a list of key-values (to be used as an array) of filenames and contents
+                    to be replaced in the oo-file.
     @return The path to the new file.
 } {
-    
     # Create a temporary directory
     set dir [ns_tmpnam]
     ns_mkdir $dir
-    set in_stream [open ${dir}/content.xml w]
-    puts $in_stream $content
-    flush $in_stream
-    close $in_stream
-    
+
+    array set content_array $contents
+    foreach filename [array names content_array] {
+	# Save the content to a file.
+	set file [open "${dir}/$filename" w]
+	puts $file $content_array($filename)
+	flush $file
+	close $file
+    }
+
+    # copy the document
+    ns_cp "${path}/$document_filename" "${dir}/$document_filename"
+
+    # Replace old content in document with new content
     # The zip command should replace the content.xml in the zipfile which
     # happens to be the OpenOffice File. 
-    ns_cp "${oo_path}/$oo_filename" "${dir}/$oo_filename"
-    exec zip -j "${dir}/$oo_filename" "${dir}/content.xml"
-    return "${dir}/$oo_filename"
+    foreach filename [array names content_array] {
+	exec zip "${dir}/$document_filename" "${dir}/$filename"
+    }
+
+    return "${dir}/$document_filename"
 }
