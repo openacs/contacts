@@ -38,7 +38,9 @@
   <msg key="Advanced_Searches">Erweiterte Suchen</msg>
   <msg key="Aggregate">Zusammenfassen</msg>
   <msg key="Aggregate_by">Zusammenfassen nach</msg>
+  <msg key="Aggregated">Aggregiert</msg>
   <msg key="aggregated_by">zusammengefasst nach:</msg>
+  <msg key="aggregated_help">Auf &quot;Wahr&quot; setzen wenn Sie dieses Erweiterung der Liste in der &quot;Aggregierten Ergebnisseite&quot; sehen wollen</msg>
   <msg key="All">Alle</msg>
   <msg key="All__Edit">Daten ändern</msg>
   <msg key="All_Contacts">Alle Kontakte</msg>
@@ -55,6 +57,7 @@
   <msg key="at">um</msg>
   <msg key="Attribute">Attribut</msg>
   <msg key="Attribute_-">Attribut -&amp;gt;</msg>
+  <msg key="Attribute_Name">Attibut Name</msg>
   <msg key="Attributes">Attribute</msg>
   <msg key="Available_Attributes">Verfügbare Attribute</msg>
   <msg key="Available_Options">Verfügbare Optionen</msg>
@@ -62,6 +65,7 @@
   <msg key="Body">Haupttext</msg>
   <msg key="Bulk_Update">Massen Update</msg>
   <msg key="Cancel">Abbrechen</msg>
+  <msg key="CC">CC</msg>
   <msg key="cc_help">Eine Kopie an mehrere Empfänger E-Mails getrennt durch &quot;;&quot; versenden.</msg>
   <msg key="Changed_date">Geändertes Datum:</msg>
   <msg key="Changes">Änderungen</msg>
@@ -101,17 +105,21 @@
   <msg key="Create_a_role">Eine Rolle anlegen</msg>
   <msg key="Create_a_Signature">Eine Signatur erstellen</msg>
   <msg key="Create_a_user_account_for_this_person">Für diesen User einen User Account erzeugen</msg>
+  <msg key="Create_Club">Kundenportal Anlegen</msg>
   <msg key="create_email">e-Mail anlegen</msg>
   <msg key="create_letter">Einen Brief anlegen</msg>
   <msg key="create_project">Neues Projekt anlegen</msg>
   <msg key="Create_role">Rolle anlegen</msg>
   <msg key="Create_user">User anlegen</msg>
+  <msg key="Creating_Club">Lege das Kundenportal an</msg>
   <msg key="CSV">CSV</msg>
   <msg key="Current">Derzeitig</msg>
   <msg key="Customer">Kunde:</msg>
   <msg key="Customer_has_no_employees">Kunde hat keine Angestellten</msg>
   <msg key="Date">Datum</msg>
   <msg key="days">Tage</msg>
+  <msg key="Default">Standard</msg>
+  <msg key="Default_attributes">Standardattribute</msg>
   <msg key="Delete">Löschen</msg>
   <msg key="Delete_from">Löschen</msg>
   <msg key="Description">Beschreibung:</msg>
@@ -138,7 +146,9 @@
   <msg key="exists_at_least">existieren mindestens</msg>
   <msg key="exists_at_most">existieren höchstens</msg>
   <msg key="ext_del_message">Option erweitern # %extend_id% gelöscht.</msg>
+  <msg key="extend_error_msg">Die erweiterte Abfrage liefert einen Fehler</msg>
   <msg key="Extend_result_list_by">Die Ergebnisliste um die folgende Attribute erweitern</msg>
+  <msg key="extended_by">erweitert um:</msg>
   <msg key="Extended_search_opt">Erweiterte Suchoptionen</msg>
   <msg key="False">falsch</msg>
   <msg key="File">Datei</msg>
@@ -238,6 +248,7 @@
   <msg key="lt_Contact_Relationships">Kontakt Beziehungen</msg>
   <msg key="lt_Contact_Rels_Employme">Kontakt Rels Arbeitsverhältnisse</msg>
   <msg key="lt_Contact_updated_in_th">Der Kontakt wurde in den letzten &lt;strong&gt;%interval%&lt;/strong&gt; upgedatet.</msg>
+  <msg key="lt_contacts_was_removed_from_group">Der Kontakt wurde von der Gruppe entfernt</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ wurden gelöscht</msg>
   <msg key="lt_country_code_is_not_-">Länderkennziffer ist nicht -&gt;</msg>
   <msg key="lt_created_in_the_last_-">Erstellt in den letzten -&gt;</msg>
@@ -312,6 +323,7 @@ Deutsch(DE) 	</msg>
   <msg key="lt_The_second_contact_sp">Der zweite spezifizierte Kontakt existiert nicht</msg>
   <msg key="lt_The_second_role_speci">Die zweite spezifizierte Rolle existiert nicht</msg>
   <msg key="lt_There_was_a_problem_w">Es gab ein Problem mit Ihrer Eingabe. Dieser Beziehungstyp kann nicht existieren.</msg>
+  <msg key="lt_there_was_an_error_processing">Es gab einen Fehler bei Ihrer Anfrage</msg>
   <msg key="lt_This_action_cannot_be">Diese Aktion kann nicht für nicht zugewiesene (unmapped) Gruppen durchgeführt werden</msg>
   <msg key="lt_This_contact_is_not_p">Dieser Kontakt ist kein Mitglied einer Gruppe</msg>
   <msg key="lt_This_group_is_already">Diese Gruppe ist bereits der Standard</msg>
@@ -324,6 +336,8 @@ Deutsch(DE) 	</msg>
   <msg key="lt_Unable_to_retrieve_gr">Nicht möglich die group-id abzurufen</msg>
   <msg key="lt_updated_in_the_last_-">Upgedatet in den letzten -&gt;</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Dieser Person als User registrieren/ upgraden</msg>
+  <msg key="lt_We_are_creating_the_c">Das Kundenportal für diese Organization wird erstellt. Bitte warten Sie, dies kann etwas dauern.</msg>
+  <msg key="lt_We_will_continue_auto">Es geht automatisch weiter</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">Sie können diesen Kontakt nicht zu mehr Gruppen zuweisen.</msg>
   <msg key="lt_You_cannot_make_sub_g">Sie können keine Untergruppen als Standardgruppe bestimmen</msg>
@@ -373,6 +387,7 @@ Deutsch(DE) 	</msg>
   <msg key="odd">ungerade</msg>
   <msg key="of">von</msg>
   <msg key="Offers">Angebote</msg>
+  <msg key="oo_mailing">Open Office Mailing</msg>
   <msg key="open">Offen</msg>
   <msg key="or">oder</msg>
   <msg key="Ordering">Reihenfolge</msg>
@@ -408,6 +423,8 @@ Deutsch(DE) 	</msg>
   <msg key="Project">Projekt:</msg>
   <msg key="Projects">Projekte</msg>
   <msg key="Projects_tasks">Projektaufgaben</msg>
+  <msg key="PS">Post Scriptum</msg>
+  <msg key="PS_help_text">Post Scriptum welches nach der Signatur verwendet wird</msg>
   <msg key="Public">Öffentlicher</msg>
   <msg key="Public_Messages">Öffentliche Nachrichten</msg>
   <msg key="Public_Page">Öffentliche Seite</msg>
@@ -449,7 +466,9 @@ Deutsch(DE) 	</msg>
   <msg key="Search_for">Suche nach</msg>
   <msg key="Search_for_all_object_type_where">Suche nach allen &lt;strong&gt;%object_type%&lt;/strong&gt; wo</msg>
   <msg key="Search_for_all_object_type_who_are">Suche nach allen %object_type% die</msg>
+  <msg key="search_for_employee">Suche nach &lt;b&gt;Personen oder Organisationen&lt;/b&gt;</msg>
   <msg key="Search_Help">Suchhilfe</msg>
+  <msg key="Search_List">Suchliste</msg>
   <msg key="searches">Suchen</msg>
   <msg key="Select">Markieren</msg>
   <msg key="Send">Senden</msg>
@@ -465,6 +484,8 @@ Deutsch(DE) 	</msg>
   <msg key="signatures">Signaturen</msg>
   <msg key="Sort_By">Sortieren nach</msg>
   <msg key="Sort_by">Sortieren nach:</msg>
+  <msg key="Spoiler">Spoiler</msg>
+  <msg key="Spoiler_help_text">Pfad zu der .jpg Grafik Datei welche als Spoiler verwendet wird.</msg>
   <msg key="stateprovince_is_-">Bundesland ist -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Gespeicherte erweiterte Optionen</msg>
@@ -501,6 +522,7 @@ Deutsch(DE) 	</msg>
   <msg key="Updated_By">Update durch</msg>
   <msg key="Updated_On">Update am</msg>
   <msg key="Upload_File">Datei hochladen</msg>
+  <msg key="Upload_file">Datei hochladen</msg>
   <msg key="Upload_More">Mehrere Dateien uploaden</msg>
   <msg key="User_Account_Information">Informationen zu dem User Account</msg>
   <msg key="valid">Berechtigt</msg>
@@ -513,6 +535,8 @@ Deutsch(DE) 	</msg>
   <msg key="which_match">die übereinstimmen mit</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">mit</msg>
+  <msg key="with_best_regards">Mit freundlichen Grüßen</msg>
+  <msg key="Working_project_tasks">Projektaufgaben in Arbeit</msg>
   <msg key="You_can_extend">Sie können diese Suche ausweiten durch:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Ihre Nachricht wurde an: &lt;strong&gt;%recipients%&lt;/strong&gt; gesendet.</msg>
   <msg key="your_signatures">Ihre Signaturen</msg>
