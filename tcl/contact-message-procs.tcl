@@ -282,36 +282,105 @@ ad_proc -public contact::oo::import_oo_pdf {
     @param parent_id Needed to set the parent of this object
     @return revision_id of the revision that contains the file
 } {
-    
     # This exec command is missing all the good things about openacs
     # Add the parameter to whatever package you put this procedure in.
-    set oowriter_bin [parameter::get -parameter "OOWriterBin" -default "/usr/local/bin/oowriter2"]
-    exec $oowriter_bin -invisible -pt $printer_name $oo_file
+    set oowriter_bin [parameter::get -parameter "OOWriterBin" -default "/opt/openoffice.org2.0/program/swriter"]
+
+    set status [catch {exec -- /bin/sh [acs_package_root_dir contacts]/bin/convert.sh $oo_file } result]
+
+    if { $status == 0 } {
+
+        # The command succeeded, and wrote nothing to stderr.
+        # $result contains what it wrote to stdout, unless you
+        # redirected it
+
+    } elseif { [string equal $::errorCode NONE] } {
+
+        # The command exited with a normal status, but wrote something
+        # to stderr, which is included in $result.
+
+    } else {
+
+        switch -exact -- [lindex $::errorCode 0] {
+
+            CHILDKILLED {
+                foreach { - pid sigName msg } $::errorCode break
+
+                # A child process, whose process ID was $pid,
+                # died on a signal named $sigName.  A human-
+                # readable message appears in $msg.
+
+            }
+
+            CHILDSTATUS {
+
+                foreach { - pid code } $::errorCode break
+
+                # A child process, whose process ID was $pid,
+                # exited with a non-zero exit status, $code.
+
+            }
+
+            CHILDSUSP {
+
+                foreach { - pid sigName msg } $::errorCode break
+
+                # A child process, whose process ID was $pid,
+                # has been suspended because of a signal named
+                # $sigName.  A human-readable description of the
+                # signal appears in $msg.
+
+            }
+
+            POSIX {
+
+                foreach { - errName msg } $::errorCode break
+
+                # One of the kernel calls to launch the command
+                # failed.  The error code is in $errName, and a
+                # human-readable message is in $msg.
+
+            }
+
+        }
+    }
     
     # Strip the extension.
     set pdf_filename "[file rootname $oo_file].pdf"
+    if {![file exists $pdf_filename]} {
+	set pdf_filename $oo_file
+    }
     set pdf_filesize [file size $pdf_filename]
     set mime_type "application/pdf"
     if {[exists_and_not_null $item_id]} {
 	set parent_id [get_parent -item_id $item_id]
-    }
-    
-    # cr_import_content checks the item_id switch. If present, it creates a new revision of the item, else it creates a new item and assigns it the name specified in the object_name parameter (last parameter).
-    set revision_id [cr_import_content \
-			 -item_id $item_id \
-                         $parent_id \
-			 $pdf_filename \
-			 $pdf_filesize \
-			 $mime_type \
-			 $pdf_filename ]
+	
+	set revision_id [cr_import_content \
+			     -title $title \
+			     -item_id $item_id \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $pdf_filename ]
+    } else {
+	set revision_id [cr_import_content \
+			     -title $title \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $pdf_filename ]
+    }	
+
     content::item::set_live_revision -revision_id $revision_id
-    return revision_id
+    return [content::revision::item_id -revision_id $revision_id]
 }
 
 ad_proc -public contact::oo::change_content {
     -path:required
     -document_filename:required
-    -contents:requried
+    -contents:required
 } {
     Takes the provided contents and places them in the content.xml file of the sxw file, effectivly changing the content of the file.
 
@@ -341,8 +410,19 @@ ad_proc -public contact::oo::change_content {
     # The zip command should replace the content.xml in the zipfile which
     # happens to be the OpenOffice File. 
     foreach filename [array names content_array] {
-	exec zip "${dir}/$document_filename" "${dir}/$filename"
+	exec zip -j "${dir}/$document_filename" "${dir}/$filename"
     }
 
-    return "${dir}/$document_filename"
+    # copy odt file
+    set new_file "[ns_tmpnam].odt"
+    ns_cp "${dir}/$document_filename" $new_file
+
+    # delete other tmpfiles
+    ns_unlink "${dir}/$document_filename"
+    foreach filename [array names content_array] {
+	ns_unlink "${dir}/$filename"
+    }
+    ns_rmdir $dir
+
+    return $new_file
 }
