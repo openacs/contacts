@@ -160,6 +160,7 @@ if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
 
 set rel_options [db_list_of_lists get_rels {}]
 set rel_options [ams::util::localize_and_sort_list_of_lists -list $rel_options]
+set rel_options [ams::util::localize_and_sort_list_of_lists -list $rel_options]
 
 set rel_options [concat [list [list "[_ contacts.--select_one--]" ""]] $rel_options]
 
@@ -263,4 +264,5 @@ db_multirow -unclobber -extend {contact_url rel_add_edit_url rel_delete_url deta
         }
     }
     set rel_delete_url [export_vars -base "${package_url}relationship-delete" -url {rel_id party_id return_url}]
+    set role_singular [lang::util::localize $role_singular]
 }
