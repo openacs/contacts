@@ -154,6 +154,7 @@ ad_proc -private contact::salutation_not_cached {
 	}
     }
 
+    set locale [lang::user::site_wide_locale -user_id $party_id]
     set revision_id [content::item::get_best_revision -item_id $party_id]
     foreach attribute [list "first_names" "last_name" "salutation" "person_title"] {
 	set value($attribute) [string trim [ams::value -object_id $revision_id -attribute_name $attribute]]
@@ -162,7 +163,7 @@ ad_proc -private contact::salutation_not_cached {
     set name [string trim "$value(first_names) $value(last_name)"]
     if {$type == "salutation"} {
 	# long salutation
-	return "$value(salutation) [string trim "$value(person_title) $name"]"
+	return [lang::util::localize "$value(salutation) [string trim "$value(person_title) $name"]" $locale]
     } else {
 	# short sticker salutation
 	return "- [string trim "$value(person_title) $name"] -"
@@ -258,15 +259,16 @@ ad_proc -private contact::employee::get_not_cached {
 	    set employer_exist_p 1
 	}
 	# Get best/last revision
-	set employee_id [content::item::get_best_revision -item_id $employee_id]
-	set employer_id [content::item::get_best_revision -item_id [lindex $employer 0]]
+	set employee_rev_id [content::item::get_best_revision -item_id $employee_id]
+	set employer_id [lindex $employer 0]
+	set employer_rev_id [content::item::get_best_revision -item_id $employer_id]
     }
 
     set company_address_p 0
     if {$employer_exist_p} {
 	foreach attribute $employer_attributes {
 	    set value [ams::value \
-			   -object_id $employer_id \
+			   -object_id $employer_rev_id \
 			   -attribute_name $attribute
 		      ]
 	    switch $attribute {
@@ -276,7 +278,7 @@ ad_proc -private contact::employee::get_not_cached {
 	    set local_array($attribute) $value
 	}
 
-	if {[contacts::postal_address::get -attribute_name "company_address" -party_id [lindex $employer 0] -array address_array]} {
+	if {[contacts::postal_address::get -attribute_name "company_address" -party_id $employer_id -array address_array]} {
 	    set local_array(address) $address_array(delivery_address)
 	    set local_array(municipality) $address_array(municipality)
 	    set local_array(region) $address_array(region)
@@ -292,7 +294,7 @@ ad_proc -private contact::employee::get_not_cached {
     # This will overwrite company's attributes
     foreach attribute $employee_attributes {
 	set value [ams::value \
-		       -object_id $employee_id \
+		       -object_id $employee_rev_id \
 		       -attribute_name $attribute
 		  ]
 	set local_array($attribute) $value
