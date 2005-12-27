@@ -39,7 +39,7 @@ if {[exists_and_not_null footer_id]} {
     set footer ""
 }
 
-
+set spoiler_options [util::find_all_files -extension jpg -path "/web/wieners/packages/wieners/templates/spoiler"]
     
 set date [split [dt_sysdate] "-"]
 append form_elements {
@@ -54,10 +54,10 @@ append form_elements {
     {date:date(date)
 	{label "[_ contacts.Date]"}
     }
-    {spoiler:text(text),optional
+    {spoiler:text(select),optional
         {label "[_ contacts.Spoiler]"} 
         {help_text "[_ contacts.Spoiler_help_text]"}
-        {html {size 45 maxlength 1000}}
+	{options $spoiler_options}
     }
     {content:richtext(richtext)
 	{label "[_ contacts.Message]"}
@@ -153,7 +153,7 @@ ad_form -action message \
 	}
 	
 
-        set return [contact::oo::change_content2 -oo_filename "vorlage.odt" -oo_path "/web/" -content $return]
+        set return [contact::oo::change_content -oo_filename "vorlage.odt" -oo_path "/web" -content $return]
 	
 	# onLoad=\"window.print()\"
 	ns_return 200 text/html "
