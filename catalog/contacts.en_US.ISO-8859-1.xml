@@ -534,6 +534,7 @@
   <msg key="which_match">which match</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">with</msg>
+  <msg key="with_best_regards">With best regards</msg>
   <msg key="Working_project_tasks">Working Project Tasks</msg>
   <msg key="You_can_extend">You can extend this search by:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Your message was sent to: &lt;strong&gt;%recipients%&lt;/strong&gt;</msg>
