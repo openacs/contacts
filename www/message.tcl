@@ -24,7 +24,7 @@ ad_page_contract {
     {context_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
-	if { [lsearch [list email letter] $message_type] < 0 } {
+	if { [lsearch [list oo_mailing email letter] $message_type] < 0 } {
 	    ad_complain "[_ contacts.lt_Your_provided_an_inva]"
 	}
     }
