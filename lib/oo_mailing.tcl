@@ -99,7 +99,7 @@ ad_form -action message \
 	set paper_type "letterhead"
     } -edit_request {
     } -on_submit {
-	set user_id [ad_conn user_id]
+        # Make sure the content actually exists
 	set content_raw [string trim \
 			     [ad_html_text_convert \
 				  -from [template::util::richtext::get_property format $content] \
@@ -110,78 +110,59 @@ ad_form -action message \
 	if {$content_raw == "" } {
 	    template::element set_error message content "[_ contacts.Message_is_required]"
 	}
+
+        # Now parse the content for openoffice
 	set content_format [template::util::richtext::get_property format $content]
-	set content [string trim [template::util::richtext::get_property content $content]]
+	set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
 
+        # Retrieve information about the user so it can be used in the template
+	set user_id [ad_conn user_id]
+        if {![contact::employee::get -employee_id $user_id -array user_info]} {
+            ad_return_error $user_id "User is not an employee"
+        }
 
-	set messages [list]
+        set return ""
 	foreach party_id $party_ids {
-	    set name [contact::name -party_id $party_id]
-	    set first_names [lindex $name 0]
-	    set last_name [lindex $name 1]
-	    set locale [lang::user::site_wide_locale -user_id $party_id]
-	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
-	    set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
-	    set revision_id [contact::live_revision -party_id $party_id]
-	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
-	    if {[empty_string_p $mailing_address]} {
-		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
-		break
-	    }
+            # get the user information
+            if {[contact::employee::get -employee_id $party_id -array employee]} {
+                set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$employee(locale)"]
+                set regards [lang::message::lookup $employee(locale) contacts.with_best_regards]
+            } else {
+                ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
+                break
+            }
 
-	    set letter "<table heigth=\"3000\" width=\"650\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" border=\"0\">
-	<tr>
-		<td>
-$header
-			<br><br>
-		</td>
-	</tr>
-	<tr>
-<td>
-$content
-</td>
-</tr>
-<tr valign=\"bottom\">
-<td>
-$footer
-</td>"
+            set file [open "/web/wieners/vorlage.xml"]
+            fconfigure $file -translation binary
+            set template_content [read $file]
+            close $file
 
-	    set values [list]
-	    foreach element [list first_names last_name name mailing_address date salutation] {
-		lappend values [list "{$element}" [set $element]]
-	    }
-	    set letter [contact::message::interpolate -text $letter -values $values]
+            eval [template::adp_compile -string $template_content]
+            append return $__adp_output
 
-	    lappend messages $letter
-
-	    contact::message::log \
-		-message_type "letter" \
-		-sender_id $user_id \
-		-recipient_id $party_id \
-		-title $title \
-		-description "" \
-		-content $letter \
-		-content_format "text/html"
+#	    contact::message::log \
+#		-message_type "letter" \
+#		-sender_id $user_id \
+#		-recipient_id $party_id \
+#		-title $title \
+#		-description "" \
+#		-content $letter \
+#		-content_format "text/html"
 
 
 	}
 	
 
-
+        set return [contact::oo::change_content2 -oo_filename "vorlage.odt" -oo_path "/web/" -content $return]
 	
 	# onLoad=\"window.print()\"
 	ns_return 200 text/html "
 <html>
 <head>
 <title>[_ contacts.Print_Letter]</title>
-<link rel=\"stylesheet\" type=\"text/css\" href=\"/resources/contacts/contacts-print.css\">
 </head>
-<body id=\"${paper_type}\">
-<div id=\"header\">
-<p>[_ contacts.lt_Once_done_printing_-return_url-]</p>
-</div>
 
-[join $messages "\n"]
+$return
 
 </body>
 </html>
