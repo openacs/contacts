@@ -201,6 +201,8 @@ ad_proc -public contact::employee::get {
     @return country_code
     @return country Name of the country in the user's locale
     @return town_line TownLine in the format used in the country of the party
+    @return locale Locale of the employee
+    @return jobtitle Job Title of the person
 
 } {
     upvar $array local_array
@@ -226,7 +228,7 @@ ad_proc -private contact::employee::get_not_cached {
 } {
     ns_log notice "start processing"
     set employer_exist_p 0
-    set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email"]
+    set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email" "jobtitle"]
     set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
 
     # Check if ID belongs to an employee, if not return empty string
@@ -312,6 +314,9 @@ ad_proc -private contact::employee::get_not_cached {
             set local_array(town_line) $home_address_array(town_line)
 	}
     }
+
+    # Get the locale
+    set local_array(locale) [lang::user::site_wide_locale -user_id $employee_id]
 
     return [array get local_array]
 }
