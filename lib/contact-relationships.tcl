@@ -23,8 +23,8 @@ if {[empty_string_p $package_id]} {
 }
 
 multirow create rels relationship relation_url contact contact_url attribute value
-set default_group [contacts::default_group]
-
+set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id  and group_id >0}]
+lappend groups_belonging_to [contacts::default_group]
 db_foreach get_relationships {} {
     set contact_url [contact::url -party_id $other_party_id]
     if {[organization::organization_p -party_id $other_party_id]} {
@@ -32,7 +32,7 @@ db_foreach get_relationships {} {
     } else {
 	set other_object_type "person"
     } 
-    set relation_url [export_vars -base "/contacts/add/$other_object_type" -url {{group_ids $default_group} {object_id_two "$party_id"} rel_type}]    
+    set relation_url [export_vars -base "/contacts/add/$other_object_type" -url {{group_ids $groups_belonging_to} {object_id_two "$party_id"} rel_type}]    
     set role_singular [lang::util::localize $role_singular]
     multirow append rels $role_singular $relation_url $other_name $contact_url {} {}
 

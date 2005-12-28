@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title"><a href="@relations_url@">Relationships</a></property>
+<property name="portlet_title"><a href="@relations_url@">#contacts.Relationships#</a></property>
 
 
 <table width="100%">

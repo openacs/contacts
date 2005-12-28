@@ -121,7 +121,6 @@ ad_form -action message \
             ad_return_error $user_id "User is not an employee"
         }
 
-        set return ""
 	foreach party_id $party_ids {
             # get the user information
             if {[contact::employee::get -employee_id $party_id -array employee]} {
@@ -138,23 +137,23 @@ ad_form -action message \
             close $file
 
             eval [template::adp_compile -string $template_content]
-            append return $__adp_output
+            set letter $__adp_output
 
-#	    contact::message::log \
-#		-message_type "letter" \
-#		-sender_id $user_id \
-#		-recipient_id $party_id \
-#		-title $title \
-#		-description "" \
-#		-content $letter \
-#		-content_format "text/html"
+	    set odt_filename [contact::oo::change_content -document_filename "vorlage.odt" -path "/web" -contents [list "content.xml" "$letter"]]
+	    set revision_id [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id] 
 
+	    contact::message::log \
+		-message_type "oo_mailing" \
+		-sender_id $user_id \
+		-recipient_id $party_id \
+		-title $title \
+		-description "" \
+		-content $letter \
+		-content_format "text/html"
 
 	}
 	
 
-        set return [contact::oo::change_content -oo_filename "vorlage.odt" -oo_path "/web" -content $return]
-	
 	# onLoad=\"window.print()\"
 	ns_return 200 text/html "
 <html>
@@ -162,7 +161,7 @@ ad_form -action message \
 <title>[_ contacts.Print_Letter]</title>
 </head>
 
-$return
+$letter
 
 </body>
 </html>
