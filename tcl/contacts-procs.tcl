@@ -66,6 +66,17 @@ ad_proc -private contact::util::get_file_extension {
     return [lindex [split $filename "."] end]
 }
 
+ad_proc -private contact::util::update_person_attributes {
+} {
+    Updates the person attributes first_names, last_name, email for people who have not been entered using contacts
+} {
+    db_foreach persons {select latest_revision as object_id, first_names, last_name, email from persons, parties,cr_items where person_id = party_id and person_id = item_id} {
+	ams::attribute::save::text -object_id $object_id -attribute_name "first_names" -value "$first_names" -object_type "person"
+	ams::attribute::save::text -object_id $object_id -attribute_name "last_name"  -value "$last_name" -object_type "person"
+	ams::attribute::save::text -object_id $object_id -attribute_name "email" -value "$email" -object_type "person"
+    }
+}
+
  ad_proc -public contact::util::get_employees {
     {-organization_id:required}
 } {
@@ -237,6 +248,7 @@ ad_proc -private contact::employee::get_not_cached {
 	ns_log notice "The ID specified does not belong to an employee"
 	return
     }
+    set employee_rev_id [content::item::get_best_revision -item_id $employee_id]
 
     # Get employers, if any
     set employers [list]
@@ -259,7 +271,6 @@ ad_proc -private contact::employee::get_not_cached {
 	    set employer_exist_p 1
 	}
 	# Get best/last revision
-	set employee_rev_id [content::item::get_best_revision -item_id $employee_id]
 	set employer_id [lindex $employer 0]
 	set employer_rev_id [content::item::get_best_revision -item_id $employer_id]
     }
@@ -864,3 +875,4 @@ ad_proc -public contacts::get_values {
 	return [array get return_array]
     }
 }
+
