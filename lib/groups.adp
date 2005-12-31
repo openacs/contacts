@@ -17,6 +17,10 @@
 <if @groups.sub_p@>)</if>
 </td></tr>
 </multiple>
+<tr><td align="right">
+<if @user_p@ eq 1>#contacts.Users#</if>
+</td>
+</tr>
 </table>
 </ul>
 </if>

@@ -93,21 +93,31 @@ if { ![exists_and_not_null group_id] } {
 }
 
 
+set last_modified_join ""
+set last_modified_clause ""
+
 switch $orderby {
     "first_names,asc" {
-        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
 	set sort_item "lower(first_names)"
     }
     "last_name,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a>"
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
 	set sort_item "lower(last_name)"
     }
     "organization,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization]"
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
 	set sort_item "lower(organizations.name)"
+    }
+    "last_modified,desc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
+	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
+	set sort_item "acs_objects.last_modified"
+	set last_modified_join "acs_objects, "
+	set last_modified_clause "and parties.party_id = acs_objects.object_id"
     }
 }
 
@@ -282,17 +292,22 @@ template::list::create \
         first_names {
             label "[_ contacts.First_Name]"
             orderby_asc  "lower(first_names) asc"
-            orderby_desc "lower(first_names) asc"
+            orderby_desc "lower(first_names) desc"
         }
         last_name {
             label "[_ contacts.Last_Name]"
             orderby_asc  "lower(last_name) asc"
-            orderby_desc "lower(last_name) asc"
+            orderby_desc "lower(last_name) desc"
         }
         organization {
-            label "[_ contacts.Last_Name]"
+            label "[_ contacts.Organization]"
             orderby_asc  "lower(organizations.name) asc"
-            orderby_desc "lower(organizations.name) asc"
+            orderby_desc "lower(organizations.name) desc"
+        }
+        last_modified {
+            label "[_ contacts.Last_Modified]"
+            orderby_asc  "acs_objects.last_modified asc"
+            orderby_desc "acs_objects.last_modified desc"
         }
 
         default_value first_names,asc

@@ -73,3 +73,4 @@ if { [permission::permission_p -object_id $default_group -privilege "delete"] } 
     set delete_p 0
 }
 
+set user_p [contact::user_p -party_id $party_id]

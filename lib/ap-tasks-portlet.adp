@@ -15,6 +15,7 @@
 		orderby_p="@orderby_p@"
 		display_mode="list"
 		pt_orderby="@pt_orderby@"
+		status_id="@status_id@"
 		elements="@elements@"
 	    />
         </td>

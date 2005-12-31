@@ -348,6 +348,9 @@ ad_proc -public contact::oo::import_oo_pdf {
     # Strip the extension.
     set pdf_filename "[file rootname $oo_file].pdf"
     if {![file exists $pdf_filename]} {
+	###############
+	# this is a fix to use the oo file if pdf file could not be generated
+	###############
 	set pdf_filename $oo_file
     }
     set pdf_filesize [file size $pdf_filename]
@@ -398,6 +401,7 @@ ad_proc -public contact::oo::change_content {
     foreach filename [array names content_array] {
 	# Save the content to a file.
 	set file [open "${dir}/$filename" w]
+	fconfigure $file -encoding utf-8
 	puts $file $content_array($filename)
 	flush $file
 	close $file

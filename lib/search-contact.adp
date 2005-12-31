@@ -1,4 +1,4 @@
-<style tyle=text/css>
+<style type=text/css>
    input.search_contact {font-size: 10px;}
 </style>
 <formtemplate id="search_contact">

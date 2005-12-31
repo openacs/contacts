@@ -34,6 +34,7 @@
 	        footer_id=@footer_id@
 	        header_id=@header_id@
 	        folder_id=@folder_id@
+		title=@title@
 	        >
   </else>
 </if>

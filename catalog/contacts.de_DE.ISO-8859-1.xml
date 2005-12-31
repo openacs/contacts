@@ -136,7 +136,7 @@
   <msg key="Email">e-Mail</msg>
   <msg key="email">EMail</msg>
   <msg key="Email_Address">e-Mail Adresse</msg>
-  <msg key="Employee">Angestellter</msg>
+  <msg key="Employee">Kundenkontakt</msg>
   <msg key="Employees">Angestellte</msg>
   <msg key="Employer">Arbeitgeber</msg>
   <msg key="Employers">Arbeitgeber</msg>
@@ -188,6 +188,7 @@
   <msg key="is_not_set">ist nicht eingerichtet</msg>
   <msg key="is_set">ist eingerichtet</msg>
   <msg key="last">letztes</msg>
+  <msg key="Last_Modified">Letzte Änderung</msg>
   <msg key="Last_Name">Nachnamen</msg>
   <msg key="Last_updated">Letzte Änderung</msg>
   <msg key="Latest">Spätester</msg>

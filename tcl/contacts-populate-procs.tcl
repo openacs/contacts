@@ -1203,7 +1203,11 @@ ams::list::attribute::map \
     # Register Relationships
 
     rel_types::create_role -role "parent_company" -pretty_name "Parent Company" -pretty_plural "Parent Companies"
+    lang::message::register -update_sync de_DE acs-translations "role_parent_company" "Mutterfirma"
+
     rel_types::create_role -role "subsidiary" -pretty_name "Subsidiary" -pretty_plural "Subsidiaries"
+    lang::message::register -update_sync de_DE acs-translations "role_subsidiary" "Tochterfirma"
+
     rel_types::new -table_name "contact_rels_subsidiary" -create_table_p "t" -supertype "contact_rel" -role_one "parent_company" -role_two "subsidiary" \
 	"contact_rels_subsidiary" \
 	"Contact Rel Subsidiary" \

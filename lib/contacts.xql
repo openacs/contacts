@@ -6,14 +6,15 @@
 	select 
 		distinct parties.party_id, $sort_item
   	from 
-		parties
+		$last_modified_join parties
 	$left_join
       	left join cr_items on (parties.party_id = cr_items.item_id) 
-      	left join cr_revisions on (cr_items.latest_revision =
-      	cr_revisions.revision_id ), group_distinct_member_map
- 	where 
+      	left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
+        group_distinct_member_map
+ 	where
 	parties.party_id = group_distinct_member_map.member_id
-   	$group_where_clause
+   	$last_modified_clause
+        $group_where_clause
 	[contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
@@ -27,10 +28,11 @@ select  $extend_query
        parties.party_id,
        parties.email,
        parties.url
-  from parties 
+  from $last_modified_join parties
       left join persons on (parties.party_id = persons.person_id)
       left join organizations on (parties.party_id = organizations.organization_id)
  where 1 = 1
+$last_modified_clause
 [template::list::page_where_clause -and -name "contacts" -key "party_id"]
 $group_by_group_id
 [template::list::orderby_clause -orderby -name "contacts"]
