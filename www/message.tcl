@@ -41,7 +41,7 @@ if { [exists_and_not_null party_id] } {
 	lappend party_ids $party_id
     }
 }
-
+	
 if { [exists_and_not_null to] } {
     set party_ids [list]
     foreach party_id $to {

@@ -484,8 +484,8 @@
   <msg key="signatures">signatures</msg>
   <msg key="Sort_By">Sort By</msg>
   <msg key="Sort_by">Sort by</msg>
-  <msg key="Spoiler">Spoiler?</msg>
-  <msg key="Spoiler_help_text">Path to the file containing the image used as a spoiler</msg>
+  <msg key="Banner">Banner?</msg>
+  <msg key="Banner_help_text">Path to the file containing the image used as a banner</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Stored Extended Options</msg>

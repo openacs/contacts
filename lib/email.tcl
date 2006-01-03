@@ -201,44 +201,37 @@ ad_form -action $action \
 
 	# Send the mail to all parties.
 	foreach party_id $to {
-	    set name [contact::name -party_id $party_id]
-	    set first_names [lindex $name 0]
-	    set last_name [lindex $name 1]
-	    set date [lc_time_fmt [dt_sysdate] "%q"]
-	    set to $name
-	    set to_addr [cc_email_from_party $party_id]
-	    set party_revision_id [contact::live_revision -party_id $party_id]
-	    if { ![exists_and_not_null locale]} {
+
+	    # Differentiate between person and organization
+	    if {[person::person_p -party_id]} {
+		contact::employee::get -employee_id $party_id -array employee
+		set first_names $employee(first_names)
+		set last_name $employee(last_name)
+		set name "$employee(title) $first_names $last_name"
+		set salutation $employee(salutation)
+		set locale $employee(locale)
+		set to_addr $employee(email)
+	    } else {
+		set name [contact::name -party_id $party_id]
+		set to_addr [cc_email_from_party $party_id]
+		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
 	    }
-	    set salutation [ams::value \
-				-attribute_id $attribute_id \
-				-attribute_name "salutation" \
-				-object_id $party_revision_id \
-				-locale $locale]
-	    lappend recipients_addr $to_addr
+	    set date [lc_time_fmt [dt_sysdate] "%q"]
+	    set to $name
 
 	    if {[empty_string_p $to_addr]} {
-                # We are going to check if this party_id has an employer and if this
-                # employer has an email
-                set employer_id [relation::get_object_two -object_id_one $party_id \
-                                     -rel_type "contact_rels_employment"]
-                if { ![empty_string_p $employer_id] } {
-                    # Get the employer email adress
-                    set to_addr [cc_email_from_party -party_id $employer_id]
-                    if {[empty_string_p $to_addr]} {
-                        ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing] 
-			break
-                    }
-                } else {
-                    ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
-                    break
-                }
-            }
+		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
+		break
+	    }
+
+	    lappend recipients_addr $to_addr
+	    
 	    set values [list]
 	    foreach element [list first_names last_name name date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
+
 	    template::multirow append messages $message_type $to_addr $party_id [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
 	    
 	    # Link the files to all parties

@@ -70,12 +70,13 @@ switch $message_type {
 	}
     }
     oo_mailing {
+	set banner_options [util::find_all_files -extension jpg -path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]/banner"]
 	append form_elements {
-	    {spoiler:text(text),optional
-                {label "[_ contacts.Spoiler]"} 
-                {help_text "[_ contacts.Spoiler_help_text]"}
-                {html {size 45 maxlength 1000}}
-            }
+	    {banner:text(select),optional
+		{label "[_ contacts.Banner]"} 
+		{help_text "[_ contacts.Banner_help_text]"}
+		{options $banner_options}
+	    }
 	    {content:richtext(richtext) {label "[_ contacts.Message]"} {html {cols 70 rows 24}}}
 	    {ps:text(text),optional
                 {label "[_ contacts.PS]"} 
@@ -131,7 +132,7 @@ ad_form -name "rel_type" \
 	    -content $content \
 	    -content_format $content_format \
 	    -locale $locale \
-            -spoiler $spoiler \
+            -banner $banner \
             -ps $ps
            
     } -after_submit {

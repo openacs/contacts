@@ -46,7 +46,7 @@ ad_proc -private contact::message::save {
     {-content:required}
     {-content_format "text/plain"}
     {-locale ""}
-    {-spoiler ""}
+    {-banner ""}
     {-ps ""}
 } {
     save a contact message
@@ -67,13 +67,13 @@ ad_proc -private contact::message::save {
 
 	db_dml insert_into_message_items {
 	    insert into contact_message_items
-	    ( item_id, owner_id, message_type, locale, spoiler, ps )
+	    ( item_id, owner_id, message_type, locale, banner, ps )
 	    values
-	    ( :item_id, :owner_id, :message_type, :locale, :spoiler, :ps )
+	    ( :item_id, :owner_id, :message_type, :locale, :banner, :ps )
 	}
     } else {
 	db_dml update_message_item {
-	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, spoiler = :spoiler, ps = :ps where item_id = :item_id
+	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, banner = :banner, ps = :ps where item_id = :item_id
 	}
     }
 
@@ -280,7 +280,7 @@ ad_proc -public contact::oo::import_oo_pdf {
     @param title Title which will be used for the resulting content item and file name if none was given in the item
     @param item_id The item_id of the content item to which the content should be associated.
     @param parent_id Needed to set the parent of this object
-    @return revision_id of the revision that contains the file
+    @return item_id of the revision that contains the file
 } {
     # This exec command is missing all the good things about openacs
     # Add the parameter to whatever package you put this procedure in.
@@ -355,6 +355,12 @@ ad_proc -public contact::oo::import_oo_pdf {
     }
     set pdf_filesize [file size $pdf_filename]
     set mime_type "application/pdf"
+    
+    set file_name [file tail $pdf_filename]
+    if {$title eq ""} {
+	set title $file_name
+    }
+    
     if {[exists_and_not_null $item_id]} {
 	set parent_id [get_parent -item_id $item_id]
 	
@@ -365,7 +371,7 @@ ad_proc -public contact::oo::import_oo_pdf {
 			     $pdf_filename \
 			     $pdf_filesize \
 			     $mime_type \
-			     $pdf_filename ]
+			     $file_name ]
     } else {
 	set revision_id [cr_import_content \
 			     -title $title \
@@ -373,7 +379,7 @@ ad_proc -public contact::oo::import_oo_pdf {
 			     $pdf_filename \
 			     $pdf_filesize \
 			     $mime_type \
-			     $pdf_filename ]
+			     $file_name ]
     }	
 
     content::item::set_live_revision -revision_id $revision_id

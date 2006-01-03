@@ -31,8 +31,8 @@ create table contact_message_items (
                                 constraint contact_message_items_message_type_nn not null,
 	locale			varchar(30)
 				constraint contact_message_items_locale_fk references ad_locales(locale),
-        -- Spoiler contains the path to an image which can be inserted into the open office mailing document
-        spoiler                 varchar(500),
+        -- Banner contains the path to an image which can be inserted into the open office mailing document
+        banner                 varchar(500),
         -- PS is the post scriptum, which is commonly used in mailings.
         ps                      varchar(500),
 );
@@ -42,7 +42,7 @@ create view contact_messages as
            cmi.owner_id,
            cmi.message_type,
 	   cmi.locale,
-           cmi.spoiler,
+           cmi.banner,
            cmi.ps
            cr.title,
            cr.description,
