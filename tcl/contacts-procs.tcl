@@ -168,15 +168,15 @@ ad_proc -private contact::salutation_not_cached {
     set locale [lang::user::site_wide_locale -user_id $party_id]
     set revision_id [content::item::get_best_revision -item_id $party_id]
     foreach attribute [list "first_names" "last_name" "salutation" "person_title"] {
-	set value($attribute) [string trim [ams::value -object_id $revision_id -attribute_name $attribute]]
+	set value($attribute) [string trim [ams::value -object_id $revision_id -attribute_name $attribute -locale $locale]]
     }
 
-    set name [string trim "$value(first_names) $value(last_name)"]
     if {$type == "salutation"} {
-	# long salutation
-	return [lang::util::localize "$value(salutation) [string trim "$value(person_title) $name"]" $locale]
+	# long salutation (though still without the first name)
+	return "$value(salutation) [string trim "$value(person_title) $value(last_name)"]"
     } else {
 	# short sticker salutation
+	set name [string trim "$value(first_names) $value(last_name)"]
 	return "- [string trim "$value(person_title) $name"] -"
     }
 }
