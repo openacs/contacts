@@ -98,6 +98,28 @@ ad_proc -private contact::util::update_person_attributes {
     return $contact_list
 }
 
+ ad_proc -public contact::util::get_employees_list_of_lists {
+    {-organization_id:required}
+} {
+    get employees of an organization in a list of list suitable for inclusion in options
+    the list is made up of employee_name and employee_id
+} {
+    set contact_list [list]
+    db_foreach select_employee_ids {
+	select CASE WHEN object_id_one = :organization_id
+                    THEN object_id_two
+                    ELSE object_id_one END as other_party_id
+	from acs_rels, acs_rel_types
+	where acs_rels.rel_type = acs_rel_types.rel_type
+	and ( object_id_one = :organization_id or object_id_two = :organization_id )
+	and acs_rels.rel_type = 'contact_rels_employment'
+    } {
+	lappend contact_list [list [person::name -person_id $other_party_id] $other_party_id]
+    }
+
+    return $contact_list
+}
+
 ad_proc -public contact::util::get_employers {
     {-employee_id:required}
 } {
@@ -312,8 +334,8 @@ ad_proc -private contact::employee::get_not_cached {
     }
 
     # Set the salutation
-    set local_array(salutation) [contact::salutation -party_id $employee_id -type salutation]
-    set local_array(salutation_letter) [contact::salutation -party_id $employee_id -type letter]
+    set local_array(salutation) [contact::salutation_not_cached -party_id $employee_id -type salutation]
+    set local_array(salutation_letter) [contact::salutation_not_cached -party_id $employee_id -type letter]
 
     # As we are asking for employee information only use home_address if there is no company_address
     if {$company_address_p == 0} {
