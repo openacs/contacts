@@ -392,19 +392,25 @@ ad_proc -private contact::flush {
 
 ad_proc -public contact::name {
     {-party_id:required}
+    {-reverse_order:boolean}
 } {
     this returns the contact's name. Cached
 } {
-    return [util_memoize [list ::contact::name_not_cached -party_id $party_id]]
+    return [util_memoize [list ::contact::name_not_cached -party_id $party_id -reverse_order_p $reverse_order_p]]
 }
 
 ad_proc -public contact::name_not_cached {
     {-party_id:required}
+    {-reverse_order_p:required}
 } {
     this returns the contact's name
 } {
     if {[person::person_p -party_id $party_id]} {
-	set person_info [person::name -person_id $party_id]
+	if {$reverse_order_p} {
+	    set person_info [db_string get_person_name {select last_name || ', ' || first_names from persons where person_id = :party_id} -default ""]
+	} else {
+	    set person_info [person::name -person_id $party_id]
+	}
 	return $person_info
     } else {
 	# if there is an org the name is returned otherwise we search for a grou,
