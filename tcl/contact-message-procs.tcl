@@ -262,8 +262,10 @@ ad_proc -public contact::oo::convert {
 } {
     Returns a string which we can insert into the content.xml file
 } {
-    regsub -all "<br>" $content "<text:line-break/>" return
-    return $return
+    regsub -all -nocase "<br>" $content "<text:line-break/>" content
+    regsub -all -nocase "<p>" $content "<text:line-break/>" content
+    regsub -all -nocase "</p>" $content "<text:line-break/>" content
+    return [string trim $content]
 }
     
 ad_proc -public contact::oo::import_oo_pdf {
@@ -381,6 +383,9 @@ ad_proc -public contact::oo::import_oo_pdf {
 			     $mime_type \
 			     $file_name ]
     }	
+
+    ns_unlink $pdf_filename
+#    ns_unlink $oo_file
 
     content::item::set_live_revision -revision_id $revision_id
     return [content::revision::item_id -revision_id $revision_id]
