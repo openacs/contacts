@@ -63,9 +63,11 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
 }
 
 set default_group [contacts::default_group]
+set user_p [contact::user_p -party_id $party_id]
+
 if { [permission::permission_p -object_id $default_group -privilege "delete"] } {
     set remove_url [export_vars -base "/contacts/group-parties-remove" -url {{group_id $default_group} party_id {return_url {/contacts/}}}] 
-    if { [person::person_p -party_id $party_id] && [contact::email -party_id $party_id] != "" } {
+    if { [person::person_p -party_id $party_id] && [contact::email -party_id $party_id] != "" && $user_p != 1} {
         set upgrade_url [export_vars -base "/contacts/person-upgrade-to-user" -url {{person_id $party_id}}] 
     }
     set delete_p 1
@@ -73,4 +75,3 @@ if { [permission::permission_p -object_id $default_group -privilege "delete"] } 
     set delete_p 0
 }
 
-set user_p [contact::user_p -party_id $party_id]
