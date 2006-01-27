@@ -274,6 +274,7 @@ ad_proc -public contact::oo::import_oo_pdf {
     {-title ""}
     {-item_id ""}
     {-parent_id ""}
+    {-no_import:boolean}
 } {
     Imports an OpenOffice file (.sxw / .odt) as a PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.
     
@@ -282,7 +283,9 @@ ad_proc -public contact::oo::import_oo_pdf {
     @param title Title which will be used for the resulting content item and file name if none was given in the item
     @param item_id The item_id of the content item to which the content should be associated.
     @param parent_id Needed to set the parent of this object
+    @param no_import If this flag is specified the location of the generated PDF will be returned, but the pdf will not be stored in the content repository
     @return item_id of the revision that contains the file
+    @return file location of the file if "no_import" has been specified.
 } {
     # This exec command is missing all the good things about openacs
     # Add the parameter to whatever package you put this procedure in.
@@ -349,14 +352,20 @@ ad_proc -public contact::oo::import_oo_pdf {
     
     # Strip the extension.
     set pdf_filename "[file rootname $oo_file].pdf"
+    set mime_type "application/pdf"
     if {![file exists $pdf_filename]} {
 	###############
 	# this is a fix to use the oo file if pdf file could not be generated
 	###############
 	set pdf_filename $oo_file
+	set mime_type "application/odt"
     }
+
+    if {$no_import_p} {
+	return [list $mime_type $pdf_filename]
+    }
+
     set pdf_filesize [file size $pdf_filename]
-    set mime_type "application/pdf"
     
     set file_name [file tail $pdf_filename]
     if {$title eq ""} {
@@ -385,7 +394,7 @@ ad_proc -public contact::oo::import_oo_pdf {
     }	
 
     ns_unlink $pdf_filename
-#    ns_unlink $oo_file
+    ns_unlink $oo_file
 
     content::item::set_live_revision -revision_id $revision_id
     return [content::revision::item_id -revision_id $revision_id]
