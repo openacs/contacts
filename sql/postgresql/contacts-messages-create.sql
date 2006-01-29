@@ -34,7 +34,7 @@ create table contact_message_items (
         -- Banner contains the path to an image which can be inserted into the open office mailing document
         banner                 varchar(500),
         -- PS is the post scriptum, which is commonly used in mailings.
-        ps                      varchar(500),
+        ps                      varchar(500)
 );
 
 create view contact_messages as 
@@ -43,7 +43,7 @@ create view contact_messages as
            cmi.message_type,
 	   cmi.locale,
            cmi.banner,
-           cmi.ps
+           cmi.ps,
            cr.title,
            cr.description,
            cr.content,

@@ -123,6 +123,13 @@ ad_form -name "rel_type" \
 	    set content_format "text/plain"
 	}
 
+	if {![exists_and_not_null banner]} {
+	    set banner ""
+	}
+	if {![exists_and_not_null ps]} {
+	    set ps ""
+	}
+
 	contact::message::save \
 	    -item_id $item_id \
 	    -owner_id $owner_id \

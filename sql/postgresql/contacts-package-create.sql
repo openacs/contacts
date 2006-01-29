@@ -107,7 +107,7 @@ begin
 
         v_folder_id := cf.folder_id from cr_items ci, cr_folders cf
                             where ci.item_id = cf.folder_id
-                              and ci.parent_id = ''0''
+                              and ci.parent_id = ''-4''
                               and ci.name = ''contacts'';
 
         if v_folder_id is null then
@@ -115,7 +115,7 @@ begin
                                   ''contacts'',
                                   ''Contacts'',
                                   NULL,
-                                  ''0''
+                                  ''-4''
                 );
         end if;
 
