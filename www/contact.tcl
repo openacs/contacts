@@ -119,6 +119,10 @@ if { $object_type == "organization" && $pm_installed_p} {
     }
 }
 
-set freelancer_p [group::member_p -user_id $party_id -group_name "Freelancer"]
-
+set freelancer_group_id [group::get_id -group_name "Freelancer"]
+if {$freelancer_group_id ne ""} {
+    set freelancer_p [group::member_p -user_id $party_id -group_name "Freelancer"]
+} else {
+    set freelancer_p "0"
+}
 ad_return_template
