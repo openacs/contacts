@@ -225,130 +225,6 @@ ad_proc -public contacts::populate::crm {
 	-section_heading ""
 
     set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "home_address" \
-			  -datatype "string" \
-			  -pretty_name "Home Address" \
-			  -pretty_plural "Home Addresses" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Privatanschrift"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Privatanschriften"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "postal_address" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "50" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "home_phone" \
-			  -datatype "string" \
-			  -pretty_name "Home Phone" \
-			  -pretty_plural "Home Phones" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Telefonnummer (privat)"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Telefonnummer (privat)"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "telecom_number" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "60" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "private_fax" \
-			  -datatype "string" \
-			  -pretty_name "Private Fax No." \
-			  -pretty_plural "Private Fax Numbers" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Faxnummer (Privat)"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Faxnummer (Privat)"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "telecom_number" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "70" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "private_mobile_phone" \
-			  -datatype "string" \
-			  -pretty_name "Private Mobile No." \
-			  -pretty_plural "Private Mobile Numbers" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Mobilnummer (Privat)"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Mobilnummern (Privat)"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "telecom_number" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "80" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
 			  -object_type "party" \
 			  -attribute_name "email" \
 			  -datatype "string" \
@@ -375,16 +251,16 @@ ad_proc -public contacts::populate::crm {
     ams::list::attribute::map \
 	-list_id $list_id \
 	-attribute_id $attribute_id \
-	-sort_order "84" \
+	-sort_order "50" \
 	-required_p "f" \
 	-section_heading ""
 
     set attribute_id [attribute::new \
 			  -object_type "person" \
-			  -attribute_name "birthdate" \
-			  -datatype "date" \
-			  -pretty_name "Birthdate" \
-			  -pretty_plural "Birthdates" \
+			  -attribute_name "directphoneno" \
+			  -datatype "string" \
+			  -pretty_name "Direct Phone No." \
+			  -pretty_plural "Direct Phone Numbers" \
 			  -table_name "" \
 			  -column_name "" \
 			  -default_value "" \
@@ -395,18 +271,18 @@ ad_proc -public contacts::populate::crm {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Geburtstag"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Geburtstage"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Durchwahl"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Durchwahlen"
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
-	-widget "date" \
+	-widget "telecom_number" \
 	-dynamic_p "t"
 
     ams::list::attribute::map \
 	-list_id $list_id \
 	-attribute_id $attribute_id \
-	-sort_order "90" \
+	-sort_order "60" \
 	-required_p "f" \
 	-section_heading ""
 
@@ -543,24 +419,8 @@ ad_proc -public contacts::populate::crm {
 	-required_p "f" \
 	-section_heading ""
 
-    set attribute_id [attribute::new \
-			  -object_type "organization" \
-			  -attribute_name "email" \
-			  -datatype "string" \
-			  -pretty_name "Email Address" \
-			  -pretty_plural "Email Addresses" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "0" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "type_specific" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "E-Mail Adresse"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "E-Mail Adressen"
+    # E-Mail is a special party attribute. Therefore we just grab the attribute number here.
+    set attribute_id [attribute::id -object_type "party" -attribute_name "email"]
 
     ams::attribute::new \
 	-attribute_id $attribute_id \
@@ -983,44 +843,6 @@ ams::list::attribute::map \
 	-list_id $leads_list_id \
 	-attribute_id $attribute_id \
 	-sort_order "20" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "directphoneno" \
-			  -datatype "string" \
-			  -pretty_name "Direct Phone No." \
-			  -pretty_plural "Direct Phone Numbers" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Durchwahl"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Durchwahlen"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "telecom_number" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "30" \
-	-required_p "f" \
-	-section_heading ""
-
-    ams::list::attribute::map \
-	-list_id $leads_list_id \
-	-attribute_id $attribute_id \
-	-sort_order "30" \
 	-required_p "f" \
 	-section_heading ""
 
