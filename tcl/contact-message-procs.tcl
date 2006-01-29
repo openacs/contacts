@@ -359,6 +359,8 @@ ad_proc -public contact::oo::import_oo_pdf {
 	###############
 	set pdf_filename $oo_file
 	set mime_type "application/odt"
+    } else {
+	ns_unlink $oo_file
     }
 
     if {$no_import_p} {
@@ -394,7 +396,6 @@ ad_proc -public contact::oo::import_oo_pdf {
     }	
 
     ns_unlink $pdf_filename
-    ns_unlink $oo_file
 
     content::item::set_live_revision -revision_id $revision_id
     return [content::revision::item_id -revision_id $revision_id]
