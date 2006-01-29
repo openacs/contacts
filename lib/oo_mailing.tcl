@@ -137,11 +137,14 @@ ad_form -action message \
 	template::multirow create messages revision_id to_addr to_party_id subject content_body
 
 	set file_revisions [list]
+	
+	# We need to set the original date here
+	set orig_date $date
 
 	foreach party_id $party_ids {
             # get the user information
             if {[contact::employee::get -employee_id $party_id -array employee]} {
-                set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$employee(locale)"]
+                set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $orig_date] "-"] "%q" "$employee(locale)"]
                 set regards [lang::message::lookup $employee(locale) contacts.with_best_regards]
             } else {
                 ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
@@ -190,7 +193,6 @@ ad_form -action message \
 		    set salutation "Dear ladies and gentlemen"
 		    set locale [lang::user::site_wide_locale -user_id $party_id]
 		}
-		set date [lc_time_fmt [dt_sysdate] "%q"]
 		
 		set values [list]
 		foreach element [list first_names last_name name date salutation] {
@@ -199,6 +201,7 @@ ad_form -action message \
 		
 		# We are going to create a multirow which knows about the file (revision_id) and contains
 		# the parsed e-mail.
+		set to_addr [party::email -party_id $party_id]
 		template::multirow append messages $revision_id $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $email_content -values $values]
 	    }
 
@@ -219,8 +222,7 @@ ad_form -action message \
 	    set package_id [ad_conn package_id]
 
 	    template::multirow foreach messages {
-	
-		ad_return_error "toaddr" "$to_addr"
+
 		# Send the e-mail to each of the users
 		acs_mail_lite::complex_send \
 		    -to_addr $to_addr \

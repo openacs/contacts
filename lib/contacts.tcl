@@ -137,8 +137,11 @@ foreach page_s $valid_page_sizes {
 }
 append name_label [join $page_size_list " | "]
 
-
-append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
+################
+# disabled csv download here
+################
+# append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size}]\">[_ contacts.CSV]</a>"
+set format normal
 
 template::multirow create bulk_acts pretty link detailed
 template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]"

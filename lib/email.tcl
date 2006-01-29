@@ -203,11 +203,11 @@ ad_form -action $action \
 	foreach party_id $to {
 
 	    # Differentiate between person and organization
-	    if {[person::person_p -party_id]} {
+	    if {[person::person_p -party_id $party_id]} {
 		contact::employee::get -employee_id $party_id -array employee
 		set first_names $employee(first_names)
 		set last_name $employee(last_name)
-		set name "$employee(title) $first_names $last_name"
+		set name "$employee(person_title) $first_names $last_name"
 		set salutation $employee(salutation)
 		set locale $employee(locale)
 		set to_addr $employee(email)
@@ -240,6 +240,7 @@ ad_form -action $action \
 	    }
 	}
 
+	
 	# Send the email to all CC in cc_list
 	foreach email_addr $cc_list {
 	    set name $email_addr
@@ -272,10 +273,10 @@ ad_form -action $action \
 	template::multirow foreach messages {
 	    
 	    lappend to_list [list $to_addr]
-	    
+
 	    if {[exists_and_not_null file_ids]} {
 		# If the no_callback_p is set to "t" then no callback will be executed
-		if { $no_callback_p } {
+		if { $no_callback_p ne "f" } {
 
 		    acs_mail_lite::complex_send \
 			-to_addr $to_addr \
@@ -289,6 +290,8 @@ ad_form -action $action \
 			-no_callback_p
 
 		} else {
+
+
 
 		    acs_mail_lite::complex_send \
 			-to_addr $to_addr \
@@ -311,6 +314,7 @@ ad_form -action $action \
 
 		    if { $no_callback_p } {
 			# If the no_callback_p is set to "t" then no callback will be executed			
+
 			acs_mail_lite::complex_send \
 			    -to_addr $to_addr \
 			    -from_addr "$from_addr" \
@@ -362,8 +366,9 @@ ad_form -action $action \
 		    } else {
 			
 			if { $no_callback_p } {
+
 			    # If the no_callback_p is set to "t" then no callback will be executed
-			    acs_mail_lite::send \
+			    acs_mail_lite::complex_send \
 				-to_addr $to_addr \
 				-from_addr "$from_addr" \
 				-subject "$subject" \
@@ -372,7 +377,7 @@ ad_form -action $action \
 				-no_callback_p
 
 			} else {
-			    acs_mail_lite::send \
+			    acs_mail_lite::complex_send \
 				-to_addr $to_addr \
 				-from_addr "$from_addr" \
 				-subject "$subject" \
