@@ -236,7 +236,7 @@ ad_proc -public -callback dotlrn_community::add_members -impl contacts_employees
 	if {[contact::user_p -party_id $employee_id]} {
 	    # Just to be on the save side, we actually check if the user is already in .LRN
 	    dotlrn::user_add -user_id $employee_id
-	    dotlrn_club::add_user -community_id $club_id -user_id $employee_id
+	    dotlrn_club::add_user -community_id $community_id -user_id $employee_id
 	}
     }
 }
