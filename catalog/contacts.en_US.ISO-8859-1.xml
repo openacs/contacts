@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d10" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.1d12" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -61,6 +61,8 @@
   <msg key="Attributes">Attributes</msg>
   <msg key="Available_Attributes">Available Attributes</msg>
   <msg key="Available_Options">Available Options</msg>
+  <msg key="Banner">Banner?</msg>
+  <msg key="Banner_help_text">Path to the file containing the image used as a banner</msg>
   <msg key="Belongs_to">Belongs to</msg>
   <msg key="Body">Body</msg>
   <msg key="Bulk_Update">Bulk Update</msg>
@@ -108,6 +110,7 @@
   <msg key="Create_Club">Create Club</msg>
   <msg key="create_email">Create Email</msg>
   <msg key="create_letter">Create Letter</msg>
+  <msg key="create_oo_mailing">Create OO Mailing</msg>
   <msg key="create_project">Create project</msg>
   <msg key="Create_role">Create role</msg>
   <msg key="Create_user">Create User</msg>
@@ -387,7 +390,12 @@
   <msg key="odd">odd</msg>
   <msg key="of">of</msg>
   <msg key="Offers">Offers</msg>
+  <msg key="oo_content_help">OO text which will be inserted into the template.</msg>
+  <msg key="oo_email_content">E-Mail content</msg>
+  <msg key="oo_email_help">Content of the E-mail, if you are sending an e-mail that is :).</msg>
+  <msg key="oo_email_subject_help">Subject of the email. &lt;font color=red&gt;&lt;b&gt;Leave empty to print&lt;/b&gt;&lt;/font&gt;</msg>
   <msg key="oo_mailing">Open Office Mailing</msg>
+  <msg key="oo_message">OO message</msg>
   <msg key="open">Open</msg>
   <msg key="or">or</msg>
   <msg key="Ordering">Ordering</msg>
@@ -413,6 +421,7 @@
   <msg key="Permissions_for_default_group">Permissions for default group</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Person Form</msg>
+  <msg key="pp">pp.</msg>
   <msg key="Pretty_name">Pretty Name</msg>
   <msg key="pretty_name_help">The Pretty Name to use in the list label.</msg>
   <msg key="Preview">Preview</msg>
@@ -484,8 +493,6 @@
   <msg key="signatures">signatures</msg>
   <msg key="Sort_By">Sort By</msg>
   <msg key="Sort_by">Sort by</msg>
-  <msg key="Banner">Banner?</msg>
-  <msg key="Banner_help_text">Path to the file containing the image used as a banner</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Stored Extended Options</msg>
