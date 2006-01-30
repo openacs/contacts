@@ -265,11 +265,37 @@ ad_proc -private contact::employee::get_not_cached {
     set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email" "jobtitle" "person_title"]
     set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
 
-    # Check if ID belongs to an employee, if not return empty string
+    # Check if ID belongs to an employee, if not return the company information
     if {![person::person_p -party_id $employee_id]} {
-	ns_log notice "The ID specified does not belong to an employee"
-	return
+	set employer_id $employee_id
+	set employer_rev_id [content::item::get_best_revision -item_id $employer_id]
+	foreach attribute $employer_attributes {
+	    set value [ams::value \
+			   -object_id $employer_rev_id \
+			   -attribute_name $attribute
+		      ]
+	    switch $attribute {
+		company_phone { set attribute "directphoneno" }
+		company_fax   { set attribute "directfaxno" }
+	    }
+	    set local_array($attribute) $value
+	}
+
+	set local_array(salutation) "#contacts.lt_dear_ladies_and#"
+	set local_array(salutation_letter) "" 
+	if {[contacts::postal_address::get -attribute_name "company_address" -party_id $employer_id -array address_array]} {
+	    set local_array(address) $address_array(delivery_address)
+	    set local_array(municipality) $address_array(municipality)
+	    set local_array(region) $address_array(region)
+	    set local_array(postal_code) $address_array(postal_code)
+	    set local_array(country_code) $address_array(country_code)
+            set local_array(country) $address_array(country)
+            set local_array(town_line) $address_array(town_line)
+	    set company_address_p 1
+	}
+	return [array get local_array]
     }
+
     set employee_rev_id [content::item::get_best_revision -item_id $employee_id]
 
     # Get employers, if any
