@@ -210,13 +210,12 @@ ad_form -action $action \
 		set name "$employee(person_title) $first_names $last_name"
 		set salutation $employee(salutation)
 		set locale $employee(locale)
-		set to_addr $employee(email)
 	    } else {
 		set name [contact::name -party_id $party_id]
-		set to_addr [cc_email_from_party $party_id]
 		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
 	    }
+	    set to_addr [cc_email_from_party $party_id]
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    set to $name
 
