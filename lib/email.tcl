@@ -17,9 +17,6 @@ foreach optional_param {return_url content export_vars file_ids object_id cc ite
     }
 }
 
-if {![info exists mime_type]} {
-    set mime_type "text/plain"
-}
 if {![info exists cancel_url]} {
     set cancel_url $return_url
 }
@@ -290,7 +287,7 @@ ad_form -action $action \
 
 		} else {
 
-
+		    ad_return_error "$file_ids" "$content_body :: $mime_type"
 
 		    acs_mail_lite::complex_send \
 			-to_addr $to_addr \

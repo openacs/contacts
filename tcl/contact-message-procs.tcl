@@ -264,6 +264,7 @@ ad_proc -public contact::oo::convert {
 } {
     regsub -all -nocase "<br>" $content "<text:line-break/>" content
     regsub -all -nocase "<p>" $content "<text:line-break/>" content
+    regsub -all -nocase "&nbsp;" $content " " content
     regsub -all -nocase "</p>" $content "<text:line-break/>" content
     return [string trim $content]
 }
