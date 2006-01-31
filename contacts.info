@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="1.2b1" url="http://openacs.org/repository/download/apm/contacts-1.2b1.apm">
+    <version name="1.2b2" url="http://openacs.org/repository/download/apm/contacts-1.2b2.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
         <release-date>2005-11-23</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b1"/>
+        <provides url="contacts" version="1.2b2"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
         <requires url="acs-datetime" version="4.2"/>
         <requires url="acs-events" version="0.5d3"/>
@@ -67,6 +67,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SquareThumbnails"  default="1" description="0 for no, 1 for yes. If yes we crop either the top or the bottom of the image to create square thumbnails and portraits" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ThumbnailSize"  default="125x125" description="Max dimension for thumbnail image" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="OOMailingPath"  default="/packages//contacts/templates/oo-mailing" description="The directory that contains all files needed for a proper OO mailing. This is the document.odt, content.xml, styles.xml and the banner directory" section_name="Templates"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="RequireAdminForTemplatesP"  default="0" description="Do we allow users to create templates in the system. If set to 1, only admins can create templates." section_name="Templates"/>
         </parameters>
 
     </version>

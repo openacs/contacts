@@ -34,6 +34,12 @@ ad_page_contract {
     }
 }
 
+set admin_required_p [parameter::get -parameter "RequireAdminForTemplatesP" -default 0]
+
+if {$admin_required_p} {
+    permission::require_permission -object_id [ad_conn package_id] -privilege "admin"
+}
+
 set message_exists_p 0
 if { [exists_and_not_null item_id] } {
     if { [db_0or1row message_exists_p { select 1 from contact_messages where item_id = :item_id}] } {
@@ -71,6 +77,7 @@ switch $message_type {
     }
     oo_mailing {
 	set banner_options [util::find_all_files -extension jpg -path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]/banner"]
+	set banner_options [concat [list ""] $banner_options]
 	append form_elements {
 	    {banner:text(select),optional
 		{label "[_ contacts.Banner]"} 

@@ -41,6 +41,7 @@ if {[exists_and_not_null footer_id]} {
 
 set template_path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]"
 set banner_options [util::find_all_files -extension jpg -path "${template_path}/banner"]
+set banner_options [concat [list ""] $banner_options]
 
 set date [split [dt_sysdate] "-"]
 append form_elements {
