@@ -1,4 +1,4 @@
-<if @search_id@ not nil>
+<if @search_id@ not nil and @hide_form_p@ nil>
     <br>
     <table>
 	<tr><td><b>#contacts.You_can_extend#</b></td></tr>

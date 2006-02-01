@@ -46,11 +46,17 @@ if {[exists_and_not_null search_id]} {
     set group_where_clause "" 
     # Also we can extend this search.
     # Is to allow extend the list by any extend_options defined in contact_extend_options
+    set extend_options [contact::extend::get_options \
+				    -ignore_extends $extend_values \
+				    -search_id $search_id -aggregated_p "f"]
+    if { [llength $extend_options] == 0 } {
+	set hide_form_p 1
+    }
+
     set available_options [concat \
 			       [list [list "- - - - - - - -" ""]] \
-			       [contact::extend::get_options \
-				    -ignore_extends $extend_values \
-				    -search_id $search_id -aggregated_p "f"]]
+			       $extend_options \
+			       ]
 
     ad_form -name extend -form {
 	{extend_option:text(select),optional
