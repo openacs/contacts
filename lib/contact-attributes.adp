@@ -1,14 +1,13 @@
     <if @attributes:rowcount@ gt 0>
-   <table>
+   <table class="attribute-values">
     <multiple name="attributes">
      <tr>
        	<td colspan="2" align="left"><h3 class="contact-title">@attributes.section@</h3></td>
      </tr>
-	<dl class="attribute-values">
 	  <group column="section">
  	     <tr>
-	 	<td align="right" valign="top">@attributes.attribute@:</td>
-		<td align="left" valign="top">@attributes.value;noquote@</td>
+	 	<td align="right" valign="top" class="attribute">@attributes.attribute@:</td>
+		<td align="left" valign="top" class="value">@attributes.value;noquote@</td>
 	    </tr>
 	  </group>
 

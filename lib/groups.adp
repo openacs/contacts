@@ -8,21 +8,14 @@
 <h3 class="contact-title"><if @hide_form_p@ true><a href="./groups"></if>#contacts.Groups#<if @hide_form_p@ true></a></if></h3>
 </if>
 <if @groups:rowcount@ gt 0>
-<ul>
-<table width="100%">
+<dl class="groups">
 <multiple name="groups">
-<tr><td align="right">
-   <if @groups.sub_p@>(</if><else><li></else>
+   <if @groups.sub_p@><dd class="subgroup"></if><else><dt class="primarygroup"></else>
    @groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a>
-<if @groups.sub_p@>)</if>
-</td></tr>
+   <if @groups.sub_p@></dd></if><else><dt></else>
 </multiple>
-<tr><td align="right">
-<if @user_p@ eq 1>#contacts.Users#</if>
-</td>
-</tr>
-</table>
-</ul>
+<if @user_p@ eq 1><dd class="primarygroup">#contacts.Users#</dd></if>
+</dl>
 </if>
 <else>
 <if @hide_form_p@ true><h3 class="contact-title"><a href="./groups">#contacts.Groups#</a></h3></if>
