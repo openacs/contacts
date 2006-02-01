@@ -5,6 +5,7 @@
 # @creation-date 2005-05-24
 # @cvs-id $Id$
 
+
 set package_url [ad_conn package_url]
 set file_url   [ad_conn path_info]
 set file_list  [split $file_url "/"]
@@ -18,6 +19,10 @@ if { [string is integer $party_id] } {
 set action [lindex $file_list 1]
 
 
+callback contacts::redirect -party_id $party_id -action $action
+
+
+
 if { $party_is_contact_p } {
         if { [llength $file_list] == "1" } {
                 # we need to redirect the user to their "correct" summary page otherwise
@@ -25,6 +30,8 @@ if { $party_is_contact_p } {
                 ad_returnredirect "[ad_conn package_url]${party_id}/"
                 ad_script_abort
         }
+
+
         set valid_pages [list "" edit files groups relationships comments message history changes mail-tracking create-club]
 
         if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
