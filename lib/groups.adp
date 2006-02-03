@@ -14,7 +14,7 @@
    @groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a>
    <if @groups.sub_p@></dd></if><else><dt></else>
 </multiple>
-<if @user_p@ eq 1><dd class="primarygroup">#contacts.Users#</dd></if>
+<if @user_p@ eq 1><dt class="primarygroup">#contacts.Users#</dt></if>
 </dl>
 </if>
 <else>
