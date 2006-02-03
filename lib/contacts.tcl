@@ -104,22 +104,22 @@ set last_modified_clause ""
 
 switch $orderby {
     "first_names,asc" {
-        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
 	set sort_item "lower(first_names)"
     }
     "last_name,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
 	set sort_item "lower(last_name)"
     }
     "organization,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
 	set sort_item "lower(organizations.name)"
     }
     "last_modified,desc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
+        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
 	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
 	set sort_item "acs_objects.last_modified"
 	set last_modified_join "acs_objects, "
@@ -138,7 +138,7 @@ foreach page_s $valid_page_sizes {
     if { $page_size == $page_s } {
         lappend page_size_list $page_s
     } else {
-        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby {page_size $page_s}}]\">$page_s</a>"
+        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby attr_val_name {page_size $page_s}}]\">$page_s</a>"
     }
 }
 append name_label [join $page_size_list " | "]
@@ -291,6 +291,7 @@ template::list::create \
     -bulk_action_export_vars { search_id return_url } \
     -elements $elements \
     -filters {
+        attr_val_name {}
 	search_id {}
 	page_size {}
 	extend_values {}
