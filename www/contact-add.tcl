@@ -48,8 +48,6 @@ lappend form_elements {object_type:text(hidden)}
 lappend form_elements {rel_type:text(hidden),optional}
 lappend form_elements {object_id_two:text(hidden),optional}
 
-set application_group_id [application_group::group_id_from_package_id -package_id [ad_conn subsite_id]]
-
 if {[lsearch $group_ids $default_group] == -1} {
     lappend group_ids $default_group
 }
@@ -57,12 +55,8 @@ if {[lsearch $group_ids $default_group] == -1} {
 lappend form_elements {group_ids:text(hidden)}
 
 # Save Group Information
-if {[lsearch $group_ids $application_group_id] == -1} {
-    lappend group_ids $application_group_id
-}
-
 set group_list [contact::groups -expand "all" -privilege_required "read"]
-set group_list "{{All Contacts} $default_group 0} $group_list"
+set group_list [concat [list [list [_ contacts.All_Contacts] $default_group 0]] $group_list]
 
 
 ad_form -name party_ae \
