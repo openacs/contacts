@@ -173,7 +173,7 @@ if { $search_exists_p } {
 	# in the list, otherwise we could have duplicated.
 	if { ![empty_string_p $attr_id] } {
 	    lappend attribute_values $attr_id
-	    lappend default_names "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"
+	    lappend default_names [attribute::pretty_name -attribute_id $attr_id]
 	}
 
 	if { [string equal [lsearch -exact $attr_val_name "[list $attr_id $attr]"] "-1"] } {
@@ -232,7 +232,8 @@ if { $search_exists_p } {
 	    set attribute $attribute_option
 	    ams::attribute::get -attribute_id $attribute -array attr_info
 	    set name $attr_info(attribute_name)
-	    lappend attribute_names "[_ acs-translations.ams_attribute_${attribute}_pretty_name]"
+	    lappend attribute_names [attribute::pretty_name -attribute_id $attribute]
+
             lappend attribute_values $attribute
 	    lappend attr_val_name [list $attribute $name]
         }

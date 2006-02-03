@@ -81,7 +81,7 @@ foreach attr $default_extend_attributes {
     # in the list, otherwise we could have duplicated.
     if { ![empty_string_p $attr_id] } {
 	lappend attribute_values $attr_id
-	lappend default_names "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]"
+	lappend default_names [attribute::pretty_name -attribute_id $attribute]
     }
 }
 

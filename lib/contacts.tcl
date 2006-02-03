@@ -265,7 +265,7 @@ set extend_attr [list]
 foreach attribute $attr_val_name {
     set attr_id   [lindex $attribute 0]
     lappend row_list $attr_id [list]
-    lappend elements $attr_id [list label "[_ acs-translations.ams_attribute_${attr_id}_pretty_name]" display_template "@contacts.${attr_id};noquote@"]
+    lappend elements $attr_id [list label [attribute::pretty_name -attribute_id $attr_id] display_template "@contacts.${attr_id};noquote@"]
     lappend extend_attr $attr_id
 }
 
