@@ -28,7 +28,9 @@ ad_page_contract {
 	if { ![permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
 	    set user_id [ad_conn user_id]
 	    if { ![db_0or1row message_exists_p { select 1 from contact_messages where item_id = :item_id and owner_id = :user_id}] } {
-		ad_complain [_ contacts.lt_The_message_id_specified_does_not_belong_to_you]
+		if { [db_0or1row message_exists_p { select 1 from contact_messages where item_id = :item_id} ] } {
+		    ad_complain [_ contacts.lt_The_message_id_specified_does_not_belong_to_you]
+		}
 	    }
 	}
     }
