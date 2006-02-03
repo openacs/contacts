@@ -108,6 +108,10 @@ foreach var $export_vars {
     lappend form_elements $element
 }
 
+if { ![exists_and_not_null mime_type] } {
+    set mime_type "text/plain"
+}
+
 set content_list [list $content $mime_type]
 
 append form_elements {
@@ -169,7 +173,7 @@ ad_form -action $action \
     } -on_submit {
 	
 	# We get the attribute_id of the salutation attribute
-	set attribute_id [db_string get_attribute_id { }]
+	set attribute_id [db_string get_attribute_id { } -default {}]
 	    
 	# List to store know wich emails recieved the message
 	set recipients_addr [list]
@@ -217,8 +221,8 @@ ad_form -action $action \
 	    set to $name
 
 	    if {[empty_string_p $to_addr]} {
-		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
-		break
+#		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
+#		break
 	    }
 
 	    lappend recipients_addr $to_addr
@@ -251,23 +255,26 @@ ad_form -action $action \
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    set party_revision_id [contact::live_revision -party_id $party_id]
-	    set salutation [ams::value \
-				-attribute_id $attribute_id \
-				-attribute_name "salutation" \
-				-object_id $party_revision_id \
-				-locale $locale]
 
+	    if { [exists_and_not_null attribute_id] } {
+		set salutation [ams::value \
+				    -attribute_id $attribute_id \
+				    -attribute_name "salutation" \
+				    -object_id $party_revision_id \
+				    -locale $locale]
+	    } else {
+		set salutation ""
+	    }
 	    if {![empty_string_p $salutation]} {
 		lappend values [list "{salutation}" $salutation]
 	    }
 	    template::multirow append messages $message_type $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
 	    
 	}
-	
-	
+
 	set to_list [list]
 	template::multirow foreach messages {
-	    
+
 	    lappend to_list [list $to_addr]
 
 	    if {[exists_and_not_null file_ids]} {
@@ -287,7 +294,7 @@ ad_form -action $action \
 
 		} else {
 
-		    ad_return_error "$file_ids" "$content_body :: $mime_type"
+#		    ad_return_error "$file_ids" "$content_body :: $mime_type"
 
 		    acs_mail_lite::complex_send \
 			-to_addr $to_addr \
@@ -403,11 +410,11 @@ ad_form -action $action \
 		lappend recipients "$to"
 	    }
 	}
-	
 	set recipients [join $recipients_addr ", "]
-        util_user_message -html -message "[_ contacts.Your_message_was_sent_to]"
-	
+        util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
+
     } -after_submit {
 	ad_returnredirect $return_url
+	ad_script_abort
     }
 
