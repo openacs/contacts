@@ -62,7 +62,7 @@ set group_list [concat [list [list [_ contacts.All_Contacts] $default_group 0]] 
 ad_form -name party_ae \
     -mode "edit" \
     -cancel_label "[_ contacts.Cancel]" \
-    -cancel_url [export_vars -base contact -url {party_id}] \
+    -cancel_url [ad_conn package_url] \
     -edit_buttons [list [list "[_ acs-kernel.common_Save]" save] ]\
     -form $form_elements
 
