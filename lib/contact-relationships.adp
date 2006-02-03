@@ -18,8 +18,7 @@
 	    </if>
 	  </group>
 	</group>
-<!-- mbbs customization -->
-<!--	<dd class="attribute-value"><a href="@rels.relation_url@">#contacts.lt_Add_new_relsrelations#</a></dd> -->
+	<dd class="attribute-value"><a href="@rels.relation_url@" class="add-new-rel">#contacts.lt_Add_new_relsrelations#</a></dd>
       </dl>
   </multiple>
   </if>
