@@ -26,9 +26,11 @@ set group_list [concat [list [list [_ contacts.All_Contacts] $default_group "0"]
 
 if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
     ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
-} elseif { [lsearch $group_ids $default_group] < 0 } {
+} elseif { ![string eq $group_ids ""] && [lsearch $group_ids $default_group] < 0 } {
     # an invalid group_ids list has been specified or they do not have permission to add person
     ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
+} else {
+    set group_ids $default_group
 }
 
 
