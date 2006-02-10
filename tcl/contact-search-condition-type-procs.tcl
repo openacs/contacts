@@ -105,7 +105,7 @@ ad_proc -private contacts::search::condition_type::attribute {
                 set attrprefix "${prefix}$attr_info(attribute_name)__"
                 set operand [ns_queryget "${attrprefix}operand"]
                 # we must use the operand in the var prefix because
-                # this will rest the vars if somebody changes the operand
+                # this will reset the vars if somebody changes the operand
                 set var1 "${attrprefix}${operand}__var1"
                 set var2 "${attrprefix}${operand}__var2"
                 set ${var1} [ns_queryget ${var1}]
@@ -191,27 +191,44 @@ ad_proc -private contacts::search::condition_type::attribute {
 						 [list "$null_display" ""] \
                                                  [list "[_ contacts.is_less_than_-]" "less_than"] \
                                                  [list "[_ contacts.is_more_than_-]" "more_than"] \
+                                                 [list "[_ contacts.is_recurrence_within_next_-]" "recurrence_within_next"] \
+                                                 [list "[_ contacts.is_recurrence_within_last_-]" "recurrence_within_last"] \
                                                  [list "[_ contacts.is_after_-]" "after"] \
                                                  [list "[_ contacts.is_before_-]" "before"] \
                                                 ]
-                        if { $operand == "more_than" || $operand == "less_than" } {
+                        if { [lsearch [list "more_than" "less_than"] $operand] >= 0 } {
                             set interval_options [list \
-                                                      [list years years] \
-                                                      [list months months] \
-                                                      [list days days] \
+                                                      [list [_ contacts.years] years] \
+                                                      [list [_ contacts.months] months] \
+                                                      [list [_ contacts.days] days] \
                                                      ]
                             lappend var_elements [list \
-                                                       ${var1}:integer(text) \
-                                                       [list label {}] \
-                                                       [list html [list size 2 maxlength 3]] \
-                                                      ]
+						      ${var1}:integer(text) \
+						      [list label {}] \
+						      [list html [list size 2 maxlength 3]] \
+						     ]
                             lappend var_elements [list \
-                                                       ${var2}:text(select) \
-                                                       [list label {}] \
-                                                       [list options $interval_options] \
-                                                       [list after_html [list ago]] \
-                                                      ]
-                        } elseif { [exists_and_not_null operand] } {
+						      ${var2}:text(select) \
+						      [list label {}] \
+						      [list options $interval_options] \
+						      [list after_html [list [_ contacts.ago]]] \
+						     ]
+			} elseif { [lsearch [list "recurrence_within_next" "recurrence_within_last"] $operand] >= 0 } {
+                            set interval_options [list \
+                                                      [list [_ contacts.days] days] \
+                                                      [list [_ contacts.months] months] \
+                                                     ]
+                            lappend var_elements [list \
+						      ${var1}:integer(text) \
+						      [list label {}] \
+						      [list html [list size 2 maxlength 3]] \
+						     ]
+                            lappend var_elements [list \
+						      ${var2}:text(select) \
+						      [list label {}] \
+						      [list options $interval_options] \
+						     ]
+			} elseif { [exists_and_not_null operand] } {
                             lappend var_elements [list ${var1}:date(date) [list label {}]]
                         }
                     }
@@ -427,17 +444,24 @@ ad_proc -private contacts::search::condition_type::attribute {
                             }
                         }
                         ams_value__time {
-			    set value_pretty [lc_time_fmt $value "%q"]
-                            set interval "$value [string tolower [lindex $var_list 3]]"
+			    set interval "$value [string tolower [lindex $var_list 3]]"
                             switch $operand {
                                 less_than {
-                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_l_1]"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_less_than]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time > ( now() - '$interval'::interval ) )"
                                 }
                                 more_than {
-                                    set output_pretty "[_ contacts.lt_attribute_pretty_is_l_1]"
+                                    set output_pretty "[_ contacts.lt_attribute_pretty_more_than]"
                                     set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and at${attribute_id}.time < ( now() - '$interval'::interval ) )"
                                 }
+                                recurrence_within_next {
+				    set output_pretty "[_ contacts.lt_attribute_pretty_within_next_]"
+                                    set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and ams_util__next_instance_of_date(at${attribute_id}.time) < ( now() + '$interval'::interval )\n    and ams_util__next_instance_of_date(at${attribute_id}.time) >= now() )"
+				}
+				recurrence_within_last {
+				    set output_pretty "[_ contacts.lt_attribute_pretty_within_last_]"
+                                    set output_code "$revision_id in (\n\select aav${attribute_id}.object_id\n  from ams_attribute_values aav${attribute_id}, ams_times at${attribute_id}\n where aav${attribute_id}.attribute_id = '${attribute_id}'\n   and aav${attribute_id}.value_id = at${attribute_id}.value_id\n   and ams_util__next_instance_of_date(at${attribute_id}.time) > (( now() - '$interval'::interval ) + '1 year'::interval )\n     and ams_util__next_instance_of_date(at${attribute_id}.time) <= ( now() + '1 year'::interval ) )"
+				}
                                 after {
 				    #
 				    # its a lot cleaner to not try and do a hack as below to get the date formatted in a lang key, instead change the key to use value_pretty
