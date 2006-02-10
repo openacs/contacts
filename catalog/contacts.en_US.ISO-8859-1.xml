@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d12" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b3" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -41,6 +41,7 @@
   <msg key="Aggregated">Aggregated</msg>
   <msg key="aggregated_by">aggregated by:</msg>
   <msg key="aggregated_help">Set it to true if you want to use this extend in &quot;Aggregated Result Page&quot;</msg>
+  <msg key="ago">ago</msg>
   <msg key="All">All</msg>
   <msg key="All__Edit">All / Edit</msg>
   <msg key="All_Contacts">All Contacts</msg>
@@ -99,6 +100,7 @@
   <msg key="contacts">contacts</msg>
   <msg key="contains_-">contains -&gt;</msg>
   <msg key="Copy">Copy</msg>
+  <msg key="Country">Country</msg>
   <msg key="country_code_is_-">country code is -&gt;</msg>
   <msg key="country_is_-">country is -&gt;</msg>
   <msg key="country_is_not_-">country is not -&gt;</msg>
@@ -189,6 +191,8 @@
   <msg key="is_more_than_-">is more than -&gt;</msg>
   <msg key="is_not_-">is not -&gt;</msg>
   <msg key="is_not_set">is not set</msg>
+  <msg key="is_recurrence_within_last_-">annual recurrence within last -&gt;</msg>
+  <msg key="is_recurrence_within_next_-">annual recurrence within next -&gt;</msg>
   <msg key="is_set">is set</msg>
   <msg key="last">last</msg>
   <msg key="Last_Modified">Last updated</msg>
@@ -204,6 +208,7 @@
   <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
   <msg key="lt_--_Recent_Searches_--">-- Recent Searches --</msg>
   <msg key="lt_--_top_level_group_--">-- top level group --</msg>
+  <msg key="lt_-contact_link-_was_upgraded_to_a_user">%contact_link% was upgraded to a user</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
   <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
@@ -219,8 +224,8 @@
   <msg key="lt_attribute_pretty_coun_2">%attribute_pretty% country is: &lt;strong&gt;%country_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_coun_3">%attribute_pretty% country is not: &lt;strong&gt;%country_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_does">%attribute_pretty% does not contain: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
-  <msg key="lt_attribute_pretty_is_a">%attribute_pretty% is after: &lt;strong&gt;[lc_time_fmt %value% %q]&lt;/strong&gt;</msg>
-  <msg key="lt_attribute_pretty_is_b">%attribute_pretty% is before: &lt;strong&gt;[lc_time_fmt %value% %q]&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_is_a">%attribute_pretty% is after: &lt;strong&gt;%value_pretty%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_is_b">%attribute_pretty% is before: &lt;strong&gt;%value_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_g">%attribute_pretty% is greater than: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_l">%attribute_pretty% is less than: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_l_1">%attribute_pretty% is less than &lt;strong&gt;%interval%&lt;/strong&gt; ago</msg>
@@ -229,8 +234,11 @@
   <msg key="lt_attribute_pretty_is_s">%attribute_pretty% is set</msg>
   <msg key="lt_attribute_pretty_is_s_1">%attribute_pretty% is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_s_2">%attribute_pretty% is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_more_than">%attribute_pretty% is less than &lt;strong&gt;%interval%&lt;/strong&gt; ago</msg>
   <msg key="lt_attribute_pretty_stat">%attribute_pretty% state/province is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_stat_1">%attribute_pretty% state/province is not: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_within_last_">%attribute_pretty%'s annual recurrence within last %interval%</msg>
+  <msg key="lt_attribute_pretty_within_next_">%attribute_pretty%'s annual recurrence within next %interval%</msg>
   <msg key="lt_attribute_pretty_zipp">%attribute_pretty% zip/postal starts with: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_zipp_1">%attribute_pretty% zip/postal does not start with: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_brbrsave_this_search_">&lt;br&gt;&lt;br&gt;save this search as</msg>
@@ -350,6 +358,7 @@
   <msg key="lt_You_cannot_send_an_email_to_invalid_recipients">You cannot send an email message to the following contacts: %invalid_recipients%</msg>
   <msg key="lt_You_cannot_unmap_the_">You cannot unmap the default group</msg>
   <msg key="lt_You_do_not_have_permi">You do not have permission to add users to groups</msg>
+  <msg key="lt_You_do_not_have_permi_">You do not have permission to remove people from %group_name%.</msg>
   <msg key="lt_You_have_not_specifie">You have not specified a valid contact type</msg>
   <msg key="lt_You_have_specified_an">You have specified an invalid Object Type</msg>
   <msg key="lt_You_have_specified_an_1">You have specified an invalid size for the textarea</msg>
@@ -373,6 +382,8 @@
   <msg key="messages">messages</msg>
   <msg key="mine-">mine-</msg>
   <msg key="Modify_by">Modify By:</msg>
+  <msg key="months">months</msg>
+  <msg key="more">more</msg>
   <msg key="My_Messages">My Messages</msg>
   <msg key="My_Searches">My Searches</msg>
   <msg key="My_Signatures">My Signatures</msg>
@@ -397,9 +408,11 @@
   <msg key="oo_mailing">Open Office Mailing</msg>
   <msg key="oo_message">OO message</msg>
   <msg key="open">Open</msg>
+  <msg key="Options">Options</msg>
   <msg key="or">or</msg>
   <msg key="Ordering">Ordering</msg>
   <msg key="Organization">Organization</msg>
+  <msg key="organization">organization</msg>
   <msg key="Organization_Form">Organization Form</msg>
   <msg key="Organizations">Organizations</msg>
   <msg key="organizations">organizations</msg>
@@ -420,6 +433,7 @@
   <msg key="Permissions">Permissions</msg>
   <msg key="Permissions_for_default_group">Permissions for default group</msg>
   <msg key="Person">Person</msg>
+  <msg key="person">person</msg>
   <msg key="Person_Form">Person Form</msg>
   <msg key="pp">pp.</msg>
   <msg key="Pretty_name">Pretty Name</msg>
@@ -456,6 +470,7 @@
   <msg key="Remove_From_to_Group">Remove from Group</msg>
   <msg key="Required">Required</msg>
   <msg key="Results">Results</msg>
+  <msg key="Return_to_history">Return to history</msg>
   <msg key="Return_to_title">Return to %title%</msg>
   <msg key="Role">Role</msg>
   <msg key="Role_Name">Role Name</msg>
@@ -545,6 +560,7 @@
   <msg key="with">with</msg>
   <msg key="with_best_regards">With best regards</msg>
   <msg key="Working_project_tasks">Working Project Tasks</msg>
+  <msg key="years">years</msg>
   <msg key="You_can_extend">You can extend this search by:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Your message was sent to: &lt;strong&gt;%recipients%&lt;/strong&gt;</msg>
   <msg key="your_signatures">your signatures</msg>
