@@ -24,7 +24,7 @@ begin
 	v_package_id := package_id from apm_packages where package_key = ''contacts'';
 
         update acs_objects
-           set title = ( select cs.title from contact_searches where cs.search_id = acs_objects.object_id ),
+           set title = ( select cs.title from contact_searches cs where cs.search_id = acs_objects.object_id ),
                package_id = v_package_id
          where object_id in ( select c.search_id from contact_searches c );
 
