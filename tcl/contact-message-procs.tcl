@@ -48,6 +48,7 @@ ad_proc -private contact::message::save {
     {-locale ""}
     {-banner ""}
     {-ps ""}
+    {-package_id ""}
 } {
     save a contact message
 } {
@@ -55,6 +56,10 @@ ad_proc -private contact::message::save {
 	if { [db_0or1row item_exists_p { select '1' from acs_objects where object_id = :item_id }] } {
 	    error "The item_id specified is not a contact_message_item but already exists as an acs_object. This is not a valid item_id."
 	}
+        if { ![exists_and_not_null package_id] } {
+	    set package_id [ad_conn package_id]
+	}
+
 	# we need to create the content item
 	content::item::new \
             -name "message.${item_id}" \
@@ -63,7 +68,8 @@ ad_proc -private contact::message::save {
 	    -creation_user [ad_conn user_id] \
 	    -creation_ip [ad_conn peeraddr] \
 	    -content_type "content_revision" \
-	    -storage_type "text"
+	    -storage_type "text" \
+            -package_id $package_id
 
 	db_dml insert_into_message_items {
 	    insert into contact_message_items
@@ -71,6 +77,14 @@ ad_proc -private contact::message::save {
 	    values
 	    ( :item_id, :owner_id, :message_type, :locale, :banner, :ps )
 	}
+        # contact item new does not set the package_id in acs_object so
+        # we do it here
+        db_dml update_package_id {
+	    update acs_objects
+               set package_id = :package_id
+             where object_id = :item_id
+	}
+
     } else {
 	db_dml update_message_item {
 	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, banner = :banner, ps = :ps where item_id = :item_id

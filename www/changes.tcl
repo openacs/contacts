@@ -13,5 +13,6 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 ad_return_template

@@ -11,6 +11,7 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 
 ad_progress_bar_begin -title "[_ contacts.Creating_Club]" -message_1 "[_ contacts.lt_We_are_creating_the_c]" -message_2 "[_ contacts.lt_We_will_continue_auto]"

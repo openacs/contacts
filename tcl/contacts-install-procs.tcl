@@ -155,12 +155,38 @@ ad_proc -public contacts::install::package_instantiate {
 
     # users have some attributes mapped by default. This could be extended in custom packages.
 
-    set default_group [contacts::default_group -package_id $package_id]
+    # set default_group [contacts::default_group -package_id $package_id]
+    # we first need to establish a default group for this instance.
+
+    set default_group [application_group::new -package_id $package_id -group_name "\#contacts.All_Contacts\#"]
+
+    # if the user chooses to set the parameter UseSubsiteAsDefaultGroup
+    # these attributes will not be in the form. We will add all attributes
+    # to both the instance application group as well as the subsite application
+    # group
+
+    # node_id is not set yet in the install process, we will assume that 
+
+#    set node_id [db_string get_it { select node_id from site_nodes where object_id = :package_id }]
+
+    # getting the the context_id of the parent package might be a cleaner way of doing this? if yes we should change it.
+    set node_id [db_string get_it { select node_id from site_nodes where object_id is null order by node_id desc limit 1 }]
+    set subsite_id [site_node::closest_ancestor_package -node_id $node_id -package_key "acs-subsite"]
+    set subsite_default_group [application_group::group_id_from_package_id -no_complain -package_id $subsite_id]
+
+
     ams::widgets_init
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "person" \
 		     -list_name "${package_id}__$default_group" \
+		     -pretty_name "#contacts.lt_Person_-_Registered_U#" \
+		     -description "" \
+		     -description_mime_type ""]
+    set subsite_list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "person" \
+		     -list_name "${package_id}__$subsite_default_group" \
 		     -pretty_name "#contacts.lt_Person_-_Registered_U#" \
 		     -description "" \
 		     -description_mime_type ""]
@@ -181,13 +207,20 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US acs-translations person_last_name "First Names"
-    lang::message::register en_US acs-translations person_last_name_plural "First Names"
+    lang::message::register en_US acs-translations person_first_names "First Names"
+    lang::message::register en_US acs-translations person_first_names_plural "First Names"
 
     ams::attribute::new -attribute_id $attribute_id -widget "textbox" -dynamic_p "f"
 
     ams::list::attribute::map \
 	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "1" \
+	-required_p "f" \
+	-section_heading ""
+
+    ams::list::attribute::map \
+	-list_id $subsite_list_id \
 	-attribute_id $attribute_id \
 	-sort_order "1" \
 	-required_p "f" \
@@ -209,13 +242,20 @@ ad_proc -public contacts::install::package_instantiate {
 			  -static_p "f" \
 			  -if_does_not_exist]
 
-    lang::message::register en_US acs-translations person_first_names "Last Name"
-    lang::message::register en_US acs-translations person_first_names_plural "Last Names"
+    lang::message::register en_US acs-translations person_last_name "Last Name"
+    lang::message::register en_US acs-translations person_last_name_plural "Last Names"
 
     ams::attribute::new -attribute_id $attribute_id -widget "textbox" -dynamic_p "f"
 
     ams::list::attribute::map \
 	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "2" \
+	-required_p "f" \
+	-section_heading ""
+
+    ams::list::attribute::map \
+	-list_id $subsite_list_id \
 	-attribute_id $attribute_id \
 	-sort_order "2" \
 	-required_p "f" \
@@ -249,12 +289,27 @@ ad_proc -public contacts::install::package_instantiate {
 	-required_p "f" \
 	-section_heading ""
 
+    ams::list::attribute::map \
+	-list_id $subsite_list_id \
+	-attribute_id $attribute_id \
+	-sort_order "3" \
+	-required_p "f" \
+	-section_heading ""
+
     # ORGANIZATIONS
 
     set list_id [ams::list::new \
 		     -package_key "contacts" \
 		     -object_type "organization" \
 		     -list_name "${package_id}__$default_group" \
+		     -pretty_name "Organization - Registered Users" \
+		     -description "" \
+		     -description_mime_type ""]
+
+    set subsite_list_id [ams::list::new \
+		     -package_key "contacts" \
+		     -object_type "organization" \
+		     -list_name "${package_id}__$subsite_default_group" \
 		     -pretty_name "Organization - Registered Users" \
 		     -description "" \
 		     -description_mime_type ""]
@@ -282,6 +337,13 @@ ad_proc -public contacts::install::package_instantiate {
 
     ams::list::attribute::map \
  	-list_id $list_id \
+ 	-attribute_id $attribute_id \
+ 	-sort_order "1" \
+ 	-required_p "f" \
+ 	-section_heading ""
+
+    ams::list::attribute::map \
+ 	-list_id $subsite_list_id \
  	-attribute_id $attribute_id \
  	-sort_order "1" \
  	-required_p "f" \

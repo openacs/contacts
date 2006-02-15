@@ -9,6 +9,7 @@ ad_page_contract {
     {person_id:integer,optional}
 }
 
+contact::require_visiblity -party_id $person_id
 
 if { [exists_and_not_null person_id] } {
     set admin_user_url [acs_community_member_admin_url -user_id $person_id]

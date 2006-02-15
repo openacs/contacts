@@ -16,6 +16,8 @@ ad_page_contract {
     }
 }
 
+contact::require_visiblity -party_id $party_id
+
 # ams::object_delete -object_id $rel_id
 db_1row get_object_id_one {}
 db_1row delete_rel {}

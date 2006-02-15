@@ -8,6 +8,7 @@ ad_page_contract {
 } {
     {person_id:integer}
 }
+contact::require_visiblity -party_id $person_id
 
 permission::require_permission -object_id [ad_conn package_id] -privilege "admin"
 

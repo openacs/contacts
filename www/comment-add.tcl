@@ -17,6 +17,7 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 if { ![exists_and_not_null comment_id] } {
     set comment_id [db_nextval acs_object_id_seq]

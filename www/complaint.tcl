@@ -16,6 +16,7 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 set supplier_id $party_id
 

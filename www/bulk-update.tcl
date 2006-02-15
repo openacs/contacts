@@ -25,6 +25,7 @@ set package_id [ad_conn package_id]
 set recipients [list]
 if { [exists_and_not_null party_id] } {
     foreach party_id $party_id {
+        contact::require_visiblity -party_id $party_id
         if { [person::person_p -party_id $party_id] } {
             lappend person_ids $party_id
         } else {

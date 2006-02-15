@@ -1,11 +1,46 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="contacts::default_group_not_cached.get_parent_subsite_id">
+  <querytext>
+    select object_id
+      from site_nodes
+     where tree_level(tree_sortkey) < ( select tree_level(n2.tree_sortkey) from site_nodes n2 where n2.node_id = :node_id )
+       and object_id in ( select package_id
+                            from apm_packages
+                           where package_key = 'acs-subsite' )
+     order by tree_sortkey desc
+     limit 1
+  </querytext>
+</fullquery>
+
+<fullquery name="contacts::default_groups_not_cached.get_child_contacts_instances">
+  <querytext>
+    select p.package_id
+      from site_nodes n, site_nodes n2, apm_packages p
+     where n2.node_id = (select coalesce(:parent_node_id, site_node__node_id('/', null)))
+       and n.tree_sortkey between n2.tree_sortkey and tree_right(n2.tree_sortkey)
+       and n.object_id = p.package_id
+       and p.package_key = 'contacts'
+       and (tree_level(n.tree_sortkey) - (select tree_level(n2.tree_sortkey) from site_nodes n2 where n2.node_id = (select coalesce(:parent_node_id, site_node__node_id('/', null))))) > 1;
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::util::generate_filename.get_parties_existing_filenames">
   <querytext>
     select name
       from cr_items
      where parent_id = :party_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::visible_p_not_cached.get_contact_visible_p">
+  <querytext>
+    select 1
+      from group_approved_member_map
+     where member_id = :party_id
+       and group_id in ('[join [contacts::default_groups -package_id $package_id] "','"]')
+     limit 1
   </querytext>
 </fullquery>
 
@@ -17,10 +52,11 @@
            ( select count(distinct gcm.component_id) from group_component_map gcm where gcm.group_id = groups.group_id) as component_count,
            CASE WHEN contact_groups.package_id is not null THEN '1' ELSE '0' END as mapped_p,
            CASE WHEN default_p THEN '1' ELSE '0' END as default_p
-      from groups left join contact_groups on ( groups.group_id = contact_groups.group_id ), acs_objects
+      from groups left join ( select * from contact_groups where package_id = :package_id ) as contact_groups on ( groups.group_id = contact_groups.group_id ), acs_objects
      where groups.group_id not in ('-1','[contacts::default_group]')
 	and groups.group_id = acs_objects.object_id
        and groups.group_id not in ( select gcm.component_id from group_component_map gcm where gcm.group_id != -1 )
+       and groups.group_id not in ( select group_id from application_groups )
        $filter_clause
      order by mapped_p desc, CASE WHEN contact_groups.default_p THEN '000000000' ELSE upper(groups.group_name) END
   </querytext>

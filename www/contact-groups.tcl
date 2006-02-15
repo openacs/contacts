@@ -8,6 +8,7 @@ ad_page_contract {
     {party_id:integer,notnull}
     {return_url "./"}
 }
+contact::require_visiblity -party_id $party_id
 
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]

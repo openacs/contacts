@@ -21,7 +21,9 @@ if { [exists_and_not_null party_id] } {
 	lappend party_ids $party_id
     }
 }
-
+foreach id $party_ids {
+    contact::require_visiblity -party_id $id
+}
 
 
 set title "[_ contacts.Add_to_Group]"

@@ -7,28 +7,37 @@
                   THEN '\#contacts.My_Searches\#'
                   ELSE contact__name(owner_id) END,
              owner_id
-        from ( select distinct owner_id
-                 from contact_searches
-                where ( title is not null or owner_id = :user_id )
-                  and owner_id in ( select party_id from parties )) distinct_owners
+        from ( select distinct cs.owner_id
+                 from contact_searches cs, acs_objects ao
+                where cs.search_id = ao.object_id
+                  and ( ao.title is not null or cs.owner_id = :user_id )
+                  and ao.package_id = :package_id
+                  and cs.owner_id in ( select party_id from parties )) distinct_owners
         order by CASE WHEN owner_id = :user_id THEN '0000000000000000000' ELSE upper(contact__name(owner_id)) END
       </querytext>
 </fullquery>
 
 <fullquery name="select_searches">
       <querytext>
-(    select search_id, title, upper(title) as order_title, all_or_any, object_type
-       from contact_searches
-      where owner_id = :owner_id
-        and title is not null
-        and not deleted_p
+(    select cs.search_id,
+            ao.title,
+            upper(ao.title) as order_title,
+            cs.all_or_any,
+            cs.object_type
+       from contact_searches cs, acs_objects ao
+      where cs.search_id = ao.object_id
+        and cs.owner_id = :owner_id
+        and ao.title is not null
+        and ao.package_id = :package_id
+        and not cs.deleted_p
 ) union (
-     select search_id, 'Search \#' || to_char(search_id,'FM9999999999999999999') || ' on ' || to_char(creation_date,'Mon FMDD') as title, 'zzzzzzzzzzz' as order_title, all_or_any, contact_searches.object_type
-       from contact_searches, acs_objects
-      where owner_id = :owner_id
-        and search_id = object_id
-        and contact_searches.title is null
-        and not deleted_p
+     select cs.search_id, 'Search \#' || to_char(cs.search_id,'FM9999999999999999999') || ' on ' || to_char(ao.creation_date,'Mon FMDD') as title, 'zzzzzzzzzzz' as order_title, cs.all_or_any, cs.object_type
+       from contact_searches cs, acs_objects ao
+      where cs.owner_id = :owner_id
+        and cs.search_id = ao.object_id
+        and ao.title is null
+        and ao.package_id = :package_id
+        and not cs.deleted_p
       limit 10
 )
       order by order_title

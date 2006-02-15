@@ -10,16 +10,17 @@
 <fullquery name="contact::search::title.select_title">
   <querytext>
     select title
-      from contact_searches
-     where search_id = :search_id
+      from acs_objects
+     where object_id = :search_id
   </querytext>
 </fullquery>
 
 <fullquery name="contact::search::get.select_search_info">
   <querytext>
-    select *
-      from contact_searches
-     where search_id = :search_id
+    select contact_searches.*, acs_objects.title, acs_objects.package_id
+      from contact_searches, acs_objects
+     where contact_searches.search_id = :search_id
+       and contact_searches.search_id = acs_objects.object_id
   </querytext>
 </fullquery>
 
@@ -38,7 +39,7 @@
     select count(distinct party_id)
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
      where parties.party_id = group_distinct_member_map.member_id
-     $group_where_clause
+       and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
     [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>

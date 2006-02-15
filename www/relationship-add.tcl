@@ -35,6 +35,8 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_one
+contact::require_visiblity -party_id $party_two
 
 set party_id $party_one
 set contact_name_one [contact::name -party_id $party_id]

@@ -20,15 +20,60 @@ namespace eval contact::employee {}
 ad_proc -public contacts::default_group {
     {-package_id ""}
 } {
-    returns the group_id for which this group is a component, if none then it return null
+    Returns the default group_id a contacts instance. Cached.
 } {
     if {[string is false [exists_and_not_null package_id]]} {
-        set package_id [ad_conn package_id]
+	set package_id [ad_conn package_id]
     }
-#    return [db_string get_default_group {select group_id from contact_groups where package_id = :package_id and default_p} -default {}]
-#    return [db_string get_default_group {select group_id from
-# application_groups where package_id = :package_id } -default {}]
-    return "-2"
+    return [util_memoize [list contacts::default_group_not_cached -package_id $package_id]]
+}
+
+ad_proc -private contacts::default_group_not_cached {
+    {-package_id:required}
+} {
+    Returns the default group_id a contacts instance.
+} {
+    if { [string is true [parameter::get -package_id $package_id -parameter "UseSubsiteAsDefaultGroup" -default "0"]] } {
+	# we cannot trust ad_conn subsite_id because instances may be asking for subsites of numerous other packages.
+        set node_id [site_node::get_node_id_from_object_id -object_id $package_id]
+        set package_id [db_string get_parent_subsite_id {}]
+    }
+    return [application_group::group_id_from_package_id -no_complain -package_id $package_id]
+}
+
+
+ad_proc -public contacts::default_groups {
+    {-package_id ""}
+} {
+    Returns a list of group_ids that this instance searches for. Cached.
+} {
+    if { [string is false [exists_and_not_null package_id]] } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list contacts::default_groups_not_cached -package_id $package_id]]
+}
+
+ad_proc -private contacts::default_groups_not_cached {
+    {-package_id:required}
+} {
+    Returns a list of group_ids that this instance searches for.
+} {
+    if { [parameter::get -package_id $package_id -parameter "IncludeChildPackages" -default "0"] } {
+        set node_id [site_node::get_node_id_from_object_id -object_id $package_id]
+        set parent_node_id [site_node::get_parent_id -node_id $node_id]
+        # this search currently does not differentiate between child
+        # instances mounted on subsites or on other packages. Don't
+        # know if this is good or bad... matthewg
+	set package_ids [db_list get_child_contacts_instances {}]
+	set package_ids [concat $package_id $package_ids]
+	set group_ids [list]
+	foreach package_id $package_ids {
+	    lappend group_ids [contacts::default_group -package_id $package_id]
+	}
+	return [lsort -unique $group_ids]
+    } else {
+	return [contacts::default_group -package_id $package_id]
+    }
 }
 
 ad_proc -private contact::util::generate_filename {
@@ -511,15 +556,21 @@ ad_proc -public contact::type {
 } {
     returns the contact type
 } {
-    if {[contact::user_p -party_id $party_id]} {
-        return "user"
-    } elseif {[person::person_p -party_id $party_id]} {
-	return "person"
-    } elseif {[organization::organization_p -party_id $party_id]} {
-	return "organization"
+    set object_type [util_memoize [list acs_object_type $party_id]]
+    if { [lsearch [list person user organization] $object_type] >= 0 } {
+	return $object_type
     } else {
 	return ""
     }
+#    if {[contact::user_p -party_id $party_id]} {
+#        return "user"
+#    } elseif {[person::person_p -party_id $party_id]} {
+#	return "person"
+#    } elseif {[organization::organization_p -party_id $party_id]} {
+#	return "organization"
+#    } else {
+#	return ""
+#    }
 }
 
 ad_proc -public contact::exists_p {
@@ -528,13 +579,19 @@ ad_proc -public contact::exists_p {
     does this contact exist?
 } {
     # persons can be organizations so we need to do the check this way
-    if {[person::person_p -party_id $party_id]} {
-	return 1
-    } elseif {[organization::organization_p -party_id $party_id]} {
+    set object_type [contact::type -party_id $party_id]
+    if { [lsearch [list person user organization] $object_type] >= 0 } {
 	return 1
     } else {
 	return 0
     }
+#    if {[person::person_p -party_id $party_id]} {
+#	return 1
+#    } elseif {[organization::organization_p -party_id $party_id]} {
+#	return 1
+#    } else {
+#	return 0
+#    }
 }
 
 ad_proc -public contact::user_p {
@@ -542,15 +599,59 @@ ad_proc -public contact::user_p {
 } {
     is this party a user? Cached
 } {
-    return [util_memoize [list ::contact::user_p_not_cached -party_id $party_id]]
+#    return [util_memoize [list ::contact::user_p_not_cached -party_id $party_id]]
+    if { [contact::type -party_id $party_id] == "user" } {
+	return 1
+    } else {
+	return 0
+    }
 }
 
-ad_proc -public contact::user_p_not_cached {
+#ad_proc -public contact::user_p_not_cached {
+#    {-party_id:required}
+#} {
+#    is this party a person? Cached
+#} {
+#    if {[db_0or1row contact_user_exists_p {select '1' from users where user_id = :party_id}]} {
+#	return 1
+#    } else {
+#	return 0
+#    }
+#}
+
+ad_proc -public contact::require_visiblity {
     {-party_id:required}
+    {-package_id ""}
 } {
-    is this party a person? Cached
 } {
-    if {[db_0or1row contact_user_exists_p {select '1' from users where user_id = :party_id}]} {
+    if { [string is false [contact::visible_p -party_id $party_id -package_id $package_id]] } {
+	# we return not found because we cannot sepecify whether or
+        # not the contact exists to the user for privacy reasons
+        # locations such as hospitals, etc.
+	ns_returnnotfound
+	ad_script_abort
+    }
+}
+
+ad_proc -public contact::visible_p {
+    {-party_id:required}
+    {-package_id ""}
+} {
+    Is the contact visible to the specified package. Cached.
+} {
+    if { [string is false [exists_and_not_null package_id]] } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list contact::visible_p_not_cached -party_id $party_id -package_id $package_id]]
+}
+
+ad_proc -private contact::visible_p_not_cached {
+    {-party_id:required}
+    {-package_id:required}
+} {
+    Is the contact visible to the specified package.
+} {
+    if { [db_0or1row get_contact_visible_p {}] } {
 	return 1
     } else {
 	return 0
@@ -562,7 +663,8 @@ ad_proc -public contact::url {
 } {
     create a contact revision
 } {
-    return "[apm_package_url_from_id [apm_package_id_from_key "contacts"]]$party_id/"
+#    return "[apm_package_url_from_id [apm_package_id_from_key "contacts"]]$party_id/"
+    return "[ad_conn package_url]${party_id}/"
 }
 
 ad_proc -public contact::revision::new {
@@ -689,13 +791,18 @@ ad_proc -public contact::group::parent {
 }
 
 ad_proc -public contact::groups_list {
+    {-package_id ""}
 } {
     Retrieve a list of all groups currently in the system
 } {
-    return [util_memoize [list contact::groups_list_not_cached]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list contact::groups_list_not_cached -package_id $package_id]]
 }
 
 ad_proc -public contact::groups_list_not_cached {
+    -package_id:required
 } {
     Retrieve a list of all groups currently in the system
 } {

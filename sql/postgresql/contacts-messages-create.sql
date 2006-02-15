@@ -47,11 +47,13 @@ create view contact_messages as
            cr.title,
            cr.description,
            cr.content,
-           cr.mime_type as content_format
-      from contact_message_items cmi, cr_items ci, cr_revisions cr
+           cr.mime_type as content_format,
+           ao.package_id
+      from contact_message_items cmi, cr_items ci, cr_revisions cr, acs_objects ao
      where cmi.item_id = cr.item_id
        and ci.publish_status not in ( 'expired' )
        and ci.live_revision = cr.revision_id
+       and ci.item_id = ao.object_id
 ;
 
 

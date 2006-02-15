@@ -48,7 +48,9 @@ if { [exists_and_not_null to] } {
 	lappend party_ids $party_id
     }
 }
-
+foreach id $party_ids {
+    contact::require_visiblity -party_id $id
+}
 set party_count [llength $party_ids]
 set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]

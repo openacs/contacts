@@ -10,6 +10,7 @@ ad_page_contract {
     rename:array
     party_id:integer,notnull
 }
+contact::require_visiblity -party_id $party_id
 
 set item_ids [db_list get_item_ids { select item_id from cr_items where parent_id = :party_id and publish_status = 'ready' } ]
 db_transaction {

@@ -10,7 +10,9 @@ set _page_size "25"
 set _tasks_interval "7"
 set admin_p 0
 
-set package_id [apm_package_id_from_key contacts]
+if { [string is false [exists_and_not_null package_id]] } {
+    set package_id [ad_conn package_id]
+}
 
 foreach required_param $required_param_list {
     set $required_param [ns_queryget $default_param]
@@ -43,7 +45,6 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 
 # If we do not have a search_id, limit the list to only users in the default group.
 if {[exists_and_not_null search_id]} {
-    set group_where_clause "" 
     # Also we can extend this search.
     # Is to allow extend the list by any extend_options defined in contact_extend_options
     set extend_options [contact::extend::get_options \
@@ -82,9 +83,8 @@ if {[exists_and_not_null search_id]} {
 	}
 	ad_returnredirect [export_vars -base "?" {search_id extend_values attr_val_name}]
     }
-} else {
-    set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
 }
+
 
 set group_by_group_id ""
 if { ![exists_and_not_null group_id] } {
@@ -374,7 +374,7 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	
 	set display_employers_p [parameter::get \
 				     -parameter DisplayEmployersP \
-				     -package_id [apm_package_id_from_key "contacts"] \
+				     -package_id $package_id \
 				     -default "0"]
 	
 	if {$display_employers_p && [person::person_p -party_id $party_id]} {
@@ -415,7 +415,7 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	
 	set display_employers_p [parameter::get \
 				     -parameter DisplayEmployersP \
-				     -package_id [apm_package_id_from_key "contacts"] \
+				     -package_id $package_id \
 				     -default "0"]
 	
 	if {$display_employers_p && [person::person_p -party_id $party_id]} {

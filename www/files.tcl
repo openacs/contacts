@@ -16,6 +16,7 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 if {$upload_count != 10} {
     set upload_count 1

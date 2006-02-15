@@ -24,6 +24,8 @@ callback contacts::redirect -party_id $party_id -action $action
 
 
 if { $party_is_contact_p } {
+        contact::require_visiblity -party_id $party_id
+
         if { [llength $file_list] == "1" } {
                 # we need to redirect the user to their "correct" summary page otherwise
                 # sub links will not work correctly

@@ -12,6 +12,7 @@ ad_page_contract {
 
 
 set party_id [lindex $party_id 0]
+contact::require_visiblity -party_id $party_id
 set object_type [contact::type -party_id $party_id]
 switch $object_type {
     person {

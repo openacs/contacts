@@ -20,11 +20,15 @@ ad_proc -public contact::search::new {
     {-all_or_any}
     {-object_type}
     {-deleted_p "f"}
+    {-package_id ""}
 } {
     create a contact search
 } {
-    if { [exists_and_not_null owner_id] } {
+    if { ![exists_and_not_null owner_id] } {
         set owner_id [ad_conn user_id]
+    }
+    if { ![exists_and_not_null package_id] } {
+        set package_id [ad_conn package_id]
     }
     set var_list [list \
                       [list search_id $search_id] \
@@ -33,6 +37,7 @@ ad_proc -public contact::search::new {
                       [list all_or_any $all_or_any] \
                       [list object_type $object_type] \
                       [list deleted_p $deleted_p] \
+                      [list package_id $package_id] \
                       ]
 
     return [package_instantiate_object -var_list $var_list contact_search]
@@ -66,11 +71,15 @@ ad_proc -public contact::search::update {
     if { [contact::search::exists_p -search_id $search_id] } {
         db_dml update_search {
             update contact_searches
-               set title = :title,
-                   owner_id = :owner_id,
+               set owner_id = :owner_id,
                    all_or_any = :all_or_any
              where search_id = :search_id
         }
+        db_dml update_object {
+            update acs_objects
+               set title = :title
+             where object_id = :search_id
+	}
     }
 }
 
@@ -159,15 +168,11 @@ ad_proc -public contact::search::results_count_not_cached {
     Get the total number of results from a search
 } {
     
-    # If we do not have a search_id, limit the list to only users in the default group.
-    
-    if {[exists_and_not_null search_id]} {
-        set group_where_clause ""
-    } else {
-        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
-    }
 
-    set type_list [db_list get_object_type { }]
+# don't know why this is here - matthewg
+# it causes an error though so i removed it 
+#
+#    set type_list [db_list get_object_type {}]
 
 #    if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	return [db_string select_results_count {}]
@@ -187,7 +192,8 @@ ad_proc -private contact::party_id_in_sub_search_clause {
     if {[exists_and_not_null search_id]} {
         set group_where_clause ""
     } else {
-        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
+        set group_where_clause "and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')"
+#        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
     }
     set query "
     select parties.party_id

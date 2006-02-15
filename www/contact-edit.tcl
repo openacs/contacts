@@ -14,6 +14,7 @@ ad_page_contract {
 	}
     }
 }
+contact::require_visiblity -party_id $party_id
 
 
 set object_type [contact::type -party_id $party_id]

@@ -10,6 +10,7 @@ ad_page_contract {
     item_id:multiple,notnull
     party_id
 }
+contact::require_visiblity -party_id $party_id
 
 db_transaction {
     foreach item_id $item_id {

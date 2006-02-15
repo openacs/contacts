@@ -63,9 +63,9 @@ create table contact_search_log (
         unique(search_id,user_id)
 );
 
-select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p;f,creation_date,creation_user,creation_ip,context_id');
+select define_function_args ('contact_search__new', 'search_id,title,owner_id,all_or_any,object_type,deleted_p;f,creation_date,creation_user,creation_ip,context_id,package_id');
 
-create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,boolean,timestamptz,integer,varchar,integer)
+create or replace function contact_search__new (integer,varchar,integer,varchar,varchar,boolean,timestamptz,integer,varchar,integer,integer)
 returns integer as '
 declare
     p_search_id                     alias for $1;
@@ -78,6 +78,7 @@ declare
     p_creation_user                 alias for $8;
     p_creation_ip                   alias for $9;
     p_context_id                    alias for $10;
+    p_package_id                    alias for $11;
     v_search_id                     contact_searches.search_id%TYPE;
 begin
     v_search_id := acs_object__new(
@@ -86,13 +87,16 @@ begin
         p_creation_date,
         p_creation_user,
         p_creation_ip,
-        coalesce(p_context_id, p_owner_id)
+        coalesce(p_context_id, p_owner_id),
+        ''1'',
+        p_title,
+        p_package_id
     );
 
     insert into contact_searches
-    (search_id,title,owner_id,all_or_any,object_type,deleted_p)
+    (search_id,owner_id,all_or_any,object_type,deleted_p)
     values
-    (v_search_id,p_title,p_owner_id,p_all_or_any,p_object_type,p_deleted_p);
+    (v_search_id,p_owner_id,p_all_or_any,p_object_type,p_deleted_p);
 
     return v_search_id;
 
