@@ -50,7 +50,7 @@
 	fmt="%x %r">
 	<br />
     </if>
-    <if @pm_installed_p@>
+    <if @projects_enabled_p@>
 	<if @freelancer_p@>
 		<include src="/packages/contacts/lib/ap-tasks-portlet"
 		    from_party_id="@party_id@"
@@ -94,7 +94,7 @@
 		format=table />
 	<br />
       </if>
-      <if @pm_installed_p@>
+      <if @projects_enabled_p@>
 	<include src="/packages/contacts/lib/contact-complaint-list-portlet" 
 	    customer_id=@party_id@
 	    elements="title supplier state description"
