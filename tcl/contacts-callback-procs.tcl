@@ -11,6 +11,12 @@ ad_library {
 }
 
 
+ad_proc -public -callback contacts::package_instantiate {
+    {-package_id:required}
+} {
+    After instantiate callback
+} -
+
 ad_proc -public -callback contact::contact_form {
     {-package_id:required}
     {-form:required}
