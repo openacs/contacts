@@ -42,6 +42,7 @@ if { $path_info == "add/person" } {
 }
 
 set package_id [ad_conn package_id]
+set package_url [ad_conn package_url]
 set user_id [ad_conn user_id]
 set peeraddr [ad_conn peeraddr]
 
@@ -329,7 +330,7 @@ ad_form -extend -name party_ae \
 	    ad_returnredirect [contact::url -party_id $party_id]
 #            ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
 	} else {
-	    ad_returnredirect "/contacts/$object_id_two"
+	    ad_returnredirect "${package_url}/$object_id_two"
 	}
 	    #        }
 	ad_script_abort
