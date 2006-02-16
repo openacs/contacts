@@ -12,7 +12,7 @@ update apm_package_types set singleton_p = FALSE where package_key = 'contacts';
 
 -- singleton contacts instances that are upgraded need to be set to use the
 -- subsites application group so that behavior doesn't change for users
-update apm_parameter_values set attr_value = '1' where parameter_id in ( select parameter_id from apm_parameters where package_key = 'contacts' and parameter_name = 'UseSubsiteAsDefaultGroup'  );
+update apm_parameter_values set attr_value = '1' where parameter_id in ( select parameter_id from apm_parameters where package_key = 'contacts' and parameter_name = 'UseSubsiteAsDefaultGroup' );
 
 -- since contacts was singleton we know there is only one package_id we need to use
 -- in migrating all our user data to the appropriate package
