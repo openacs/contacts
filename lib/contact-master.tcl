@@ -17,12 +17,18 @@ if { ![exists_and_not_null name] } {
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
 set package_url [ad_conn package_url]
+set tasks_url [site_node::get_package_url -package_key "tasks"]
 set page_url [ad_conn url]
 set page_query [ad_conn query]
 
 set title $name
 set context [list $name]
-set prefix "${package_url}${party_id}/"
+if {![empty_string_p $tasks_url]} {
+    set prefix "/contacts/${party_id}/"
+} else {
+    set prefix "${package_url}${party_id}/"
+}
+
 
 set link_list [list]
 if { [ad_conn user_id] != 0} {
@@ -37,6 +43,11 @@ if { [ad_conn user_id] != 0} {
 
     lappend link_list "${prefix}files"
     lappend link_list "[_ contacts.Files]"
+
+    if {![empty_string_p $tasks_url]} {
+	lappend link_list "${prefix}history" "[_ contacts.History]"
+	lappend link_list "/tasks/contact" "[_ contacts.Tasks]"
+    }
 
     lappend link_list "${prefix}message"
     lappend link_list "[_ contacts.Mail]"
