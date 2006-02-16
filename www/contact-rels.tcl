@@ -34,7 +34,10 @@ if { $contact_type == "user" } {
 set contact_name [contact::name -party_id $party_id]
 set contact_url  [contact::url  -party_id $party_id]
 
+# What groups should the person be added to
 
+set group_ids [contacts::default_group]
+set package_url [ad_conn package_url]
 
 
 
@@ -175,12 +178,11 @@ ad_form -name "search" -method "GET" -export {party_id} -form {
 } -on_refresh {
 } -on_submit {
     if {[exists_and_not_null add]} {
-	set default_group [contacts::default_group]
 	if {$person_valid_p} {
-	    ad_returnredirect [export_vars -base "/contacts/add/person" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]
+	    ad_returnredirect [export_vars -base "${package_url}/add/person" -url {group_ids {object_id_two "$party_id"} role_two}]
 	} 
 	if {$org_valid_p} {
-	    ad_returnredirect [export_vars -base "/contacts/add/organization" -url {{group_ids $default_group} {object_id_two "$party_id"} role_two}]
+	    ad_returnredirect [export_vars -base "${package_url}/add/organization" -url {group_ids {object_id_two "$party_id"} role_two}]
 	}
     } 
     if { ![exists_and_not_null role_two] } {
