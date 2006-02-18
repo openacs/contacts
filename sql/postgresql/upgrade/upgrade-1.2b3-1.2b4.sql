@@ -2,7 +2,7 @@
 -- packages/contacts/sql/postgresql/upgrade/upgrade-1.2b3-1.2b4.sql
 -- 
 -- @author Matthew Geddert (openacs@geddert.com)
--- @creation-date 2005-02-13
+-- @creation-date 2006-02-13
 -- @arch-tag: 
 -- @cvs-id $Id$
 --
