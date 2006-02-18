@@ -25,7 +25,7 @@ ad_page_contract {
 	}
     }
     item_not_yours -requires {item_id} {
-	if { ![permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
+	if { ![permission::permission_p -object_id $item_id -privilege "write"] } {
 	    set user_id [ad_conn user_id]
 	    if { ![db_0or1row message_exists_p { select 1 from contact_messages where item_id = :item_id and owner_id = :user_id}] } {
 		if { [db_0or1row message_exists_p { select 1 from contact_messages where item_id = :item_id} ] } {
