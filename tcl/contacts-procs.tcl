@@ -41,8 +41,10 @@ ad_proc -private contacts::default_group_not_cached {
 
     set group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
     if {[string eq "" $group_id]} {
+        # application_group should not be empty unless contacts
 	set group_id "-2"
     }
+    return $group_id
 }
 
 
