@@ -38,7 +38,11 @@ ad_proc -private contacts::default_group_not_cached {
         set node_id [site_node::get_node_id_from_object_id -object_id $package_id]
         set package_id [db_string get_parent_subsite_id {}]
     }
-    return [application_group::group_id_from_package_id -no_complain -package_id $package_id]
+
+    set group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
+    if {[string eq "" $group_id]} {
+	set group_id "-2"
+    }
 }
 
 
