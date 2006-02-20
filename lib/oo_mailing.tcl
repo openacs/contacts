@@ -242,6 +242,6 @@ ad_form -action message \
 		cr_write_content -revision_id [lindex $file_revisions 0]
 	    }
 	}
-	ad_returnredirect "/contacts/$party_id"
+	ad_returnredirect [contact::url -party_id $party_id]
     }
 

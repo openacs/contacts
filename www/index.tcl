@@ -65,7 +65,7 @@ db_foreach my_recent_searches {} {
 
 lang::util::localize_list_of_lists -list $search_options
 
-
+set package_url [ad_conn package_url]
 
 set form_elements {
     {search_id:integer(select),optional {label ""} {options $search_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}

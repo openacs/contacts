@@ -29,5 +29,5 @@ ad_form -name search_contact -form {
     }
     {return_url:text(hidden) {value $return_url}}
 } -on_submit {
-	ad_returnredirect [export_vars -base "/contacts/" -url {{query $keyword}}]
+    ad_returnredirect [export_vars -base [ad_conn package_url] -url {{query $keyword}}]
 } -has_submit {1}

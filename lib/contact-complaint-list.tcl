@@ -37,9 +37,10 @@ if {![exists_and_not_null elements] } {
 	lappend rows_list [list]
     }
 }
+set package_url [ad_conn package_url]
 
 # This are the elements of the template::list
-set edit_url "/contacts/add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
+set edit_url "${package_url}add-edit-complaint?complaint_id=@complaint.complaint_id@&customer_id=@complaint.customer_id@"
 set elements_list [list \
 		  title [list label [_ contacts.Title_1] \
 			     display_template \
@@ -107,7 +108,7 @@ template::list::create \
 db_multirow -extend { customer customer_url supplier supplier_url object_url} complaint get_complaints { } {
     set customer "[contact::name -party_id $customer_id]"
     set supplier "[contact::name -party_id $supplier_id]"
-    set customer_url "/contacts/$customer_id"
-    set supplier_url "/contacts/$supplier_id"
+    set customer_url "${package_url}$customer_id"
+    set supplier_url "${package_url}$supplier_id"
     set object_url "/o/$complaint_object_id"
 }

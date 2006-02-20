@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title">#contacts.History#</property>
+<property name="portlet_title"><a href="@history_url;noquote@">#contacts.History#</a></property>
 
 <table width="100%">
 <tr>

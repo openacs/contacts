@@ -28,8 +28,8 @@ ad_page_contract {
     }
 }
 
-contact::require_visiblity -party_id $party_one
-contact::require_visiblity -party_id $party_two
+contact::require_visiblity -party_id $object_id_one
+contact::require_visiblity -party_id $object_id_two
 
 set rel_id_from_db [db_string get_rel_id {} -default {}]
 if { [exists_and_not_null rel_id_from_db] } {

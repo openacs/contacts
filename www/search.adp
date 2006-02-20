@@ -16,7 +16,7 @@
 	    <b>@show_default_names;noquote@</b> @show_names;noquote@ 	
   	    ( <a href="search?search_id=@search_id@">#contacts.Clear#</a> )
 	    <table><tr><td>
-            <form action="/contacts/">
+            <form action="@package_url@">
 	        <input type="hidden" name="attr_val_name" value="@attr_val_name@">
 	        <input type="hidden" name="search_id" value="@search_id@">
 		<input type="submit" value="#contacts.Go#" style="font-size: 8px;">

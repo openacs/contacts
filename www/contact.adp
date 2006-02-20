@@ -10,7 +10,7 @@
       <h3 class="contact-title"><a href="@club_url@">#contacts.Visit_Club#</a></h3>
       </if>
     <include
-      src="/packages/contacts/lib/searches-portlet"
+      src="/packages/contacts/lib/groups-portlet"
       party_id="@party_id@"
       hide_form_p="t" />
       <br />

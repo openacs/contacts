@@ -19,4 +19,4 @@ ad_progress_bar_begin -title "[_ contacts.Creating_Club]" -message_1 "[_ contact
 set group_id [group::get_id -group_name "Customers"]
 callback contact::organization_new_group -organization_id $party_id -group_id $group_id
 
-ad_progress_bar_end -url  "/contacts/$party_id"
+ad_progress_bar_end -url  [contact::url -party_id $party_id]

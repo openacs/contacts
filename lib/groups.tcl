@@ -55,7 +55,7 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
 	set sub_p "0"
     }
     set group_id [lindex $group 1]
-    set remove_url [export_vars -base "/contacts/group-parties-remove" -url {group_id party_id return_url}] 
+    set remove_url [export_vars -base "${package_url}/group-parties-remove" -url {group_id party_id return_url}] 
     if { [lindex $group 2] == "1" } { set active_top_level [lindex $group 0] }
     if { [lsearch $groups_belonging_to [lindex $group 1]] >= 0 } {
         multirow append groups [lindex $group 1] $group_name $sub_p $remove_url
@@ -66,9 +66,9 @@ set default_group [contacts::default_group]
 set user_p [contact::user_p -party_id $party_id]
 
 if { [permission::permission_p -object_id $default_group -privilege "delete"] } {
-    set remove_url [export_vars -base "/contacts/group-parties-remove" -url {{group_id $default_group} party_id {return_url {/contacts/}}}] 
+    set remove_url [export_vars -base "${package_url}/group-parties-remove" -url {{group_id $default_group} party_id {return_url {${package_url}/}}}] 
     if { [person::person_p -party_id $party_id] && [contact::email -party_id $party_id] != "" && $user_p != 1} {
-        set upgrade_url [export_vars -base "/contacts/person-upgrade-to-user" -url {{person_id $party_id}}] 
+        set upgrade_url [export_vars -base "${package_url}/person-upgrade-to-user" -url {{person_id $party_id}}] 
     }
     set delete_p 1
 } else {

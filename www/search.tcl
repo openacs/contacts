@@ -52,7 +52,7 @@ ad_page_contract {
     }
 }
 
-
+set package_url [ad_conn package_url]
 
 if { [exists_and_not_null aggregate] } {
     ad_returnredirect "[export_vars -base ./ -url {search_id aggregate_attribute_id}]"

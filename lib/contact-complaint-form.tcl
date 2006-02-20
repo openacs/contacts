@@ -31,6 +31,7 @@ ad_form -mode $mode -name complaint_form -form {
     }
 }
 
+set package_url [ad_conn package_url]
 set customer_name [contact::name -party_id $customer_id]
 ad_form -extend -name complaint_form -form {
     {customer_id:text(hidden)
@@ -38,7 +39,7 @@ ad_form -extend -name complaint_form -form {
     }
     {customer:text(inform),optional
 	{label "[_ contacts.Customer]"}
-	{value "<a href=\"/contacts/${customer_id}\">$customer_name</a>"}
+	{value "<a href=\"${package_url}${customer_id}\">$customer_name</a>"}
     }
 }
 

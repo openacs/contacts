@@ -1,3 +1,4 @@
+set package_url [ad_conn package_url]
 set portlet_layout [parameter::get -parameter "DefaultPortletLayout"]
 
-set relations_url "[site_node::get_package_url -package_key "contacts"]${party_id}/relationships"
+set relations_url "[contact::url -party_id $party_id]relationships"
