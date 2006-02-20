@@ -7,15 +7,23 @@
 -- @cvs-id $Id$
 --
 
-create function inline_0() returns integer as '
+create or replace function inline_0() returns integer as '
 declare 
 	v_labels_p   boolean;
+        v_envelopes_p boolean;
 begin
 	v_labels_p := ''1'' from contact_message_types where message_type = ''label'';
 
         if v_labels_p is not true then 
-	   insert into contact_message_types (message_type) values (''label'',''#contacts.Labels#'');
+	   insert into contact_message_types (message_type,pretty_name) values (''label'',''#contacts.Labels#'');
         end if;
+
+	v_envelopes_p := ''1'' from contact_message_types where message_type = ''envelope'';
+
+        if v_envelopes_p is not true then 
+	   insert into contact_message_types (message_type,pretty_name) values (''envelope'',''#contacts.Envelopes#'');
+        end if;
+
 
      return 0;
 
