@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b3" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b5" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -67,6 +67,7 @@
   <msg key="Belongs_to">Belongs to</msg>
   <msg key="Body">Body</msg>
   <msg key="Bulk_Update">Bulk Update</msg>
+  <msg key="Bulk_Update_these_Contacts">Bulk update these contacts</msg>
   <msg key="Cancel">Cancel</msg>
   <msg key="CC">CC</msg>
   <msg key="cc_help">Send copy to multiple addresses separated by &quot;;&quot;</msg>
@@ -98,6 +99,7 @@
   <msg key="Contact_Type_Two">Contact Type Two</msg>
   <msg key="Contacts">Contacts</msg>
   <msg key="contacts">contacts</msg>
+  <msg key="Contacts_to_Export">Contacts to export</msg>
   <msg key="contains_-">contains -&gt;</msg>
   <msg key="Copy">Copy</msg>
   <msg key="Country">Country</msg>
@@ -111,6 +113,8 @@
   <msg key="Create_a_user_account_for_this_person">Create a user account for this person</msg>
   <msg key="Create_Club">Create Club</msg>
   <msg key="create_email">Create Email</msg>
+  <msg key="create_envelope">create envelope</msg>
+  <msg key="create_label">Create Mailing Labels</msg>
   <msg key="create_letter">Create Letter</msg>
   <msg key="create_oo_mailing">Create OO Mailing</msg>
   <msg key="create_project">Create project</msg>
@@ -145,6 +149,7 @@
   <msg key="Employees">Employees</msg>
   <msg key="Employer">Employer</msg>
   <msg key="Employers">Employers</msg>
+  <msg key="Envelopes">Envelopes</msg>
   <msg key="Error">Error</msg>
   <msg key="even">even</msg>
   <msg key="exists">exists</msg>
@@ -164,6 +169,7 @@
   <msg key="Footer">Footer</msg>
   <msg key="Freelancers">Freelancers</msg>
   <msg key="From">From</msg>
+  <msg key="Generating_PDF">Generating PDF</msg>
   <msg key="Get">Get</msg>
   <msg key="Glossars">Glossars</msg>
   <msg key="Go">Go</msg>
@@ -194,6 +200,8 @@
   <msg key="is_recurrence_within_last_-">annual recurrence within last -&gt;</msg>
   <msg key="is_recurrence_within_next_-">annual recurrence within next -&gt;</msg>
   <msg key="is_set">is set</msg>
+  <msg key="Label_Type">Label Type</msg>
+  <msg key="Labels">Labels</msg>
   <msg key="last">last</msg>
   <msg key="Last_Modified">Last updated</msg>
   <msg key="Last_Name">Last Name</msg>
@@ -275,6 +283,8 @@
   <msg key="lt_Existing_Relationship">Existing Relationships</msg>
   <msg key="lt_First_Names_contains_">&quot;First Names&quot; contains &quot;Search_Word&quot; or</msg>
   <msg key="lt_First_Names_is_requir">First Names is required</msg>
+  <msg key="lt_Generating_the_envelopes_">Generating the envelopes you requested</msg>
+  <msg key="lt_Generating_the_labels_">Generating the labels you requested</msg>
   <msg key="lt_Group_group_name_Crea">Group '%group_name%' Created</msg>
   <msg key="lt_Group_group_name_Upda">Group '%group_name%' Updated</msg>
   <msg key="lt_Group_Information_Sav">Group Information Saved.</msg>
@@ -297,6 +307,7 @@
   <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>
   <msg key="lt_of_the_following_cond">of the following conditions:&lt;br&gt;</msg>
   <msg key="lt_Once_done_printing_-return_url-">Once you have printed these letters you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt;.</msg>
+  <msg key="lt_Once_finished_you_get">Once finished you will be redirected and message will appear at the top of the page that allows you to download your pdf.</msg>
   <msg key="lt_Once_ready_for_releas">Once ready for release this will be taken care of in code</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; contains &quot;Search_Word&quot; or</msg>
   <msg key="lt_Organization_Relation">Organization Relationship</msg>
@@ -321,6 +332,7 @@
   <msg key="lt_The_contact_is_NOT_in">The contact is NOT in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_specified">The contact specified does not exist</msg>
   <msg key="lt_The_contact_specified_1">The contact specified is not one of the contacts in this relationship</msg>
+  <msg key="lt_The_contacts_were_merged">The contacts were merged and the other one was deleted.</msg>
   <msg key="lt_The_default_group_mus">The default group must have first_names and last_name for person objects and name for organization objects, both of them need email</msg>
   <msg key="lt_The_file_lindex_messa">The file %message% was successfully uploaded</msg>
   <msg key="lt_The_files_join_messag">The files %message% were successfully uploaded</msg>
@@ -328,6 +340,7 @@
   <msg key="lt_The_first_role_specif">The first role specified does not exist</msg>
   <msg key="lt_The_parameter_RecentO">The parameter RecentOnTopP is not set correctly for the General Comments package, please enter either a '0' or a '1'</msg>
   <msg key="lt_The_party_id_specifie">The party_id specified does not exist</msg>
+  <msg key="lt_The_pdf_you_requested_-pdf_url-">The pdf you requested is &lt;a href=&quot;%pdf_url%&quot;&gt;available for download&lt;/a&gt;.</msg>
   <msg key="lt_The_query_type_var_li">The query \&quot;%type% %var_list%\&quot; is no longer valid because: %error_message</msg>
   <msg key="lt_The_query_type_var_li_1">The query \&quot;%type% %var_list%\&quot; is no longer valid. Contact an admin.</msg>
   <msg key="lt_The_recipeints_name_a">The recipeints name and mailing address will automatically be included so that they work with window envelopes</msg>
@@ -340,6 +353,7 @@
   <msg key="lt_This_group_is_already">This group is already the default</msg>
   <msg key="lt_This_group_is_already_1">This group is already mapped</msg>
   <msg key="lt_this_is_my_default_si">this is my default signature</msg>
+  <msg key="lt_this_may_take_a_bit">(this may take a bit)</msg>
   <msg key="lt_This_signature_specif">This signature specified either does not exist or does not belong to you</msg>
   <msg key="lt_This_user_is_awaiting">This user is awaiting administrator approval</msg>
   <msg key="lt_This_users_has_not_be">This users has not been approved</msg>
@@ -351,6 +365,7 @@
   <msg key="lt_We_will_continue_auto">We will continue automatically</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">You cannot add this contact to more groups.</msg>
+  <msg key="lt_You_cannot_create_a_label_for_invalid_recipients">Labels will not be made for the following people (who do not have valid addresses): %invalid_recipients%</msg>
   <msg key="lt_You_cannot_make_sub_g">You cannot make sub groups the default group</msg>
   <msg key="lt_You_cannot_map_groups">You cannot map groups whose parent groups are not mapped</msg>
   <msg key="lt_You_cannot_send_a_letter_to_invalid_recipients">You cannot send a letter to the following contacts: %invalid_recipients%</msg>
@@ -363,7 +378,9 @@
   <msg key="lt_You_have_specified_an">You have specified an invalid Object Type</msg>
   <msg key="lt_You_have_specified_an_1">You have specified an invalid size for the textarea</msg>
   <msg key="lt_You_need_parties_to_bulk_update">You need to select some contacts to bulk update</msg>
+  <msg key="lt_You_no_merge_with_self">You cannot merge a contact with itself</msg>
   <msg key="lt_Your_administrator_mu">Your administrator must map and add a default group in the &lt;a href=&quot;admin&quot;&gt;admin pages&lt;/a&gt;</msg>
+  <msg key="lt_your_bulk_update_was_successful">Your bulk update was successful.</msg>
   <msg key="lt_Your_need_to_provide_">Your need to provide some contacts to send a message</msg>
   <msg key="lt_Your_provided_an_inva">Your provided an invalid Message Type</msg>
   <msg key="lt_zippostal_does_not_st">zip/postal does not start with -&gt;</msg>
@@ -376,6 +393,7 @@
   <msg key="Make_Public">Make Public</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
   <msg key="Manage_group_categories">Manage Group Categories</msg>
+  <msg key="Merge_with">Merge with</msg>
   <msg key="Message">Message</msg>
   <msg key="Message_is_required">Message is required</msg>
   <msg key="Messages">Messages</msg>
