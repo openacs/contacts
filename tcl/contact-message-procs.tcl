@@ -181,7 +181,7 @@ ad_proc -private contact::message::email_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer_id [contact::util::get_employers] {
+	foreach employer_id [contact::util::get_employers -employee_id $party_id] {
 	    set email [contact::email -party_id $employer_id]
 	    if { $email ne "" } {
 		break
@@ -241,7 +241,7 @@ ad_proc -private contact::message::mailing_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer_id [contact::util::get_employers] {
+	foreach employer_id [contact::util::get_employers -employee_id $party_id] {
 	    set mailing_address [contact::message::mailing_address -party_id $employer_id -package_id $package_id]
 	    if { $mailing_address ne "" } {
 		break
