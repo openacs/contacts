@@ -181,8 +181,8 @@ ad_proc -private contact::message::email_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer_id [contact::util::get_employers -employee_id $party_id] {
-	    set email [contact::email -party_id $employer_id]
+	foreach employer [contact::util::get_employers -employee_id $party_id] {
+	    set email [contact::email -party_id [lindex $employer 0]]
 	    if { $email ne "" } {
 		break
 	    }
@@ -208,6 +208,7 @@ ad_proc -private contact::message::mailing_address_exists_p {
 ad_proc -private contact::message::mailing_address {
     {-party_id:required}
     {-format "text/plain"}
+    {-package_id ""}
 } {
     Returns a parties mailing address. Cached
 } {
@@ -215,7 +216,10 @@ ad_proc -private contact::message::mailing_address {
     if { $format != "html" } {
 	set format "text"
     }
-    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id [ad_conn package_id]]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id $package_id]]
 }
 
 ad_proc -private contact::message::mailing_address_not_cached {
@@ -241,8 +245,8 @@ ad_proc -private contact::message::mailing_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer_id [contact::util::get_employers -employee_id $party_id] {
-	    set mailing_address [contact::message::mailing_address -party_id $employer_id -package_id $package_id]
+	foreach employer [contact::util::get_employers -employee_id $party_id] {
+	    set mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id]
 	    if { $mailing_address ne "" } {
 		break
 	    }

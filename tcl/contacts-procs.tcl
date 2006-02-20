@@ -178,7 +178,7 @@ ad_proc -public contact::util::get_employers {
 
     @return List of lists, each containing the ID and name of an employer, or an empty list if no employers exist.
 } {
-    return [util_memoize [list contact::util::get_employers_not_cached -employee_id $employee_id]]
+    return [util_memoize [list ::contact::util::get_employers_not_cached -employee_id $employee_id]]
 }
 
 ad_proc -private contact::util::get_employers_not_cached {
@@ -470,14 +470,8 @@ ad_proc -private contact::flush {
 } {
     Flush memorized information related to this contact
 } {
-    util_memoize_flush "::contact::email_address_exists_p_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::mailing_address_not_cached -party_id $party_id -format html"
-    util_memoize_flush "::contact::mailing_address_not_cached -party_id $party_id -format text"
-    util_memoize_flush "::contact::name_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::email_not_cached -party_id $party_id"
-    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
+    util_memoize_flush_regexp "contact(.*?)-party_id ${party_id}"
+    util_memoize_flush_regexp "contact(.*?)-employee_id ${party_id}"
 }
 
 ad_proc -public contact::name {
@@ -621,7 +615,7 @@ ad_proc -public contact::visible_p {
     if { [string is false [exists_and_not_null package_id]] } {
 	set package_id [ad_conn package_id]
     }
-    return [util_memoize [list contact::visible_p_not_cached -party_id $party_id -package_id $package_id]]
+    return [util_memoize [list ::contact::visible_p_not_cached -party_id $party_id -package_id $package_id]]
 }
 
 ad_proc -private contact::visible_p_not_cached {
