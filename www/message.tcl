@@ -24,7 +24,7 @@ ad_page_contract {
     {context_id:integer ""}
 } -validate {
     valid_message_type -requires {message_type} {
-	if { [lsearch [list oo_mailing email letter label] $message_type] < 0 } {
+	if { ![db_0or1row check_for_it { select 1 from contact_message_types where message_type = :message_type and message_type not in ('header','footer') }] } {
 	    ad_complain "[_ contacts.lt_Your_provided_an_inva]"
 	}
     }
@@ -80,7 +80,7 @@ foreach recipient $sorted_recipients {
     set contact_link   [lindex $recipient 2]
     set email_p        [lindex $recipient 3]
     set letter_p       [lindex $recipient 4]
-    if { $message_type == "letter" || $message_type == "label" } {
+    if { [lsearch [list "letter" "label" "envelope"] $message_type] >= 0 } {
         if { $letter_p } {
             lappend party_ids $party_id
             lappend recipients $contact_link
@@ -205,7 +205,7 @@ if { ![exists_and_not_null message_type] } {
     set message_options [list]
     foreach op $message_type_options {
 	set message_type [lindex $op 1]
-	if {$message_type == "letter" || $message_type == "email" || $message_type == "label" } {
+	if { [lsearch [list "header" "footer"] $message_type] < 0 } {
 	    lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" $message_type]
 	} else {
 	    set ${message_type}_options [list [list [_ contacts.--none--] ""]]

@@ -31,7 +31,7 @@ if {![info exists no_callback_p]} {
 set recipients [list]
 foreach party_id $party_ids {
     if {![empty_string_p $party_id]} {
-	lappend recipients [list "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a> ([cc_email_from_party $party_id])" $party_id]
+	lappend recipients [list "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a> ([contact::message::email_address -party_id $party_id])" $party_id]
     }
 }
 
@@ -173,13 +173,13 @@ ad_form -action $action \
     } -on_submit {
 	
 	# We get the attribute_id of the salutation attribute
-	set attribute_id [db_string get_attribute_id { } -default {}]
+	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
 	    
 	# List to store know wich emails recieved the message
 	set recipients_addr [list]
 
 	set from [ad_conn user_id]
-	set from_addr [cc_email_from_party $from]
+	set from_addr [contact::email -party_id $from]
 
 	# Remove all spaces in cc
 	regsub -all " " $cc "" cc
@@ -216,7 +216,7 @@ ad_form -action $action \
 		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
 	    }
-	    set to_addr [cc_email_from_party $party_id]
+	    set to_addr [contact::message::email_address -party_id $party_id]
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    set to $name
 

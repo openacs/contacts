@@ -190,7 +190,7 @@ ad_form -action message \
 		    set to_addr $employee(email)
 		} else {
 		    set name [contact::name -party_id $party_id]
-		    set to_addr [cc_email_from_party $party_id]
+		    set to_addr [contact::message::email_address -party_id $party_id]
 		    set salutation "Dear ladies and gentlemen"
 		    set locale [lang::user::site_wide_locale -user_id $party_id]
 		}
@@ -202,7 +202,7 @@ ad_form -action message \
 		
 		# We are going to create a multirow which knows about the file (revision_id) and contains
 		# the parsed e-mail.
-		set to_addr [party::email -party_id $party_id]
+		set to_addr [contact::message::email_address -party_id $party_id]
 		template::multirow append messages $revision_id $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $email_content -values $values]
 	    }
 
@@ -219,7 +219,7 @@ ad_form -action message \
 
 	if {$subject ne ""} {
 	    set from [ad_conn user_id]
-	    set from_addr [cc_email_from_party $from]
+	    set from_addr [contact::email -party_id $from]
 	    set package_id [ad_conn package_id]
 
 	    template::multirow foreach messages {

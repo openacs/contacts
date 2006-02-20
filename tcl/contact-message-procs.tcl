@@ -158,83 +158,111 @@ ad_proc -private contact::message::log {
 ad_proc -private contact::message::email_address_exists_p {
     {-party_id:required}
 } {
-    Does a email address exist for this party. Cached
+    Does a message email address exist for this party or his/her employer. Cached via contact::message::email_address.
 } {
-    return [util_memoize [list ::contact::message::email_address_exists_p_not_cached -party_id $party_id]]
+    return [string is false [empty_string_p [contact::message::email_address -party_id $party_id]]]
 }
 
-ad_proc -private contact::message::email_address_exists_p_not_cached {
+ad_proc -private contact::message::email_address {
     {-party_id:required}
 } {
-    Does a email address exist for this party
+    Does a message email address exist for this party
 } {
-    return [string is false [empty_string_p [contact::email -party_id $party_id]]]
+    return [util_memoize [list ::contact::message::email_address_not_cached -party_id $party_id]]
+}
+
+ad_proc -private contact::message::email_address_not_cached {
+    {-party_id:required}
+} {
+    Does a message email address exist for this party
+} {
+    set email [contact::email -party_id $party_id]
+    if { $email eq "" } {
+	# if this person is the employee of
+        # an organization we can attempt to use
+        # that organizations email address
+	foreach employer_id [contact::util::get_employers] {
+	    set email [contact::email -party_id $employer_id]
+	    if { $email ne "" } {
+		break
+	    }
+	}
+    }
+    return $email
 }
 
 ad_proc -private contact::message::mailing_address_exists_p {
     {-party_id:required}
 } {
-    Does a mailing address exist for this party. Cached
+    Does a mailing address exist for this party. Cached via contact::message::mailing_address.
 } {
-    return [util_memoize [list ::contact::message::mailing_address_exists_p_not_cached -party_id $party_id]]
-}
+    # since this check is almost always called by a page which
+    # will later ask for the mailing address we take on the 
+    # overhead of calling for the address, which is cached.
+    # this simplifies the code and thus "pre" caches the address
+    # for the user, which overall is faster
 
-ad_proc -private contact::message::mailing_address_exists_p_not_cached {
-    {-party_id:required}
-} {
-    Does a mailing address exist for this party
-} {
-    set attribute_ids [contact::message::mailing_address_attribute_id_priority]
-    set revision_id [contact::live_revision -party_id $party_id]
-    if { [llength $attribute_ids] > 0 } {
-        if { [db_0or1row mailing_address_exists_p " select '1' from ams_attribute_values where object_id = :revision_id and attribute_id in ('[join $attribute_ids {','}]') limit 1 "] } {
-            return 1
-        } else {
-            return 0
-        }
-    } else {
-        return 0
-    }
+    return [string is false [empty_string_p [contact::message::mailing_address -party_id $party_id -format "text"]]]
 }
 
 ad_proc -private contact::message::mailing_address {
     {-party_id:required}
     {-format "text/plain"}
 } {
-    Does a mailing address exist for this party
+    Returns a parties mailing address. Cached
 } {
     regsub -all "text/" $format "" format
     if { $format != "html" } {
 	set format "text"
     }
+    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id [ad_conn package_id]]]
+}
 
-    set attribute_ids [contact::message::mailing_address_attribute_id_priority]
+ad_proc -private contact::message::mailing_address_not_cached {
+    {-party_id:required}
+    {-format:required}
+    {-package_id:required}
+} {
+    Returns a parties mailing address
+} {
+    set attribute_ids [contact::message::mailing_address_attribute_id_priority -package_id $package_id]
     set revision_id [contact::live_revision -party_id $party_id]
     set mailing_address {}
-    db_foreach mailing_address_values "
-                   select attribute_id,
-                          ams_attribute_value__value(attribute_id,value_id) as value
-                     from ams_attribute_values
-                    where object_id = :revision_id
-                      and attribute_id in ('[join $attribute_ids {','}]')
-    " {
-	set attribute_value($attribute_id) $value
+    foreach attribute_id $attribute_ids {
+	set mailing_address [ams::value \
+				 -object_id $revision_id \
+				 -attribute_id $attribute_id \
+				 -format $format]
+	if { $mailing_address ne "" } {
+	    break
+	}
     }
-    foreach attribute $attribute_ids {
-	if { [info exists attribute_value($attribute)] } {
-	    set mailing_address [ams::widget \
-				     -widget postal_address \
-				     -request "value_${format}" \
-				     -value $value \
-				    ]
-
-            break
-        }
+    if { $mailing_address eq "" } {
+	# if this person is the employee of
+        # an organization we can attempt to use
+        # that organizations email address
+	foreach employer_id [contact::util::get_employers] {
+	    set mailing_address [contact::message::mailing_address -party_id $employer_id -package_id $package_id]
+	    if { $mailing_address ne "" } {
+		break
+	    }
+	}
     }
     return $mailing_address
 }
 
+
+
 ad_proc -private contact::message::mailing_address_attribute_id_priority {
+    {-package_id:required}
+} {
+    Returns the order of priority of attribute_ids for the letter mailing address. Cached
+} {
+    return [util_memoize [list ::contact::message::mailing_address_attribute_id_priority_not_cached -package_id $package_id]]
+}
+
+ad_proc -private contact::message::mailing_address_attribute_id_priority_not_cached {
+    {-package_id:required}
 } {
     Returns the order of priority of attribute_ids for the letter mailing address
 } {
@@ -466,3 +494,32 @@ ad_proc -public contact::oo::change_content {
 
     return $new_file
 }
+
+
+
+
+
+
+
+
+ad_proc -public -callback contacts::redirect -impl contactspdfs {
+    {-party_id ""}
+    {-action ""}
+} {
+    redirect the contact to the correct pdf stuff
+} {
+
+    ns_log notice "got here..."
+    set url [ad_conn url]
+    if { [regexp "^[ad_conn package_url]pdfs/" $url match] } {
+	# this is a pdf url
+	set filename [lindex [ad_conn urlv] end]
+	if { ![regexp "^contacts_.*?_[ad_conn user_id](.*).pdf$" $filename match] || ![file exists "/tmp/${filename}"] } {
+	    ad_return_error "No Permission" "You do not have permission to view this file, or the temporary file has been deleted."
+	} else {
+	    ns_returnfile 200 "application/pdf" "/tmp/${filename}"
+	}
+    }
+
+}
+

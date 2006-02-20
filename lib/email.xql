@@ -12,15 +12,4 @@
     </querytext>
 </fullquery>
 
-<fullquery name="get_attribute_id">
-    <querytext>
-	 select 
-		attribute_id 
-	from 
-		ams_attributes 
-	where 
-		attribute_name = 'salutation';	
-    </querytext>
-</fullquery>
-
 </queryset>

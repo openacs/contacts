@@ -143,7 +143,7 @@ ad_proc -private contact::util::update_person_attributes {
     return $contact_list
 }
 
- ad_proc -public contact::util::get_employees_list_of_lists {
+ad_proc -public contact::util::get_employees_list_of_lists {
     {-organization_id:required}
 } {
     get employees of an organization in a list of list suitable for inclusion in options
@@ -170,6 +170,16 @@ ad_proc -public contact::util::get_employers {
 } {
     Get employers of an employee
 
+    @return List of lists, each containing the ID and name of an employer, or an empty list if no employers exist.
+} {
+    return [util_memoize [list contact::util::get_employers_not_cached -employee_id $employee_id]]
+}
+
+ad_proc -private contact::util::get_employers_not_cached {
+    {-employee_id:required}
+} {
+    Get employers of an employee
+
     @author Al-Faisal El-Dajani (faisal.dajani@gmail.com)
     @param employee_id The ID of the employee whom you want to know his/her employer
     @creation-date 2005-10-17
@@ -191,6 +201,7 @@ ad_proc -public contact::util::get_employers {
 
     return $contact_list
 }
+
 
 ad_proc -public contact::salutation {
     {-party_id:required}
@@ -305,7 +316,7 @@ ad_proc -private contact::employee::get_not_cached {
     @param organization_id ID of the organization whose information should be returned <I> if </I> the employee_id is an employee at this organization. If not specified, defaults to first employer relationship found, if any.
 
 } {
-    ns_log notice "start processing"
+    # ons_log notice "start processing"
     set employer_exist_p 0
     set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email" "jobtitle" "person_title"]
     set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
@@ -455,6 +466,8 @@ ad_proc -private contact::flush {
 } {
     util_memoize_flush "::contact::email_address_exists_p_not_cached -party_id $party_id"
     util_memoize_flush "::contact::mailing_address_exists_p_not_cached -party_id $party_id"
+    util_memoize_flush "::contact::mailing_address_not_cached -party_id $party_id -format html"
+    util_memoize_flush "::contact::mailing_address_not_cached -party_id $party_id -format text"
     util_memoize_flush "::contact::name_not_cached -party_id $party_id"
     util_memoize_flush "::contact::email_not_cached -party_id $party_id"
     util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
@@ -509,33 +522,22 @@ ad_proc -public contact::email_not_cached {
 } {
     this returns the contact's name
 } {
-    set email [db_string get_party_email { select email from parties where party_id = :party_id } -default {}]
+    # we should use party::email here but 
+    # we need to wait for the new version of
+    # acs-subsite to be release to remove
+    # the dependence on contacts which
+    # would cause an infinit loop
+    set email [cc_email_from_party $party_id]
     if { ![exists_and_not_null email] } {
-	# we check if these is an ams_attribute_valued email address for this party
-	set attribute_id [contact::email_attribute_id]
+	# we check if there is an ams_attribute_valued email address for this party
+	set attribute_id [attribute::id -object_type "party" -attribute_name "email"]
 	set revision_id [contact::live_revision -party_id $party_id]
 	if { [exists_and_not_null revision_id] } {
-	    set email [db_string get_email { select ams_attribute_value__value(:attribute_id,value_id) from ams_attribute_values where object_id = :revision_id and attribute_id = :attribute_id } -default {}]
-	    set email [ams::widget -widget email -request value_text -value $email]
+	    set email [ams::value -object_id $revision_id -attribute_id $attribute_id]
 	}
     }
     return $email
 }
-
-ad_proc -private contact::email_attribute_id {
-} {
-    this returns the email attributes attribute_id. cached
-} {
-    return [util_memoize [list ::contact::email_attribute_id]]
-}
-
-ad_proc -private contact::email_attribute_id {
-} {
-    this returns the email attributes attribute_id
-} {
-    return [db_string get_email_attribute_id { select attribute_id from acs_attributes where object_type = 'party' and attribute_name = 'email'}]
-}
-
 
 ad_proc -public contact::link {
     {-party_id:required}
@@ -562,15 +564,6 @@ ad_proc -public contact::type {
     } else {
 	return ""
     }
-#    if {[contact::user_p -party_id $party_id]} {
-#        return "user"
-#    } elseif {[person::person_p -party_id $party_id]} {
-#	return "person"
-#    } elseif {[organization::organization_p -party_id $party_id]} {
-#	return "organization"
-#    } else {
-#	return ""
-#    }
 }
 
 ad_proc -public contact::exists_p {
@@ -585,13 +578,6 @@ ad_proc -public contact::exists_p {
     } else {
 	return 0
     }
-#    if {[person::person_p -party_id $party_id]} {
-#	return 1
-#    } elseif {[organization::organization_p -party_id $party_id]} {
-#	return 1
-#    } else {
-#	return 0
-#    }
 }
 
 ad_proc -public contact::user_p {
@@ -599,25 +585,12 @@ ad_proc -public contact::user_p {
 } {
     is this party a user? Cached
 } {
-#    return [util_memoize [list ::contact::user_p_not_cached -party_id $party_id]]
     if { [contact::type -party_id $party_id] == "user" } {
 	return 1
     } else {
 	return 0
     }
 }
-
-#ad_proc -public contact::user_p_not_cached {
-#    {-party_id:required}
-#} {
-#    is this party a person? Cached
-#} {
-#    if {[db_0or1row contact_user_exists_p {select '1' from users where user_id = :party_id}]} {
-#	return 1
-#    } else {
-#	return 0
-#    }
-#}
 
 ad_proc -public contact::require_visiblity {
     {-party_id:required}
@@ -711,6 +684,7 @@ ad_proc -private contact::person_upgrade_to_user {
     set user_id $person_id
     set username [contact::email -party_id $person_id]
     set authority_id [auth::authority::local]
+
 
     # Make sure that we do not upgrade an already existing user
     if {![contact::user_p -party_id $person_id]} {
