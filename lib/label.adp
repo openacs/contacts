@@ -1,1 +1,1 @@
-<formtemplate id="letter"></formtemplate>
+<formtemplate id="label"></formtemplate>
