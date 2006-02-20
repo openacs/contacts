@@ -698,7 +698,6 @@ ad_proc -private contacts::search::condition_type::group {
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
 } {
-    set prefix "contact"
     set operand  [ns_queryget "${prefix}operand"]
     set group_id [ns_queryget "${prefix}group_id"]
 
@@ -741,11 +740,13 @@ ad_proc -private contacts::search::condition_type::group {
             switch $operand {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
-                    set output_code "group_id = $group_id"
+#                    set output_code "group_id = $group_id"
+		    set output_code "party_id in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
-                    set output_code "group_id != $group_id"
+#                    set output_code "group_id != $group_id"
+		    set output_code "party_id not in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
             }
             if { $request == "pretty" } {
