@@ -186,6 +186,7 @@
   <msg key="History">History</msg>
   <msg key="In_Searches">Searches</msg>
   <msg key="in_the_search">in the search</msg>
+  <msg key="Include_address_for_windowed_">include name and mailing address for use with windowed envelopes</msg>
   <msg key="invalid">Invalid</msg>
   <msg key="Invalid_Object_Type">Invalid Object Type</msg>
   <msg key="irrelevant">irrelevant</msg>
@@ -306,7 +307,8 @@
   <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>
   <msg key="lt_of_the_following_cond">of the following conditions:&lt;br&gt;</msg>
-  <msg key="lt_Once_done_printing_-return_url-">Once you have printed these letters you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt;.</msg>
+  <msg key="lt_Once_done_printing_plural">&lt;p&gt;When you have printed these letters you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt; or create &lt;a href=&quot;%labels_url%&quot;&gt;labels&lt;/a&gt; or &lt;a href=&quot;%envelopes_url%&quot;&gt;envelopes&lt;/a&gt; for these letters.&lt;p&gt;</msg>
+  <msg key="lt_Once_done_printing_singular">&lt;p&gt;When you have printed this letter you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt; or create a &lt;a href=&quot;%labels_url%&quot;&gt;label&lt;/a&gt; or &lt;a href=&quot;%envelopes_url%&quot;&gt;envelope&lt;/a&gt; for this letter.&lt;p&gt;</msg>
   <msg key="lt_Once_finished_you_get">Once finished you will be redirected and message will appear at the top of the page that allows you to download your pdf.</msg>
   <msg key="lt_Once_ready_for_releas">Once ready for release this will be taken care of in code</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; contains &quot;Search_Word&quot; or</msg>
