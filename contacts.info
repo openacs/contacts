@@ -10,7 +10,7 @@
     <version name="1.2b5" url="http://openacs.org/repository/download/apm/contacts-1.2b5.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2005-11-23</release-date>
+        <release-date>2006-02-20</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
@@ -61,6 +61,8 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ImageMagickPath"  default="/usr/local/bin" description="Absolute path from computer root to directory containing ImageMagick executables" section_name="Photos"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="IncludeChildPackages"  default="0" description="Default '0'. Set to '1' to include child contacts instances contacts in searches for this package."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Index"  default="/packages/contacts/templates/index" description="The template src for the index page" section_name="Portal Templates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="LetterPrintCSSFile"  default="/resources/contacts/contacts-print.css" description="What css file should be used for printing letter messages, this should be relative to server root. Defaults to /resources/contacts/contacts-print.css
+" section_name="Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="LogEmailsP"  default="t" description="Boolean that indicates if messages of type &quot;email&quot; are going to be logged or not on the contact_message_log"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="MailingAddressAttributeIdOrder"  description="A list of attribute_ids for postal addresses in order of priority. In doing a letter mail merge the first attribute_id in this list that a contact has a value for will be used as the mailing address. If no attribute_ids are specified all postal_address attribute_ids will be used in alphabetical order."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Message"  default="/packages/contacts/templates/message" description="The template src for the message page" section_name="Portal Templates"/>

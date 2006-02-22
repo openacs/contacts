@@ -23,9 +23,6 @@ if {[exists_and_not_null header_id]} {
 		     -from $header_info(content_format) \
 		     -- $header_info(content) \
 		    ]
-} else {
-    set header "<div class=\"mailing-address\">{name}<br />
-{mailing_address}</div>"
 }
 
 if {[exists_and_not_null footer_id]} {
@@ -35,8 +32,6 @@ if {[exists_and_not_null footer_id]} {
 		     -from $footer_info(content_format) \
 		     -- $footer_info(content) \
 		    ]
-} else {
-    set footer ""
 }
 
 
@@ -54,14 +49,17 @@ append form_elements {
     }
     {recipients:text(inform)
 	{label "[_ contacts.Recipients]"}
+	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
-    {date:date(date)
+    {date:date(date),optional
 	{label "[_ contacts.Date]"}
+    }
+    {include_address:boolean(checkbox),optional
+        {label ""}
+        {options "[list [list [_ contacts.Include_address_for_windowed_] 1]]"}
     }
     {header:text(inform),optional
 	{label "[_ contacts.Header]"}
-	{value "$header"}
-	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
     {content:richtext(richtext)
 	{label "[_ contacts.Message]"}
@@ -70,8 +68,6 @@ append form_elements {
     }
     {footer:text(inform),optional
 	{label "[_ contacts.Footer]"}
-	{value "$footer"}
-	{help_text {[_ contacts.lt_The_recipeints_name_a]}}
     }
 }
 
@@ -82,28 +78,26 @@ ad_form -action message \
     -edit_buttons [list [list [_ contacts.Print] print]] \
     -form $form_elements \
     -on_request {
+	set include_address "1"
     } -new_request {
  	if {[exists_and_not_null signature_id]} {
 	    set signature [contact::signature::get -signature_id $signature_id]
-	    if { [exists_and_not_null signature] } {
-		set signature [ad_html_text_convert \
-				   -to "text/html" \
-				   -from "text/plain" \
-				   -- $signature \
-				  ]
-		set signature "<p><br>${signature}</p>"
-	    }
 	}
  	if {[exists_and_not_null item_id]} {
 	    contact::message::get -item_id $item_id -array message_info
 	    set subject $message_info(description)
-	    set content [ad_html_text_convert \
-			     -to "text/html" \
-			     -from $message_info(content_format) \
-			     -- $message_info(content) \
-			    ]
+	    set content $message_info(content)
 	    if { [exists_and_not_null signature] } {
-		append content "\n${signature}"
+		if { $message_info(content_format) == "text/html" } {
+		    # if there is a signature we need to convert
+		    # if not we let "reformatting" be handled by
+		    # whatever richtext widget is used on the
+		    # since we don't know what it is
+		    set signature [ad_html_text_convert -to "text/html" -from "text/plain" -- $signature]
+		    append content "\n<p><br />${signature}</p>"
+		} else {
+		    append content "\n\n${signature}"   
+		}
 	    }
 	    set content [list $content $message_info(content_format)]
 	    set title $message_info(title)
@@ -126,75 +120,106 @@ ad_form -action message \
 	if {$content_raw == "" } {
 	    template::element set_error message content "[_ contacts.Message_is_required]"
 	}
-	set content_format [template::util::richtext::get_property format $content]
-	set content [string trim [template::util::richtext::get_property content $content]]
-
+	set content_html [ad_html_text_convert \
+			      -from [template::util::richtext::get_property format $content] \
+			      -to "text/html" \
+			      -- [string trim [template::util::richtext::get_property content $content]] \
+			      ]
+	if { [exists_and_not_null header] } {
+	    set content_html "${header}\n\n${content_html}"
+	}
+	if { [exists_and_not_null footer] } {
+	    set content_html "${content_html}\n\n${footer}"
+	}
 
 	set messages [list]
+	set date [join [template::util::date::get_property linear_date_no_time $date] "-"]
+
+	if { $include_address eq "1" } {
+	    set message_class "message"
+        } else {
+	    set messege_class "message noaddress"
+	}
+        set count 1
+        set total_count [llength $party_ids]
+
 	foreach party_id $party_ids {
 	    set name [contact::name -party_id $party_id]
 	    set first_names [lindex $name 0]
 	    set last_name [lindex $name 1]
 	    set locale [lang::user::site_wide_locale -user_id $party_id]
-	    set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $date] "-"] "%q" "$locale"]
-	    set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
 	    set revision_id [contact::live_revision -party_id $party_id]
 	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
-	    if {[empty_string_p $mailing_address]} {
-		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
-		break
+
+	    set letter ""
+	    if { [exists_and_not_null date] } {
+		# do not pull the date variable out here and reformat
+                # the date is reformatted every time and depends on
+                # it being in the linear_date_not_time format specified
+                # above
+		append letter "\n<div class=\"date\">[lc_time_fmt $date %q $locale]</div>"
 	    }
-
-	    set letter "<table heigth=\"3000\" width=\"650\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" border=\"0\">
-	<tr>
-		<td>
-$header
-			<br><br>
-		</td>
-	</tr>
-	<tr>
-<td>
-$content
-</td>
-</tr>
-<tr valign=\"bottom\">
-<td>
-$footer
-</td>"
-
+	    if { $include_address eq "1" } {
+		set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
+		append letter "\n<div class=\"mailing-address\">$name<br />$mailing_address</div>"
+	    }
+	    append letter "\n<div class=\"content\">${content_html}</div>"
 	    set values [list]
 	    foreach element [list first_names last_name name mailing_address date salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    set letter [contact::message::interpolate -text $letter -values $values]
 
-	    lappend messages $letter
-
+	    if { $count < $total_count } {
+		# we need to do a page break
+		lappend messages "<div class=\"${message_class}\" style=\"page-break-after: always;\">\n$letter\n</div>"
+	    } else {
+		lappend messages "\n\n<div class=\"${message_class}\" style=\"page-break-after: auto;\">\n$letter\n</div>"
+	    }
+	    incr count
 	    contact::message::log \
 		-message_type "letter" \
 		-sender_id $user_id \
 		-recipient_id $party_id \
 		-title $title \
 		-description "" \
-		-content $letter \
+		-content "<div class=\"message\">\n$letter\n</div>" \
 		-content_format "text/html"
 
 
 	}
 	
-
-
-	
 	# onLoad=\"window.print()\"
+
+	# if you want to alter the formatting and are
+        # working out of cvs.openacs.org you should use
+        # a new css file that is site specified. many
+        # contacts sites depend on this markup so please
+        # be kind and use CSS.
+
+        # included in this page are a number of css print
+        # pages you can use please check them out in 
+        # /packages/contacts/www/resources/
+
+	set labels_url [export_vars -base "message" -url {{message_type label} party_ids return_url}]
+        set envelopes_url [export_vars -base "message" -url {{message_type envelope} party_ids return_url}]
+
+	if { [llength $messages] > 1 } {
+	    set todo_message [_ contacts.lt_Once_done_printing_plural]
+	} else {
+	    set todo_message [_ contacts.lt_Once_done_printing_singular]
+	}
+
+	set css_file [parameter::get -parameter "LetterPrintCSSFile" -default "/resources/contacts/contacts-print.css"]
 	ns_return 200 text/html "
 <html>
 <head>
 <title>[_ contacts.Print_Letter]</title>
-<link rel=\"stylesheet\" type=\"text/css\" href=\"/resources/contacts/contacts-print.css\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"${css_file}\">
 </head>
 <body id=\"${paper_type}\">
 <div id=\"header\">
-<p>[_ contacts.lt_Once_done_printing_-return_url-]</p>
+$todo_message
 </div>
 
 [join $messages "\n"]
@@ -205,3 +230,11 @@ $footer
         ad_script_abort
     }
 
+
+
+if { [template::element::get_value letter header] eq "" } {
+    template::element::set_properties letter header widget hidden
+}
+if { [template::element::get_value letter footer] eq "" } {
+    template::element::set_properties letter footer widget hidden
+}

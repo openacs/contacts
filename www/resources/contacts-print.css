@@ -68,43 +68,58 @@ a {
           padding: 0;
           margin: 0;
    	}
+
+        /* The header is a set of links that lets the user continue */
+        /* to browse the site once they have printed letters. We do not */
+        /* want any of it printed */
 	#header {
 	  display: none;
 	}
-	.message {
-	  page-break-after: always;
-        }
+
+        /* The user included the date in their letter creation */
+        /* Our school operates out of the US and canada where */
+        /* it is supposed to be on the top right of the page. You */
+        /* can change this here for your insitituion */
 	.date {
-	  position: relative;
-          text-align: right;
-          font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
-          font-size: 80%;
-          line-height: 11pt;
-	  top: 0;
-          right: 0;
-          padding: 0;
-	  padding-right: 0.5cm;
-          margin: 0;
+          float: right;
 	}
+
+
+        /* mailing-address goes in the correct position to work */
+        /* with windowed envelopes */
 	.mailing-address {
 	  position: relative;
           top: 3.6cm;
           left: 0cm;
           font-family: courier, MS Courier New, Prestige, Everson Mono, monospace;
           font-size: 80%;
-          line-height: 11pt;
           padding: 0;
           margin: 0;
 	}
+
+
+        /* Padding on top is needed to clear the */
+        /* address which is positioned for windowed envelopes */
         .content {
-	  position: relative;
-          top: 5cm;
-          left: 0cm;
+	  clear: both;
+          padding-top: 5cm;
         }
+
+
+	/* The user is printing the content without an address */
+        /* and probably printing off labels and or envelopes so */
+        /* we remove the padding */
+	.noaddress {
+          padding-top: 0cm;
+	}
+
+        /* Every companies letter head is different. My schools */
+        /* fills up the left margin of our page. You can adjust */
+        /* this to work with your institution if it has a top logo */
+        /* by changing this to padding-top: 2cm; or something like that */
         #letterhead .content,
         #letterhead .mailing-address {
-          left: 2.9cm;
-	  padding-right: 2.9cm;
+          padding-left: 2.9cm;
         }
 }
 @page {
