@@ -513,5 +513,64 @@ ad_proc -public contacts::install::package_upgrade {
 		    -column_spec "float"
 
 	    }
+
+
+	    1.2b3 1.2b4 {
+
+		ns_log notice "Running contacts::install::package_upgrade upgrade from 1.2b3 to 1.2b4"
+
+		# We should only have one contacts instance since in 1.2b3 contacts
+                # was singleton. We need the package_id of that contacts instance
+
+		set package_id [db_string get_package_id { select package_id from apm_packages where package_key = 'contacts' } -default {}]
+		if { $package_id eq "" } {
+		    ns_log notice "Although contacts was installed there are no instances of contacts 1.2b3 so we do not need to do anything."
+		} else {
+		    ns_log notice "The package_id of the singleton contacts 1.2b3 instance is: $package_id"
+
+		    # in 1.2b3 contacts was dependent on the registered users group "-2"
+		    # now that contacts can use application groups we need to make sure
+                    # one exists for the contacts instance that already exists. There
+                    # was one developmental version prior to 1.2b3 that had application
+                    # groups so it might already exist.
+
+		    set contacts_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
+		    if { $contacts_application_group_id ne "" } {
+			ns_log notice "An application group (${contacts_application_group_id}) already exists for contacts instance ${package_id}."
+		    } else {
+			# We are not going to copy all the attributes to this
+			# application groups list. Since we we do not want to
+			# make assumptions about how a site should be configured
+			set contacts_application_group_id [application_group::new -package_id $package_id -group_name "\#contacts.All_Contacts\#"]
+			ns_log notice "An application group (${contacts_application_group_id}) was created for contacts instance ${package_id}."
+		    }
+
+		    # Since contacts prior to 1.2b4 was singleton and it was set to
+		    # use the '-2' group we are going to set the parameter
+		    # 'UseSubsiteAsDefaultGroup' to '1'. This will mean that contacts
+		    # will use the '-2' group if it was mounted on the root subsite
+		    # since '-2' is the application group for that subsite.
+
+		    parameter::set_value -package_id $package_id -parameter "UseSubsiteAsDefaultGroup" -value "1"
+                    ns_log notice "The parameter 'UseSubsiteAsDefaultGroup' was set to a value of '1' (the default is '0') for package_id '$package_id'. Although contacts now allows the use of application groups specific to that contacts instance (which is the default) and is not dependent on the 'registered users' group, versions of contacts prior to 1.2b4 used the '-2' application group of the root subsite as their default group. This parameter setting will mean that contacts instances mounted directly on the root subsite will continue to use the '-2' group as the default, which means no change in behavior of the contacts instance because of the ugprade from 1.2b3 to 1.2b4."
+
+                    # If contacts was not mounted on the root subsite then your
+                    # site will likely need to run a custom contact::default_group_not_cached
+                    # proc that returns this packages default group.
+
+		    set contacts_node_id [site_node::get_node_id_from_object_id -object_id ${package_id}]
+		    set subsite_package_id [site_node::closest_ancestor_package -node_id $contacts_node_id -package_key "acs-subsite"]
+		    set subsite_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $subsite_package_id]
+
+		    if { $subsite_application_group_id ne "-2" } {
+			error "The upgrade from contacts 1.2b3 to 1.2b4 removes contacts dependence on the registered users group '-2'. It is set to automatically use the nearest subsites application group. Unfortunately since your contacts instance is not mounted directly on the root subsite (i.e. its not mounted at a url similar to /contacts/) this application group is '$subsite_application_group_id'. You either need to manually move all of your contacts and ams::lists associated with the '-2' group to this application group (note the ams::list::copy will come in hand for this) or you may run a custom contacts::default_group_not_cached proc that will return the appropriate_id for your install and keep its functionality for any new contacts instance you create. This proc that corrects your setup should not be part of the offical contacts release since its a hack that is now site specific. Sorry for the significant inconvenience. This was what happens when you live on the bleeding edge of developmental versions of software :("
+		    }
+
+		}
+
+	    }
+
 	}
+
 }
+
