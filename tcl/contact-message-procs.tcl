@@ -522,6 +522,13 @@ ad_proc -public -callback contacts::redirect -impl contactspdfs {
 	    ad_return_error "No Permission" "You do not have permission to view this file, or the temporary file has been deleted."
 	} else {
 	    ns_returnfile 200 "application/pdf" "/tmp/${filename}"
+            # now that we have displayed the file we can delete it
+            # if a user does not click on the display link
+            # the file will remain in the /tmp/ folder until its 
+            # cleared. We may want to sweep the /tmp/ directory
+            # every now and then to delete stale files.
+            file delete "/tmp/${filename}"
+
 	}
     }
 
