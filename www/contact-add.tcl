@@ -267,7 +267,7 @@ ad_form -extend -name party_ae \
 	
 	# Save the contact information
 	# No clue why this is not part of the db_transaction though ....
-	contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
+	callback contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
 	set revision_id [contact::revision::new -party_id $party_id]
 	foreach group_id $group_ids {
 	    ams::ad_form::save -package_key "contacts" \

@@ -90,7 +90,7 @@ ad_form -extend -name party_ae \
                 -form_name "party_ae" \
                 -object_id $revision_id
         }
-        contact::special_attributes::ad_form_values -party_id $party_id -form "party_ae"
+        callback contact::special_attributes::ad_form_values -party_id $party_id -form "party_ae"
         
     } -on_submit {
 
@@ -118,7 +118,7 @@ ad_form -extend -name party_ae \
     } -new_data {
     } -edit_data {
 
-	contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
+	callback contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
         set revision_id [contact::revision::new -party_id $party_id]
 
 	
