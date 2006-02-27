@@ -513,7 +513,6 @@ ad_proc -public -callback contacts::redirect -impl contactspdfs {
     redirect the contact to the correct pdf stuff
 } {
 
-    ns_log notice "got here..."
     set url [ad_conn url]
     if { [regexp "^[ad_conn package_url]pdfs/" $url match] } {
 	# this is a pdf url
