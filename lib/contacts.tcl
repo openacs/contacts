@@ -106,12 +106,12 @@ switch $orderby {
     "first_names,asc" {
         set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
-	set sort_item "lower(first_names)"
+	set sort_item "lower(first_names), lower(last_name)"
     }
     "last_name,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (parties.party_id = persons.person_id)"
-	set sort_item "lower(last_name)"
+	set sort_item "lower(last_name), lower(first_names)"
     }
     "organization,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
@@ -310,13 +310,13 @@ template::list::create \
     } -orderby {
         first_names {
             label "[_ contacts.First_Name]"
-            orderby_asc  "lower(first_names) asc"
-            orderby_desc "lower(first_names) desc"
+            orderby_asc  "lower(first_names) asc, lower(last_name) asc"
+            orderby_desc "lower(first_names) desc, lower(last_name) desc"
         }
         last_name {
             label "[_ contacts.Last_Name]"
-            orderby_asc  "lower(last_name) asc"
-            orderby_desc "lower(last_name) desc"
+            orderby_asc  "lower(last_name) asc, lower(first_names) asc"
+            orderby_desc "lower(last_name) desc, lower(first_names) desc"
         }
         organization {
             label "[_ contacts.Organization]"
