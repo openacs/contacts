@@ -225,11 +225,11 @@
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_At_least_times_role_are_related">At least %times% %role% are related</msg>
-  <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
-  <msg key="lt_attribute_pretty_area_1">%attribute_pretty% area code is not: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_area_1">%attribute_pretty% area code is not: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_cont">%attribute_pretty% contains: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
-  <msg key="lt_attribute_pretty_coun">%attribute_pretty% country code is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
-  <msg key="lt_attribute_pretty_coun_1">%attribute_pretty% country code is not: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_coun">%attribute_pretty% country code is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_coun_1">%attribute_pretty% country code is not: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_coun_2">%attribute_pretty% country is: &lt;strong&gt;%country_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_coun_3">%attribute_pretty% country is not: &lt;strong&gt;%country_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_does">%attribute_pretty% does not contain: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
