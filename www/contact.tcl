@@ -41,12 +41,8 @@ if { [exists_and_not_null live_revision] } {
     set update_date [db_string get_update_date { select to_char(publish_date,'Mon FMDD, YYYY at FMHH12:MIam') from cr_revisions where revision_id = :live_revision } -default {}]
 }
 
-
-if { [site_node::get_package_url -package_key "tasks"] != "" } {
-    set tasks_enabled_p 1
-} else {
-    set tasks_enabled_p 0
-}
+# Ideally we would use callbacks for the include instead of checking directly for a specific package
+set tasks_enabled_p [apm_package_enabled_p tasks]
 
 # Get the linked projekt_id to display the subprojects if projects is installed
 set pm_package_id ""
