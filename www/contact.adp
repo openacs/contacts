@@ -17,14 +17,11 @@
     <if @tasks_enabled_p@>
       <include
 	src="/packages/contacts/lib/tasks-tasks-portlet"
-	party_id="@party_id@"
+	object_id="@party_id@"
 	hide_form_p="t"
-	page="@page@"
-	tasks_orderby="@tasks_orderby@"
-	page_flush_p="0"
 	page_size="15" 
-	show_filters_p="1"
-	emp_f="@emp_f@" />	
+	show_filters_p="0"
+        hide_elements="checkbox process_title"/>
 	<br />
     </if>
     <include

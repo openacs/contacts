@@ -130,7 +130,7 @@ switch $orderby {
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
 
 
-set valid_page_sizes [list 25 50 100 500]
+set valid_page_sizes [list 25 50 100 5000]
 if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
     set page_size [parameter::get -parameter "DefaultPageSize" -default "50"]
 }

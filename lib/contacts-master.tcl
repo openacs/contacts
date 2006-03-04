@@ -10,7 +10,6 @@ if { $contacts_master_template != "/packages/contacts/lib/contacts-master" } {
 
 # Set up links in the navbar that the user has access to
 set package_url [ad_conn package_url]
-set tasks_url [site_node::get_package_url -package_key "tasks"]
 
 set link_list [list]
 lappend link_list "${package_url}"
@@ -30,9 +29,12 @@ lappend link_list "[_ contacts.Advanced_Search]"
 lappend link_list "${package_url}searches"
 lappend link_list "[_ contacts.Saved_Searches]"
 
-if {![empty_string_p $tasks_url]} {
-    lappend link_list "$tasks_url"
-    lappend link_list "[_ contacts.Tasks]"
+# this should be taken care of by a callback...
+if { [apm_package_enabled_p tasks] } {
+    lappend link_list "${package_url}tasks"
+    lappend link_list "[_ tasks.Tasks]"
+    lappend link_list "${package_url}processes"
+    lappend link_list "[_ tasks.Processes]"
 }
 
 lappend link_list "${package_url}messages"

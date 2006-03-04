@@ -1,5 +1,5 @@
 <master src="@portlet_layout@">
-<property name="portlet_title">#contacts.Tasks#</property>
+<property name="portlet_title"><a href="tasks">#contacts.Tasks#</a></property>
 
 
 <table width="100%">
@@ -10,16 +10,12 @@
         <td>
 	     <include
         	src="/packages/tasks/lib/tasks"
-	        party_id="@party_id@"
-                elements="@elements@"
+	        object_id=@object_id@
                 package_id="@package_id@"
         	hide_form_p="t" 
-		page="@page@"
-		tasks_orderby="@tasks_orderby@"
-		page_flush_p="@page_flush_p@"
 		page_size="@page_size@" 
 		show_filters_p="@show_filters_p@"
-		emp_f="@emp_f@" />	
+                hide_elements=@hide_elements@ />	
         </td>
       </tr>
     </table>
