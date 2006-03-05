@@ -184,8 +184,10 @@ ad_form -action message \
 		    contact::employee::get -employee_id $party_id -array employee
 		    set first_names $employee(first_names)
 		    set last_name $employee(last_name)
-		    set name "$first_names $last_name"
+		    set name [string trim "$employee(person_title) $first_names $last_name"]
 		    set salutation $employee(salutation)
+		    set directphone $employee(directphoneno)
+		    set mailing_address $employee(mailing_address)
 		    set locale $employee(locale)
 		    set to_addr $employee(email)
 		} else {
@@ -196,7 +198,7 @@ ad_form -action message \
 		}
 		
 		set values [list]
-		foreach element [list first_names last_name name date salutation] {
+		foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		    lappend values [list "{$element}" [set $element]]
 		}
 		

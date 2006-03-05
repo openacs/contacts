@@ -319,7 +319,7 @@
   <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
-  <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {home_address} and {date}</msg>
+  <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {mailing_address}, {directphone} and {date}</msg>
   <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
   <msg key="lt_role_exists">%role% exists</msg>

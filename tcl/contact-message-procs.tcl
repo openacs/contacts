@@ -157,22 +157,31 @@ ad_proc -private contact::message::log {
 
 ad_proc -private contact::message::email_address_exists_p {
     {-party_id:required}
+    {-package_id ""}
 } {
     Does a message email address exist for this party or his/her employer. Cached via contact::message::email_address.
 } {
-    return [string is false [empty_string_p [contact::message::email_address -party_id $party_id]]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [string is false [empty_string_p [contact::message::email_address -party_id $party_id -package_id [ad_conn package_id]]]]
 }
 
 ad_proc -private contact::message::email_address {
     {-party_id:required}
+    {-package_id ""}
 } {
     Does a message email address exist for this party
 } {
-    return [util_memoize [list ::contact::message::email_address_not_cached -party_id $party_id]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::message::email_address_not_cached -party_id $party_id -package_id $package_id]]
 }
 
 ad_proc -private contact::message::email_address_not_cached {
     {-party_id:required}
+    {-package_id:required}
 } {
     Does a message email address exist for this party
 } {
@@ -181,7 +190,7 @@ ad_proc -private contact::message::email_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer [contact::util::get_employers -employee_id $party_id] {
+	foreach employer [contact::util::get_employers -employee_id $party_id -package_id $package_id] {
 	    set email [contact::email -party_id [lindex $employer 0]]
 	    if { $email ne "" } {
 		break
@@ -193,16 +202,20 @@ ad_proc -private contact::message::email_address_not_cached {
 
 ad_proc -private contact::message::mailing_address_exists_p {
     {-party_id:required}
+    {-package_id ""}
 } {
     Does a mailing address exist for this party. Cached via contact::message::mailing_address.
 } {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
     # since this check is almost always called by a page which
     # will later ask for the mailing address we take on the 
     # overhead of calling for the address, which is cached.
     # this simplifies the code and thus "pre" caches the address
     # for the user, which overall is faster
 
-    return [string is false [empty_string_p [contact::message::mailing_address -party_id $party_id -format "text"]]]
+    return [string is false [empty_string_p [contact::message::mailing_address -party_id $party_id -format "text" -package_id $package_id]]]
 }
 
 ad_proc -private contact::message::mailing_address {
@@ -245,7 +258,7 @@ ad_proc -private contact::message::mailing_address_not_cached {
 	# if this person is the employee of
         # an organization we can attempt to use
         # that organizations email address
-	foreach employer [contact::util::get_employers -employee_id $party_id] {
+	foreach employer [contact::util::get_employers -employee_id $party_id -package_id $package_id] {
 	    set mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id]
 	    if { $mailing_address ne "" } {
 		break

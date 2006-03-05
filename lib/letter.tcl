@@ -144,12 +144,22 @@ ad_form -action message \
         set total_count [llength $party_ids]
 
 	foreach party_id $party_ids {
-	    set name [contact::name -party_id $party_id]
-	    set first_names [lindex $name 0]
-	    set last_name [lindex $name 1]
-	    set locale [lang::user::site_wide_locale -user_id $party_id]
-	    set revision_id [contact::live_revision -party_id $party_id]
-	    set salutation [ams::value -attribute_name "salutation" -object_id $revision_id -locale $locale]
+
+	    # Differentiate between person and organization
+	    if {[person::person_p -party_id $party_id]} {
+		contact::employee::get -employee_id $party_id -array employee
+		set first_names $employee(first_names)
+		set last_name $employee(last_name)
+		set name [string trim "$employee(person_title) $first_names $last_name"]
+		set salutation $employee(salutation)
+		set directphone $employee(directphoneno)
+		set mailing_address $employee(mailing_address)
+		set locale $employee(locale)
+	    } else {
+		set name [contact::name -party_id $party_id]
+		set salutation "Dear ladies and gentlemen"
+		set locale [lang::user::site_wide_locale -user_id $party_id]
+	    }
 
 	    set letter ""
 	    if { [exists_and_not_null date] } {
@@ -160,12 +170,13 @@ ad_form -action message \
 		append letter "\n<div class=\"date\">[lc_time_fmt $date %q $locale]</div>"
 	    }
 	    if { $include_address eq "1" } {
-		set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/html"]
-		append letter "\n<div class=\"mailing-address\">$name<br />$mailing_address</div>"
+		# this work differnt from the contact::employee::get mailing address because that is
+		# in text format, but we need it as html
+		append letter "\n<div class=\"mailing-address\">$name<br />[contact::message::mailing_address -party_id $party_id -format "text/html"]</div>"
 	    }
 	    append letter "\n<div class=\"content\">${content_html}</div>"
 	    set values [list]
-	    foreach element [list first_names last_name name mailing_address date salutation] {
+	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    set letter [contact::message::interpolate -text $letter -values $values]

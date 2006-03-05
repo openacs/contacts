@@ -208,14 +208,17 @@ ad_form -action $action \
 		contact::employee::get -employee_id $party_id -array employee
 		set first_names $employee(first_names)
 		set last_name $employee(last_name)
-		set name "$employee(person_title) $first_names $last_name"
+		set name [string trim "$employee(person_title) $first_names $last_name"]
 		set salutation $employee(salutation)
+		set directphone $employee(directphoneno)
+		set mailing_address $employee(mailing_address)
 		set locale $employee(locale)
 	    } else {
 		set name [contact::name -party_id $party_id]
 		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
 	    }
+
 	    set to_addr [contact::message::email_address -party_id $party_id]
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    set to $name
@@ -228,7 +231,7 @@ ad_form -action $action \
 	    lappend recipients_addr $to_addr
 	    
 	    set values [list]
-	    foreach element [list first_names last_name name date salutation] {
+	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 

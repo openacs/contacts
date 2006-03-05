@@ -127,8 +127,21 @@ ad_proc -private contact::util::update_person_attributes {
     }
 }
 
- ad_proc -public contact::util::get_employees {
+ad_proc -public contact::util::get_employees {
     {-organization_id:required}
+    {-package_id ""}
+} {
+    get employees of an organization
+} {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::util::get_employees_not_cached -organization_id $organization_id -package_id $package_id]]
+}
+
+ad_proc -public contact::util::get_employees_not_cached {
+    {-organization_id:required}
+    {-package_id:required}
 } {
     get employees of an organization
 } {
@@ -142,7 +155,9 @@ ad_proc -private contact::util::update_person_attributes {
 	and ( object_id_one = :organization_id or object_id_two = :organization_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	lappend contact_list $other_party_id
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id_id] } {
+	    lappend contact_list $other_party_id
+	}
     }
 
     return $contact_list
@@ -150,6 +165,20 @@ ad_proc -private contact::util::update_person_attributes {
 
 ad_proc -public contact::util::get_employees_list_of_lists {
     {-organization_id:required}
+    {-package_id ""}
+} {
+    get employees of an organization in a list of list suitable for inclusion in options
+    the list is made up of employee_name and employee_id. Cached
+} {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::util::get_employees_list_of_lists_not_cached -organization_id $organization_id -package_id $package_id]]
+}
+
+ad_proc -private contact::util::get_employees_list_of_lists_not_cached {
+    {-organization_id:required}
+    {-package_id:required}
 } {
     get employees of an organization in a list of list suitable for inclusion in options
     the list is made up of employee_name and employee_id
@@ -164,7 +193,9 @@ ad_proc -public contact::util::get_employees_list_of_lists {
 	and ( object_id_one = :organization_id or object_id_two = :organization_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	lappend contact_list [list [person::name -person_id $other_party_id] $other_party_id]
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id_id] } {
+	    lappend contact_list [list [person::name -person_id $other_party_id] $other_party_id]
+	}
     }
 
     return $contact_list
@@ -172,16 +203,21 @@ ad_proc -public contact::util::get_employees_list_of_lists {
 
 ad_proc -public contact::util::get_employers {
     {-employee_id:required}
+    {-package_id ""}
 } {
     Get employers of an employee
 
     @return List of lists, each containing the ID and name of an employer, or an empty list if no employers exist.
 } {
-    return [util_memoize [list ::contact::util::get_employers_not_cached -employee_id $employee_id]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::util::get_employers_not_cached -employee_id $employee_id -package_id $package_id]]
 }
 
 ad_proc -private contact::util::get_employers_not_cached {
     {-employee_id:required}
+    {-package_id:required}
 } {
     Get employers of an employee
 
@@ -200,13 +236,14 @@ ad_proc -private contact::util::get_employers_not_cached {
 	and ( object_id_one = :employee_id or object_id_two = :employee_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	set organization_name [contact::name -party_id $other_party_id]
-	lappend contact_list [list $other_party_id $organization_name]
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id] } {
+	    set organization_name [contact::name -party_id $other_party_id]
+	    lappend contact_list [list $other_party_id $organization_name]
+	}
     }
 
     return $contact_list
 }
-
 
 ad_proc -public contact::salutation {
     {-party_id:required}
@@ -268,6 +305,7 @@ ad_proc -public contact::employee::get {
     {-employee_id:required}
     {-array:required}
     {-organization_id ""}
+    {-package_id ""}
 } {
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Cached.
 
@@ -301,7 +339,10 @@ ad_proc -public contact::employee::get {
 
 } {
     upvar $array local_array
-    set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id]]
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]]
 
     if {![empty_string_p $values]} {
 	array set local_array $values
@@ -314,6 +355,7 @@ ad_proc -public contact::employee::get {
 ad_proc -private contact::employee::get_not_cached {
     {-employee_id:required}
     {-organization_id}
+    {-package_id:required}
 } {
     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Uncached.
@@ -361,7 +403,7 @@ ad_proc -private contact::employee::get_not_cached {
 
     # Get employers, if any
     set employers [list]
-    set employers [contact::util::get_employers -employee_id $employee_id]
+    set employers [contact::util::get_employers -employee_id $employee_id -package_id $package_id]
 
     # If employer(s) exist
     if {[llength $employers] > 0} {
@@ -437,6 +479,13 @@ ad_proc -private contact::employee::get_not_cached {
 	}
     }
 
+    # message variables. if the employee does not have 
+    # a viable mailing address for this package it will
+    # look for a viable mailing address for its employers
+    set local_array(mailing_address) [contact::message::mailing_address -party_id $employee_id -package_id $package_id]
+    set local_array(email_address) [contact::message::email_address -party_id $employee_id -package_id $package_id]
+
+
     # Get the locale
     set local_array(locale) [lang::user::site_wide_locale -user_id $employee_id]
 
@@ -445,6 +494,19 @@ ad_proc -private contact::employee::get_not_cached {
 
 ad_proc -public contact::util::get_employee_organization {
     {-employee_id:required}
+    {-package_id ""}
+} {
+    get organization of an employee
+} {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    return [util_memoize [list ::contact::util::get_employee_organization_not_cached -employee_id $employee_id -package_id $package_id]]
+}
+
+ad_proc -public contact::util::get_employee_organization_not_cached {
+    {-employee_id:required}
+    {-package_id:required}
 } {
     get organization of an employee
 } {
@@ -458,7 +520,9 @@ ad_proc -public contact::util::get_employee_organization {
 	and ( object_id_one = :employee_id or object_id_two = :employee_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	lappend contact_list $other_party_id
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id] } {
+	    lappend contact_list $other_party_id
+	}
     }
 
     return $contact_list
