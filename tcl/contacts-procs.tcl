@@ -155,7 +155,7 @@ ad_proc -public contact::util::get_employees_not_cached {
 	and ( object_id_one = :organization_id or object_id_two = :organization_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	if { [contact::visible_p -party_id $other_party_id -package_id $package_id_id] } {
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id] } {
 	    lappend contact_list $other_party_id
 	}
     }
@@ -193,7 +193,7 @@ ad_proc -private contact::util::get_employees_list_of_lists_not_cached {
 	and ( object_id_one = :organization_id or object_id_two = :organization_id )
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
-	if { [contact::visible_p -party_id $other_party_id -package_id $package_id_id] } {
+	if { [contact::visible_p -party_id $other_party_id -package_id $package_id] } {
 	    lappend contact_list [list [person::name -person_id $other_party_id] $other_party_id]
 	}
     }
