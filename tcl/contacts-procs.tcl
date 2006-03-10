@@ -744,6 +744,7 @@ ad_proc -public contact::subsite_user_group {
 
 ad_proc -private contact::person_upgrade_to_user {
     {-person_id ""}
+    {-no_perm_check "f"}
 } {
     Upgrade a person to a user. This proc does not send an email to the newly created user.
 } {
@@ -777,11 +778,18 @@ ad_proc -private contact::person_upgrade_to_user {
 	    # we reset the password in admin mode. this means that an email
 	    # will not automatically be sent.
 	    auth::password::reset -authority_id [auth::authority::local] -username $username -admin
-	    group::add_member \
-		-group_id "-2" \
-		-user_id $person_id \
-		-rel_type "membership_rel"
-	    
+	    if { [string is true $no_perm_check] } {
+		group::add_member \
+		    -no_perm_check \
+		    -group_id "-2" \
+		    -user_id $person_id \
+		    -rel_type "membership_rel"
+	    } else {
+		group::add_member \
+		    -group_id "-2" \
+		    -user_id $person_id \
+		    -rel_type "membership_rel"
+	    }
 	    # Grant the user to update the password on himself
 	    permission::grant -party_id $user_id -object_id $user_id -privilege write
 
