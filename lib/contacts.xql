@@ -4,18 +4,47 @@
 <fullquery name="contacts_pagination">
     <querytext>
 	select 
-		distinct parties.party_id, $sort_item
+		distinct p.party_id, $sort_item
   	from 
-		$last_modified_join parties
-	$left_join
-      	left join cr_items on (parties.party_id = cr_items.item_id) 
-      	left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
+		parties p
+	$left_join, cr_items ci, cr_revisions cr,
         group_distinct_member_map
  	where
-	parties.party_id = group_distinct_member_map.member_id
+	p.party_id = group_distinct_member_map.member_id
+	and ci.item_id = p.party_id and ci.latest_revision = cr.revision_id
         and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
-   	$last_modified_clause
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
+	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.party_id" -revision_id "revision_id"]
+	[template::list::orderby_clause -orderby -name "contacts"]
+      </querytext>
+</fullquery>
+
+<fullquery name="organization_pagination">
+    <querytext>
+	select 
+		o.organization_id
+  	from organizations o,
+	cr_items ci, cr_revisions cr,
+        group_distinct_member_map
+ 	where
+	o.organization_id = group_distinct_member_map.member_id
+        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+	and ci.item_id = o.organization_id and ci.latest_revision = cr.revision_id
+	[contact::search_clause -and -search_id $search_id -query $query -party_id "o.organization_id" -revision_id "revision_id"]
+	[template::list::orderby_clause -orderby -name "contacts"]
+      </querytext>
+</fullquery>
+
+<fullquery name="person_pagination">
+    <querytext>
+	select 
+		p.person_id
+  	from persons p, cr_items ci, cr_revisions cr,
+        group_distinct_member_map
+ 	where
+	p.person_id = group_distinct_member_map.member_id
+        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+	and ci.item_id = p.person_id and ci.latest_revision = cr.revision_id
+	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.person_id" -revision_id "revision_id"]
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>
@@ -28,11 +57,10 @@ select  $extend_query
        parties.party_id,
        parties.email,
        parties.url
-  from $last_modified_join parties
+  from parties
       left join persons on (parties.party_id = persons.person_id)
-      left join organizations on (parties.party_id = organizations.organization_id)
- where 1 = 1
-$last_modified_clause
+      left join organizations on (parties.party_id = organizations.organization_id), cr_items ci, cr_revisions cr
+ where  ci.item_id = party_id and ci.latest_revision = cr.revision_id
 [template::list::page_where_clause -and -name "contacts" -key "party_id"]
 $group_by_group_id
 [template::list::orderby_clause -orderby -name "contacts"]

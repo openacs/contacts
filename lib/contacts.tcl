@@ -105,25 +105,23 @@ set last_modified_clause ""
 switch $orderby {
     "first_names,asc" {
         set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set left_join "left join persons on (p.party_id = persons.person_id)"
 	set sort_item "lower(first_names), lower(last_name)"
     }
     "last_name,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set left_join "left join persons on (p.party_id = persons.person_id)"
 	set sort_item "lower(last_name), lower(first_names)"
     }
     "organization,asc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
+	set left_join "left join organizations on (p.party_id = organizations.organization_id)"
 	set sort_item "lower(organizations.name)"
     }
     "last_modified,desc" {
         set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
-	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
-	set sort_item "acs_objects.last_modified"
-	set last_modified_join "acs_objects, "
-	set last_modified_clause "and parties.party_id = acs_objects.object_id"
+	set left_join ""
+	set sort_item "cr.publish_date"
     }
 }
 
@@ -244,12 +242,21 @@ if { ![exists_and_not_null attr_val_name] && [exists_and_not_null search_id] } {
     set object_type [db_string get_object_type { }]
     switch $object_type {
 	person { 
+	    set page_query_name "person_pagination"
+	    if {[string eq $orderby "organization,asc"]} {
+		set orderby "first_names,asc"
+	    }
 	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
 	}
 	organization { 
+	    set page_query_name "organization_pagination"
+	    if {[string eq $orderby "first_names,asc"] || [string eq $orderby "last_name,asc"]} {
+		set orderby "organization,asc"
+	    }
 	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
 	}
 	party { 
+	    set page_query_name "contacts_pagination"
 	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	}
     }
@@ -325,9 +332,9 @@ template::list::create \
         }
         last_modified {
             label "[_ contacts.Last_Modified]"
-            orderby_asc  "acs_objects.last_modified asc"
-            orderby_desc "acs_objects.last_modified desc"
-        }
+	    orderby_asc "cr.publish_date"
+	    orderby_desc "cr.publish_date"
+       }
 
         default_value first_names,asc
     } -formats {
