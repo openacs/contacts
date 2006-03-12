@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b5" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b6" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -276,6 +276,7 @@
   <msg key="lt_Currently_the_group_">Currently, the group is able to handle the following types of relationships:</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>
   <msg key="lt_Define_a_new_relation">Define a new relationship type</msg>
+  <msg key="lt_Delete_requires_return_url">Deleting an item from history requires a return_url</msg>
   <msg key="lt_Delete_the_selected_C">Delete the selected Contacts</msg>
   <msg key="lt_Delete_the_selectted_">Delete the selectted files</msg>
   <msg key="lt_Delete_this_contact">Completely delete this contact (irreversible action)</msg>
@@ -303,6 +304,7 @@
   <msg key="lt_li_The_role_you_enter">&lt;li&gt; The role you entered \&quot;%pretty_name%\&quot; or the plural \&quot;%pretty_plural%\&quot; already exists.</msg>
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
   <msg key="lt_neither_person_nor_or">neither person nor org type is valid, what happened admin?</msg>
+  <msg key="lt_No_perm_to_delete_from_hist">You do not have permission to delete this item from this contacts history </msg>
   <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
   <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>

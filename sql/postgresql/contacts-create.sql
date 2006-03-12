@@ -128,6 +128,32 @@ create table organization_rels (
                          constraint organization_rels_rel_id_pk primary key
 );
 
+
+-- what objects should not be shown in a contacts history?
+-- although we store deleted by and deleted date
+-- information there is no need to make this an object
+-- because this info is related to other objects
+-- this doesn't warrent permissions or the overhead
+-- in the acs_objects table
+
+create table contact_deleted_history (
+        party_id                integer
+                                constraint contact_deleted_history_party_id_fk references parties(party_id) on delete cascade
+                                constraint contact_deleted_history_party_id_nn not null,
+        object_id               integer
+                                constraint contact_deleted_history_object_id_fk references acs_objects(object_id) on delete cascade
+                                constraint contact_deleted_history_object_id_nn not null,
+        deleted_by              integer
+                                constraint contact_deleted_history_deleted_by_fk references users(user_id) on delete cascade
+                                constraint contact_deleted_history_deleted_by_nn not null,
+        deleted_date            timestamptz default now()
+                                constraint contact_deleted_history_deleted_date not null,
+        unique(party_id,object_id)
+);
+
+-- create the content type
+
+
 \i contacts-package-create.sql
 \i contacts-search-create.sql
 \i contacts-messages-create.sql

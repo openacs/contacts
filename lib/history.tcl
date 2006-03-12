@@ -131,23 +131,50 @@ db_foreach get_messages "
 
 
 template::multirow sort hist -decreasing timestamp
-template::multirow create history date time object_id creation_user user_link include content
+template::multirow create history date time object_id creation_user user_link include content delete_url
+
+set deleted_history [db_list select_deleted_history {}]
+set return_url [string trimright "[ad_conn url]?[ad_conn query]" "?"]
+
+if { [permission::permission_p -party_id $user_id -object_id [ad_conn package_id] -privilege admin] } {
+    set delete_permission "all"
+} else {
+    set delete_permission [string tolower [parameter::get -parameter "DeleteHistoryPermission" -default "no"]]
+}
+
 
 set result_number 1
 template::multirow foreach hist {
-    set timestamp     [lindex [split $timestamp "."] 0]
-    set date          [lc_time_fmt $timestamp "%q"]
-    set time          [string trimleft [lc_time_fmt $timestamp "%X"] "0"]
-#    set object_id     
-#    set creation_user 
-    set user_link     [contact::name -party_id $creation_user]
-#    set content
-#    set include
-    template::multirow append history $date $time $object_id $creation_user $user_link $include $content
-    if { [exists_and_not_null limit] } {
-	incr result_number
-	if { $result_number > $limit } {
-	    break
+    if { [lsearch $deleted_history $object_id] < 0 } {
+	set timestamp     [lindex [split $timestamp "."] 0]
+	set date          [lc_time_fmt $timestamp "%q"]
+	set time          [string trimleft [lc_time_fmt $timestamp "%X"] "0"]
+	#    set object_id     
+	#    set creation_user 
+	set user_link     [contact::name -party_id $creation_user]
+	#    set content
+	#    set include
+	if { [lsearch [list yours all] $delete_permission] < 0 } {
+	    set delete_url ""
+	} else {
+	    set delete_url [export_vars -base "[contact::url -party_id $party_id]history" -url {{delete_object_id $object_id} return_url}]
+	    if { $delete_permission eq "yours" } {
+		# we need to verify that they have permission to delete
+                # this object form history
+		acs_object::get -object_id $object_id -array acs_object
+		if { $user_id ne $acs_object(creation_user) } {
+		    # they do not have permission to delete this object from history
+		    set delete_url ""
+		}
+	    }
+	}
+
+	template::multirow append history $date $time $object_id $creation_user $user_link $include $content $delete_url
+	if { [exists_and_not_null limit] } {
+	    incr result_number
+	    if { $result_number > $limit } {
+		break
+	    }
 	}
     }
 }

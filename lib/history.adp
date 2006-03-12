@@ -5,7 +5,7 @@
 <if @history:rowcount@ gt 0>
   <dl class="comments">
 <multiple name="history">
-    <dt id="@history.object_id@" class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">@history.date@ #contacts.at# @history.time@ @history.user_link@</dd>
+    <dt id="@history.object_id@" class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">@history.date@ #contacts.at# @history.time@ @history.user_link@<if @history.delete_url@> <a href="@history.delete_url@"><img src="/resources/acs-subsite/Delete16.gif" alt="#acs-subsite.Delete#" border="0" title="#acs-subsite.Delete#" /></a></if></dd>
       <dd class="<if @history.creation_user@ eq @user_id@>mine-</if><if @history.rownum@ odd>odd</if><else>even</else>">
    
 	<if @history.include@ nil>
