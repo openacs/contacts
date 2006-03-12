@@ -146,6 +146,18 @@ ad_proc -public -callback contact::after_instantiate {
 } {
 }
 
+ad_proc -public -callback contact::search::query_clauses {
+    {-query:required}
+    {-party_id:required}
+} {
+    This callback is executed by the contact::search::query_clause
+    and allows a site to customize the behavior or the entered
+    query string in the primary contacts search box it should
+    return a list of conditions. These conditions will be joined by 
+    and in the sql query, so if you want it to be or you should 
+    return the conditions in quotes with or's already in place
+} -
+
 ad_proc -public -callback contact::special_attributes::ad_form_values {
     {-party_id:required}
     {-form:required}

@@ -330,29 +330,41 @@ ad_proc -public contact::search::query_clause {
 } {
     set query [string trim $query]
     regsub -all "'" $query "''" query
+
     set query_clauses [list]
+    set callback_query_clauses [callback contact::search::query_clauses -query $query -party_id $party_id]
 
-    # If we have a query, we need to do a subselect with an "in" clause. 
-    # We are assuming that people usually want to get a small number of the
-    # base for the selection, therefore the subselects will return a very small
-    # number of rows, justifying the union cum in clause.
-    if { [string is integer $query] } {
-        lappend query_clauses "$party_id = $query"
-    } elseif { [exists_and_not_null query] } {
-        foreach term $query {
+    if { [llength $callback_query_clauses] > 0 } {
+	# the callback returns a list of the lists from the callbacks
+	foreach callback_clauses $callback_query_clauses {
+	    foreach clause $callback_clauses {
+		lappend query_clauses $clause
+	    }
+	}
+    } else {
 
-            # We want to enable searches with "*", to select all users who's 
-            # last_name starts with "Ab", searching for "Ab*"
-            # For this we check if the term starts or ends with "*" and if yes
-            # we do a regsub to replace the "*" with "%" for reuse in SQL
-            if {[string length [string trim $term "*"]] == [string length $term]} {
-                set term_clause "%${term}%"
-            } else {
-                regsub -all "*" $term "%" term
-            }
+	# If we have a query, we need to do a subselect with an "in" clause. 
+	# We are assuming that people usually want to get a small number of the
+	# base for the selection, therefore the subselects will return a very small
+	# number of rows, justifying the union in clause.
+	if { [string is integer $query] } {
+	    lappend query_clauses "$party_id = $query"
+	} elseif { [exists_and_not_null query] } {
+	    foreach term $query {
+		
+		# We want to enable searches with "*", to select all users who's 
+		# last_name starts with "Ab", searching for "Ab*"
+		# For this we check if the term starts or ends with "*" and if yes
+		# we do a regsub to replace the "*" with "%" for reuse in SQL
+		if {[string length [string trim $term "*"]] == [string length $term]} {
+		    set term_clause "%${term}%"
+		} else {
+		    regsub -all "*" $term "%" term
+		}
 
-            lappend query_clauses "party_id in (select organization_id from organizations where upper(organizations.name) like upper('%${term}%') union select person_id from persons where upper(last_name) like upper('%${term}%') or upper(first_names) like upper ('%${term}%'))"
-        }
+		lappend query_clauses "$party_id in (select organization_id from organizations where upper(organizations.name) like upper('%${term}%') union select person_id from persons where upper(last_name) like upper('%${term}%') or upper(first_names) like upper ('%${term}%'))"
+	    }
+	}
     }
 
     set result {}
