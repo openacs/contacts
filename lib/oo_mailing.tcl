@@ -240,7 +240,7 @@ ad_form -action message \
 	} else {
 	    
 	    # We are not sending the e-mail but write the file back to the user
-	    if {[llength $file_revisions]==1} {
+	    if {[llength $file_revisions]>=1} {
 		cr_write_content -revision_id [lindex $file_revisions 0]
 	    }
 	}

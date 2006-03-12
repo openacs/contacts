@@ -45,7 +45,7 @@ if { $recipients_num <= 1 } {
 	no_callback_p:text(hidden)
 	title:text(hidden),optional
 	{message_type:text(hidden) {value "email"}}
-	{to:text(checkbox),multiple 
+	{to:text(checkbox),multiple,optional
 	    {label "[_ contacts.Recipients]"} 
 	    {options  $recipients }
 	    {html {checked 1}}
@@ -70,7 +70,7 @@ if { $recipients_num <= 1 } {
 	    {section "[_ contacts.Recipients]"}
 	    {html {onclick check_uncheck_boxes(this.checked)}}
 	}
-	{to:text(checkbox),multiple 
+	{to:text(checkbox),multiple,optional
 	    {label "[_ contacts.Recipients]"} 
 	    {options  $recipients }
 	    {html {checked 1}}
@@ -108,22 +108,15 @@ foreach var $export_vars {
     lappend form_elements $element
 }
 
-if { ![exists_and_not_null mime_type] } {
-    set mime_type "text/plain"
-}
-
-set content_list [list $content $mime_type]
-
 append form_elements {
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
 	{section "[_ contacts.Message]"}
     }
-    {content_body:text(richtext),optional
+    {content_body:richtext(richtext),optional
 	{label "[_ contacts.Message]"}
 	{html {cols 55 rows 18}}
-	{value $content_list}
 	{help_text "[_ contacts.lt_remember_that_you_can]"}
     }
     {upload_file:file(file),optional
@@ -170,6 +163,11 @@ ad_form -action $action \
 	    }
 	}
     } -edit_request {
+	if {![exists_and_not_null mime_type]} {
+	    set mime_type "text/plain"
+	}
+	
+	set content_list [list $content $mime_type]
     } -on_submit {
 	
 	# We get the attribute_id of the salutation attribute
@@ -186,6 +184,8 @@ ad_form -action $action \
 
 	set cc_list [split $cc ";"]
 
+	set mime_type [template::util::richtext::get_property format $content_body]
+	set content_body [template::util::richtext::get_property contents $content_body]
 	template::multirow create messages message_type to_addr to_party_id subject content_body
 
 	# Insert the uploaded file linked under the package_id
@@ -199,6 +199,8 @@ ad_form -action $action \
 
 	    lappend file_ids $revision_id
 	}
+
+	set locale [lang::system::site_wide_locale]
 
 	# Send the mail to all parties.
 	foreach party_id $to {
@@ -293,11 +295,9 @@ ad_form -action $action \
 			-file_ids $file_ids \
 			-mime_type $mime_type \
 			-object_id $object_id \
-			-no_callback_p
+			-no_callback
 
 		} else {
-
-#		    ad_return_error "$file_ids" "$content_body :: $mime_type"
 
 		    acs_mail_lite::complex_send \
 			-to_addr $to_addr \
@@ -329,7 +329,7 @@ ad_form -action $action \
 			    -package_id $package_id \
 			    -mime_type $mime_type \
 			    -object_id $object_id \
-			    -no_callback_p
+			    -no_callback
 
 		    } else {
 
@@ -357,7 +357,7 @@ ad_form -action $action \
 				-package_id $package_id \
 				-mime_type "text/html" \
 				-object_id $object_id \
-				-no_callback_p
+				-no_callback
 			} else {
 
 			    acs_mail_lite::complex_send \
@@ -380,7 +380,7 @@ ad_form -action $action \
 				-subject "$subject" \
 				-body "$content_body" \
 				-package_id $package_id \
-				-no_callback_p
+				-no_callback
 
 			} else {
 			    acs_mail_lite::complex_send \
