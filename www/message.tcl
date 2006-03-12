@@ -6,8 +6,8 @@ ad_page_contract {
     @cvs-id $Id$
 } {
     {object_id:integer,multiple,optional}
-    {party_id:integer,multiple,optional}
-    {party_ids:optional}
+    {party_id:multiple,optional}
+    {party_ids ""}
     {message_type ""}
     {message:optional}
     {header_id:integer ""}
@@ -22,6 +22,7 @@ ad_page_contract {
     {to:integer,multiple,optional ""}
     {page:optional 1}
     {context_id:integer ""}
+    {cc ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { ![db_0or1row check_for_it { select 1 from contact_message_types where message_type = :message_type and message_type not in ('header','footer') }] } {
@@ -35,22 +36,38 @@ if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
     set item_id [lindex [split $message "."] 1]
 }
 
-if { [exists_and_not_null party_id] } {
+if {[empty_string_p $party_ids]} {
     set party_ids [list]
-    foreach party_id $party_id {
-	lappend party_ids $party_id
+}
+
+if { [exists_and_not_null party_id] } {
+    foreach p_id $party_id {
+	lappend party_ids $p_id
     }
 }
 	
 if { [exists_and_not_null to] } {
-    set party_ids [list]
     foreach party_id $to {
 	lappend party_ids $party_id
     }
 }
+
+if { [exists_and_not_null cc] } {
+    foreach email $cc {
+	set email_party_id [party::get_by_email -email $email]
+	lappend party_ids $email_party_id
+    }
+
+    # We might not have a party_id
+    if {![exists_and_not_null party_id]} {
+	set party_id $email_party_id
+    }
+}
+
 foreach id $party_ids {
     contact::require_visiblity -party_id $id
 }
+
 set party_count [llength $party_ids]
 set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]

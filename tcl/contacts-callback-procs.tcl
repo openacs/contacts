@@ -346,6 +346,16 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     } -default ""]
 
     if {[empty_string_p $project_id]} {
+	set project_id [db_string get_linked_project_id {
+	    select r.object_id_two as project_id
+	    from acs_data_links r, cr_items p
+	    where r.object_id_one = :folder_id
+	    and r.object_id_two = p.item_id
+	    and p.content_type = 'pm_project'
+	} -default ""]
+    }
+
+    if {[empty_string_p $project_id]} {
 	# no project -> mail to all organization contacts
 	set contact_organizations [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"]
 	set contact_list ""
@@ -368,10 +378,12 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 	upvar $bulk_variable local_var
 	upvar $var_export_list local_list
 	upvar party_ids contact_ids_loc
+	upvar return_url return_url_loc
+	set return_url_loc "[ad_conn url]?[ad_conn query]"
 	set contact_ids_loc $contact_list
 
 	lappend local_var "[_ contacts.Mail_to_contact]" "/contacts/message" "[_ contacts.Mail_to_contact]"
-	lappend local_list "party_ids"
+	lappend local_list "party_ids" "return_url"
 	
 	# Add the message type automatically
 	# lappend local_list "message_type"
