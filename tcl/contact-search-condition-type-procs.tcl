@@ -737,16 +737,17 @@ ad_proc -private contacts::search::condition_type::group {
             } else {
                 set group_pretty ""
             }
+
             switch $operand {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
-#                    set output_code "group_id = $group_id"
-		    set output_code "party_id in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
+#                    set output_code "group_distinct_member_map.group_id = $group_id"
+		    set output_code "${object_type}_id in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
-#                    set output_code "group_id != $group_id"
-		    set output_code "party_id not in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
+#                    set output_code "group_distinct_member_map.group_id != $group_id"
+		    set output_code "${object_type}_id not in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
             }
             if { $request == "pretty" } {

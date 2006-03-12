@@ -167,18 +167,12 @@ ad_proc -public contact::search::results_count_not_cached {
 } {
     Get the total number of results from a search
 } {
-    
 
-# don't know why this is here - matthewg
-# it causes an error though so i removed it 
-#
-#    set type_list [db_list get_object_type {}]
+# Get the results depening on the object_type
+set object_type [db_string get_object_type {} -default "party"]
 
-#    if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
-	return [db_string select_results_count {}]
-#    } else {
-#	return [db_string select_employees_results_count {}]
-#    }
+return [db_string select_${object_type}_results_count {}]
+
 }
 
 ad_proc -private contact::party_id_in_sub_search_clause {
@@ -269,6 +263,16 @@ ad_proc -public contact::search_pretty_not_cached {
 } {
     Get the search in human readable format
 } {
+
+    contact::search::get -search_id $search_id -array "search_info"
+    
+    if { $search_info(object_type) == "person" } {
+	set object_type [_ contacts.people]
+    } elseif { $search_info(object_type) == "organization" } {
+	set object_type [_ contacts.organizations]
+    } else {
+	set object_type [_ contacts.people_or_organizations]
+    }
     
     # the reason we do not put this in the db_foreach statement is because we 
     # can run into problems with the number of database pools we have when a sub
@@ -281,20 +285,12 @@ ad_proc -public contact::search_pretty_not_cached {
 				-type [lindex $condition 0] \
 				-request pretty \
 				-var_list [lindex $condition 1] \
+				-object_type $object_type
 			       ]
     }
 
     if { [llength $conditions] > 0 } {
 
-	contact::search::get -search_id $search_id -array "search_info"
-
-	if { $search_info(object_type) == "person" } {
-	    set object_type [_ contacts.people]
-	} elseif { $search_info(object_type) == "organization" } {
-	    set object_type [_ contacts.organizations]
-	} else {
-	    set object_type [_ contacts.people_or_organizations]
-	}
 
         set results "[_ contacts.Search_for_all_object_type_where]\n"
 
@@ -459,9 +455,9 @@ ad_proc -public contact::search::where_clause_not_cached {
     if { [exists_and_not_null all_or_any] } {
 	set result {}
 	if { $object_type == "person" } {
-	    append result "$party_id = persons.person_id\n"
+	    #	 append result "$party_id = persons.person_id\n"
 	} elseif { $object_type == "organization" } {
-	    append result "$party_id = organizations.organization_id\n"
+	    #    append result "$party_id = organizations.organization_id\n"
 	}
     
 	# the reason we do not put this in the db_foreach statement is because we 
@@ -476,6 +472,7 @@ ad_proc -public contact::search::where_clause_not_cached {
 				       -var_list [lindex $condition 1] \
 				       -revision_id $revision_id \
 				       -party_id $party_id \
+				       -object_type $object_type
 				      ]
 	}
 	

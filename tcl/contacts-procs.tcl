@@ -14,7 +14,7 @@ namespace eval contact::group:: {}
 namespace eval contact::revision:: {}
 namespace eval contact::rels:: {}
 namespace eval contact::employee {}
-
+namespace eval contact::special_attributes {}
 
 ad_proc -public contacts::default_group {
     {-package_id ""}

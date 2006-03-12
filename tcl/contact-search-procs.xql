@@ -34,7 +34,7 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contact::search::results_count_not_cached.select_results_count">
+<fullquery name="contact::search::results_count_not_cached.select_party_results_count">
   <querytext>
     select count(distinct party_id)
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_distinct_member_map
@@ -44,12 +44,37 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contact::search::results_count_not_cached.get_condition_type">
+<fullquery name="contact::search::results_count_not_cached.select_person_results_count">
+  <querytext>
+    select count(distinct person_id)
+      from persons, cr_items, cr_revisions, group_distinct_member_map
+     where persons.person_id = group_distinct_member_map.member_id
+       and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+       and persons.person_id = cr_items.item_id
+       and cr_items.latest_revision = cr_revisions.revision_id
+    [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results_count_not_cached.select_organization_results_count">
+  <querytext>
+    select count(distinct organization_id)
+      from organizations, cr_items, cr_revisions, group_distinct_member_map
+     where organizations.organization_id = group_distinct_member_map.member_id
+       and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+       and organizations.organization_id = cr_items.item_id
+       and cr_items.latest_revision = cr_revisions.revision_id
+    [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
+  </querytext>
+</fullquery>
+
+
+<fullquery name="contact::search::results_count_not_cached.get_object_type">
   <querytext>
 	select
-                distinct type
+                object_type
         from
-                contact_search_conditions
+                contact_searches
         where
                 search_id = :search_id
   </querytext>
