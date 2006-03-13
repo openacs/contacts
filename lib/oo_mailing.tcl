@@ -129,12 +129,6 @@ ad_form -action message \
 	set content_format [template::util::richtext::get_property format $content]
 	set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
 	
-        # Retrieve information about the user so it can be used in the template
-	set user_id [ad_conn user_id]
-        if {![contact::employee::get -employee_id $user_id -array user_info]} {
-            ad_return_error $user_id "User is not an employee"
-        }
-
 	template::multirow create messages revision_id to_addr to_party_id subject content_body
 
 	set file_revisions [list]
@@ -143,8 +137,15 @@ ad_form -action message \
 	set orig_date $date
 
 	foreach party_id $party_ids {
+
             # get the user information
             if {[contact::employee::get -employee_id $party_id -array employee]} {
+		if {![person::person_p -party_id $party_id]} {
+		    set employee(locale) [lang::user::site_wide_locale -user_id $party_id]
+		    set organization_id $party_id
+		} else {
+		    set organization_id $employee(organization_id)
+		}
                 set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $orig_date] "-"] "%q" "$employee(locale)"]
                 set regards [lang::message::lookup $employee(locale) contacts.with_best_regards]
             } else {
@@ -152,6 +153,20 @@ ad_form -action message \
                 break
             }
 	    
+	    # Retrieve information about the creation user so it can be used in the template
+	    # First check if there is an account manager
+	    set account_manager_id [contacts::util::get_account_manager -organization_id $organization_id]
+	    if {[string eq "" $account_manager_id]} {
+		set user_id [ad_conn user_id]
+	    } else {
+		set user_id $account_manager_id
+	    }
+
+	    if {![contact::employee::get -employee_id $user_id -array user_info]} {
+		ad_return_error $user_id "User is not an employee"
+	    }
+
+
             set file [open "${template_path}/content.xml"]
             fconfigure $file -translation binary
             set template_content [read $file]
