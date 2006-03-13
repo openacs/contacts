@@ -52,7 +52,7 @@
        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
        and persons.person_id = cr_items.item_id
        and cr_items.latest_revision = cr_revisions.revision_id
-    [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
+    [contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>
 
@@ -64,7 +64,7 @@
        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
        and organizations.organization_id = cr_items.item_id
        and cr_items.latest_revision = cr_revisions.revision_id
-    [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id"]
+    [contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id"]
   </querytext>
 </fullquery>
 

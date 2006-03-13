@@ -21,15 +21,14 @@
 <fullquery name="organization_pagination">
     <querytext>
 	select 
-		o.organization_id
-  	from organizations o,
-	cr_items ci, cr_revisions cr,
+	organizations.organization_id
+  	from organizations, cr_items ci, cr_revisions cr,
         group_distinct_member_map
  	where
-	o.organization_id = group_distinct_member_map.member_id
+	organizations.organization_id = group_distinct_member_map.member_id
         and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
-	and ci.item_id = o.organization_id and ci.latest_revision = cr.revision_id
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "o.organization_id" -revision_id "revision_id"]
+	and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id
+	[contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id"]
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>
@@ -37,14 +36,14 @@
 <fullquery name="person_pagination">
     <querytext>
 	select 
-		p.person_id
-  	from persons p, cr_items ci, cr_revisions cr,
+	persons.person_id
+  	from persons, cr_items ci, cr_revisions cr,
         group_distinct_member_map
  	where
-	p.person_id = group_distinct_member_map.member_id
+	persons.person_id = group_distinct_member_map.member_id
         and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
-	and ci.item_id = p.person_id and ci.latest_revision = cr.revision_id
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.person_id" -revision_id "revision_id"]
+	and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id
+	[contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id"]
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>
