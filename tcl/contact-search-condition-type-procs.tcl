@@ -92,6 +92,8 @@ ad_proc -private contacts::search::condition_type::attribute {
     {-null_display "- - - - - -"}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
+
+    @param party_id the sql column where a party id can be found (normally something like parties.party_id, but it might be persons.person_id, or organizations.organization_id)
     @param without_arrow_p Show the elementes in the select menu without the "->"
     @param only_multiple_p Only show those elements that have multiple choices
 } {
@@ -697,6 +699,8 @@ ad_proc -private contacts::search::condition_type::group {
     {-object_type ""}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
+
+    @param party_id the sql column where a party id can be found (normally something like parties.party_id, but it might be persons.person_id, or organizations.organization_id)
 } {
     set operand  [ns_queryget "${prefix}operand"]
     set group_id [ns_queryget "${prefix}group_id"]
@@ -742,12 +746,12 @@ ad_proc -private contacts::search::condition_type::group {
                 in {
                     set output_pretty "[_ contacts.lt_The_contact_is_in_the]"
 #                    set output_code "group_distinct_member_map.group_id = $group_id"
-		    set output_code "${object_type}_id in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
+		    set output_code "${party_id} in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
                 not_in {
                     set output_pretty "[_ contacts.lt_The_contact_is_NOT_in]"
 #                    set output_code "group_distinct_member_map.group_id != $group_id"
-		    set output_code "${object_type}_id not in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
+		    set output_code "${party_id} not in ( select gdmm.member_id from group_distinct_member_map gdmm where group_id = $group_id )"
                 }
             }
             if { $request == "pretty" } {
@@ -934,15 +938,15 @@ union
             switch $operand {
 		exists {
 		    set output_pretty [_ contacts.lt_role_exists]
-		    set output_code "party_id in $union"
+		    set output_code "$party_id in $union"
 		}
 		not_exists {
 		    set output_pretty [_ contacts.lt_role_not_exists]
-		    set output_code "party_id not in $union"
+		    set output_code "$party_id not in $union"
 		}
 		max_number {
 		    set output_pretty [_ contacts.lt_At_most_times_role_are_related]
-		    set output_code "party_id in 
+		    set output_code "$party_id in 
 ( select party_id from
 (
 select count(party_id) as rel_count, party_id from
@@ -953,7 +957,7 @@ where rel_count <= $times )"
 		}
 		min_number {
 		    set output_pretty [_ contacts.lt_At_least_times_role_are_related]
-		    set output_code "party_id in 
+		    set output_code "$party_id in 
 ( select party_id from
 (
 select count(party_id) as rel_count, party_id from
@@ -967,7 +971,7 @@ where rel_count >= $times )"
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_in_the_search_search_link]
                     set output_code "
-party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+$party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
                 from acs_rels, acs_rel_types
                where acs_rels.rel_type = acs_rel_types.rel_type
                  and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
@@ -982,7 +986,7 @@ party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.ob
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_not_in_the_search_search_link]
                     set output_code "
-party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+$party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
                 from acs_rels, acs_rel_types
                where acs_rels.rel_type = acs_rel_types.rel_type
                  and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
