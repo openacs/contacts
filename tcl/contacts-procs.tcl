@@ -533,14 +533,7 @@ ad_proc -private contact::flush {
 } {
     Flush memorized information related to this contact
 } {
-    util_memoize_flush "::contact::message::email_address_exists_p_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::message::mailing_address_exists_p_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::name_not_cached -party_id $party_id"
-    util_memoize_flush "::contact::email_not_cached -party_id $party_id"
-    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
-    util_memoize_flush_regexp "contact(.*?)-party_id ${party_id}"
-    util_memoize_flush_regexp "contact(.*?)-employee_id ${party_id}"
+    util_memoize_flush_regexp "contact(.*?)${party_id}"
 }
 
 ad_proc -public contact::name {
@@ -927,117 +920,6 @@ ad_proc -public contact::groups {
             return $group_list
         }
     }
-}
-
-ad_proc -public contact::special_attributes::ad_form_values {
-    -party_id:required
-    -form:required
-} {
-} {
-    set object_type [contact::type -party_id $party_id]
-
-    db_1row get_extra_info {
-	select email, url
-	from parties
-	where party_id = :party_id}
-    set element_list [list email url]
-
-    if { [lsearch [list person user] $object_type] >= 0 } {
-
-	array set person [person::get -person_id $party_id]
-	set first_names $person(first_names)
-	set last_name $person(last_name)
-
-	lappend element_list first_names last_name
-    } elseif {$object_type == "organization" } {
-
-	db_0or1row get_org_info {
-            select name, legal_name, reg_number, notes
-	    from organizations
-	    where organization_id = :party_id}
-	lappend element_list name legal_name reg_number notes
-    }
-
-    foreach element $element_list {
-	if {[exists_and_not_null $element]} {
-	    if {[template::element::exists $form $element]} {
-		template::element::set_value $form $element [set $element]
-	    }
-	}
-    }
-}
-
-ad_proc -public contact::special_attributes::ad_form_save {
-    -party_id:required
-    -form:required
-} {
-} {
-    set object_type [contact::type -party_id $party_id]
-    set element_list [list email url]
-    if { [lsearch [list person user] $object_type] >= 0 } {
-	lappend element_list first_names last_name
-    } elseif {$object_type == "organization" } {
-	lappend element_list name legal_name reg_number notes
-    }
-    foreach element $element_list {
-	if {[template::element::exists $form $element]} {
-	    set value [template::element::get_value $form $element]
-	    switch $element {
-		email {
-		    if {[db_0or1row party_is_user_p {select '1' from users where user_id = :party_id}]} {
-			if {[exists_and_not_null value]} {
-			    set username $value
-			} else {
-			    set username $party_id
-			}
-			acs_user::update -user_id $party_id -username $username
-		    }
-		    party::update -party_id $party_id -email $value -url [db_string get_url {select url from parties where party_id = :party_id} -default {}]
-		}
-		url {
-		    party::update -party_id $party_id -email [db_string get_email {select email from parties where party_id = :party_id} -default {}] -url $value
-		}
-		default {
-		    set $element $value
-		}
-	    }
-        }
-    }
-    if { [lsearch [list person user] $object_type] >= 0 } {
-
-	# first_names and last_name are required
-
-	if {[exists_and_not_null first_names] 
-	    && [exists_and_not_null last_name]} {
-	    person::update -person_id $party_id -first_names $first_names -last_name $last_name
-	} else {
-	    if {![exists_and_not_null first_names]} {
-		error "The object type was person but first_names (a required element) did not exist"
-	    }
-	    if {![exists_and_not_null last_name]} {
-	        error "The object type was person but first_names (a required element) did not exist"
-	    }
-	}
-    } elseif {$object_type == "organization" } {
-
-	# name is required
-
-	if {[exists_and_not_null name]} {
-	    if {![exists_and_not_null legal_name]} {set legal_name "" }
-	    if {![exists_and_not_null reg_number]} {set reg_number "" }
-	    if {![exists_and_not_null notes]} {set notes "" }
-	    db_dml update_org {
-		update organizations
-		set name = :name,
-		legal_name = :legal_name,
-		reg_number = :reg_number,
-		notes = :notes
-		where organization_id = :party_id}
-	} else {
-	    error "The object type was organization but name (a required element) did not exist"
-	}
-    }
-    contact::flush -party_id $party_id
 }
 
 ad_proc -public contacts::get_values {
