@@ -13,7 +13,13 @@
 #
 # Expects:
 # keyword     The keyword to search projects
+# contacts_url The URL for the contacts package to be used.
 # return_url  The return_url to return if no project is found. It would be the same page if empty.
+
+
+if { ![exists_and_not_null contacts_url]} {
+    set contacts_url [ad_conn package_url]
+}
 
 if { ![exists_and_not_null return_url] } {
     set return_url [ad_return_url]
@@ -29,5 +35,5 @@ ad_form -name search_contact -form {
     }
     {return_url:text(hidden) {value $return_url}}
 } -on_submit {
-    ad_returnredirect [export_vars -base [ad_conn package_url] -url {{query $keyword}}]
+    ad_returnredirect [export_vars -base "$contacts_url" -url {{query $keyword}}]
 } -has_submit {1}
