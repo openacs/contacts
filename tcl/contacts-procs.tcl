@@ -325,6 +325,7 @@ ad_proc -public contact::employee::get {
     @return direct_phoneno Direct phone number of the person, use company one if non existing
     @return directfaxno Direct Fax number, use company one if non existing
     @return email email of the person or the company (if there is no email for this person) 
+    @return organization_id of the company (if there is an employing company)
     @return name name of the company (if there is an employing company)
     @return company_name_ext Name extension of the company (if there is one)
     @return address Street of the person (or company)
@@ -424,6 +425,9 @@ ad_proc -private contact::employee::get_not_cached {
 	# Get best/last revision
 	set employer_id [lindex $employer 0]
 	set employer_rev_id [content::item::get_best_revision -item_id $employer_id]
+	
+	# set the info
+	set local_array(organization_id) $employer_id
     }
 
     set company_address_p 0
