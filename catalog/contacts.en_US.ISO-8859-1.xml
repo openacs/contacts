@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b6" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b7" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
@@ -363,6 +363,7 @@
   <msg key="lt_This_users_has_not_be">This users has not been approved</msg>
   <msg key="lt_Title_is_not_shown_in_the_message">Title is not shown in the message, it is used to select the appropriate message.</msg>
   <msg key="lt_Unable_to_retrieve_gr">Unable to retrieve group_id</msg>
+  <msg key="lt_update_contact_if_needed">If needed please update this contact's information.</msg>
   <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Upgrade this person to a user</msg>
   <msg key="lt_We_are_creating_the_c">We are creating the club for this organization. Please wait, this might take a while ...</msg>
