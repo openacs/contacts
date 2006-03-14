@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <queryset>
 
-<fullquery name="get_object_id_one">
+<fullquery name="get_rel_info">
       <querytext>
-select object_id_one
+select *
   from acs_rels
  where ( object_id_one = :party_id or object_id_two = :party_id )
    and rel_id = :rel_id
