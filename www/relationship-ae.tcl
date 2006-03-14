@@ -69,22 +69,18 @@ if { $list_exists_p } {
 if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 
     set existing_rel_id [db_string rel_exists_p {} -default {}]
-    
-    if { [empty_string_p $existing_rel_id] } {
-	set rel_id {}
-	set context_id {}
-	set creation_user [ad_conn user_id]
-	set creation_ip [ad_conn peeraddr]
-	set rel_id [db_exec_plsql create_rel {}]
-        db_dml insert_contact_rel {}
-	#	callback contact::insert_contact_rel -package_id $package_id -form party_ae -object_type $object_type
-        util_user_message -message "[_ contacts.Relationship_Added]"
 
-	# flush cache for employee data
-	util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
-	util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $object_id_one *"
+    if { [empty_string_p $existing_rel_id] } {
+        set rel_id {}
+        set context_id {}
+        set creation_user [ad_conn user_id]
+        set creation_ip [ad_conn peeraddr]
+        set rel_id [db_exec_plsql create_rel {}]
+        db_dml insert_contact_rel {}
+        set message [_ contacts.Relationship_Added]
+        #       callback contact::insert_contact_rel -package_id $package_id -form party_ae -object_type $object_type
     } else {
-        util_user_message -message "[_ contacts.Relationship_Updated]"
+        set message [_ contacts.Relationship_Updated]
     }
     if { $list_exists_p } {
         ams::ad_form::save -package_key "contacts" \
@@ -93,9 +89,23 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
             -form_name "rel_form" \
             -object_id $rel_id
     }
+
+    # flush info on the parties
+    contact::flush -party_id $object_id_one
+    contact::flush -party_id $object_id_two
+
+    # send them on their way
     if { ![exists_and_not_null return_url] } {
-        set return_url "$party_id/relationships"
+        set return_url "[contact::url -party_id $party_id]relationships"
     }
+    set redirect_rel_types [parameter::get -parameter EditDataAfterRel -package_id [ad_conn package_id] -default ""]
+    if { [regexp {\*} $redirect_rel_types match] || [lsearch $redirect_rel_types $rel_type] >= 0 } {
+        # we need to redirect the party to the attribute add/edit page
+        set return_url [export_vars -base "[contact::url -party_id $party_id]edit" -url {return_url}]
+        append message ". [_ contacts.lt_update_contact_if_needed]"
+    }
+
+    util_user_message -message $message
     ad_returnredirect $return_url
     ad_script_abort
 }
