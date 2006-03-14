@@ -7,6 +7,7 @@ ad_page_contract {
 
 } {
     {party_id:integer,notnull}
+    {return_url ""}
 } -validate {
     contact_exists -requires {party_id} {
 	if { ![contact::exists_p -party_id $party_id] && ![ad_form_new_p -key party_id] } {
@@ -43,6 +44,7 @@ append form_elements " [ams::ad_form::elements -package_key "contacts" -object_t
 
 ad_form -name party_ae \
     -mode "edit" \
+    -export {return_url} \
     -form $form_elements \
     -has_edit "1"
 
@@ -183,7 +185,12 @@ ad_form -extend -name party_ae \
     } -after_submit {
 	contact::flush -party_id $party_id
 	contact::search::flush_results_counts
-        ad_returnredirect [contact::url -party_id $party_id]
+
+	if { ![exists_and_not_null return_url] } {
+	    set return_url [contact::url -party_id $party_id] 
+	}
+
+        ad_returnredirect $return_url
 	ad_script_abort
     }
 
