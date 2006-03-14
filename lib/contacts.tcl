@@ -128,7 +128,7 @@ switch $orderby {
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
 
 
-set valid_page_sizes [list 25 50 100 5000]
+set valid_page_sizes [list 25 50 100 500]
 if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
     set page_size [parameter::get -parameter "DefaultPageSize" -default "50"]
 }
@@ -209,7 +209,9 @@ if { $format == "csv" } {
     
 } else {
     set row_list [list \
-		  checkbox {} \
+		  checkbox {
+		      html {style {width: 30px; text-align: center;}}
+		  } \
 		  contact {}]
 }
 if { [exists_and_not_null search_id] } {
