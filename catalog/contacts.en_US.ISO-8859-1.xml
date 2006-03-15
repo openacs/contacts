@@ -265,7 +265,7 @@
   <msg key="lt_Contact_interacted_in_th">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
-  <msg key="lt_Contact_not_interacted_i">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_Contact_not_interacted_i">Contact last interaction not in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
