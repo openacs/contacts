@@ -262,8 +262,10 @@
   <msg key="lt_Contact_has_never_log">Contact has never logged in</msg>
   <msg key="lt_Contact_has_not_logge">Contact has not logged in within the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_in_the_search_search_link">in the search %search_link%</msg>
+  <msg key="lt_Contact_interacted_in_th">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_Contact_not_interacted_i">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
@@ -296,6 +298,7 @@
   <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above critera. So, for example if our contacts database contains these entries:</msg>
   <msg key="lt_Instance_Permissions_">Instance Permissions - Not done yet</msg>
   <msg key="lt_Insufficient_Permissi">Insufficient Permissions</msg>
+  <msg key="lt_interacted_in_the_last_-">last interaction in the last -&gt;</msg>
   <msg key="lt_Invalid_input_you_spe">Invalid input, you specified form as '%form%' but should only specify: top, bottom, none</msg>
   <msg key="lt_labels_are_not_implem">labels are not implemented yet</msg>
   <msg key="lt_Last_Name_contains_Se">&quot;Last Name&quot; contains &quot;Search_Word&quot; or</msg>
@@ -307,6 +310,7 @@
   <msg key="lt_No_perm_to_delete_from_hist">You do not have permission to delete this item from this contacts history </msg>
   <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
   <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
+  <msg key="lt_not_interacted_in_the_la">last interacted not in the last -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>
   <msg key="lt_of_the_following_cond">of the following conditions:&lt;br&gt;</msg>
   <msg key="lt_Once_done_printing_plural">&lt;p&gt;When you have printed these letters you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt; or create &lt;a href=&quot;%labels_url%&quot;&gt;labels&lt;/a&gt; or &lt;a href=&quot;%envelopes_url%&quot;&gt;envelopes&lt;/a&gt; for these letters.&lt;p&gt;</msg>

@@ -550,6 +550,8 @@ ad_proc -private contacts::search::condition_type::contact {
                                      [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
                                      [list "[_ contacts.lt_updated_in_the_last_-]" "update"] \
                                      [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
+                                     [list "[_ contacts.lt_interacted_in_the_last_-]" "interacted"] \
+                                     [list "[_ contacts.lt_not_interacted_in_the_la]" "not_interacted"] \
                                      [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
                                      [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"] \
                                      [list "[_ contacts.lt_created_in_the_last_-]" "created"] \
@@ -639,6 +641,26 @@ ad_proc -private contacts::search::condition_type::contact {
                 not_update {
                     set output_pretty "[_ contacts.lt_Contact_not_updated_i]"
                     set output_code   "CASE WHEN ( select creation_date from acs_objects where object_id = $revision_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
+                }
+                interacted {
+		    if { [util_memoize [list ::db_table_exists acs_mail_log]] } {
+			# mail-tracking is installed so we use this table as well as the contact_message_log
+			set interacted_table "( select recipient_id, sent_date from acs_mail_log union select recipient_id, sent_date from contact_message_log ) as messages"
+		    } else {
+			set interacted_table "contact_message_log"
+		    }
+                    set output_pretty "[_ contacts.lt_Contact_interacted_in_th]"
+                    set output_code   "CASE WHEN ( select distinct on (recipient_id) sent_date from $interacted_table where recipient_id = $party_id order by recipient_id, sent_date desc ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
+                }
+                not_interacted {
+		    if { [util_memoize [list ::db_table_exists acs_mail_log]] } {
+			# mail-tracking is installed so we use this table as well as the contact_message_log
+			set interacted_table "( select recipient_id, sent_date from acs_mail_log union select recipient_id, sent_date from contact_message_log ) as messages"
+		    } else {
+			set interacted_table "contact_message_log"
+		    }
+                    set output_pretty "[_ contacts.lt_Contact_not_interacted_i]"
+                    set output_code   "CASE WHEN ( select distinct on (recipient_id) sent_date from $interacted_table where recipient_id = $party_id order by recipient_id, sent_date desc ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
                 comment {
                     set output_pretty "[_ contacts.lt_Contact_commented_on_]"
