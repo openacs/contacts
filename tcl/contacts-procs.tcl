@@ -946,6 +946,10 @@ ad_proc -public contacts::person::new {
 
     # Add to default group
     set default_group_id [contacts::default_group -package_id $contacts_package_id]
+    group::add_member \
+	-group_id $default_group_id \
+	-user_id $person_id \
+	-rel_type "membership_rel"
 
     # Store the AMS attribute
     set object_id [contact::revision::new -party_id $person_id]
