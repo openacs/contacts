@@ -13,6 +13,7 @@ namespace eval contact::util:: {}
 namespace eval contact::group:: {}
 namespace eval contact::revision:: {}
 namespace eval contact::rels:: {}
+namespace eval contacts::person:: {}
 namespace eval contact::employee {}
 namespace eval contact::special_attributes {}
 
@@ -925,6 +926,36 @@ ad_proc -public contact::groups {
         }
     }
 }
+
+ad_proc -public contacts::person::new {
+    {-first_names:required}
+    {-last_name:required}
+    {-email:required}
+    {-contacts_package_id ""}
+} {
+    Insert a new person into contacts
+    This will add them to the default group and add the ams attributes.
+} {
+
+    if {[string eq "" $contacts_package_id]} {
+	set contacts_package_id [ad_conn package_id]
+    } 
+
+    # Create the new person
+    set person_id [person::new -first_names $first_names -last_name $last_name -email $email]
+
+    # Add to default group
+    set default_group_id [contacts::default_group -package_id $contacts_package_id]
+
+    # Store the AMS attribute
+    set object_id [contact::revision::new -party_id $person_id]
+    ams::attribute::save::text -object_id $object_id -attribute_name "first_names" -value "$first_names" -object_type "person"
+    ams::attribute::save::text -object_id $object_id -attribute_name "last_name"  -value "$last_name" -object_type "person"
+    ams::attribute::save::text -object_id $object_id -attribute_name "email" -value "$email" -object_type "person"
+    
+    return $person_id
+}
+
 
 ad_proc -public contacts::get_values {
     {-attribute_name ""}
