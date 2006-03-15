@@ -82,6 +82,30 @@ ad_proc -private contacts::default_groups_not_cached {
     }
 }
 
+ad_proc -private contacts::create_revisions_sweeper {
+} {
+    So that contacts searches work correctly, and quickly
+    every person or organization in the system
+    needs an associated content_item and live revision
+    this could be done with left joins on persons and organizations
+    tables but its slower so we create the necessary item_ids
+    for person or organization objects that were not created
+    by contacts (ones created by contacts automatically get
+    associated item_id and live_revisions.
+} {
+    db_foreach get_persons_without_items {} {
+	ns_log notice "contacts::create_revisions_sweeper creating content_item and content_revision for party_id: $person_id"
+	contact::revision::new -party_id $person_id
+    }
+    db_foreach get_organizations_without_items {} {
+	ns_log notice "contacts::create_revisions_sweeper creating content_item and content_revision for organization_id: $organization_id"
+	contact::revision::new -party_id $organization_id
+    }
+    if { ![info exists person_id] && ![info exists organization_id] } {
+	ns_log notice "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
+    }
+}
+
 ad_proc -private contact::util::generate_filename {
     {-title:required}
     {-extension:required}

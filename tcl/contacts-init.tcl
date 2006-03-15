@@ -6,6 +6,17 @@ ad_library {
     @creation-date 2004-08-16
 }
 
+# This will be run every 5 minutes, so that if other
+# packages create objects (such as users creating
+# accounts for themselves) content_items and content_revisions
+# are automatically create. This is needed for contacts
+# searches to work correctly.
+ad_schedule_proc -thread t 300 contacts::create_revisions_sweeper
+# we also run it once now
+contacts::create_revisions_sweeper
+
+
+
 if {[empty_string_p [info procs callback]]} {
 
     ns_log notice "CONTACTS: callback proc didn't exist so we are adding it here"

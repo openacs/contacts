@@ -26,6 +26,22 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contacts::create_revisions_sweeper.get_persons_without_items">
+  <querytext>
+    select person_id
+      from persons
+     where person_id not in ( select item_id from cr_items )
+  </querytext>
+</fullquery>
+
+<fullquery name="contacts::create_revisions_sweeper.get_organizations_without_items">
+  <querytext>
+    select organization_id
+      from organizations
+     where organization_id not in ( select item_id from cr_items )
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::util::generate_filename.get_parties_existing_filenames">
   <querytext>
     select name
