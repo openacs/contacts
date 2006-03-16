@@ -77,13 +77,6 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
         set creation_ip [ad_conn peeraddr]
         set rel_id [db_exec_plsql create_rel {}]
         db_dml insert_contact_rel {}
-
-	# flush cache for employee data
-	util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $object_id_one"
-	util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $object_id_one *"
-	util_memoize_flush_regexp "::contact::util::get_employee_organization_not_cached -employee_id $object_id_one *"
-	util_memoize_flush_regexp "::contact::util::get_employees_not_cached -organization_id $object_id_two *"
-
         set message [_ contacts.Relationship_Added]
         #       callback contact::insert_contact_rel -package_id $package_id -form party_ae -object_type $object_type
     } else {
