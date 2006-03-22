@@ -325,6 +325,8 @@ ad_proc -public contact::oo::convert {
     regsub -all -nocase "<p>" $content "<text:line-break/>" content
     regsub -all -nocase "&nbsp;" $content " " content
     regsub -all -nocase "</p>" $content "<text:line-break/>" content
+    regsub -all -nocase "a href=" $content "text:a xlink:type=\"simple\" xlink:href=" content
+    regsub -all -nocase "/a" $content "/text:a" content
     return [string trim $content]
 }
     
