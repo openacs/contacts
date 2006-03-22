@@ -125,10 +125,6 @@ ad_form -action message \
 	    template::element set_error message content "[_ contacts.Message_is_required]"
 	}
 	
-        # Now parse the content for openoffice
-	set content_format [template::util::richtext::get_property format $content]
-	set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
-	
 	template::multirow create messages revision_id to_addr to_party_id subject content_body
 
 	set file_revisions [list]
@@ -166,6 +162,16 @@ ad_form -action message \
 		ad_return_error $user_id "User is not an employee"
 	    }
 
+	    # Now parse the content for openoffice
+	    set content_format [template::util::richtext::get_property format $content]
+	    set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
+	    eval [template::adp_compile -string $content]
+	    set content $__adp_output
+
+	    # And do the same for PS
+	    eval [template::adp_compile -string $ps]
+	    set ps $__adp_output
+	    set ps [contact::oo::convert -content $ps]
 
             set file [open "${template_path}/content.xml"]
             fconfigure $file -translation binary
