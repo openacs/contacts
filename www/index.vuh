@@ -18,9 +18,7 @@ if { [string is integer $party_id] } {
 }
 set action [lindex $file_list 1]
 
-
 callback contacts::redirect -party_id $party_id -action $action
-
 
 
 if { $party_is_contact_p } {
@@ -79,6 +77,7 @@ if { $party_is_contact_p } {
        	   ad_script_abort
         }
 } else {
+
         switch $file_url {
 	   "add/person" {
                if { ![ns_queryexists object_type]  } {

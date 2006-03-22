@@ -42,7 +42,9 @@ if {[empty_string_p $party_ids]} {
 
 if { [exists_and_not_null party_id] } {
     foreach p_id $party_id {
-	lappend party_ids $p_id
+	if {[lsearch $party_ids $party_id] < 0} {
+	    lappend party_ids $p_id
+	}
     }
 }
 	
