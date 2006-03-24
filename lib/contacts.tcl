@@ -150,6 +150,7 @@ if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] } {
 template::multirow create bulk_acts pretty link detailed
 template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]"
 template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
+template::multirow append bulk_acts "[_ contacts.Add_Relationship]" "${base_url}relationship-bulk-add" "[_ contacts.lt_Add_relationship_to_sel]"
 template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
 if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
     set admin_p 1

@@ -4,6 +4,8 @@
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
   <msg key="--none--">-- None --</msg>
+  <msg key="--select_a_person--">-- select a person --</msg>
+  <msg key="--select_an_organization--">-- select an organization --</msg>
   <msg key="--select_one--">--select one--</msg>
   <msg key="Action">Action</msg>
   <msg key="Actions">Actions</msg>
@@ -23,6 +25,7 @@
   <msg key="Add_new_in_Group">Add new %object_type% selected groups</msg>
   <msg key="Add_Organization">Add Organization</msg>
   <msg key="Add_Person">Add Person</msg>
+  <msg key="Add_Relationship">Add Relationship</msg>
   <msg key="Add_Search">Add Search</msg>
   <msg key="Add_Signature">Add Signature</msg>
   <msg key="Add_the_selected_contacts_to_a_category">Add the selected contacts to a category</msg>
@@ -131,6 +134,7 @@
   <msg key="Default_attributes">Default attributes</msg>
   <msg key="Delete">Delete</msg>
   <msg key="Delete_from">Delete</msg>
+  <msg key="dependent_on_role_of_related_contact">dependent on role of related contact</msg>
   <msg key="Description">Description:</msg>
   <msg key="description_help">A short description of what the subquery does.</msg>
   <msg key="Details">Details</msg>
@@ -220,6 +224,7 @@
   <msg key="lt_-contact_link-_was_upgraded_to_a_user">%contact_link% was upgraded to a user</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
   <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
+  <msg key="lt_Add_relationship_to_sel">Add relathionship to the select contacts</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
@@ -328,9 +333,13 @@
   <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {mailing_address}, {directphone} and {date}</msg>
   <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
+  <msg key="lt_Remove_others_of_this_role_from_these_contacts">Remove all other relationships of this type for these contacts</msg>
+  <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Remove all other relationships of this type for the related contact</msg>
   <msg key="lt_role_exists">%role% exists</msg>
   <msg key="lt_role_in_the_search_search_link">%role% in the search %search_link%</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% not in the search %search_link%</msg>
+  <msg key="lt_Search_again_over_50_orgs">Search again - over 50 organizations found...</msg>
+  <msg key="lt_Search_again_over_50_people">Search again - over 50 people found...</msg>
   <msg key="lt_Some_of_the_required_">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:</msg>
   <msg key="lt_Some_of_the_required__1">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:</msg>
   <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
@@ -366,6 +375,9 @@
   <msg key="lt_This_user_is_awaiting">This user is awaiting administrator approval</msg>
   <msg key="lt_This_users_has_not_be">This users has not been approved</msg>
   <msg key="lt_Title_is_not_shown_in_the_message">Title is not shown in the message, it is used to select the appropriate message.</msg>
+  <msg key="lt_To_many_contacts_found_search_again">To many search results please search again to select a person or an organization</msg>
+  <msg key="lt_To_many_orgs_found_search_again">To many search results please search again to select an organization</msg>
+  <msg key="lt_To_many_people_found_search_again">To many search results please search again to select a person</msg>
   <msg key="lt_Unable_to_retrieve_gr">Unable to retrieve group_id</msg>
   <msg key="lt_update_contact_if_needed">If needed please update this contact's information.</msg>
   <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
@@ -462,6 +474,7 @@
   <msg key="Person">Person</msg>
   <msg key="person">person</msg>
   <msg key="Person_Form">Person Form</msg>
+  <msg key="Please_choose_a_contact">Please choose a contact</msg>
   <msg key="pp">pp.</msg>
   <msg key="Pretty_name">Pretty Name</msg>
   <msg key="pretty_name_help">The Pretty Name to use in the list label.</msg>
@@ -483,6 +496,7 @@
   <msg key="READ_THESE">READ THESE</msg>
   <msg key="Recipients">Recipients</msg>
   <msg key="Refund">Refund</msg>
+  <msg key="Related_contact">Related contact</msg>
   <msg key="Relationship">Relationship</msg>
   <msg key="Relationship_Added">Relationship Added</msg>
   <msg key="Relationship_Deleted">Relationship Deleted</msg>
@@ -500,7 +514,9 @@
   <msg key="Return_to_history">Return to history</msg>
   <msg key="Return_to_title">Return to %title%</msg>
   <msg key="Role">Role</msg>
+  <msg key="Role_for_these_contacts">Role for these contacts</msg>
   <msg key="Role_Name">Role Name</msg>
+  <msg key="Role_of_related_contact">Role of related contact</msg>
   <msg key="Role_One">Role One</msg>
   <msg key="Role_Singular">Role Singular</msg>
   <msg key="Role_Two">Role Two</msg>
@@ -512,6 +528,7 @@
   <msg key="save_this_search_">Save this Search</msg>
   <msg key="Saved_Searches">Saved Searches</msg>
   <msg key="Search">Search</msg>
+  <msg key="Search_again">Search again...</msg>
   <msg key="search_contact">Search contact</msg>
   <msg key="Search_Existing">Search Existing</msg>
   <msg key="Search_for">Search for</msg>
@@ -557,6 +574,8 @@
   <msg key="The_search_-title-_was_copied_to_your_searches">The search &quot;%title%&quot; was copied to your searches</msg>
   <msg key="The_search_-title-_was_deleted">The search &quot;%title%&quot; was deleted</msg>
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
+  <msg key="The_selected_relationship_requires_related_org">The selected relationship requires that the related contact be an organization</msg>
+  <msg key="The_selected_relationship_requires_related_person">The selected relationship requires that the related contact be a person</msg>
   <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use it's employer email (%emp_addr%)</msg>
   <msg key="this_var_name">This &quot;Variable Name&quot; is already present</msg>
   <msg key="Times">times</msg>
