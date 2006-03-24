@@ -1,4 +1,4 @@
-`<?xml version="1.0"?>
+<?xml version="1.0"?>
 <queryset>
 
 <fullquery name="get_valid_object_types">
