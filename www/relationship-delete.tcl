@@ -36,8 +36,8 @@ db_1row delete_rel {}
 
 
 # flush cache for relationship data
-contact::flush -party_id party_id
-contact::flush -party_id other_party_id
+contact::flush -party_id $party_id
+contact::flush -party_id $other_party_id
 
 
 if { ![exists_and_not_null return_url] } {
