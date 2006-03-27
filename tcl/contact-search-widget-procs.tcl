@@ -155,7 +155,7 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
         # no search results so return text entry back to the user
 
         catch { unset element(options) }
-        template::element::set_error $element(form_id) $element_id [_ contacts.lt_not_matches_for_-query-]
+        template::element::set_error $element(form_id) $element_id [_ contacts.lt_no_matches_for_-query-]
 
     } else {
         # we need to return a select list
