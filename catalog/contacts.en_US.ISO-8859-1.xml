@@ -225,6 +225,8 @@
   <msg key="lt_Add_new_in_Selected_Groups">Add new %object_type% and insert into selected groups</msg>
   <msg key="lt_Add_new_relsrelations">Add new %rels.relationship%</msg>
   <msg key="lt_Add_relationship_to_sel">Add relathionship to the select contacts</msg>
+  <msg key="lt_Add_relationship_to_these_orgs">Add relationship to these organizations</msg>
+  <msg key="lt_Add_relationship_to_these_people">Add relationship to these people</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
@@ -312,6 +314,7 @@
   <msg key="lt_li_The_role_you_enter">&lt;li&gt; The role you entered \&quot;%pretty_name%\&quot; or the plural \&quot;%pretty_plural%\&quot; already exists.</msg>
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
   <msg key="lt_neither_person_nor_or">neither person nor org type is valid, what happened admin?</msg>
+  <msg key="lt_no_matches_for_-query-">No matches for '%query%'</msg>
   <msg key="lt_No_perm_to_delete_from_hist">You do not have permission to delete this item from this contacts history </msg>
   <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
   <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
