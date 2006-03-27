@@ -77,8 +77,8 @@ ad_form -name "add_edit" -method "GET" -export {party_ids return_url} -form {
 	{label ""}
 	{options {{"[_ contacts.lt_Remove_others_of_this_role_from_these_contacts]" 1}}}
     }
-    {people:text(inform) {label "[_ tasks.lt_Add_relationship_to_these_people]"}}
-    {organizations:text(inform) {label "[_ tasks.lt_Add_relationship_to_these_orgs]"}}
+    {people:text(inform) {label "[_ contacts.lt_Add_relationship_to_these_people]"}}
+    {organizations:text(inform) {label "[_ contacts.lt_Add_relationship_to_these_orgs]"}}
 }
 
 if { $role_two ne "" && $role_one eq "" } {
