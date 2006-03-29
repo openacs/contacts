@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
     
-    <version name="1.2b7" url="http://openacs.org/repository/download/apm/contacts-1.2b7.apm">
+    <version name="1.2b8" url="http://openacs.org/repository/download/apm/contacts-1.2b8.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2006-03-14</release-date>
+        <release-date>2006-03-29</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b7"/>
+        <provides url="contacts" version="1.2b8"/>
         <requires url="acs-datetime" version="4.1"/>
         <requires url="acs-events" version="0.5d3"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
@@ -26,8 +26,8 @@
 
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
-            <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
             <callback type="after-upgrade"  proc="contacts::install::package_upgrade"/>
+            <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
         </callbacks>
         <parameters>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AcceptableFileUploadMIMETypes"  default="*" description="* for any. CSV of acceptable MIME Types for File Upload" section_name="File Upload"/>
@@ -52,6 +52,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DefaultPersonOrganAttributeExtension"  description="List names of the attributes that will extend a search for a person or an organization separated by &quot;;&quot;." section_name="Attribute Extensions"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DefaultPortalLayout"  default="50" description="The default portlet"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DefaultPortletLayout"  default="/packages/contacts/lib/portlet" description="The src of the default portlet layout"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DefaultTasks"  description="A semi-colon (;) delimited list of message-keys representing standard tasks that should be displayed as a drop down on the task add screen (if tasks is installed on the system)." section_name="Tasks Integration"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DefaultViewAttributes"  default="{email} {home_phone} {(h)} {work_phone} {(w)} {mobile_phone} {(m)}" description="The default attributes to view on the main contact page. This should be a list of attribute_name display_code to show for the attribute, the display code will only show up if the person/contact has a value for that attribute."/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DeleteHistoryPermission"  default="no" description="Default 'no'. Valid options are: 'no', 'yours' or 'all'. If set to 'yours' then you can only delete history that was created by you (i.e. the acs_objects tables created_user is your user_id). If set to 'all' you can delete any history item. This does not actually delete the object, its just hidden because an entry is made in the contact_deleted_history table. NOTE: people with admin rights on the package instance are automatically given 'all' permission."/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DisableCSV"  default="0" description="Default '0'. If set to '1' people will not be able to download a csv of the contacts attributes displayed on this contact instances front page."/>
