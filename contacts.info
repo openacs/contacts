@@ -7,14 +7,18 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
     
-    <version name="1.2b8" url="http://openacs.org/repository/download/apm/contacts-1.2b8.apm">
+    <version name="1.2b9" url="http://openacs.org/repository/download/apm/contacts-1.2b9.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
+<<<<<<< contacts.info
+        <release-date>2006-03-31</release-date>
+=======
         <release-date>2006-03-29</release-date>
+>>>>>>> 1.69
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b8"/>
+        <provides url="contacts" version="1.2b9"/>
         <requires url="acs-datetime" version="4.1"/>
         <requires url="acs-events" version="0.5d3"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
