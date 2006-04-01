@@ -478,16 +478,20 @@ if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
 }
 
 
-set limit_clause ""
-if { $format != "csv" } {
-    if { $page_size ne "" } {
-	if { $page eq "" } { set page 1 }
-	set limit_clause "limit $page_size offset [expr [expr $page - 1 ] * $page_size]"
-    }
-}
-set select_query "select party_id from ( [db_map $page_query_name] $limit_clause) party_query"
+
+
 
 # extend the multirow
+template::list::get_reference -name contacts
+if { [empty_string_p $list_properties(page_size)] || $list_properties(page_size) == 0 } {
+    # we give an alias that won't likely be used in the contacts::multirow extend callbacks
+    # because those callbacks may have references to a parties table and we don't want 
+    # postgresql to think that this query belongs to that table.
+    set select_query " select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
+} else {
+    set select_query [template::list::page_get_ids -name "contacts"]
+}
+
 contacts::multirow \
     -extend $extended_columns \
     -multirow contacts \
