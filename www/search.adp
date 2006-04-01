@@ -2,35 +2,21 @@
 
 <formtemplate id="advanced_search" style="../../../contacts/resources/forms/inline"></formtemplate>
 
-<br />
-<br />
 <if @search_exists_p@>
-    <table>
-    <tr>
-        <td>
-        <formtemplate id="extend_attributes" style="../../../contacts/resources/forms/inline"></formtemplate>
-        </td>
-	<if @attribute_values@ not nil>
-        <td>
-	    <small>
-	    <b>@show_default_names;noquote@</b> @show_names;noquote@ 	
-  	    ( <a href="search?search_id=@search_id@">#contacts.Clear#</a> )
-	    <table><tr><td>
-            <form action="@package_url@">
-	        <input type="hidden" name="attr_val_name" value="@attr_val_name@">
-	        <input type="hidden" name="search_id" value="@search_id@">
-		<input type="submit" value="#contacts.Go#" style="font-size: 8px;">
-	    </form></td><td>
-            <form action="save-attribute">
-	        <input type="hidden" name="attr_val_name" value="@attr_val_name@">
-	        <input type="hidden" name="search_id" value="@search_id@">
-		<input type="submit" value="#contacts.Save#" style="font-size: 8px;">
-	    </form></td></tr></table>
-            </small>
-        </td>
-	</if>
-   </tr>
-   </table>
+<br />
+<br />
+<if @add_columns@ not nil or @remove_columns@ not nil>
+<table cellpadding="0" cellspacing="0" border="0">
+  <tr>
+  <if @add_columns@ not nil>
+    <td><formtemplate id="add_column_form" style="../../../contacts/resources/forms/inline"></formtemplate></td>
+  </if>
+  <if @remove_columns@ not nil>
+    <td><formtemplate id="remove_column_form" style="../../../contacts/resources/forms/inline"></formtemplate></td>
+  </if>
+  </tr>
+</table>
+</if>
 </if>
 
 

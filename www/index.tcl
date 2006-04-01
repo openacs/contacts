@@ -16,7 +16,7 @@ ad_page_contract {
     {aggregate_attribute_id ""}
     {aggregate_extend_id:multiple ""}
     {extend_values:optional ""}
-    {attr_val_name:optional ""}
+    {extended_columns:optional ""}
 }
 
 if { [exists_and_not_null add_person] } {
@@ -26,6 +26,20 @@ if { [exists_and_not_null add_person] } {
     ad_returnredirect "add/organization"
     ad_script_abort
 }
+
+set extended_columns [ns_queryget extended_columns]
+set add_column       [ns_queryget add_column]
+set remove_column    [ns_queryget remove_column]
+if { $extended_columns ne "" && $remove_column ne "" } {
+    set lindex_id [lsearch -exact $extended_columns $remove_column]
+    if { $lindex_id >= 0 } {
+	set extended_columns [lreplace $extended_columns $lindex_id $lindex_id]
+    }
+}
+if { $add_column ne "" } {
+    lappend extended_columns $add_column
+}
+
 
 set aggregated_p 0
 if {[exists_and_not_null aggregate_attribute_id] } {
@@ -83,7 +97,7 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
     }
 }
 
-ad_form -name "search" -method "GET" -export {orderby page_size format} -form $form_elements \
+ad_form -name "search" -method "GET" -export {orderby page_size format extended_columns} -form $form_elements \
     -on_request {
     } -edit_request {
     } -on_refresh {

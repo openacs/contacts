@@ -14,6 +14,6 @@
 	base_url="@package_url@" 
 	extend_p="@extend_p@" 
 	extend_values="@extend_values@"
-	attr_val_name="@attr_val_name@"
+	search_id="@search_id@"
    >
 </else>

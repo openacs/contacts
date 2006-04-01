@@ -60,6 +60,17 @@ ad_proc -public contact::search::get {
     db_1row select_search_info {} -column_array row
 }
 
+ad_proc -public contact::search::get_extensions { 
+    -search_id:required
+} {
+} {
+    return [db_list get_search_exensions {
+	    select extend_column
+	      from contact_search_extend_map
+	     where search_id = :search_id
+           }]
+}
+
 ad_proc -public contact::search::update {
     {-search_id ""}
     {-title ""}

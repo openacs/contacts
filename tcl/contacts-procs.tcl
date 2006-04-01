@@ -106,6 +106,40 @@ ad_proc -private contacts::create_revisions_sweeper {
     }
 }
 
+ad_proc -public contacts::multirow {
+    {-extend ""}
+    {-multirow}
+    {-select_query}
+    {-party_id_column "party_id"}
+} {
+    This procedure extends a contacts multirow by the type.key pairs specified as 
+    a list as the extend param. The supplied select query will return a list of
+    party_ids to the callback proc... this proc is then to use the subselct
+    in their retrieval of the values requested. A list of lists, i.e.
+    {{party_id1 value1} {party_id2 value2}}
+    this procedure then takes that list of lists and matches values with parties
+    and extends the multirow provided with those values
+} {
+    foreach id $extend {
+	set ${id}__list ""
+	regexp {^(.*?)__(.*)$} $id match type key
+	set results [callback contacts::multirow::extend -type $type -key $key -select_query $select_query]
+	foreach result $results {
+	    if { $result ne "" } {
+		array set "${id}__array" $result
+	    }
+	}
+	template::multirow extend $multirow $id
+    }
+    template::multirow foreach $multirow {
+	foreach id $extend {
+	    if { [info exists ${id}__array(${party_id})] } {
+		set $id [set ${id}__array(${party_id})]
+	    }
+	}
+    }
+}
+
 ad_proc -private contact::util::generate_filename {
     {-title:required}
     {-extension:required}

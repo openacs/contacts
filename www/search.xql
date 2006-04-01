@@ -1,6 +1,31 @@
 <?xml version="1.0"?>
 <queryset>
 
+<fullquery name="condition_exists_p">
+      <querytext>
+    select owner_id
+      from contact_searches
+     where search_id = :search_id
+      </querytext>
+</fullquery>
+
+<fullquery name="delete_column">
+      <querytext>
+    delete from contact_search_extend_map
+     where search_id = :search_id
+       and extend_column = :remove_column
+      </querytext>
+</fullquery>
+
+<fullquery name="insert_column">
+      <querytext>
+    insert into contact_search_extend_map
+           ( search_id, extend_column )
+           values
+           ( :search_id , :add_column )
+      </querytext>
+</fullquery>
+
 <fullquery name="contacts_pagination">
       <querytext>
     select gmm.member_id as party_id
@@ -147,7 +172,7 @@
     </querytext>
 </fullquery>
 
-<fullquery name="get_em">
+<fullquery name="get_search_info">
     <querytext>
 	select 
 		title, 
@@ -158,6 +183,14 @@
 		contact_searches 
 	where 
 		search_id = :search_id 
+    </querytext>
+</fullquery>
+
+<fullquery name="selectqueries">
+    <querytext>
+        select condition_id, type as query_type, var_list as query_var_list
+          from contact_search_conditions
+         where search_id = :search_id
     </querytext>
 </fullquery>
 

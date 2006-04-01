@@ -83,3 +83,104 @@ ad_proc -public contact::extend::option_info {
 } {
     return [db_list_of_lists get_options { }]
 }
+
+
+
+
+
+
+
+
+
+
+
+namespace eval template::widget {}
+
+ad_proc -public template::widget::select_with_optgroup { element_reference tag_attributes } {
+
+    upvar $element_reference element
+
+    if { [info exists element(html)] } {
+        array set attributes $element(html)
+    }
+
+    array set attributes $tag_attributes
+    set options_list $element(options)
+    set widget_name $element(name)
+    set element_mode $element(mode)
+
+    # edit...
+    # Create an array for easier testing of selected values
+    template::util::list_to_lookup $element(values) values
+
+    if { ![string equal $element(mode) "edit"] } {
+	# this is the same as the menu display.
+        # we may want to customize it to use the optgroup
+        # as some sort of heading for certain options
+        set selected_list [list]
+
+        foreach option $options_list {
+	    
+            set label [lindex $option 0]
+            set value [lindex $option 1]
+	    
+            if { [info exists values($value)] } {
+                lappend selected_list $label
+                append output "<input type=\"hidden\" name=\"$widget_name\" value=\"[ad_quotehtml $value]\">"
+            }
+        }
+
+        append output [join $selected_list ", "]
+    } else {
+	
+
+	append output "<select name=\"$widget_name\" "
+	foreach name [array names attributes] {
+	    if { [string equal $attributes($name) {}] } {
+		append output " $name=\"$name\""
+	    } else {
+		append output " $name=\"$attributes($name)\""
+	    }
+	}
+	append output ">\n"
+
+
+	set optgroup {}
+	foreach option $options_list {
+	    
+	    set label [lindex $option 0]
+	    set value [lindex $option 1]
+	    set group [string trim [lindex $option 2]]
+
+
+	    if { $group eq "" } {
+		if { $optgroup ne "" } {
+		    append output "</optgroup>\n"
+		}
+		set optgroup {}
+	    } elseif { $group ne $optgroup } {
+		if { $optgroup ne "" } {
+		    append output "</optgroup>\n"
+		}
+		append output "<optgroup label=\"[ad_quotehtml $group]\">\n"
+		set optgroup $group
+	    }
+
+
+	    append output " <option value=\"[template::util::quote_html $value]\""
+	    if { [info exists values($value)] } {
+		append output " selected=\"selected\""
+	    }
+	    append output ">$label</option>\n"
+
+
+	}
+	if { $optgroup ne {} } {
+	    append output "</optgroup>\n"
+	}
+	append output "</select>"	
+    }
+
+    return $output
+}
+

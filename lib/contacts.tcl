@@ -7,7 +7,6 @@ set optional_unset_list [list]
 set _orderby "first_names,asc"
 set _format "normal"
 set _page_size "25"
-set _tasks_interval "7"
 set admin_p 0
 
 if { [string is false [exists_and_not_null package_id]] } {
@@ -33,6 +32,24 @@ foreach default_param $default_param_list {
 	set $default_param [set _${default_param}]
     }
 }
+
+# see if the person is attemping to add
+# or remove a column
+set extended_columns [ns_queryget extended_columns]
+set add_column       [ns_queryget add_column]
+set remove_column    [ns_queryget remove_column]
+if { $extended_columns ne "" && $remove_column ne "" } {
+    set lindex_id [lsearch -exact $extended_columns $remove_column]
+    if { $lindex_id >= 0 } {
+	set extended_columns [lreplace $extended_columns $lindex_id $lindex_id]
+    }
+}
+if { $add_column ne "" } {
+    lappend extended_columns $add_column
+}
+
+set add_column ""
+set remove_column ""
 
 # This is for showing the employee_id and employeer relationship
 set type_list [db_list get_condition_type { }] 
@@ -70,9 +87,6 @@ if {[exists_and_not_null search_id]} {
 	{extend_values:text(hidden)
 	    {value "$extend_values"}
 	}
-	{attr_val_name:text(hidden)
-	    {value "$attr_val_name"}
-	}
     } -on_submit {
 	# We clear the list when no value is submited, otherwise
 	# we acumulate the extend values.
@@ -81,7 +95,7 @@ if {[exists_and_not_null search_id]} {
 	} else {
 	    lappend extend_values [list $extend_option] 
 	}
-	ad_returnredirect [export_vars -base "?" {search_id extend_values attr_val_name}]
+	ad_returnredirect [export_vars -base "?" {search_id extend_values extended_columns}]
     }
 }
 
@@ -102,28 +116,35 @@ if { ![exists_and_not_null group_id] } {
 set last_modified_join ""
 set last_modified_clause ""
 
+
+set first_names_url   [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {first_names,asc}}}]
+set last_name_url     [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_name,asc}}}]
+set organization_url  [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {organization,asc}}}]
+set last_modified_url [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_modified,desc}}}]
 switch $orderby {
     "first_names,asc" {
-        set name_label "[_ contacts.Sort_by]: [_ contacts.First_Names] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by] [_ contacts.First_Names] | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (p.party_id = persons.person_id)"
 	set sort_item "lower(first_names), lower(last_name)"
     }
     "last_name,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join persons on (p.party_id = persons.person_id)"
 	set sort_item "lower(last_name), lower(first_names)"
     }
     "organization,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_modified,desc}}}]\">[_ contacts.Last_Modified]</a>"
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
 	set left_join "left join organizations on (p.party_id = organizations.organization_id)"
 	set sort_item "lower(organizations.name)"
     }
     "last_modified,desc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"[export_vars -base $base_url -url {format search_id query page page_size attr_val_name {orderby {first_names,asc}}}]\">[_ contacts.First_Names]</a>  | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {last_name,asc}}}]\">[_ contacts.Last_Name]</a> | <a href=\"[export_vars -base $base_url -url {format search_id query page page_size {orderby {organization,asc}}}]\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
 	set left_join ""
 	set sort_item "cr.publish_date"
     }
 }
+
+
 
 append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
 
@@ -136,7 +157,7 @@ foreach page_s $valid_page_sizes {
     if { $page_size == $page_s } {
         lappend page_size_list $page_s
     } else {
-        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby attr_val_name {page_size $page_s}}]\">$page_s</a>"
+        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby extended_columns {page_size $page_s}}]\">$page_s</a>"
     }
 }
 append name_label [join $page_size_list " | "]
@@ -144,7 +165,7 @@ append name_label [join $page_size_list " | "]
 if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] } {
     set format normal
 } else {
-    append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby attr_val_name page_size}]\">[_ contacts.CSV]</a>"
+    append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size extended_columns}]\">[_ contacts.CSV]</a>"
 }
 
 template::multirow create bulk_acts pretty link detailed
@@ -234,64 +255,87 @@ foreach value $extend_values {
 }
 
 
-# We are going to extend the list also by the attributes specified in the
-# parameters, if there is any. Only when attr_val_name is empty and exists a 
-# search_id, otherwise we would have duplicates since when attr_val_name is 
-# present then the default attributes specified on the parameter already come 
-# in this list.
+if { [exists_and_not_null search_id] } {
 
-if { ![exists_and_not_null attr_val_name] && [exists_and_not_null search_id] } {
-
-    set object_type [db_string get_object_type { }]
+    set object_type [db_string get_object_type {}]
     switch $object_type {
 	person { 
 	    set page_query_name "person_pagination"
 	    if {[string eq $orderby "organization,asc"]} {
 		set orderby "first_names,asc"
 	    }
-	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
+#	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
 	}
 	organization { 
 	    set page_query_name "organization_pagination"
 	    if {[string eq $orderby "first_names,asc"] || [string eq $orderby "last_name,asc"]} {
 		set orderby "organization,asc"
 	    }
-	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
+#	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
 	}
 	party { 
 	    set page_query_name "contacts_pagination"
-	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
+#	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	}
     }
-    
-    # We are going to take all the blank spaces and split the list by ";"
-    regsub -all " " $default_attr_extend "" default_attr_extend
-    set default_attr_extend [split $default_attr_extend ";"]
-
-    foreach attr $default_attr_extend {
-	set attr_id [attribute::id -object_type "person" -attribute_name "$attr"]
-        if { [empty_string_p $attr_id] } {
-	    # Is not a person attribute is an organization attribute
-            set attr_id [attribute::id -object_type "organization" -attribute_name "$attr"]
-        }
-	lappend attr_val_name [list $attr_id $attr]
-    }
-}
-
-
-# This is for the attributes
-set extend_attr [list]
-foreach attribute $attr_val_name {
-    set attr_id   [lindex $attribute 0]
-    lappend row_list $attr_id [list]
-    lappend elements $attr_id [list label [attribute::pretty_name -attribute_id $attr_id] display_template "@contacts.${attr_id};noquote@"]
-    lappend extend_attr $attr_id
 }
 
 set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
     set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
 }
+
+
+
+template::multirow create ext impl type type_pretty key key_pretty
+
+# permissions for what attributes/extensions are visible to this
+# user are to be handled by this callback proc. The callback
+# MUST only return keys that are visible to this user
+
+callback contacts::extensions \
+    -user_id [ad_conn user_id] \
+    -multirow ext \
+    -package_id [ad_conn package_id]
+
+
+set add_columns [list]
+set remove_columns [list]
+set db_extend_columns [list]
+if { $search_id ne "" } {
+    # now we get the extensions for this specific search
+    set db_extend_columns [contact::search::get_extensions -search_id $search_id]
+}
+set extended_columns [concat $db_extend_columns $extended_columns]
+
+# we run through the multirow here to determine wether or not the columns are allowed
+template::multirow foreach ext {
+    set selected_p 0
+    set immutable_p 0
+    if { [lsearch $extended_columns "${type}__${key}"] >= 0 } {
+        # we want to use this column in our table
+        set selected_p 1
+        if { [lsearch $db_extend_columns "${type}__${key}"] >= 0 } {
+            set immutable_p 1
+        }
+        # we add the column to the template::list
+        lappend elements "${type}__${key}" [list label $key_pretty display_col "${type}__${key}" display_template "@contacts.${type}__${key};noquote@"]
+	lappend row_list "${type}__${key}" [list]
+    }
+    if { [string is true $selected_p] && [string is false $immutable_p] } {
+	lappend remove_columns [list $key_pretty "${type}__${key}" $type_pretty]
+    } elseif { [string is false $selected_p] } {
+	lappend add_columns [list $key_pretty "${type}__${key}" $type_pretty]
+    }
+
+}
+
+
+
+
+
+
+
 
 template::list::create \
     -html {width 100%} \
@@ -310,13 +354,12 @@ template::list::create \
     -bulk_action_export_vars { search_id return_url } \
     -elements $elements \
     -filters {
-        attr_val_name {}
 	search_id {}
 	page_size {}
 	extend_values {}
 	attribute_values {}
-	tasks_interval {}
         query {}
+	extended_columns {}
     } -orderby {
         first_names {
             label "[_ contacts.First_Name]"
@@ -338,8 +381,7 @@ template::list::create \
 	    orderby_asc "cr.publish_date"
 	    orderby_desc "cr.publish_date"
        }
-
-        default_value first_names,asc
+       default_value first_names,asc
     } -formats {
 	normal {
 	    label "[_ contacts.Table]"
@@ -358,7 +400,8 @@ template::list::create \
 	}
     }
 
-set extend_list "$extend_attr contact_url message_url name orga_info"
+#set extend_list "$extend_attr contact_url message_url name orga_info"
+set extend_list "contact_url message_url name orga_info"
 
 if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
     # We use this multirow since is going to retrive the attribute values
@@ -368,24 +411,6 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	set contact_url [contact::url -party_id $party_id]
 	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
 	set name "[contact::name -party_id $party_id]"
-
-	foreach attribute $attr_val_name {
-	    set attr_id   [lindex $attribute 0]
-	    set attr_name [lindex $attribute 1]
-	    set contact_party_revision [contact::live_revision -party_id $party_id]
-	    set $attr_id  [ams::value \
-			       -object_id $contact_party_revision \
-			       -attribute_id $attr_id \
-			       -attribute_name "$attr_name"]
-	    
-	    if { ![exists_and_not_null $attr_id] } {
-		set contact_party_revision [contact::live_revision -party_id $employee_id]
-		set $attr_id  [ams::value \
-				   -object_id $contact_party_revision \
-				   -attribute_id $attr_id \
-				   -attribute_name "$attr_name"]
-	    }
-	}
 	
 	set display_employers_p [parameter::get \
 				     -parameter DisplayEmployersP \
@@ -418,15 +443,6 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	set contact_url [contact::url -party_id $party_id]
 	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
 	set name "[contact::name -party_id $party_id]"
-	foreach attribute $attr_val_name {
-	    set attr_id   [lindex $attribute 0]
-	    set attr_name [lindex $attribute 1]
-	    set contact_party_revision [contact::live_revision -party_id $party_id]
-	    set $attr_id  [ams::value \
-			       -object_id $contact_party_revision \
-			       -attribute_id $attr_id \
-			       -attribute_name "$attr_name"]
-	}
 	
 	set display_employers_p [parameter::get \
 				     -parameter DisplayEmployersP \
@@ -462,5 +478,73 @@ if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
 }
 
 
-list::write_output -name contacts
+set limit_clause ""
+if { $format != "csv" } {
+    if { $page_size ne "" } {
+	if { $page eq "" } { set page 1 }
+	set limit_clause "limit $page_size offset [expr [expr $page - 1 ] * $page_size]"
+    }
+}
+set select_query "select party_id from ( [db_map $page_query_name] $limit_clause) party_query"
 
+# extend the multirow
+contacts::multirow \
+    -extend $extended_columns \
+    -multirow contacts \
+    -select_query $select_query
+
+
+# create forms to add/remove columns from the multirow
+if { [llength $add_columns] > 0 } {
+    set add_columns [concat [list [list "[_ contacts.--add_column--]" "" ""]] $add_columns]
+}
+if { [llength $remove_columns] > 0 } {
+    set remove_columns [concat [list [list "[_ contacts.--remove_column--]" "" ""]] $remove_columns]
+}
+
+set extended_columns_preserved $extended_columns
+
+ad_form \
+    -name "add_column_form" \
+    -method "GET" \
+    -export {format search_id query page page_size orderby} \
+    -has_submit "1" \
+    -has_edit "1" \
+    -form {
+	{extended_columns:text(hidden),optional}
+	{add_column:text(select_with_optgroup)
+	    {label ""}
+	    {html {onChange "document.add_column_form.submit();"}}
+	    {options $add_columns}
+	}
+    } \
+    -on_request {} \
+    -on_submit {}
+
+ad_form \
+    -name "remove_column_form" \
+    -method "GET" \
+    -export {format search_id query page page_size orderby} \
+    -has_submit "1" \
+    -has_edit "1" \
+    -form {
+	{extended_columns:text(hidden),optional}
+	{remove_column:text(select_with_optgroup)
+	    {label ""}
+	    {html {onChange "document.remove_column_form.submit();"}}
+	    {options $remove_columns}
+	}
+    } \
+    -on_request {} \
+    -on_submit {}
+
+
+set extended_columns $extended_columns_preserved
+template::element::set_value add_column_form extended_columns $extended_columns
+template::element::set_value remove_column_form extended_columns $extended_columns
+
+
+
+
+
+list::write_output -name contacts

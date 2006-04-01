@@ -58,6 +58,21 @@ ad_proc -public -callback contact::contact_form_validate {
 } {
 }
 
+ad_proc -public -callback contacts::multirow::extend {
+    {-type}
+    {-key}
+    {-select_query}
+    {-format "html"}
+} {
+} -
+
+ad_proc -public -callback contacts::extensions {
+    {-multirow}
+    {-user_id}
+    {-package_id}
+} {
+} -
+
 ad_proc -public -callback contact::organization_new {
     {-package_id:required}
     {-contact_id:required}
@@ -556,3 +571,139 @@ ad_proc -public -callback contact::envelope -impl envelope10 {
     }
 
 }
+
+
+ad_proc -public -callback contacts::multirow::extend -impl attributes {
+    {-type}
+    {-key}
+    {-select_query}
+    {-format "html"}
+} {
+} {
+    if { $format ne "text" } {
+	set format "html"
+    }
+
+    set object_type $type
+
+    if { [lsearch [list party person organization] $object_type] >= 0 } {
+	set attribute_name $key
+	# now we check for a sub_attribute
+	regexp {^(.*)__(.*)$} $attribute_name match attribute_name sub_attribute_name
+
+	set attribute_id [attribute::id -object_type $object_type -attribute_name $attribute_name]
+	if { [db_0or1row get_attribute_info { select aa.*, aw.value_method from ams_attributes aa, ams_widgets aw where aa.widget = aw.widget and aa.attribute_id = :attribute_id }] } {
+	    set results [list]
+
+	    db_foreach get_ams_values "
+select ci.item_id as party_id, ${value_method}(aav.value_id) as value
+  from ams_attribute_values aav,
+       cr_items ci
+ where aav.attribute_id = $attribute_id
+   and aav.object_id = ci.live_revision
+   and ci.item_id in ( $select_query )
+            " {
+
+		if { [info exists sub_attribute_name] } {
+		    array set sub_attribute_values [ams::widget -widget $widget -request "value_list_${format}" -attribute_name $attribute_name -attribute_id $attribute_id -value $value]
+		    if { [info exists sub_attribute_values($sub_attribute_name)] } {
+			set value $sub_attribute_values($sub_attribute_name)
+			lappend results $party_id $value
+		    } else {
+			set results ""
+		    }
+		} else {
+		    lappend results $party_id [ams::widget -widget $widget -request "value_${format}" -attribute_name $attribute_name -attribute_id $attribute_id -value $value]
+		}
+
+	    }
+
+	    return $results
+	}
+    }
+    return [list]
+}
+
+
+ad_proc -public -callback contacts::extensions -impl attributes {
+    {-multirow}
+    {-user_id}
+    {-package_id}
+} {
+} {
+
+    set list_ids ""
+    set group_ids [list]
+    foreach group [contact::groups_list] {
+	lappend group_ids [lindex $group 0]
+    }
+    # since contact::groups_list doesn't get the default_groups
+    # we have to add them here
+    set group_ids [concat $group_ids [contacts::default_groups]]
+
+    foreach group_id $group_ids {
+	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege read] } {
+	    continue
+	}
+	set list_id [ams::list::get_list_id \
+			 -package_key "contacts" \
+			 -object_type "person" \
+			 -list_name "${package_id}__${group_id}"]
+	if { $list_id ne "" } {
+	    lappend list_ids $list_id
+	}
+	set list_id [ams::list::get_list_id \
+			 -package_key "contacts" \
+			 -object_type "organization" \
+			 -list_name "${package_id}__${group_id}"]
+	if { $list_id ne "" } {
+	    lappend list_ids $list_id
+	}
+    }
+
+    if { [llength $list_ids] == 0 } {
+	return {}
+    }
+
+    set attr_list [db_list_of_lists get_all_attributes "
+select pretty_name, object_type, attribute_name, widget
+  from ams_attributes
+ where attribute_id in ( select attribute_id
+                           from ams_list_attribute_map
+                          where list_id in ([template::util::tcl_to_sql_list $list_ids])
+                       )
+   and not deprecated_p
+    "]
+
+    set attr_list [ams::util::localize_and_sort_list_of_lists -list $attr_list -position 0]
+    # now that its sorted by attribute_name, we sort it
+    # by object_type, lsort leaves the same order
+    # as the previous sort if the new sort is tied
+    # so this keeps the attributes ordered alphabetically
+    # by type
+    set attr_list [lsort -dictionary -index 1 $attr_list]
+    
+    # now we want to first get the sort by
+    foreach attr $attr_list {
+	util_unlist $attr pretty_name object_type attribute_name widget
+	switch $object_type {
+	    party { set type_pretty [_ contacts.Contact] }
+	    person { set type_pretty [_ contacts.Person] }
+	    organization { set type_pretty [_ contacts.Organization] }
+	}
+	append type_pretty " [_ contacts.Attributes]"
+	
+	set sub_attributes_list [ams::widget -widget $widget -request value_list_headings]
+	
+	if { [llength $sub_attributes_list] > 0 } {
+	    foreach {sub_attribute_name sub_pretty_name} $sub_attributes_list {
+		template::multirow append $multirow attribute $object_type $type_pretty "${attribute_name}__${sub_attribute_name}" "${pretty_name}: ${sub_pretty_name}"
+	    }
+	} else {
+	    template::multirow append $multirow attribute $object_type $type_pretty $attribute_name $pretty_name
+	}
+	
+    }
+
+}
+

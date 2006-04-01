@@ -22,7 +22,8 @@ ad_page_contract {
     {attribute_values ""}
     {attribute_option ""}
     {attribute_names ""}
-    {attr_val_name ""}
+    {add_column ""}
+    {remove_column ""}
 } -validate {
     valid_object_type -requires {object_type} {
         if { [lsearch [list party person organization] $object_type] < 0 } {
@@ -30,12 +31,7 @@ ad_page_contract {
         }
     }
     valid_search_id -requires {search_id} {
-	db_0or1row condition_exists_p {
-                                        select owner_id
-                                          from contact_searches
-                                         where search_id = :search_id
-                                      }
-        if { [exists_and_not_null owner_id] } {
+        if { [db_0or1row condition_exists_p {}] } {
 	    set valid_owner_ids [list]
 	    lappend valid_owner_ids [ad_conn user_id]
 	    if { [permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
@@ -78,167 +74,99 @@ set search_exists_p 0
 # set query_pretty [list]
 if { [exists_and_not_null search_id] } {
     if { [contact::search::exists_p -search_id $search_id] } {
-        db_1row get_em { }
+        db_1row get_search_info { }
         set search_exists_p 1
     }
 }
 
 
 if { $search_exists_p } {
-    # Figure out if the search was over a person, organization or both
-    set search_for [db_string get_search_for { } -default ""]
-    
-    set search_for_clause ""
-    
-    # Get the var list of the search if type equals group
-    # so we can retrieve the default attributes of the group
-    # also.
-    set var_list [db_string get_var_list { } -default ""]
-    
-    # We get the default attributes of persons, organizations or both and of the group
-    # if there is a condition for the gorup in the search (when var_list not null)
-    switch $search_for {
-	person {
-	    
-	    if { ![empty_string_p $var_list] } {
-		# Default attributes for the group and persons
-		set group_id [lindex [split $var_list " "] 1]
-		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
-	    } else {
-		# Default attributes for person only
-		set search_for_clause "and l.list_name like '%__-2' "
-	    }
-	    append search_for_clause "and object_type = 'person'"
-	    
-	    # We are going to take the default attributes from the parameter
-	    set default_extend_attributes [parameter::get -parameter "DefaultPersonAttributeExtension"]
-	    
-	    }
-	organization {
-	    
-	    if { ![empty_string_p $var_list] } {
-		# Default attributes for the group and organizations
-		set group_id [lindex [split $var_list " "] 1]
-		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
-	    } else {
-		# Default attributes for organization
-		set search_for_clause "and l.list_name like '%__-2' "
-		}
-	    append search_for_clause "and object_type = 'organization'"
 
-	    # We are going to take the default attributes from the parameter
-	    set default_extend_attributes [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
-	}
-	party {
-	    if { ![empty_string_p $var_list] } {
-		# Default attributes for the group, persons and organizations
-		set group_id [lindex [split $var_list " "] 1]
-		set search_for_clause "and (l.list_name like '%__-2' or l.list_name like '%__$group_id') "
-	    }
-
-	    # We are going to take the default attributes from the parameter
-	    set default_extend_attributes [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
-	}
+    template::multirow create ext impl type type_pretty key key_pretty
+    
+    # permissions for what attributes/extensions are visible to this
+    # user are to be handled by this callback proc. The callback
+    # MUST only return keys that are visible to this user
+    
+    callback contacts::extensions \
+	-user_id [ad_conn user_id] \
+	-multirow ext \
+	-package_id [ad_conn package_id]
+    
+    set add_columns [list]
+    set remove_columns [list]
+    set extended_columns [contact::search::get_extensions -search_id $search_id]
+    if { [lsearch $extended_columns $remove_column] >= 0 && $remove_column ne "" } {
+	# remove this extension
+	db_dml delete_column {}
+	set extended_columns [contact::search::get_extensions -search_id $search_id]
+    }
+    if { [lsearch $extended_columns $add_column] <= 0 && $add_column ne ""  } {
+	db_dml insert_column {}
+	lappend extended_columns $add_column
     }
 
-    set show_default_names ""
-    set show_names ""
-    # We add the default attributes, first we take out all spaces
-    # and then split by ";"
-    regsub -all " " $default_extend_attributes "" default_extend_attributes
-    set default_extend_attributes [split $default_extend_attributes ";"]
-
-    # Now we are going to add the mapped attributes in the contact_search_extend_map
-    set ema_list [db_list get_extend_mapped_attributes { }]
-
-    foreach extend_attribute_id $ema_list {
-	# We check that the attribute is nor already in the default list
-	# to avoid duplicates
-	ams::attribute::get -attribute_id $extend_attribute_id -array ea_info
-	set attribute_name $ea_info(attribute_name)
+    # we run through the multirow here to determine wether or not the columns are allowed
+    template::multirow foreach ext {
+	set selected_p 0
+	if { [lsearch $extended_columns "${type}__${key}"] >= 0 } {
+	    # we want to use this column in our table
+	    lappend remove_columns [list $key_pretty "${type}__${key}" $type_pretty]
+	} else {
+	    lappend add_columns [list $key_pretty "${type}__${key}" $type_pretty]
+	}
 	
-	if { [string equal [lsearch $default_extend_attributes $attribute_name] "-1"] } {
-	    lappend default_extend_attributes $attribute_name
-	}
     }
 
-    foreach attr $default_extend_attributes {
-	# Now we get the attribute_id
-	set attr_id [attribute::id -object_type "person" -attribute_name "$attr"]
-	if { [empty_string_p $attr_id] } {
-	    set attr_id [attribute::id -object_type "organization" -attribute_name "$attr"]
-	}
-
-	# We need to check if the attribute is not already present
-	# in the list, otherwise we could have duplicated.
-	if { ![empty_string_p $attr_id] } {
-	    lappend attribute_values $attr_id
-	    lappend default_names [attribute::pretty_name -attribute_id $attr_id]
-	}
-
-	if { [string equal [lsearch -exact $attr_val_name "[list $attr_id $attr]"] "-1"] } {
-	    lappend attr_val_name [list $attr_id $attr]
-	}
+    # create forms to add/remove columns from the multirow
+    if { [llength $add_columns] > 0 } {
+	set add_columns [concat [list [list "[_ contacts.--add_column--]" "" ""]] $add_columns]
     }
-
-    # To extend the result list using default attributes
-    if { [exists_and_not_null default_names] } {
-	set show_default_names "[join $default_names ", "], "
+    if { [llength $remove_columns] > 0 } {
+	set remove_columns [concat [list [list "[_ contacts.--remove_column--]" "" ""]] $remove_columns]
     }
-
-    # To extend the reult list using the selected attributes
-    if { [exists_and_not_null attribute_names] } {
-	set show_names [join $attribute_names ", "]
-    }
-
-    # Now we are going to create the select options
-    set attribute_values_query ""
-    if { [exists_and_not_null attribute_values] } {
-	set attribute_values_query "and lam.attribute_id not in ([template::util::tcl_to_sql_list $attribute_values])"
-    }
-    set attribute_options [db_list_of_lists get_ams_options " "]
-    set ams_options [list [list "- - - - - - - - - -" ""]]
-    foreach attribute $attribute_options {
-	set attribute_name [lang::util::localize [db_string get_ams_pretty_name { }]]
-	lappend ams_options [list $attribute_name $attribute]
-	}
     
-    ad_form -name extend_attributes -has_submit 1 -form {
-	{attribute_option:text(select),optional
-	    {label "[_ contacts.Extend_result_list_by]:"}
-	    {options { $ams_options }}
-	    {html { onChange "document.extend_attributes.submit();" }}
-	}
-	{search_id:text(hidden)
-	    {value "$search_id"}
-	}
-	{attribute_values:text(hidden)
-	    {value "$attribute_values"}
-	}
-	{attribute_names:text(hidden)
-	    {value "$attribute_names"}
-	}
-	{attr_val_name:text(hidden)
-	    {value "$attr_val_name"}
-	}
-    } -on_submit {
-	# We clear the list when no value is submited, otherwise
-        # we acumulate the extend values.
-        if { [empty_string_p $attribute_option] } {
-            set attribute_values [list]
-	    set attribute_names [list]
-	    set attr_val_name [list]
-        } else {
-	    set attribute $attribute_option
-	    ams::attribute::get -attribute_id $attribute -array attr_info
-	    set name $attr_info(attribute_name)
-	    lappend attribute_names [attribute::pretty_name -attribute_id $attribute]
+    set extended_columns_preserved $extended_columns
+    
+    ad_form \
+	-name "add_column_form" \
+	-method "GET" \
+	-export {format search_id query page page_size orderby} \
+	-has_submit "1" \
+	-has_edit "1" \
+	-form {
+	    {extended_columns:text(hidden),optional}
+	    {add_column:text(select_with_optgroup)
+		{label ""}
+		{html {onChange "document.add_column_form.submit();"}}
+		{options $add_columns}
+	    }
+	} \
+	-on_request {} \
+	-on_submit {}
+    
+    ad_form \
+	-name "remove_column_form" \
+	-method "GET" \
+	-export {format search_id query page page_size orderby} \
+	-has_submit "1" \
+	-has_edit "1" \
+	-form {
+	    {extended_columns:text(hidden),optional}
+	    {remove_column:text(select_with_optgroup)
+		{label ""}
+		{html {onChange "document.remove_column_form.submit();"}}
+		{options $remove_columns}
+	    }
+	} \
+	-on_request {} \
+	-on_submit {}
+    
 
-            lappend attribute_values $attribute
-	    lappend attr_val_name [list $attribute $name]
-        }
-        ad_returnredirect [export_vars -base "search" {search_id attribute_values attribute_names attr_val_name}]
-    }
+    set extended_columns $extended_columns_preserved
+    template::element::set_value add_column_form extended_columns $extended_columns
+    template::element::set_value remove_column_form extended_columns $extended_columns
+
 }
 
 
@@ -277,9 +205,7 @@ if { [exists_and_not_null object_type] } {
 
 if { $search_exists_p } {
     set conditions [list]
-    db_foreach selectqueries {
-        select condition_id, type as query_type, var_list as query_var_list from contact_search_conditions where search_id = :search_id
-    } {
+    db_foreach selectqueries {} {
 	set condition_name [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
 	if { [empty_string_p $condition_name] } {
 	    set condition_name  "[_ contacts.Employees]"

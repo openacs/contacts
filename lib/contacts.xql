@@ -21,7 +21,7 @@
 <fullquery name="organization_pagination">
     <querytext>
 	select 
-	organizations.organization_id
+	organizations.organization_id as party_id
   	from organizations, cr_items ci, cr_revisions cr,
         group_distinct_member_map
  	where
@@ -36,7 +36,7 @@
 <fullquery name="person_pagination">
     <querytext>
 	select 
-	persons.person_id
+	persons.person_id as party_id
   	from persons, cr_items ci, cr_revisions cr,
         group_distinct_member_map
  	where
