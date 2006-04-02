@@ -2,10 +2,10 @@
 #    @creation-date 2005-05-09
 #    @cvs-id $Id$
 
-
 set contact_master_template [parameter::get_from_package_key -package_key "contacts" -parameter "ContactMaster" -default "/packages/contacts/lib/contact-master"]
 if { $contact_master_template != "/packages/contacts/lib/contact-master" } {
     ad_return_template
+    return
 }
 
 # Set up links in the navbar that the user has access to

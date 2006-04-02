@@ -311,6 +311,7 @@ ad_form -extend -name party_ae \
 	    }
 	    
 	    callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id
+	    contact::flush -party_id $object_id_two
 	}
 
 	# Add the user to the
