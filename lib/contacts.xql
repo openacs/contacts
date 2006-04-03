@@ -55,7 +55,8 @@ select  $extend_query
       first_names, last_name,
        parties.party_id,
        parties.email,
-       parties.url
+       parties.url,
+       to_char(cr.publish_date, :date_format) as publish_date
   from parties
       left join persons on (parties.party_id = persons.person_id)
       left join organizations on (parties.party_id = organizations.organization_id), cr_items ci, cr_revisions cr

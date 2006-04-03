@@ -115,7 +115,7 @@ if { ![exists_and_not_null group_id] } {
 
 set last_modified_join ""
 set last_modified_clause ""
-
+set last_modified_rows ""
 
 set first_names_url   [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {first_names,asc}}}]
 set last_name_url     [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_name,asc}}}]
@@ -141,6 +141,7 @@ switch $orderby {
         set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
 	set left_join ""
 	set sort_item "cr.publish_date"
+	set last_modified_rows [list publish_date {}]
     }
 }
 
@@ -218,6 +219,7 @@ set elements [list \
 		  contact_id [list display_col party_id] \
 		  first_names [list display_col first_names] \
 		  last_name [list display_col last_name] \
+		  publish_date [list display_col publish_date] \
 		  organization [list display_col organization] \
 		  email [list display_col email]]
 
@@ -230,12 +232,17 @@ if { $format == "csv" } {
 		      ]
     
 } else {
+
     set row_list [list \
 		  checkbox {
 		      html {style {width: 30px; text-align: center;}}
 		  } \
-		  contact {}]
+		      contact {} \
+		 ] 
 }
+
+set row_list [concat $row_list $last_modified_rows]
+
 if { [exists_and_not_null search_id] } {
     # We get all the default values for that are mapped to this search_id
     set default_values [db_list_of_lists get_default_extends { }]
@@ -254,6 +261,7 @@ foreach value $extend_values {
     append extend_query "( $sub_query ) as $name,"
 }
 
+set date_format [lc_get formbuilder_date_format]
 
 if { [exists_and_not_null search_id] } {
 
