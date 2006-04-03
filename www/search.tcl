@@ -91,7 +91,8 @@ if { $search_exists_p } {
     callback contacts::extensions \
 	-user_id [ad_conn user_id] \
 	-multirow ext \
-	-package_id [ad_conn package_id]
+	-package_id [ad_conn package_id] \
+	-object_type $object_type
     
     set add_columns [list]
     set remove_columns [list]

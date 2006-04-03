@@ -70,6 +70,7 @@ ad_proc -public -callback contacts::extensions {
     {-multirow}
     {-user_id}
     {-package_id}
+    {-object_type "party"}
 } {
 } -
 
@@ -629,6 +630,7 @@ ad_proc -public -callback contacts::extensions -impl attributes {
     {-multirow}
     {-user_id}
     {-package_id}
+    {-object_type}
 } {
 } {
 
@@ -645,24 +647,34 @@ ad_proc -public -callback contacts::extensions -impl attributes {
 	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege read] } {
 	    continue
 	}
-	set list_id [ams::list::get_list_id \
-			 -package_key "contacts" \
-			 -object_type "person" \
-			 -list_name "${package_id}__${group_id}"]
-	if { $list_id ne "" } {
-	    lappend list_ids $list_id
+	if { $object_type ne "organization" } {
+	    set list_id [ams::list::get_list_id \
+			     -package_key "contacts" \
+			     -object_type "person" \
+			     -list_name "${package_id}__${group_id}"]
+	    if { $list_id ne "" } {
+		lappend list_ids $list_id
+	    }
 	}
-	set list_id [ams::list::get_list_id \
-			 -package_key "contacts" \
-			 -object_type "organization" \
-			 -list_name "${package_id}__${group_id}"]
-	if { $list_id ne "" } {
-	    lappend list_ids $list_id
+	if { $object_type ne "person" } {
+	    set list_id [ams::list::get_list_id \
+			     -package_key "contacts" \
+			     -object_type "organization" \
+			     -list_name "${package_id}__${group_id}"]
+	    if { $list_id ne "" } {
+		lappend list_ids $list_id
+	    }
 	}
     }
 
     if { [llength $list_ids] == 0 } {
 	return {}
+    }
+
+    if { $object_type ne "party" } {
+	set object_type_clause "and object_type in ('party','${object_type}')"
+    } else {
+	set object_type_clause ""
     }
 
     set attr_list [db_list_of_lists get_all_attributes "
@@ -672,6 +684,7 @@ select pretty_name, object_type, attribute_name, widget
                            from ams_list_attribute_map
                           where list_id in ([template::util::tcl_to_sql_list $list_ids])
                        )
+   $object_type_clause
    and not deprecated_p
     "]
 

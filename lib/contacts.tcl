@@ -278,13 +278,13 @@ if { [exists_and_not_null search_id] } {
 #	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	}
     }
+} else {
+    set object_type "party"
 }
-
 set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
     set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
 }
-
 
 
 template::multirow create ext impl type type_pretty key key_pretty
@@ -296,7 +296,8 @@ template::multirow create ext impl type type_pretty key key_pretty
 callback contacts::extensions \
     -user_id [ad_conn user_id] \
     -multirow ext \
-    -package_id [ad_conn package_id]
+    -package_id [ad_conn package_id] \
+    -object_type $object_type
 
 
 set add_columns [list]
