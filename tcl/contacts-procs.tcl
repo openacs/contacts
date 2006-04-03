@@ -597,6 +597,10 @@ ad_proc -private contact::flush {
     Flush memorized information related to this contact
 } {
     util_memoize_flush_regexp "contact(.*?)${party_id}"
+    # in order to flush person::name and any other
+    # procs that may show up there we also flush person
+    # procs for this party_id
+    util_memoize_flush_regexp "person(.*?)${party_id}"
 }
 
 ad_proc -public contact::name {
