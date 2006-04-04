@@ -18,7 +18,8 @@
 	    </if>
 	  </group>
 	</group>
-	<dd class="attribute-value"><a href="@rels.relation_url@" class="add-new-rel">#contacts.lt_Add_new_relsrelations#</a></dd>
+	<if @rels.relation_url@ ne "">
+	<dd class="attribute-value"><a href="@rels.relation_url@" class="add-new-rel">#contacts.lt_Add_new_relsrelations#</a></dd></if>
       </dl>
   </multiple>
   </if>
