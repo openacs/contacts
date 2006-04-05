@@ -13,6 +13,7 @@
   </if>
   <if @remove_columns@ not nil>
     <td><formtemplate id="remove_column_form" style="../../../contacts/resources/forms/inline"></formtemplate></td>
+    <td><a href="./?search_id=@search_id@&report_p=1" class="button">#contacts.Aggregated_Report#</a></td>
   </if>
   </tr>
 </table>
