@@ -82,7 +82,7 @@ if { [exists_and_not_null search_id] } {
 
 if { $search_exists_p } {
 
-    template::multirow create ext impl type type_pretty key key_pretty
+    template::multirow create ext impl type_key type_pretty key key_pretty
     
     # permissions for what attributes/extensions are visible to this
     # user are to be handled by this callback proc. The callback
@@ -110,11 +110,11 @@ if { $search_exists_p } {
     # we run through the multirow here to determine wether or not the columns are allowed
     template::multirow foreach ext {
 	set selected_p 0
-	if { [lsearch $extended_columns "${type}__${key}"] >= 0 } {
+	if { [lsearch $extended_columns "${type_key}__${key}"] >= 0 } {
 	    # we want to use this column in our table
-	    lappend remove_columns [list $key_pretty "${type}__${key}" $type_pretty]
+	    lappend remove_columns [list $key_pretty "${type_key}__${key}" $type_pretty]
 	} else {
-	    lappend add_columns [list $key_pretty "${type}__${key}" $type_pretty]
+	    lappend add_columns [list $key_pretty "${type_key}__${key}" $type_pretty]
 	}
 	
     }
