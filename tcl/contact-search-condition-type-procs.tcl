@@ -626,13 +626,13 @@ ad_proc -private contacts::search::condition_type::contact {
                     set search_id [lindex $var_list 1]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty "[_ contacts.lt_Contact_in_the_search_search_link]"
-                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id]
+                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id -party_id $party_id]
                 }
                 not_in_search {
                     set search_id [lindex $var_list 1]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty "[_ contacts.lt_Contact_not_in_the_search_search_link]"
-                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id -not]
+                    set output_code   [contact::party_id_in_sub_search_clause -search_id $search_id -not -party_id $party_id]
                 }
                 update {
                     set output_pretty "[_ contacts.lt_Contact_updated_in_th]"
