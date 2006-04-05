@@ -5,6 +5,7 @@
   <msg key="--add_column--">-- add column --</msg>
   <msg key="--Create_New_Message--">-- Create New Message --</msg>
   <msg key="--none--">-- None --</msg>
+  <msg key="--Not_Specified--">-- Not Specified --</msg>
   <msg key="--remove_column--">-- remove column --</msg>
   <msg key="--select_a_person--">-- select a person --</msg>
   <msg key="--select_an_organization--">-- select an organization --</msg>
@@ -46,6 +47,7 @@
   <msg key="Aggregated">Aggregated</msg>
   <msg key="aggregated_by">aggregated by:</msg>
   <msg key="aggregated_help">Set it to true if you want to use this extend in &quot;Aggregated Result Page&quot;</msg>
+  <msg key="Aggregated_Report">Aggregated Report</msg>
   <msg key="ago">ago</msg>
   <msg key="All">All</msg>
   <msg key="All__Edit">All / Edit</msg>
@@ -232,6 +234,7 @@
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
+  <msg key="lt_Aggregated_reports_require_added_columns">Aggregated reports required at least one added column</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_At_least_times_role_are_related">At least %times% %role% are related</msg>
   <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
@@ -497,6 +500,7 @@
   <msg key="Public_Messages">Public Messages</msg>
   <msg key="Public_Page">Public Page</msg>
   <msg key="Public_Searches">Public Searches</msg>
+  <msg key="Quantity">Quantity</msg>
   <msg key="Query">Query</msg>
   <msg key="READ_THESE">READ THESE</msg>
   <msg key="Recipients">Recipients</msg>
@@ -603,6 +607,7 @@
   <msg key="Var_name">Variable Name</msg>
   <msg key="var_name_help">Name of the variable to use in the extend search.</msg>
   <msg key="View_all_roles">View all roles</msg>
+  <msg key="View_Contacts">View Contacts</msg>
   <msg key="View_next">View next</msg>
   <msg key="Visit_Club">Visit Club</msg>
   <msg key="Watch_all_changes">Watch all changes</msg>
