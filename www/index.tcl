@@ -65,10 +65,6 @@ if { $aggregated_p } {
     set contacts_total_count "<a href=\"?search_id=$search_id\">$contacts_total_count</a>"
 }
 
-if { [exists_and_not_null search_id] } {
-    contact::search::log -search_id $search_id
-}
-
 set public_searches [lang::util::localize_list_of_lists -list [db_list_of_lists public_searches {}]]
 set search_options [concat [list [list [_ contacts.All_Contacts] ""]] $public_searches]
 set searchcount 1
@@ -76,6 +72,20 @@ db_foreach my_recent_searches {} {
     lappend search_options [list "${searchcount}) ${recent_title}" ${recent_search_id}]
     incr searchcount
 }
+
+if { [exists_and_not_null search_id] } {
+    contact::search::log -search_id $search_id
+    set search_in_list_p 0
+    foreach search_option $search_options {
+	if { [lindex $search_option 1] eq $search_id } {
+	    set search_in_list_p 1
+	}
+    }
+    if { [string is false $search_in_list_p] } {
+	set search_options [concat [list [list "&lt;&lt; [_ contacts.Search] \#${search_id} &gt;&gt;" $search_id]] $search_options]
+    }
+}
+
 
 lang::util::localize_list_of_lists -list $search_options
 
