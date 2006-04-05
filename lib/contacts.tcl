@@ -51,13 +51,25 @@ if { $add_column ne "" } {
 set add_column ""
 set remove_column ""
 
+set report_p [ns_queryget report_p]
+if { [string is true $report_p] && $report_p ne "" } {
+    set report_csv_url    [export_vars -base $base_url -url {{format csv} search_id query page page_size extended_columns orderby {report_p 1}}]
+    set contacts_mode_url [export_vars -base $base_url -url {format search_id query page page_size extended_columns orderby {report_p 0}}]
+} else {
+    set report_p 0
+    set report_mode_url [export_vars -base $base_url -url {format search_id query page page_size extended_columns orderby {report_p 1}}]
+}
+
+
+
+
 # This is for showing the employee_id and employeer relationship
 set type_list [db_list get_condition_type { }] 
 
 if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
-    set page_query_name "employees_pagination"
+    set multirow_query_name "employees_select"
 } else {
-    set page_query_name "contacts_pagination"
+    set multirow_query_name "contacts_select"
 }
 
 # If we do not have a search_id, limit the list to only users in the default group.
@@ -288,6 +300,7 @@ if { [exists_and_not_null search_id] } {
     }
 } else {
     set object_type "party"
+    set page_query_name "contacts_pagination"
 }
 set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
@@ -318,6 +331,7 @@ if { $search_id ne "" } {
 set extended_columns [concat $db_extend_columns $extended_columns]
 
 # we run through the multirow here to determine wether or not the columns are allowed
+set report_elements [list]
 template::multirow foreach ext {
     set selected_p 0
     set immutable_p 0
@@ -328,7 +342,8 @@ template::multirow foreach ext {
             set immutable_p 1
         }
         # we add the column to the template::list
-        lappend elements "${type}__${key}" [list label $key_pretty display_col "${type}__${key}" display_template "@contacts.${type}__${key};noquote@"]
+        lappend elements            "${type}__${key}" [list label $key_pretty display_col "${type}__${key}" display_template "@contacts.${type}__${key};noquote@"]
+	lappend report_elements     "${type}__${key}" [list label $key_pretty display_col "${type}__${key}" display_template "@report.${type}__${key};noquote@"]
 	lappend row_list "${type}__${key}" [list]
     }
     if { [string is true $selected_p] && [string is false $immutable_p] } {
@@ -336,89 +351,78 @@ template::multirow foreach ext {
     } elseif { [string is false $selected_p] } {
 	lappend add_columns [list $key_pretty "${type}__${key}" $type_pretty]
     }
-
 }
 
+if { [string is false $report_p] } {
 
 
-
-
-
-
-
-template::list::create \
-    -html {width 100%} \
-    -name "contacts" \
-    -multirow "contacts" \
-    -row_pretty_plural "[_ contacts.contacts]" \
-    -checkbox_name checkbox \
-    -selected_format ${format} \
-    -key party_id \
-    -page_size $page_size \
-    -page_flush_p t \
-    -page_query_name $page_query_name \
-    -actions $actions \
-    -bulk_actions $bulk_actions \
-    -bulk_action_method post \
-    -bulk_action_export_vars { search_id return_url } \
-    -elements $elements \
-    -filters {
-	search_id {}
-	page_size {}
-	extend_values {}
-	attribute_values {}
-        query {}
-	extended_columns {}
-    } -orderby {
-        first_names {
-            label "[_ contacts.First_Name]"
-            orderby_asc  "lower(first_names) asc, lower(last_name) asc"
-            orderby_desc "lower(first_names) desc, lower(last_name) desc"
-        }
-        last_name {
-            label "[_ contacts.Last_Name]"
-            orderby_asc  "lower(last_name) asc, lower(first_names) asc"
-            orderby_desc "lower(last_name) desc, lower(first_names) desc"
-        }
-        organization {
-            label "[_ contacts.Organization]"
-            orderby_asc  "lower(organizations.name) asc"
-            orderby_desc "lower(organizations.name) desc"
-        }
-        last_modified {
-            label "[_ contacts.Last_Modified]"
-	    orderby_asc "cr.publish_date"
-	    orderby_desc "cr.publish_date"
-       }
-       default_value first_names,asc
-    } -formats {
-	normal {
-	    label "[_ contacts.Table]"
-	    layout table
-	    row {
-		$row_list
+    template::list::create \
+	-html {width 100%} \
+	-name "contacts" \
+	-multirow "contacts" \
+	-row_pretty_plural "[_ contacts.contacts]" \
+	-checkbox_name checkbox \
+	-selected_format ${format} \
+	-key party_id \
+	-page_size $page_size \
+	-page_flush_p t \
+	-page_query_name $page_query_name \
+	-actions $actions \
+	-bulk_actions $bulk_actions \
+	-bulk_action_method post \
+	-bulk_action_export_vars { search_id return_url } \
+	-elements $elements \
+	-filters {
+	    search_id {}
+	    page_size {}
+	    extend_values {}
+	    attribute_values {}
+	    query {}
+	    extended_columns {}
+	} -orderby {
+	    first_names {
+		label "[_ contacts.First_Name]"
+		orderby_asc  "lower(first_names) asc, lower(last_name) asc"
+		orderby_desc "lower(first_names) desc, lower(last_name) desc"
+	    }
+	    last_name {
+		label "[_ contacts.Last_Name]"
+		orderby_asc  "lower(last_name) asc, lower(first_names) asc"
+		orderby_desc "lower(last_name) desc, lower(first_names) desc"
+	    }
+	    organization {
+		label "[_ contacts.Organization]"
+		orderby_asc  "lower(organizations.name) asc"
+		orderby_desc "lower(organizations.name) desc"
+	    }
+	    last_modified {
+		label "[_ contacts.Last_Modified]"
+		orderby_asc "cr.publish_date"
+		orderby_desc "cr.publish_date"
+	    }
+	    default_value first_names,asc
+	} -formats {
+	    normal {
+		label "[_ contacts.Table]"
+		layout table
+		page_size $page_size
+		row {
+		    $row_list
+		}
+	    }
+	    csv {
+		label "[_ contacts.CSV]"
+		output csv
+		page_size 64000
+		row {
+		    $row_list
+		}
 	    }
 	}
-	csv {
-	    label "[_ contacts.CSV]"
-	    output csv
-            page_size 64000
-            row {
-		$row_list
-	    }
-	}
-    }
 
-#set extend_list "$extend_attr contact_url message_url name orga_info"
-set extend_list "contact_url message_url name orga_info"
-
-if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
-    # We use this multirow since is going to retrive the attribute values
-    # for the employee and the employer
-
-    db_multirow -extend $extend_list -unclobber contacts employees_select " " {
+    db_multirow -extend [list contact_url message_url name orga_info] -unclobber contacts $multirow_query_name {} {
 	set contact_url [contact::url -party_id $party_id]
-	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
+	set message_url [export_vars -base "${contact_url}message" {{message_type "email"}}]
 	set name "[contact::name -party_id $party_id]"
 	
 	set display_employers_p [parameter::get \
@@ -431,6 +435,7 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 	    set organizations [contact::util::get_employers -employee_id $party_id]
 	    if {[llength $organizations] > 0} {
 		set orga_info {}
+		
 		foreach organization $organizations {
 		    set organization_url [contact::url -party_id [lindex $organization 0]]
 		    set organization_name [lindex $organization 1]
@@ -442,69 +447,132 @@ if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
 		}
 	    }
 	}
-	
-    }
-
-
-} else {
-
-    db_multirow -extend $extend_list -unclobber contacts contacts_select " " {
-	set contact_url [contact::url -party_id $party_id]
-	set message_url [export_vars -base "$contact_url/message" {{message_type "email"}}]
-	set name "[contact::name -party_id $party_id]"
-	
-	set display_employers_p [parameter::get \
-				     -parameter DisplayEmployersP \
-				     -package_id $package_id \
-				     -default "0"]
-	
-	if {$display_employers_p && [person::person_p -party_id $party_id]} {
-	    # We want to display the names of the organization behind the employees name
-	    set organizations [contact::util::get_employers -employee_id $party_id]
-	    if {[llength $organizations] > 0} {
-		set orga_info {}
-		foreach organization $organizations {
-		    set organization_url [contact::url -party_id [lindex $organization 0]]
-		    set organization_name [lindex $organization 1]
-		    lappend orga_info "<a href=\"$organization_url\">$organization_name</a>"
-		}
-		
-		if {![empty_string_p $orga_info]} {
-		    set orga_info " - ([join $orga_info ", "])"
-		}
-	    }
-	}
-	
     }
     
-}
+
+    if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
+	# Redirecting the user directly to the one resulted contact
+	ad_returnredirect [contact::url -party_id [template::multirow get contacts 1 party_id]]
+	ad_script_abort
+    }
+
+    # extend the multirow
+    template::list::get_reference -name contacts
+    if { [empty_string_p $list_properties(page_size)] || $list_properties(page_size) == 0 } {
+	# we give an alias that won't likely be used in the contacts::multirow extend callbacks
+	# because those callbacks may have references to a parties table and we don't want 
+	# postgresql to think that this query belongs to that table.
+	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
+    } else {
+	set select_query [template::list::page_get_ids -name "contacts"]
+    }
 
 
-if { [exists_and_not_null query] && [template::multirow size contacts] == 1 } {
-    # Redirecting the user directly to the one resulted contact
-    ad_returnredirect [contact::url -party_id [template::multirow get contacts 1 party_id]]
-    ad_script_abort
-}
+    contacts::multirow \
+	-extend $extended_columns \
+	-multirow contacts \
+	-select_query $select_query
+ 
+    list::write_output -name contacts
 
-
-
-
-
-# extend the multirow
-template::list::get_reference -name contacts
-if { [empty_string_p $list_properties(page_size)] || $list_properties(page_size) == 0 } {
-    # we give an alias that won't likely be used in the contacts::multirow extend callbacks
-    # because those callbacks may have references to a parties table and we don't want 
-    # postgresql to think that this query belongs to that table.
-    set select_query " select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
 } else {
-    set select_query [template::list::page_get_ids -name "contacts"]
+    if { [llength $extended_columns] == "0"} {
+	ad_returnredirect -message [_ contacts.lt_Aggregated_reports_require_added_columns] $contacts_mode_url
+	ad_script_abort
+    }
+
+
+    set party_ids [list]
+    db_multirow -unclobber contacts report_contacts_select {} {
+	lappend party_ids $party_id
+    }
+    if { [llength $party_ids] <= 1000 } {
+	# 1000 appears to be the cutoff point where its faster to have a list
+	set select_query [template::util::tcl_to_sql_list $party_ids]
+    } else {
+	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
+    }
+#	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
+
+    contacts::multirow \
+	-extend $extended_columns \
+	-multirow contacts \
+	-select_query $select_query
+    
+
+
+    template::list::create \
+	-html {width 100%} \
+	-name "report" \
+	-multirow "report" \
+	-selected_format ${format} \
+	-elements [concat $report_elements [list quantity [list label [_ contacts.Quantity]]]] \
+	-formats {
+	    normal {
+		label "[_ contacts.Table]"
+		layout table
+	    }
+	    csv {
+		label "[_ contacts.CSV]"
+		output csv
+	    }
+	}
+    
+
+
+    set command [list template::multirow create report]
+    foreach {element details} $report_elements {
+	lappend command $element
+    }
+    lappend command quantity
+    eval $command
+
+    
+    set keys [list]
+    template::multirow foreach contacts {
+	set key [list]
+	foreach {element details} $report_elements {
+	    if { $element ne "party_id" } {
+		lappend key [set $element]
+	    }
+	}
+	if { [info exists quantities($key)] } {
+	    incr quantities($key)
+	} else {
+	    set quantities($key) 1
+	    lappend keys $key
+	}
+    }
+    # now we figure out how many list items each
+    # key has then then we sort recursively
+    
+    set count [llength $key]
+    while { $count > 0 } {
+	incr count -1
+	set keys [lsort -dictionary -index $count $keys]
+    }
+    
+    foreach key $keys {
+	set command [list template::multirow append report]
+	set count 0
+	foreach part $key {
+	    if { $part eq "" } {
+		set part [_ contacts.--Not_Specified--]
+		if { $format ne "csv" } {
+		    set part "<em>${part}</em>"
+		}
+	    }
+	    lappend command $part
+	}
+	lappend command $quantities($key)
+	eval $command
+    }
+    list::write_output -name report
+
 }
 
-contacts::multirow \
-    -extend $extended_columns \
-    -multirow contacts \
-    -select_query $select_query
+
+
 
 
 # create forms to add/remove columns from the multirow
@@ -516,11 +584,12 @@ if { [llength $remove_columns] > 0 } {
 }
 
 set extended_columns_preserved $extended_columns
+set report_p_preserved $report_p
 
 ad_form \
     -name "add_column_form" \
     -method "GET" \
-    -export {format search_id query page page_size orderby} \
+    -export {format search_id query page page_size orderby report_p} \
     -has_submit "1" \
     -has_edit "1" \
     -form {
@@ -534,10 +603,11 @@ ad_form \
     -on_request {} \
     -on_submit {}
 
+set report_p $report_p_preserved
 ad_form \
     -name "remove_column_form" \
     -method "GET" \
-    -export {format search_id query page page_size orderby} \
+    -export {format search_id query page page_size orderby report_p} \
     -has_submit "1" \
     -has_edit "1" \
     -form {
@@ -560,4 +630,7 @@ template::element::set_value remove_column_form extended_columns $extended_colum
 
 
 
-list::write_output -name contacts
+
+
+
+

@@ -67,6 +67,20 @@ $group_by_group_id
       </querytext>
 </fullquery>
 
+<fullquery name="report_contacts_select">
+    <querytext>
+        select distinct parties.party_id
+          from parties,
+               cr_items
+         where parties.party_id = cr_items.item_id
+           and parties.party_id in ( select group_approved_member_map.member_id
+                                       from group_approved_member_map
+                                      where group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_group]]) )
+        [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "cr_items.live_revision"]
+    </querytext>
+</fullquery>
+
+
 <fullquery name="get_default_extends">
     <querytext>
 	select 

@@ -1,3 +1,13 @@
+<if @report_p@>
+<p>
+  <a href="@contacts_mode_url;noquote@" class="button">#contacts.View_Contacts#</a>
+  <a href="@report_csv_url;noquote@" class="button">#contacts.CSV#</a>
+</p>
+<listtemplate name="report"></listtemplate>
+
+</if>
+<else>
+
 <if @search_id@ not nil and @hide_form_p@ nil>
     <br>
     <table>
@@ -10,9 +20,11 @@
 	</tr>
     </table>
 </if>
-
 <br>
 <listtemplate name="contacts"></listtemplate>
+
+</else>
+
 
 <if @add_columns@ not nil or @remove_columns@ not nil>
 <table cellpadding="0" cellspacing="0" border="0">
@@ -22,6 +34,16 @@
   </if>
   <if @remove_columns@ not nil>
     <td><formtemplate id="remove_column_form" style="../../../contacts/resources/forms/inline"></formtemplate></td>
+  </if>
+  <if @extended_columns@ not nil>
+    <td>
+      <if @report_p@ true>
+        <a href="@contacts_mode_url;noquote@" class="button">#contacts.View_Contacts#</a>
+      </if>
+      <else>
+        <a href="@report_mode_url;noquote@" class="button">#contacts.Aggregated_Report#</a>
+      </else>
+    </td>
   </if>
   </tr>
 </table>
