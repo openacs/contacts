@@ -483,11 +483,12 @@ if { [string is false $report_p] } {
 
 
     set party_ids [list]
-    db_multirow -unclobber contacts report_contacts_select {} {
+    db_multirow contacts report_contacts_select {} {
 	lappend party_ids $party_id
     }
-    if { [llength $party_ids] <= 1000 } {
-	# 1000 appears to be the cutoff point where its faster to have a list
+    ns_log notice "party_ids [llength $party_ids]"
+    if { [llength $party_ids] < 10000 } {
+	# postgresql cannot deal with lists larger than 10000
 	set select_query [template::util::tcl_to_sql_list $party_ids]
     } else {
 	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
