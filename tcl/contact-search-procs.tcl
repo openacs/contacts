@@ -227,6 +227,7 @@ ad_proc -public contact::search_clause {
     {-query ""}
     {-party_id "party_id"} 
     {-revision_id "revision_id"}
+    {-limit_type_p "1"}
 } {
     Get the search clause for a search_id
 
@@ -437,6 +438,7 @@ ad_proc -public contact::search::where_clause {
     {-and:boolean}
     {-party_id}
     {-revision_id}
+    {-limit_type_p "1"}
 } {
 } {
     if { $and_p } {
@@ -444,12 +446,14 @@ ad_proc -public contact::search::where_clause {
                                   -search_id $search_id \
                                   -and \
                                   -party_id $party_id \
-                                  -revision_id $revision_id]]
+                                  -revision_id $revision_id \
+				  -limit_type_p $limit_type_p]]
     } else {
         return [util_memoize [list ::contact::search::where_clause_not_cached \
                                   -search_id $search_id \
                                   -party_id $party_id \
-                                  -revision_id $revision_id]]
+                                  -revision_id $revision_id \
+				  -limit_type_p $limit_type_p]]
     }
 }
 
@@ -458,6 +462,7 @@ ad_proc -public contact::search::where_clause_not_cached {
     {-and:boolean}
     {-party_id}
     {-revision_id}
+    {-limit_type_p}
 } {
 } {
     db_0or1row get_search_info {}
@@ -465,12 +470,13 @@ ad_proc -public contact::search::where_clause_not_cached {
 
     if { [exists_and_not_null all_or_any] } {
 	set result {}
-	if { $object_type == "person" } {
-	    #	 append result "$party_id = persons.person_id\n"
-	} elseif { $object_type == "organization" } {
-	    #    append result "$party_id = organizations.organization_id\n"
+	if { [string is true $limit_type_p] } {
+	    if { $object_type == "person" } {
+		append result "$party_id = persons.person_id\n"
+	    } elseif { $object_type == "organization" } {
+		append result "$party_id = organizations.organization_id\n"
+	    }
 	}
-    
 	# the reason we do not put this in the db_foreach statement is because we 
 	# can run into problems with the number of database pools we have when a sub
 	# query is a condition. We are limited to 3 levels of database access for most
