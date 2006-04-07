@@ -111,6 +111,7 @@ ad_proc -public contacts::multirow {
     {-multirow}
     {-select_query}
     {-party_id_column "party_id"}
+    {-format "html"}
 } {
     This procedure extends a contacts multirow by the type.key pairs specified as 
     a list as the extend param. The supplied select query will return a list of
@@ -120,10 +121,13 @@ ad_proc -public contacts::multirow {
     this procedure then takes that list of lists and matches values with parties
     and extends the multirow provided with those values
 } {
+    if { $format ne "text" } {
+	set format "html"
+    }
     foreach id $extend {
 	set ${id}__list ""
 	regexp {^(.*?)__(.*)$} $id match type key
-	set results [callback contacts::multirow::extend -type $type -key $key -select_query $select_query]
+	set results [callback contacts::multirow::extend -type $type -key $key -select_query $select_query -format $format]
 	foreach result $results {
 	    if { $result ne "" } {
 		array set "${id}__array" $result

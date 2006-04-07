@@ -467,11 +467,17 @@ if { [string is false $report_p] } {
 	set select_query [template::list::page_get_ids -name "contacts"]
     }
 
+    if { $format == "csv" } {
+	set extend_format "text"
+    } else {
+	set extend_format "html"
+    }
 
     contacts::multirow \
 	-extend $extended_columns \
 	-multirow contacts \
-	-select_query $select_query
+	-select_query $select_query \
+	-format $extend_format
  
     list::write_output -name contacts
 
@@ -495,12 +501,17 @@ if { [string is false $report_p] } {
     }
 #	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
 
+    if { $format == "csv" } {
+	set extend_format "text"
+    } else {
+	set extend_format "html"
+    }
+
     contacts::multirow \
 	-extend $extended_columns \
 	-multirow contacts \
-	-select_query $select_query
-    
-
+	-select_query $select_query \
+	-format $extend_format
 
     template::list::create \
 	-html {width 100%} \
