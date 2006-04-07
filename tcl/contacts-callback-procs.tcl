@@ -245,13 +245,16 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
 	    set value [template::element::get_value $form $element]
 	    switch $element {
 		email {
-		    if {[db_0or1row party_is_user_p {select '1' from users where user_id = :party_id}]} {
-			if {[exists_and_not_null value]} {
-			    set username $value
-			} else {
-			    set username $party_id
+		    if { [contact::type -party_id $party_id] eq "user" } {
+			# if the system uses email for username we need to update it
+                        if { [string is true [auth::UseEmailForLoginP]] } {
+			    if {[exists_and_not_null value]} {
+				set username $value
+			    } else {
+				set username $party_id
+			    }
+			    acs_user::update -user_id $party_id -username $username
 			}
-			acs_user::update -user_id $party_id -username $username
 		    }
 		    party::update -party_id $party_id -email $value -url [db_string get_url {select url from parties where party_id = :party_id} -default {}]
 		}
