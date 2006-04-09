@@ -723,3 +723,31 @@ select pretty_name, object_type, attribute_name, widget
 
 }
 
+
+ad_proc -public -callback contacts::redirect -impl contactspdfs {
+    {-party_id ""}
+    {-action ""}
+} {
+    redirect the contact to the correct pdf stuff
+} {
+
+    set url [ad_conn url]
+    if { [regexp "^[ad_conn package_url]pdfs/" $url match] } {
+	# this is a pdf url
+	set filename [lindex [ad_conn urlv] end]
+	if { ![regexp "^contacts_.*?_[ad_conn user_id](.*).pdf$" $filename match] || ![file exists "/tmp/${filename}"] } {
+	    ad_return_error "No Permission" "You do not have permission to view this file, or the temporary file has been deleted."
+	} else {
+	    ns_returnfile 200 "application/pdf" "/tmp/${filename}"
+            # now that we have displayed the file we can delete it
+            # if a user does not click on the display link
+            # the file will remain in the /tmp/ folder until its 
+            # cleared. We may want to sweep the /tmp/ directory
+            # every now and then to delete stale files.
+            file delete "/tmp/${filename}"
+
+	}
+    }
+
+}
+
