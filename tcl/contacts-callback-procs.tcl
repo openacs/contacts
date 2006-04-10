@@ -723,6 +723,118 @@ select pretty_name, object_type, attribute_name, widget
 
 }
 
+ad_proc -public -callback contacts::multirow::extend -impl attributes {
+    {-type}
+    {-key}
+    {-select_query}
+    {-format "html"}
+} {
+} {
+    if { $format ne "text" } {
+	set format "html"
+    }
+    if { $type eq "relationships" } {
+	# now we need to figure out what ends of a relationship this role can be
+	set object_one_types [list]
+	set object_two_types [list]
+	db_foreach get_types "
+	    select *
+              from acs_rel_types
+             where ( role_one = :key or role_two = :key )
+               and rel_type like ('contact_rels_%')
+	" {
+	    if { $role_one eq $key } {
+		lappend object_one_types $rel_type
+	    }
+	    if { $role_two eq $key } {
+		lappend object_two_types $rel_type
+	    }
+	}
+	set query ""
+	if { [llength $object_one_types] > 0 } {
+	    append query "
+            select object_id_two as party_id,
+                   object_id_one as related_party_id
+              from acs_rels
+             where rel_type in ([template::util::tcl_to_sql_list $object_one_types])
+               and object_id_two in ( $select_query )
+            "
+	    if { [llength $object_two_types] > 0 } {
+		append query "union\n"
+	    }
+	}
+	if { [llength $object_two_types] > 0 } {
+	    append query "
+            select object_id_one as party_id,
+                   object_id_two as related_party_id
+              from acs_rels
+             where rel_type in ([template::util::tcl_to_sql_list $object_two_types])
+               and object_id_one in ( $select_query )
+            "
+	}
+	db_foreach get_roles $query {
+	    if { [info exists roles_list($party_id)] } {
+		lappend roles_list($party_id) [contact::name -party_id $related_party_id] 
+	    } else {
+		set roles_list($party_id) [list [contact::name -party_id $related_party_id]]
+	    }
+	}
+	if { ![array exists roles_list] } {
+	    return [list]
+	} else {
+	    set results [list]
+	    foreach {party_id related_parties} [array get roles_list] {
+		lappend results $party_id [join [lsort -dictionary $related_parties] ", "]
+	    }
+	    return $results
+	}
+    }
+    return [list]
+}
+
+
+ad_proc -public -callback contacts::extensions -impl relationships {
+    {-multirow}
+    {-user_id}
+    {-package_id}
+    {-object_type}
+} {
+} {
+    
+    switch $object_type {
+	person { set object_types [list person party] }
+	organization { set object_types [list organization party] }
+	default { set object_types [list person organization party] }
+    }
+
+    # we might want to add different variables here, such as
+    # quantity of related roles, true/false for exists, etc.
+
+    set role_types [db_list_of_lists get_roles "
+	select role, pretty_plural
+          from acs_rel_roles
+         where ( role in ( 
+                 select role_one
+                   from acs_rel_types
+                  where rel_type like ('contact_rels_%')
+                    and object_type_two in ([template::util::tcl_to_sql_list $object_types])
+                ) or (
+                 role in (
+                 select role_two
+                   from acs_rel_types
+                  where rel_type like ('contact_rels_%')
+                    and object_type_one in ([template::util::tcl_to_sql_list $object_types]) 
+                )
+                ))
+    "]
+
+    set role_types [ams::util::localize_and_sort_list_of_lists -list $role_types -position 1]
+    set relationships_pretty [_ contacts.Relationships]
+    foreach role_type $role_types {
+	# util_unlist $role_type role pretty_plural
+	template::multirow append $multirow relationships relationships $relationships_pretty [lindex $role_type 0] [lindex $role_type 1]
+    }
+}
 
 ad_proc -public -callback contacts::redirect -impl contactspdfs {
     {-party_id ""}
@@ -750,4 +862,3 @@ ad_proc -public -callback contacts::redirect -impl contactspdfs {
     }
 
 }
-
