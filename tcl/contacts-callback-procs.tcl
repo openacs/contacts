@@ -723,17 +723,17 @@ select pretty_name, object_type, attribute_name, widget
 
 }
 
-ad_proc -public -callback contacts::multirow::extend -impl attributes {
+ad_proc -public -callback contacts::multirow::extend -impl relationships {
     {-type}
     {-key}
     {-select_query}
     {-format "html"}
 } {
 } {
-    if { $format ne "text" } {
-	set format "html"
-    }
     if { $type eq "relationships" } {
+	if { $format ne "text" } {
+	    set format "html"
+	}
 	# now we need to figure out what ends of a relationship this role can be
 	set object_one_types [list]
 	set object_two_types [list]
@@ -800,7 +800,7 @@ ad_proc -public -callback contacts::extensions -impl relationships {
     {-object_type}
 } {
 } {
-    
+
     switch $object_type {
 	person { set object_types [list person party] }
 	organization { set object_types [list organization party] }
