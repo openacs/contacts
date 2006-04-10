@@ -137,8 +137,8 @@ ad_proc -public contacts::multirow {
     }
     template::multirow foreach $multirow {
 	foreach id $extend {
-	    if { [info exists ${id}__array(${party_id})] } {
-		set $id [set ${id}__array(${party_id})]
+	    if { [info exists ${id}__array([set ${party_id_column}])] } {
+		set $id [set ${id}__array([set ${party_id_column}])]
 	    }
 	}
     }
