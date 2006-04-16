@@ -176,8 +176,7 @@ ad_form -extend -name party_ae \
 	if {$object_type == "organization"} {
 	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
 	    foreach employee_id [contact::util::get_employees -organization_id $party_id] {
-		util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $employee_id *"
-		util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $employee_id"
+		contact::flush -party_id $employee_id
 	    }
 	} else {
 	    callback contact::person_add -package_id $package_id -person_id $party_id

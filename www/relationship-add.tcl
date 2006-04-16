@@ -44,20 +44,14 @@ set contact_name_two [contact::name -party_id $party_two]
 set contact_type_one [contact::type -party_id $party_id]
 if { $contact_type_one == "user" } {
     set contact_type_one "person"
-    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
-} else {
-    contact::flush -party_id $party_id
 }
+contact::flush -party_id $party_id
 
 set contact_type_two [contact::type -party_id $party_two]
 if { $contact_type_two == "user" } {
     set contact_type_two "person"
-    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_two *"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_two"
-} else {
-    contact::flush -party_id $party_two
 }
+contact::flush -party_id $party_two
 
 set secondary_role_pretty [lang::util::localize [db_string get_secondary_role_pretty {}]]
 if { ![exists_and_not_null rel_type] } {
