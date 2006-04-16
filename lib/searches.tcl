@@ -10,7 +10,7 @@ multirow create public_searches title url
 if { [site_node::get_package_url -package_key "tasks"] != "" } {
     set tasks_enabled_p 1
     db_foreach dbqd.contacts.www.index.public_searches {} {
-	if { [contact::search::party_p -search_id $search_id -party_id $party_id -package_id $package_id] && $title != "All People" && $title != "All Organizations" } {
+	if { [contact::search::party_p_not_cached -search_id $search_id -party_id $party_id -package_id $package_id] && $title != "All People" && $title != "All Organizations" } {
 	    multirow append public_searches $title [export_vars -base "../" -url {search_id}] 
 	}
     }
