@@ -139,10 +139,48 @@ ad_proc -public contact::search::log {
 ad_proc -public contact::search::results_count {
     {-search_id}
     {-query ""}
+    {-package_id ""}
 } {
     Get the total number of results from a search. Cached.
 } {
-    return [util_memoize [list ::contact::search::results_count_not_cached -search_id $search_id -query $query]]
+    if { $package_id eq "" } {
+	if { [ad_conn package_key] eq "contacts" } {
+	    set package_id [ad_conn package_id]
+	} else {
+	    acs_object::get -object_id $search_id -array search_object_info
+	    set package_id $search_object_info(package_id)
+	}
+    }
+    return [util_memoize [list ::contact::search::results_count_not_cached -search_id $search_id -query $query -package_id $package_id]]
+}
+
+ad_proc -public contact::search::party_p {
+    {-search_id}
+    {-party_id}
+    {-package_id ""}
+} {
+    Is the supplied party in the search. Cached.
+} {
+    if { $package_id eq "" } {
+	if { [ad_conn package_key] eq "contacts" } {
+	    set package_id [ad_conn package_id]
+	} else {
+	    acs_object::get -object_id $search_id -array search_object_info
+	    set package_id $search_object_info(package_id)
+	}
+    }
+    return [util_memoize [list ::contact::search::party_p_not_cached -search_id $search_id -party_id $party_id -package_id $package_id]]
+}
+
+ad_proc -public contact::search::party_p_not_cached {
+    {-search_id}
+    {-party_id}
+    {-package_id}
+} {
+    Is the supplied party in the search.
+} {
+    set revision_id [contact::live_revision -party_id $party_id]
+    return [db_0or1row party_in_search_p {}]
 }
 
 ad_proc -public contact::search::flush_all {
@@ -158,7 +196,11 @@ ad_proc -public contact::search::flush_results_counts {
 } {
     Flush everything related to a search
 } {
-    util_memoize_flush_regexp -log "contact::search::results_count_not_cached"
+    util_memoize_flush_regexp "contact::search::results_count_not_cached"
+    # previously we used results_count to figure out if a party was in a seach
+    # as a performance enhancement this was moved to contact::search::party_p
+    # we also need to flush all results for this proc now.
+    util_memoize_flush_regexp "contact::search::party_p"
 }
 
 ad_proc -public contact::search::flush {
@@ -166,23 +208,23 @@ ad_proc -public contact::search::flush {
 } {
     Flush everything related to a search
 } {
-    util_memoize_flush_regexp -log "contact::search::results_count_not_cached -search_id $search_id"
-    util_memoize_flush_regexp -log "contact::search::results_count_not_cached -search_id {}"
-    util_memoize_flush_regexp -log "contact::search_pretty_not_cached -search_id $search_id"
-    util_memoize_flush_regexp -log "contact::search::where_clause_not_cached -search_id $search_id"
+    util_memoize_flush_regexp "contact::search(.*)$search_id"
+    # we also flush the "all contacts" search, which doesn't have a search_id
+    util_memoize_flush_regexp "contact::search(.*)-search_id {}"
 }
 
 ad_proc -public contact::search::results_count_not_cached {
     {-search_id}
     {-query ""}
+    {-package_id}
 } {
     Get the total number of results from a search
 } {
 
-# Get the results depening on the object_type
-set object_type [db_string get_object_type {} -default "party"]
+    # Get the results depening on the object_type
+    set object_type [db_string get_object_type {} -default "party"]
 
-return [db_string select_${object_type}_results_count {}]
+    return [db_string select_${object_type}_results_count {}]
 
 }
 
@@ -235,7 +277,7 @@ ad_proc -public contact::search_clause {
 } {
     set query [string trim $query]
     set search_clauses [list]
-    set where_clause [contact::search::where_clause -search_id $search_id -party_id $party_id -revision_id $revision_id]
+    set where_clause [contact::search::where_clause -search_id $search_id -party_id $party_id -revision_id $revision_id -limit_type_p $limit_type_p]
 
     if { [exists_and_not_null where_clause] } {
         lappend search_clauses $where_clause
