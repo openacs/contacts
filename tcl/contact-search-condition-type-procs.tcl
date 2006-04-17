@@ -21,6 +21,7 @@ ad_proc -public contacts::search::condition_type {
     {-revision_id "revision_id"}
     {-object_type "party"}
     {-prefix "condition"}
+    {-package_id ""}
 } {
     This proc defers its responses to all other <a href="/api-doc/proc-search?show_deprecated_p=0&query_string=contacts::search::condition_type::&source_weight=0&param_weight=3&name_weight=5&doc_weight=2&show_private_p=1&search_type=All+matches">contacts::search::condition_type::${type}</a> procs.
 
@@ -33,6 +34,9 @@ ad_proc -public contacts::search::condition_type {
     </ul>
     @param form_name The name of the template_form or ad_form being used
 } {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
 
     if { [contacts::search::condition_type_exists_p -type $type] } {
         switch $request {
@@ -47,7 +51,7 @@ ad_proc -public contacts::search::condition_type {
 	    type_name {
 	    }
 	}
-	return [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix]
+	return [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id]
     } else {
 	# the widget requested did not exist
 	ns_log Debug "Contacts: the contacts search condition type \"${type}\" was requested and the associated ::contacts::search::condition_type::${type} procedure does not exist"
@@ -55,15 +59,19 @@ ad_proc -public contacts::search::condition_type {
 }
 
 ad_proc -private contacts::search::condition_types {
+    {-package_id ""}
 } {
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
 } {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
     set condition_types [list]
     set all_procs [::info procs "::contacts::search::condition_type::*"]
     foreach condition_type $all_procs {
 	if { [string is false [regsub {__arg_parser} $condition_type {} condition_type]] } {
 	    regsub {::contacts::search::condition_type::} $condition_type {} condition_type
-	    lappend condition_types [list [contacts::search::condition_type -type $condition_type -request "type_name"] $condition_type]
+	    lappend condition_types [list [contacts::search::condition_type -type $condition_type -request "type_name" -package_id $package_id] $condition_type]
 	}
     }
     return [::ams::util::localize_and_sort_list_of_lists -list $condition_types]
@@ -81,6 +89,7 @@ ad_proc -private contacts::search::condition_type_exists_p {
 
 ad_proc -private contacts::search::condition_type::attribute {
     -request:required
+    -package_id:required
     {-var_list ""}
     {-form_name ""}
     {-party_id ""}
@@ -526,6 +535,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 
 ad_proc -private contacts::search::condition_type::contact {
     -request:required
+    -package_id:required
     {-var_list ""}
     {-form_name ""}
     {-party_id ""}
@@ -714,6 +724,7 @@ ad_proc -private contacts::search::condition_type::contact {
 
 ad_proc -private contacts::search::condition_type::group {
     -request:required
+    -package_id:required
     {-var_list ""}
     {-form_name ""}
     {-party_id ""}
@@ -736,7 +747,7 @@ ad_proc -private contacts::search::condition_type::group {
                                      [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
                                     ]
 
-            set group_options_old [contact::groups -expand "all" -privilege_required "read"]
+            set group_options_old [contact::groups -expand "all" -privilege_required "read" -package_id $package_id]
 	    set group_options [list]
 	    foreach group $group_options_old {
 		set group_name [lang::util::localize [lindex $group 0]]
@@ -791,6 +802,7 @@ ad_proc -private contacts::search::condition_type::group {
 
 ad_proc -private contacts::search::condition_type::relationship {
     -request:required
+    -package_id:required
     {-var_list ""}
     {-form_name ""}
     {-party_id ""}

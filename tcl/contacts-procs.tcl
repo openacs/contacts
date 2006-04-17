@@ -943,11 +943,15 @@ ad_proc -public contact::groups {
     {-output "list"}
     {-all:boolean}
     {-no_member_count:boolean}
+    {-package_id ""}
 } {
 } {
+    if { $package_id ne "" } {
+	set package_id [ad_conn package_id]
+    }
     set user_id [ad_conn user_id]
     set group_list [list]
-    foreach one_group [contact::groups_list] {
+    foreach one_group [contact::groups_list -package_id $package_id] {
 	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p
 	# We check if the group has the required privilege 
 	# specified on privilege_required switch, if not then

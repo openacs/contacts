@@ -278,7 +278,8 @@ if { $search_exists_p } {
 			      -request ad_form_widgets \
 			      -prefix "aggregate_" \
 			      -without_arrow_p "t" \
-			      -only_multiple_p "t"]
+			      -only_multiple_p "t" \
+			      -package_id [ad_conn package_id]]
 
     append form_elements {
 	{aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"}}
