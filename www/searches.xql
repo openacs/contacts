@@ -31,7 +31,11 @@
         and ao.package_id = :package_id
         and not cs.deleted_p
 ) union (
-     select cs.search_id, 'Search \#' || to_char(cs.search_id,'FM9999999999999999999') || ' on ' || to_char(ao.creation_date,'Mon FMDD') as title, 'zzzzzzzzzzz' as order_title, cs.all_or_any, cs.object_type
+     select cs.search_id,
+            'Search \#' || to_char(cs.search_id,'FM999999999999') || ' on ' || to_char(ao.creation_date,'Mon FMDD') as title,
+            'zzzzzzzzzzz' || replace( to_char(999999999999 - cs.search_id,'999999999999') , ' ' , '0') as order_title,
+	    cs.all_or_any,
+            cs.object_type
        from contact_searches cs, acs_objects ao
       where cs.owner_id = :owner_id
         and cs.search_id = ao.object_id
