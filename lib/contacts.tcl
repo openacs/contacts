@@ -328,14 +328,14 @@ if { $search_id ne "" } {
     # now we get the extensions for this specific search
     set db_extend_columns [contact::search::get_extensions -search_id $search_id]
 }
-set extended_columns [concat $db_extend_columns $extended_columns]
+set combined_extended_columns [lsort -unique [concat $db_extend_columns $extended_columns]]
 
 # we run through the multirow here to determine wether or not the columns are allowed
 set report_elements [list]
 template::multirow foreach ext {
     set selected_p 0
     set immutable_p 0
-    if { [lsearch $extended_columns "${type}__${key}"] >= 0 } {
+    if { [lsearch $combined_extended_columns "${type}__${key}"] >= 0 } {
         # we want to use this column in our table
         set selected_p 1
         if { [lsearch $db_extend_columns "${type}__${key}"] >= 0 } {
@@ -474,7 +474,7 @@ if { [string is false $report_p] } {
     }
 
     contacts::multirow \
-	-extend $extended_columns \
+	-extend $combined_extended_columns \
 	-multirow contacts \
 	-select_query $select_query \
 	-format $extend_format
@@ -482,7 +482,7 @@ if { [string is false $report_p] } {
     list::write_output -name contacts
 
 } else {
-    if { [llength $extended_columns] == "0"} {
+    if { [llength $combined_extended_columns] == "0"} {
 	ad_returnredirect -message [_ contacts.lt_Aggregated_reports_require_added_columns] $contacts_mode_url
 	ad_script_abort
     }
@@ -508,7 +508,7 @@ if { [string is false $report_p] } {
     }
 
     contacts::multirow \
-	-extend $extended_columns \
+	-extend $combined_extended_columns \
 	-multirow contacts \
 	-select_query $select_query \
 	-format $extend_format
