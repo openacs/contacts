@@ -240,6 +240,13 @@ if { [exists_and_not_null object_type] } {
     if { [exists_and_not_null condition_name] && [string equal $condition_name [_ contacts.Employees]] } {
 	set employee_p 1
     }
+
+    if { $search_exists_p } {
+	# the search already exists so we put the option of not selecting
+        # a new condition type, otherwise all form manipulations make
+        # the assumption that a new type was selected
+	set type_options [concat [list [list "- - - -" ""]] $type_options]
+    }
     if { !$employee_p } {
 	# Show the attribute options of the search
 	append form_elements {
@@ -247,7 +254,6 @@ if { [exists_and_not_null object_type] } {
 	}
     }
 }
-
 
 #get condition types widgets
 set form_elements [concat \
