@@ -17,7 +17,7 @@
               <group column="widget">
                 <noparse><formwidget id="@elements.id@"></noparse>
               </group>
-                </span>
+            </span>
         </if>
 
         <else>
@@ -33,11 +33,21 @@
                     @elements.label;noquote@
                 <if @form_properties.show_required_p@ true>
                 <if @elements.optional@ nil and @elements.mode@ ne "display" and @elements.widget@ ne "inform" and @elements.widget@ ne "select"><span class="form-required-mark">*</span></if>
+
+
                 </if>
               </span>
             </if>
             <else>
             </else>
+
+              <noparse>
+                <formerror id="@elements.id@">
+                    <div style="color: red; display: inline; background-color: #FCC; padding: 5px;">
+                    <strong>\@formerror.@elements.id@;noquote\@:</strong>
+                </formerror>
+              </noparse>
+
               <noparse>
                 <if \@formerror.@elements.id@\@ not nil>
                   <span class="form-widget-error">
@@ -71,10 +81,7 @@
 
               <noparse>
                 <formerror id="@elements.id@">
-                  <br>
-                  <font color="red">
-                    <b>\@formerror.@elements.id@;noquote\@<b>
-                  </font>
+                    </div>
                 </formerror>
               </noparse>
 
@@ -85,6 +92,8 @@
                     </noparse>
                 </p>
               </if>
+
+              </span>
 
         </else>
       </else>
