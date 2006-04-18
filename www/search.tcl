@@ -179,31 +179,6 @@ if { ![exists_and_not_null owner_id] } {
     set owner_id [ad_conn user_id]
 }
 
-
-# FORM HEADER
-set form_elements {
-    {search_id:key}
-    {owner_id:integer(hidden)}
-}
-
-if { [exists_and_not_null object_type] } {
-    set object_type_pretty $object_type_pretty_name($object_type)
-    append form_elements {
-        {object_type:text(hidden) {value $object_type}}
-        {object_type_pretty:text(inform) {label {[_ contacts.Search_for]}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
-        {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]"}}
-    }
-} else {
-    set object_type_options [list]
-    foreach object_type_temp [list party person organization] {
-        lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
-    }
-    append form_elements {
-        {object_type:text(select) {label {\#contacts.Search_for\#}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
-    }
-}
-
-
 if { $search_exists_p } {
     set conditions [list]
     db_foreach selectqueries {} {
@@ -218,9 +193,34 @@ if { $search_exists_p } {
     } else {
 	set query_pretty ""
     }
-    lappend form_elements [list query:text(hidden),optional]
-    lappend form_elements [list query_pretty:text(inform),optional [list label {}] [list value $query_pretty]]
+} else {
+    set query_pretty ""
 }
+
+# FORM HEADER
+set form_elements {
+    {search_id:key}
+    {owner_id:integer(hidden)}
+}
+
+if { [exists_and_not_null object_type] } {
+    set object_type_pretty $object_type_pretty_name($object_type)
+    append form_elements {
+        {object_type:text(hidden) {value $object_type}}
+        {object_type_pretty:text(inform) {label {[_ contacts.Search_for]}} {value "<strong>$object_type_pretty</strong>"} {after_html "[_ contacts.which_match]"}}
+        {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]$query_pretty"}}
+    }
+} else {
+    set object_type_options [list]
+    foreach object_type_temp [list party person organization] {
+        lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
+    }
+    append form_elements {
+        {object_type:text(select) {label {\#contacts.Search_for\#}} {options $object_type_options} {html {onChange "javascript:acs_FormRefresh('advanced_search')"}}}
+    }
+}
+
+
 
 # The employee search only works without other attribute so 
 # we are going to remove the option "Employee" where is already
@@ -288,8 +288,7 @@ if { $search_exists_p } {
 			      -package_id [ad_conn package_id]]
 
     append form_elements {
-	{aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"}}
-        {results_count_widget:text(inform) {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span>"} {value {<a href="[export_vars -base ./ -url {search_id}]">$results_count</a>}}}
+	{aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"} {after_html "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> <a href=\"[export_vars -base ./ -url {search_id}]\">$results_count</a>"}}
     }
 }
 
