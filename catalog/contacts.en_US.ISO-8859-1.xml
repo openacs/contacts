@@ -100,6 +100,7 @@
   <msg key="Contact_-">Contact -&gt;</msg>
   <msg key="contact_is_in_-">contact is in -&gt;</msg>
   <msg key="contact_is_not_in_-">contact is not in -&gt;</msg>
+  <msg key="contact_rel_change">Change</msg>
   <msg key="Contact_Relationship">Contact Relationship</msg>
   <msg key="Contact_Type">Contact Type</msg>
   <msg key="Contact_Type_One">Contact Type One</msg>
@@ -175,6 +176,7 @@
   <msg key="First_Name">First Name</msg>
   <msg key="First_Names">First Names</msg>
   <msg key="Footer">Footer</msg>
+  <msg key="Freelancer_bookings">Freelancer Bookings</msg>
   <msg key="Freelancers">Freelancers</msg>
   <msg key="From">From</msg>
   <msg key="Generating_PDF">Generating PDF</msg>
@@ -288,6 +290,7 @@
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
   <msg key="lt_created_in_the_last_-">created in the last -&gt;</msg>
   <msg key="lt_Currently_the_group_">Currently, the group is able to handle the following types of relationships:</msg>
+  <msg key="lt_dear_ladies_and">Dear ladies and gentlemen</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>
   <msg key="lt_Define_a_new_relation">Define a new relationship type</msg>
   <msg key="lt_Delete_requires_return_url">Deleting an item from history requires a return_url</msg>
@@ -594,6 +597,7 @@
   <msg key="True">True</msg>
   <msg key="Turnover">Turnover:</msg>
   <msg key="Type">Type</msg>
+  <msg key="Untitled">Untitled</msg>
   <msg key="Update">Update</msg>
   <msg key="Update_filenames">Update filenames</msg>
   <msg key="Updated_By">Updated By</msg>
@@ -611,6 +615,7 @@
   <msg key="View_next">View next</msg>
   <msg key="Visit_Club">Visit Club</msg>
   <msg key="Watch_all_changes">Watch all changes</msg>
+  <msg key="werbemailing">Werbemailing</msg>
   <msg key="which_match">which match</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">with</msg>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.1d12" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b9" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
   <msg key="--none--">-- Keine --</msg>
+  <msg key="--select_a_person--">-- Person wählen --</msg>
+  <msg key="--select_an_organization--">-- Organisation wählen --</msg>
   <msg key="--select_one--">-- Bitte auswählen --</msg>
   <msg key="Action">Aktion</msg>
   <msg key="Actions">Aktionen</msg>
@@ -23,6 +25,7 @@
   <msg key="Add_new_in_Group">Eine neue %object_type% Gruppen zuteilen</msg>
   <msg key="Add_Organization">Neue Organisation</msg>
   <msg key="Add_Person">Neue Person</msg>
+  <msg key="Add_Relationship">Beziehung hinzufügen</msg>
   <msg key="Add_Search">Suche hinzufügen</msg>
   <msg key="Add_Signature">Eine Signatur hinzufügen</msg>
   <msg key="Add_the_selected_contacts_to_a_category">Den ausgewählten Kontakt zu einer Kategorie hinzuweisen</msg>
@@ -91,6 +94,7 @@
   <msg key="Contact_-">Kontakt -&amp;gt;</msg>
   <msg key="contact_is_in_-">Kontakt ist in -&gt;</msg>
   <msg key="contact_is_not_in_-">Kontakt ist nicht in -&gt;</msg>
+  <msg key="contact_rel_change">Neu zuweisen</msg>
   <msg key="Contact_Relationship">Kontakt Beziehung</msg>
   <msg key="Contact_Type">Kontakttyp</msg>
   <msg key="Contact_Type_One">Kontakttyp eins</msg>
@@ -160,6 +164,7 @@
   <msg key="First_Name">Vorname</msg>
   <msg key="First_Names">Vornamen</msg>
   <msg key="Footer">Fußzeile</msg>
+  <msg key="Freelancer_bookings">Fremdaufträge</msg>
   <msg key="Freelancers">Freelancer</msg>
   <msg key="From">Von</msg>
   <msg key="Get">Lade</msg>
@@ -206,6 +211,8 @@
   <msg key="lt_--_top_level_group_--">-- Gruppe erste Ebene --</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Eine neue %object_type% hinzufügen und den ausgewählten Gruppen zuordnen</msg>
   <msg key="lt_Add_new_relsrelations">Hinzufügen neuer %rels.relationship%</msg>
+  <msg key="lt_Add_relationship_to_these_orgs">Beziehung zu diesen Organisationen hinzufügen</msg>
+  <msg key="lt_Add_relationship_to_these_people">Beziehung zu folgenden Personen hinzufügen</msg>
   <msg key="lt_Add_relationship_type">Hinzufügen Beziehungstyp</msg>
   <msg key="lt_Add_to_Selected_Group">Zu markierter/n Gruppe/n hinzufügen</msg>
   <msg key="lt_Advanced_searches_are">Erweiterte Suchen sind sehr vielfältig, aber sie benötigen spezifischen Input</msg>
@@ -257,6 +264,7 @@
   <msg key="lt_country_code_is_not_-">Länderkennziffer ist nicht -&gt;</msg>
   <msg key="lt_created_in_the_last_-">Erstellt in den letzten -&gt;</msg>
   <msg key="lt_Currently_the_group_">Zurzeit ist die Gruppe in der Lage, die folgenden Beziehungstypen zu nutzen:</msg>
+  <msg key="lt_dear_ladies_and">Sehr geehrte Damen und Herren</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Nur SW Admins sehen dies</msg>
   <msg key="lt_Define_a_new_relation">Definition eines neuen Beziehungstyps</msg>
   <msg key="lt_Delete_the_selected_C">Selektierte Kontakte löschen</msg>
@@ -289,7 +297,6 @@ Deutsch(DE) 	</msg>
   <msg key="lt_not_created_in_the_la">nicht erstellt in den letzten -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">nicht upgedatet in den letzten -&gt;</msg>
   <msg key="lt_of_the_following_cond">der folgenden Bedingungen:&lt;br&gt;</msg>
-  <msg key="lt_Once_done_printing_-return_url-">Sobald Sie diese Briefe ausgedruckt haben können Sie  &lt;a href=&quot;%return_url%&quot;&gt;dorthin zurückkehren wo Sie waren&lt;/a&gt;.</msg>
   <msg key="lt_Once_ready_for_releas">Sobald der Release ansteht, wird dieses im Softwarecode berücksichtigt.</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; enthält &quot;Search_Word&quot; oder</msg>
   <msg key="lt_Organization_Relation">Organisationsbeziehung</msg>
@@ -302,6 +309,8 @@ Deutsch(DE) 	</msg>
   <msg key="lt_remember_that_you_can">Bei der Erstellung können sie nutzen: &amp;lt;a href=&amp;quot;message-help&amp;quot;&amp;gt;mail merge substitutions&amp;lt;/a&amp;gt;. Die gebräuchlichsten Platzhalter sind \{name\} \{first_names\}, \{last_name\}, \{home_address\} und \{date\}</msg>
   <msg key="lt_Remove_from_Selected_">Entfernen von markierter/n Gruppe(n)</msg>
   <msg key="lt_Remove_from_this_Grou">Von Gruppe entfernen</msg>
+  <msg key="lt_Remove_others_of_this_role_from_these_contacts">Lösche alle anderen Beziehungen desselben Typs zu diesen Kontakten</msg>
+  <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Lösche alle anderen Beziehungen diesen Typs beim hinzugefügten Kontakt</msg>
   <msg key="lt_role_exists">%role% existiert</msg>
   <msg key="lt_role_in_the_search_search_link">%role% ist in der Suche %search_link%</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% nicht in der Suche %search_link%</msg>
@@ -423,6 +432,7 @@ Deutsch(DE) 	</msg>
   <msg key="Permissions_for_default_group">Zugriffsrechte für Standardgruppe</msg>
   <msg key="Person">Person</msg>
   <msg key="Person_Form">Personen Formblatt</msg>
+  <msg key="Please_choose_a_contact">Bitte wählen Sie einen Kontakt</msg>
   <msg key="pp">i.V.</msg>
   <msg key="Pretty_name">Angezeigter Name</msg>
   <msg key="pretty_name_help">Der Name der bei dieser Liste als Überschrift angezeigt wird.</msg>
@@ -444,6 +454,7 @@ Deutsch(DE) 	</msg>
   <msg key="READ_THESE">LESEN SIE BITTE DIESES</msg>
   <msg key="Recipients">Empfänger</msg>
   <msg key="Refund">Rückerstattung</msg>
+  <msg key="Related_contact">Beziehung zu</msg>
   <msg key="Relationship">Beziehung</msg>
   <msg key="Relationship_Added">Beziehung hinzugefügt</msg>
   <msg key="Relationship_Deleted">Beziehung gelöscht</msg>
@@ -460,7 +471,9 @@ Deutsch(DE) 	</msg>
   <msg key="Results">Ergebnisse:</msg>
   <msg key="Return_to_title">Zurück zu %title%</msg>
   <msg key="Role">Rolle</msg>
+  <msg key="Role_for_these_contacts">Art der Beziehung dieser Kontakte</msg>
   <msg key="Role_Name">Rollenname</msg>
+  <msg key="Role_of_related_contact">Art der Beziehung</msg>
   <msg key="Role_One">Rolle eins</msg>
   <msg key="Role_Singular">Rolle Singular</msg>
   <msg key="Role_Two">Rolle zwei</msg>
@@ -472,6 +485,7 @@ Deutsch(DE) 	</msg>
   <msg key="save_this_search_">Speichern dieser Suche</msg>
   <msg key="Saved_Searches">Gespeicherte Suchen</msg>
   <msg key="Search">Suchen</msg>
+  <msg key="Search_again">Erneut suchen...</msg>
   <msg key="search_contact">Kontakt suchen</msg>
   <msg key="Search_Existing">Existierenden suchen</msg>
   <msg key="Search_for">Suche nach</msg>
@@ -526,6 +540,7 @@ Deutsch(DE) 	</msg>
   <msg key="True">richtig</msg>
   <msg key="Turnover">Auftragswert:</msg>
   <msg key="Type">Typ</msg>
+  <msg key="Untitled">Unbenannt</msg>
   <msg key="Update">Update</msg>
   <msg key="Update_filenames">Update Dateinamen</msg>
   <msg key="Updated_By">Update durch</msg>

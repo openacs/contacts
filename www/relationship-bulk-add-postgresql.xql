@@ -83,18 +83,32 @@ select acs_object__delete(rel_id)
 select rel_id
   from acs_rels 
  where rel_type = :rel_type
-   and object_id_one = :object_id_one
-   and object_id_two = :object_id_two
+   and ((:switch_roles_p = 0 and object_id_one = :object_id_one and object_id_two = :object_id_two)
+   or (:switch_roles_p = 1 and object_id_one = :object_id_two and object_id_two = :object_id_one))
       </querytext>
 </fullquery>
 
-<fullquery name="create_rel">
+<fullquery name="create_forward_rel">
       <querytext>
 select acs_rel__new (
                      :rel_id,
                      :rel_type,
                      :object_id_one,
                      :object_id_two,
+                     :context_id,
+                     :creation_user,
+                     :creation_ip  
+                    )
+      </querytext>
+</fullquery>
+
+<fullquery name="create_backward_rel">
+      <querytext>
+select acs_rel__new (
+                     :rel_id,
+                     :rel_type,
+                     :object_id_two,
+                     :object_id_one,
                      :context_id,
                      :creation_user,
                      :creation_ip  

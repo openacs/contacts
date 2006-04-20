@@ -82,6 +82,7 @@ set name_order 0
 set member_state "approved"
 set format "normal"
 
+set bulk_actions [list "[_ contacts.contact_rel_change]" "../relationship-bulk-move" "[_ contacts.contact_rel_change]"]
 set admin_p [ad_permission_p [ad_conn package_id] admin]
 #set default_group_id [contacts::default_group_id]
 set title "Contacts"
@@ -198,8 +199,11 @@ template::list::create \
     -html {width 100%} \
     -name "relationships" \
     -multirow "relationships" \
+    -key rel_id \
     -row_pretty_plural "[_ contacts.relationships]" \
     -selected_format "normal" \
+    -bulk_actions $bulk_actions \
+    -bulk_action_export_vars {party_id} \
     -elements {
         role {
             label "[_ contacts.Art_of_Relationship]"
@@ -240,6 +244,7 @@ template::list::create \
 	    label "[_ contacts.Table]"
 	    layout table
 	    row {
+		checkbox {}
                 role {}
                 other_name {}
                 details {}
