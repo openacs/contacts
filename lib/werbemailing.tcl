@@ -42,8 +42,6 @@ if {[exists_and_not_null footer_id]} {
 set template_path "[acs_root_dir]/templates/pdf/werbemailing/"
 
 set date [split [dt_sysdate] "-"]
-set date_7 ""
-set date_14 ""
 append form_elements {
     message_id:key
     party_ids:text(hidden)
@@ -97,7 +95,9 @@ ad_form -action message \
 		    set organization_id $employee(organization_id)
 		}
                 set date [lc_time_fmt [join [template::util::date::get_property linear_date_no_time $orig_date] "-"] "%q" "$employee(locale)"]
-                set regards [lang::message::lookup $employee(locale) contacts.with_best_regards]
+		set date_7 [lc_time_fmt [clock format [clock scan {+7 days}] -format "%Y-%m-%d"] "%q" "$employee(locale)"]
+		set date_14 [lc_time_fmt [clock format [clock scan {+14 days}] -format "%Y-%m-%d"] "%q" "$employee(locale)"]
+		set regards [lang::message::lookup $employee(locale) contacts.with_best_regards]
             } else {
                 ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
                 break
