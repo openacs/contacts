@@ -45,6 +45,8 @@ if {$rel_type == "organization_rel"} {
 	    -group_id $group_id \
 	    -user_id $party_id \
 	    -rel_type membership_rel
+
+	callback contact::person_new_group -person_id $party_id -group_id $group_id
     }
 }
 

@@ -38,12 +38,16 @@ ad_page_contract {
 contact::require_visiblity -party_id $party_one
 contact::require_visiblity -party_id $party_two
 
+set package_id [ad_conn package_id]
 set party_id $party_one
 set contact_name_one [contact::name -party_id $party_id]
 set contact_name_two [contact::name -party_id $party_two]
 set contact_type_one [contact::type -party_id $party_id]
 if { $contact_type_one == "user" } {
     set contact_type_one "person"
+    callback contact::person_new_rel -package_id $package_id -party_id $party_id -object_id_two $party_two -rel_type $rel_type
+    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
+    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
 }
 contact::flush -party_id $party_id
 
