@@ -35,6 +35,13 @@ ad_proc -public template::widget::contact_search { element_reference tag_attribu
     if { ![info exists element(options)] } {
 	if { [lsearch $element(html) size] < 0 } {
 	    lappend element(html) size 20
+	} else {
+	    set number_index [expr [lsearch $element(html) size] + 1]
+	    if { [lindex $element(html) $number_index] eq "1" } {
+		# we assume that this one is only intended for the select widget so
+                # we need to set it here to a sensible value
+		set element(html) [lreplace $element(html) $number_index $number_index 20]
+	    }
 	}        
 	if { [lsearch $element(html) maxlength] < 0 } {
 	    lappend element(html) maxlength 255
@@ -53,8 +60,8 @@ ad_proc -public template::widget::contact_search { element_reference tag_attribu
         
 	if { [lsearch $element(html) size] < 0 } {
 	    lappend element(html) size 7
-	}        
-        append output [select $element_reference $tag_attributes]
+	}
+        append output [template::widget::select_with_optgroup $element_reference $tag_attributes]
     }
     return $output
 }
@@ -161,38 +168,32 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
         # we need to return a select list
 
         set options [list]
-
         if { [llength $persons] > 0 } {
 	    if { [llength $persons] > 50 } {
 		set options [list [list [_ contacts.lt_Search_again_over_50_people] ":search:"]]
 		template::element::set_error $element(form_id) $element_id [_ contacts.lt_To_many_people_found_search_again]
 	    } else {
-		set options [concat [list [list [_ contacts.--select_a_person--] ""]] $persons]
+		foreach person_with_id $persons {
+		    lappend options [list [lindex $person_with_id 0] [lindex $person_with_id 1] [_ contacts.Select_a_person]]
+		}
 	    }
         }
         if { [llength $orgs] > 0 } {
 	    if { [llength $orgs] > 50 } {
-		if { [llength $options] == "0" } {
-		    set options [concat $options [list [list [_ contacts.lt_Search_again_over_50_orgs] ":search:"]]]
-		} else {
-		    set options [concat $options [list [list "---" ""]]]
-		    set options [concat $options [list [list [_ contacts.lt_Search_again_over_50_orgs] ":search:"]]]
-		}
+		set options [concat $options [list [list [_ contacts.lt_Search_again_over_50_orgs] ":search:"]]]
 		if { [llength $persons] > 50 || [llength $persons] == 0 } {
 		    template::element::set_error $element(form_id) $element_id [_ contacts.Search_again]
 		} else {
 		    template::element::set_error $element(form_id) $element_id [_ contacts.lt_To_many_orgs_found_search_again]
 		}
 	    } else {
-		if { $persons_p } {
-		    set options [concat $options [list [list "---" ""]]]
+		foreach org_with_id $orgs {
+		    lappend options [list [lindex $org_with_id 0] [lindex $org_with_id 1] [_ contacts.Select_an_organization]]
 		}
-		set options [concat $options [list [list [_ contacts.--select_an_organization--] ""]]]
-		set options [concat $options $orgs]
 	    }
         }
-        set options [concat $options [list [list "---" ""]]]
-        set element(options) [concat $options [list [list [_ contacts.Search_again] ":search:"]]]
+        lappend options [list [_ contacts.Search_again] ":search:"]
+	set element(options) $options
         if { ![info exists value] } {
             # set value to first item
             set value [lindex [lindex $options 0] 1]
