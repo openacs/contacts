@@ -4,8 +4,6 @@
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
   <msg key="--none--">-- Keine --</msg>
-  <msg key="--select_a_person--">-- Person wählen --</msg>
-  <msg key="--select_an_organization--">-- Organisation wählen --</msg>
   <msg key="--select_one--">-- Bitte auswählen --</msg>
   <msg key="Action">Aktion</msg>
   <msg key="Actions">Aktionen</msg>
@@ -496,6 +494,8 @@ Deutsch(DE) 	</msg>
   <msg key="Search_List">Suchliste</msg>
   <msg key="searches">Suchen</msg>
   <msg key="Select">Markieren</msg>
+  <msg key="Select_a_person">Person wählen</msg>
+  <msg key="Select_an_organization">Organisation wählen</msg>
   <msg key="Send">Senden</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Eine e-Mail Nachricht an die markierten Kontakte schicken</msg>
   <msg key="Send_Email">e-Mail senden</msg>

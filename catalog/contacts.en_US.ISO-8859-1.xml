@@ -7,8 +7,6 @@
   <msg key="--none--">-- None --</msg>
   <msg key="--Not_Specified--">-- Not Specified --</msg>
   <msg key="--remove_column--">-- remove column --</msg>
-  <msg key="--select_a_person--">-- select a person --</msg>
-  <msg key="--select_an_organization--">-- select an organization --</msg>
   <msg key="--select_one--">--select one--</msg>
   <msg key="Action">Action</msg>
   <msg key="Actions">Actions</msg>
@@ -236,7 +234,7 @@
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
-  <msg key="lt_Aggregated_reports_require_added_columns">Aggregated reports required at least one added column</msg>
+  <msg key="lt_Aggregated_reports_require_added_columns">Aggregated reports require at least one added column</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
   <msg key="lt_At_least_times_role_are_related">At least %times% %role% are related</msg>
   <msg key="lt_attribute_pretty_area">%attribute_pretty% area code is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
@@ -551,6 +549,8 @@
   <msg key="Search_List">Search List</msg>
   <msg key="searches">searches</msg>
   <msg key="Select">Select</msg>
+  <msg key="Select_a_person">Select a person</msg>
+  <msg key="Select_an_organization">Select an organization</msg>
   <msg key="Send">Send</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
   <msg key="Send_Email">Send Email</msg>
