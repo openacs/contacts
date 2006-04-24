@@ -865,15 +865,26 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
 		in_search - not_in_search {
 		    set user_id [ad_conn user_id]
 		    set search_options [db_list_of_lists get_my_searches {
-                        select title,
+			select ao.title,
+			cs.search_id
+			from contact_searches cs, acs_objects ao
+			where cs.search_id = ao.object_id
+			and cs.owner_id = :user_id
+			and ao.title is not null
+			and ao.package_id = :package_id
+			and not cs.deleted_p
+			order by lower(ao.title)
+                    }]
+		    set public_searches [db_list_of_lists public_searches {
+			select title,
 			search_id
 			from contact_searches
-			where owner_id = :user_id
+			where owner_id = :package_id
 			and title is not null
 			and not deleted_p
 			order by lower(title)
-                    }]
-		    set search_options [concat [list [list "" ""]] $search_options]
+		    }]
+		    set search_options [lang::util::localize [concat [list [list "" ""]] $search_options $public_searches]]
 		    lappend form_elements [list \
 					       ${prefix}${role}search_id:integer(select) \
 					       [list label {}] \
