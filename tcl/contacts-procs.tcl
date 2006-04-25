@@ -369,6 +369,7 @@ ad_proc -public contact::employee::get {
     {-array:required}
     {-organization_id ""}
     {-package_id ""}
+    {-use_cache:boolean}
 } {
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Cached.
 
@@ -406,8 +407,11 @@ ad_proc -public contact::employee::get {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]]
-
+    if {$use_cache_p} {
+	set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]]
+    } else {
+	set values [::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]
+    }
     if {![empty_string_p $values]} {
 	array set local_array $values
 	return 1
@@ -433,6 +437,7 @@ ad_proc -private contact::employee::get_not_cached {
     set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
 
     # Check if ID belongs to an employee, if not return the company information
+
     if {![person::person_p -party_id $employee_id]} {
 	set employer_id $employee_id
 	set employer_rev_id [content::item::get_best_revision -item_id $employer_id]
