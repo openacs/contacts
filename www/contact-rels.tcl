@@ -111,7 +111,7 @@ if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
 	    contact {
 		label {}
 		display_template {
-		    <a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="@contacts.map_url@">Select</a>\]</span>
+		    <a href="@contacts.map_url@">@contacts.name@</a> <span style="padding-left: 1em; font-size: 80%;">\[<a href="<%=[contact::url -party_id ""]%>@contacts.party_id@">View</a>\]</span>
 		    <span style="clear:both; display: block; margin-left: 10px; font-size: 80%;">@contacts.email@</sapn>
 		}
 	    }
