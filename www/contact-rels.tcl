@@ -36,7 +36,7 @@ set contact_url  [contact::url  -party_id $party_id]
 
 # What groups should the person be added to
 
-set group_ids [contacts::default_group]
+set group_ids ""
 set package_url [ad_conn package_url]
 
 

@@ -25,7 +25,7 @@ set default_group [contacts::default_group]
 set group_list [concat [list [list [_ contacts.All_Contacts] $default_group "0"]] [contact::groups]]
 
 if {[empty_string_p $group_ids] && [llength $group_list] > 1} {
-    ad_returnredirect "[export_vars -base "../select-groups" -url {object_type}]"
+    ad_returnredirect "[export_vars -base "../select-groups" -url {object_type object_id_two role_two rel_type}]"
 } elseif { ![string eq $group_ids ""] && [lsearch $group_ids $default_group] < 0 } {
     # an invalid group_ids list has been specified or they do not have permission to add person
     ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
@@ -94,12 +94,16 @@ foreach group $group_list {
     }
 }
 
-# Creating the form
-ad_form -extend -name party_ae -form [ams::ad_form::elements \
-					  -package_key "contacts" \
-					  -object_type $object_type \
-					  -list_names $list_names]
 
+set form_definition [ams::ad_form::elements \
+			 -package_key "contacts" \
+			 -object_type $object_type \
+			 -list_names $list_names]
+
+#ad_return_error "$object_type" "$list_names :: $form_definition"
+
+# Creating the form
+ad_form -extend -name party_ae -form $form_definition
 
 # Append relationship attributes
 
@@ -310,7 +314,7 @@ ad_form -extend -name party_ae \
 		    -object_id $rel_id
 	    }
 	    
-	    callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id
+	    callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id -package_id $package_id
 	    contact::flush -party_id $object_id_two
 	}
 

@@ -6,6 +6,8 @@ ad_page_contract {
     @cvs-id $Id$
 } {
     {object_type}
+    {object_id_two ""}
+    {role_two ""}
 } 
 
 
@@ -16,18 +18,23 @@ set package_id [ad_conn package_id]
 
 set form_elements {
     object_type:text(hidden)
+    object_id_two:text(hidden)
+    role_two:text(hidden)
 }
 set default_group [contacts::default_group]
 set group_options [contact::groups -privilege_required "create"]
 if { [llength $group_options] == "0" } {
     # only the default group is available to this user
     set group_ids $default_group
-    ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
+    ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids object_id_two role_two}]
 #    ad_return_error "[_ contacts.lt_Insufficient_Permissi]" "[_ contacts.lt_You_do_not_have_permi]"
 }
 
+# If we have a group named like the role select it by default
+set role_group_id [group::get_id -group_name $role_two]
+set group_options [lsort -index 0 $group_options]
 append form_elements {
-    {group_ids:text(checkbox),multiple,optional {label "[_ contacts.Add_to_Groups]"} {options $group_options}}
+    {group_ids:text(checkbox),multiple,optional {label "[_ contacts.Add_to_Groups]"} {values $role_group_id} {options $group_options}}
 }
 set edit_buttons [list [list "[_ contacts.lt_Add_new_in_Selected_Groups]" create]]
 
@@ -42,7 +49,7 @@ ad_form \
     } -after_submit {
 	# the contact needs to be added to the default group
 	lappend group_ids $default_group
-	ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids}]
+	ad_returnredirect [export_vars -base "add/${object_type}" -url {object_type group_ids role_two object_id_two}]
 	ad_script_abort
     }
 

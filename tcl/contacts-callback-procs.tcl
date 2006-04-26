@@ -109,6 +109,7 @@ ad_proc -public -callback contact::person_new_rel {
     {-party_id:required}
     {-object_id_two:required}
     {-rel_type:required}
+    {-package_id:required}
 } {
     This is a callback that is executed when you add a new person in a relationship to an organization.
     This will enable other packages to check if the person is added into a special relationship with the 
@@ -119,6 +120,7 @@ ad_proc -public -callback contact::organization_new_rel {
     {-party_id:required}
     {-object_id_two:required}
     {-rel_type:required}
+    {-package_id:required}
 } {
     This is a callback that is executed when you add a new organization in a relationship.
     This will enable other packages to check if the organization is added into a special relationship
