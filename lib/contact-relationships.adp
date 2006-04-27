@@ -9,7 +9,7 @@
 	  <dd class="attribute-value">
 	    <strong>
 	      <a href="@rels.contact_url@">@rels.contact@</a>
-	    </strong>
+	    </strong><font size=-2>[@rels.creation_date@]</font>
 	  </dd>
 	  <group column="contact_url">
 	    <if @rels.attribute@ not nil>

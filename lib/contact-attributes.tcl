@@ -28,10 +28,10 @@ if { $object_type == "user" } {
 }
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id }]
 
-contact::require_visiblity -party_id $party_id
+contact::require_visiblity -party_id $party_id -package_id $package_id
 
-set ams_groups [contacts::default_group]
-foreach group [contact::groups -expand "all" -privilege_required "read"] {
+set ams_groups [contacts::default_group -package_id $package_id]
+foreach group [contact::groups -expand "all" -privilege_required "read" -package_id $package_id] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {
         lappend ams_groups $group_id

@@ -18,8 +18,11 @@ set package_id [ad_conn package_id]
 
 set form_elements {
     object_type:text(hidden)
-    object_id_two:text(hidden)
-    role_two:text(hidden)
+}
+
+if {![string eq "" $object_id_two]} {
+    lappend form_elements "object_id_two:text(hidden)"
+    lappend form_elements "role_two:text(hidden)"
 }
 set default_group [contacts::default_group]
 set group_options [contact::groups -privilege_required "create"]
