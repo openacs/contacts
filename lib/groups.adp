@@ -19,6 +19,11 @@
 </if>
 <else>
 <if @hide_form_p@ true><h3 class="contact-title"><a href="./groups">#contacts.Groups#</a></h3></if>
+<if @user_p@ eq 1>
+<dl class="groups">
+  <dt class="primarygroup">#contacts.Users#</dt>
+</dl>
+</if>
 </else>
 
 <if @hide_form_p@ false and @delete_p@>
