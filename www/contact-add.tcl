@@ -234,7 +234,6 @@ ad_form -extend -name party_ae \
 		    -user_id $party_id \
 		    -rel_type "membership_rel"
 		
-		callback contact::person_new_group -person_id $party_id -group_id $group_id
 		set element_name "category_ids$group_id"
 		if {$group_id < 0} {
 		    set element_name "category_ids[expr - $group_id]"
@@ -262,7 +261,6 @@ ad_form -extend -name party_ae \
 		    # special procedure for organizations at the moment.
 		    set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,'organization_rel',:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
 		    db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
-		    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
 		}
 	    }
 	    
@@ -279,6 +277,8 @@ ad_form -extend -name party_ae \
 		-list_name "${package_id}__${group_id}" \
 		-form_name "party_ae" \
 		-object_id $revision_id
+
+	    callback contact::${object_type}_new_group -${object_type}_id $party_id -group_id $group_id
 	    # execute group specific callbacks
 	    group::get -group_id $group_id -array group_array
 	    set group_name ${group_array(group_name)}
