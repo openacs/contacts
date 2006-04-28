@@ -22,6 +22,17 @@ if {[empty_string_p $package_id]} {
     set package_id [ad_conn package_id]
 }
 
+
+if {![exists_and_not_null sort_by_date_p]} {
+    set sort_by_date_p 0
+}
+
+if {$sort_by_date_p} {
+    set sort_order "creation_date desc"
+} else {
+    set sort_order upper(other_name)
+}
+
 multirow create rels relationship relation_url contact contact_url attribute value creation_date
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id  and group_id > 0}]

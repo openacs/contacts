@@ -3,7 +3,7 @@
 <div id="contact-info">
   <div class="primary">
     <include src="/packages/contacts/lib/contact-attributes-portlet" party_id="@party_id@" /> <br />
-    <include src="/packages/contacts/lib/contact-relationships-portlet" party_id="@party_id@" />
+    <include src="/packages/contacts/lib/contact-relationships-portlet" party_id="@party_id@" sort_by_date_p="1"/>
   </div>
   <div class="secondary">
     <if @dotlrn_club_enabled_p@>

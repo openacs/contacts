@@ -9,7 +9,7 @@
       <tr>
         <td>
 
-	<include src="/packages/contacts/lib/contact-relationships" party_id="@party_id@" />
+	<include src="/packages/contacts/lib/contact-relationships" party_id="@party_id@" sort_by_date_p="@sort_by_date_p@"/>
 
         </td>
       </tr>

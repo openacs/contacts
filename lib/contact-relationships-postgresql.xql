@@ -18,7 +18,7 @@ select rel_id, other_name, other_party_id, role_singular, role_plural, rel_type,
             and acs_rels.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
        ) rels_temp, acs_objects
 	where rels_temp.rel_id = acs_objects.object_id
- order by upper(role_singular) asc, upper(other_name)
+ order by upper(role_singular) asc, $sort_order
       </querytext>
 </fullquery>
 
