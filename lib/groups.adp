@@ -11,7 +11,7 @@
 <dl class="groups">
 <multiple name="groups">
    <if @groups.sub_p@><dd class="subgroup"></if><else><dt class="primarygroup"></else>
-   @groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a>
+   @groups.group;noquote@ <a href="@groups.remove_url@"><img src="/resources/acs-subsite/Delete16.gif" width="16" height="16" border="0" alt="#contacts.Delete_from# @groups.group;noquote@"></a> - <font size="-2">[@groups.creation_date@]</font>
    <if @groups.sub_p@></dd></if><else><dt></else>
 </multiple>
 <if @user_p@ eq 1><dt class="primarygroup">#contacts.Users#</dt></if>
