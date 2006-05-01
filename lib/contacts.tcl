@@ -203,6 +203,33 @@ set return_url "[ad_conn url]?[ad_conn query]"
 # if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
 #    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
 # }
+if { [exists_and_not_null search_id] } {
+
+    set object_type [db_string get_object_type {}]
+    switch $object_type {
+	person { 
+	    set page_query_name "person_pagination"
+	    if {[string eq $orderby "organization,asc"]} {
+		set orderby "first_names,asc"
+	    }
+#	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
+	}
+	organization { 
+	    set page_query_name "organization_pagination"
+	    if {[string eq $orderby "first_names,asc"] || [string eq $orderby "last_name,asc"]} {
+		set orderby "organization,asc"
+	    }
+#	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
+	}
+	party { 
+	    set page_query_name "contacts_pagination"
+#	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
+	}
+    }
+} else {
+    set object_type "party"
+    set page_query_name "contacts_pagination"
+}
 
 set elements [list \
 		  contact [list \
@@ -233,15 +260,15 @@ set elements [list \
 		  last_name [list display_col last_name] \
 		  publish_date [list display_col publish_date] \
 		  organization [list display_col organization] \
-		  email [list display_col email]]
+		  email [list display_col email] \
+		  name [list display_col name]]
 
 if { $format == "csv" } {
-    set row_list [list \
-		      contact_id {} \
-		      first_names {} \
-		      last_name {} \
-		      email {} \
-		      ]
+    set row_list [list contact_id {} name {}]
+    if { $object_type ne "organization" } {
+	lappend row_list first_names {} last_name {}
+    }
+    lappend row_list email {}
     
 } else {
 
@@ -275,33 +302,7 @@ foreach value $extend_values {
 
 set date_format [lc_get formbuilder_date_format]
 
-if { [exists_and_not_null search_id] } {
 
-    set object_type [db_string get_object_type {}]
-    switch $object_type {
-	person { 
-	    set page_query_name "person_pagination"
-	    if {[string eq $orderby "organization,asc"]} {
-		set orderby "first_names,asc"
-	    }
-#	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
-	}
-	organization { 
-	    set page_query_name "organization_pagination"
-	    if {[string eq $orderby "first_names,asc"] || [string eq $orderby "last_name,asc"]} {
-		set orderby "organization,asc"
-	    }
-#	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
-	}
-	party { 
-	    set page_query_name "contacts_pagination"
-#	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
-	}
-    }
-} else {
-    set object_type "party"
-    set page_query_name "contacts_pagination"
-}
 set actions [list]
 if { $admin_p && [exists_and_not_null search_id] } {
     set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
