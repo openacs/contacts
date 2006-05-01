@@ -24,7 +24,7 @@ if { [exists_and_not_null party_id] } {
     }
 }
 foreach id $party_ids {
-    contact::require_visiblity -party_id $party_id
+    contact::require_visiblity -party_id $id
 }
 if { [exists_and_not_null group_id] } {
     if { $group_id != [contacts::default_group] || $confirmed_p } {
