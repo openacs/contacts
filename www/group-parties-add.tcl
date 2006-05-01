@@ -92,11 +92,12 @@ ad_form -action group-parties-add \
 		    } -default {}]
 		    
 		    if { [empty_string_p $existing_rel_id] } {
-		    
 			set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,:rel_type,:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
 			db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
+		    } else {
+			# we approve the existing rel which may not be approved
+			db_dml update_state { update membership_rels set member_state = 'approved' where rel_id = :existing_rel_id }
 		    }
-
 		    
                 }
             }
