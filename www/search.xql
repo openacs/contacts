@@ -174,15 +174,14 @@
 
 <fullquery name="get_search_info">
     <querytext>
-	select 
-		title, 
-		owner_id, 
-		all_or_any, 
-		object_type 
-	from 
-		contact_searches 
-	where 
-		search_id = :search_id 
+       select ao.title,
+              cs.owner_id,
+              cs.all_or_any,
+              cs.object_type
+         from contact_searches cs,
+              acs_objects ao
+	where cs.search_id = :search_id 
+          and cs.search_id = ao.object_id
     </querytext>
 </fullquery>
 
