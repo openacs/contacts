@@ -591,15 +591,29 @@ ad_proc -public -callback contacts::multirow::extend -impl attributes {
     }
 
     set object_type $type
-
-    if { [lsearch [list party person organization] $object_type] >= 0 } {
+    set results [list]
+    if { $object_type eq "party" && [lsearch [list email url] $key] >= 0 } {
+	db_foreach get_party_info " select $key as value, party_id from parties where party_id in ( $select_query ) " {
+	    if { $format eq "html" && $value ne "" } {
+		set value [ad_html_text_convert -from "text/plain" -to "text/html" -- $value]
+	    }
+	    lappend results $party_id $value
+	}
+    } elseif { $object_type eq "person" && [lsearch [list first_names last_name] $key] >= 0 } {
+	db_foreach get_person_info " select person_id, $key as value from persons where person_id in ( $select_query ) " {
+	    lappend results $person_id $value
+	}
+    } elseif { $object_type eq "organization" && [lsearch [list name legal_name reg_number notes] $key] >= 0 } {
+	db_foreach get_organization_info " select organization_id, $key as value from organizations where organization_id in ( $select_query ) " {
+	    lappend results $organization_id $value
+	}
+    } elseif { [lsearch [list party person organization] $object_type] >= 0 } {
 	set attribute_name $key
 	# now we check for a sub_attribute
 	regexp {^(.*)__(.*)$} $attribute_name match attribute_name sub_attribute_name
 
 	set attribute_id [attribute::id -object_type $object_type -attribute_name $attribute_name]
 	if { [db_0or1row get_attribute_info { select aa.*, aw.value_method from ams_attributes aa, ams_widgets aw where aa.widget = aw.widget and aa.attribute_id = :attribute_id }] } {
-	    set results [list]
 
 	    db_foreach get_ams_values "
 select ci.item_id as party_id, ${value_method}(aav.value_id) as value
@@ -616,18 +630,17 @@ select ci.item_id as party_id, ${value_method}(aav.value_id) as value
 			set value $sub_attribute_values($sub_attribute_name)
 			lappend results $party_id $value
 		    } else {
-			set results ""
+			# an invalid sub_attribute_name was specified
+			error "error in callback contacts::multirow::extend -impl attributes, an invalid sub_attribute_name of '$sub_attribute_name' was specified"
 		    }
 		} else {
 		    lappend results $party_id [ams::widget -widget $widget -request "value_${format}" -attribute_name $attribute_name -attribute_id $attribute_id -value $value]
 		}
 
 	    }
-
-	    return $results
 	}
     }
-    return [list]
+    return $results
 }
 
 
