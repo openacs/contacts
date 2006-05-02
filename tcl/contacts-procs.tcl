@@ -434,7 +434,7 @@ ad_proc -private contact::employee::get_not_cached {
     # ons_log notice "start processing"
     set employer_exist_p 0
     set employee_attributes [list "first_names" "last_name" "person_title" "directphoneno" "directfaxno" "email" "jobtitle" "person_title"]
-    set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext"]
+    set employer_attributes [list "name" "company_phone" "company_fax" "email" "company_name_ext" "client_id"]
 
     # Check if ID belongs to an employee, if not return the company information
 
