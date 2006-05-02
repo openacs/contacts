@@ -60,6 +60,7 @@ if { $role_two ne "" && $role_one ne "" } {
 	set role_one ""
     }
 }
+
 if { $role_two ne "" } {
     set role_one_options [lang::util::localize [ams::util::localize_and_sort_list_of_lists -list [db_list_of_lists get_rel_types {}]]]
     if { [llength $role_one_options] == "0" } {
@@ -131,7 +132,6 @@ ad_form -extend -name "add_edit" -form {
 } -on_refresh {
 } -validate {
 } -on_submit {
-
     db_transaction {
 	if { ![db_0or1row get_rel_info {}] } {
 	    break
@@ -146,35 +146,16 @@ ad_form -extend -name "add_edit" -form {
 	if { ![template::form::is_valid add_edit] } {
 	    break
 	}
-	if { $remove_role_two eq "1" } {
-	    set party_id $object_id_two
-	    db_list delete_all_rels {}
-	}
-	set context_id {}
-	set creation_user [ad_conn user_id]
-	set creation_ip [ad_conn peeraddr]
-	foreach object_id_one $party_ids {
-	    if { $remove_role_one eq "1" } {
-		set party_id $object_id_one
-		db_list delete_all_rels {}
-	    }
-	    set existing_rel_id [db_string rel_exists_p {} -default {}]
-	    if { [empty_string_p $existing_rel_id] } {
-		set rel_id {}
-		if {$switch_roles_p} {
-		    set rel_id [db_exec_plsql create_backward_rel {}]
-		} else {
-		    set rel_id [db_exec_plsql create_forward_rel {}]
-		}
-		db_dml insert_contact_rel {}
-	    }
-	    contact::flush -party_id $object_id_one
-	}
-	contact::flush -party_id $object_id_two
     }
 
+    #171498 kopieren duplicate key
+
 } -after_submit {
-    ad_returnredirect $return_url
+    if { $remove_role_one eq "1" || $remove_role_two eq "1" } {
+	ad_returnredirect [export_vars -base relationship-bulk-add-2 {party_ids object_id_two rel_type return_url remove_role_one remove_role_two switch_roles_p}]
+    } else {
+	ad_returnredirect [export_vars -base relationship-bulk-add-3 {party_ids object_id_two rel_type return_url remove_role_one remove_role_two switch_roles_p}]
+    }
 }
 
 
