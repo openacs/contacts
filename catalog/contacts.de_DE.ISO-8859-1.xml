@@ -24,6 +24,10 @@
   <msg key="Add_Organization">Neue Organisation</msg>
   <msg key="Add_Person">Neue Person</msg>
   <msg key="Add_Relationship">Beziehung hinzufügen</msg>
+  <msg key="Add_relationship_role_one_count">Anzahl zu löschender Beziehungen</msg>
+  <msg key="Add_relationship_role_two_count">Anzahl zu löschender Beziehungen</msg>
+  <msg key="Add_relationship_to_these_contacts">Beziehung zu diesen Kontakten hinzufügen</msg>
+  <msg key="Add_relationship_to_this_contact">Beziehung zu diesem Kontakt hinzufügen</msg>
   <msg key="Add_Search">Suche hinzufügen</msg>
   <msg key="Add_Signature">Eine Signatur hinzufügen</msg>
   <msg key="Add_the_selected_contacts_to_a_category">Den ausgewählten Kontakt zu einer Kategorie hinzuweisen</msg>
@@ -68,6 +72,7 @@
   <msg key="Body">Haupttext</msg>
   <msg key="Bulk_Update">Massen Update</msg>
   <msg key="Cancel">Abbrechen</msg>
+  <msg key="cancel_and_return">Abbrechen und zurück</msg>
   <msg key="CC">CC</msg>
   <msg key="cc_help">Eine Kopie an mehrere Empfänger E-Mails getrennt durch &quot;;&quot; versenden.</msg>
   <msg key="Changed_date">Geändertes Datum:</msg>
@@ -100,6 +105,7 @@
   <msg key="Contacts">Kontakte</msg>
   <msg key="contacts">Kontakte</msg>
   <msg key="contains_-">enthält -&amp;gt;</msg>
+  <msg key="continue_with_delete">Fortfahren mit löschen</msg>
   <msg key="Copy">Kopieren</msg>
   <msg key="country_code_is_-">Landeskennziffer ist -&gt;</msg>
   <msg key="country_is_-">Land ist -&gt;</msg>
@@ -452,6 +458,7 @@ Deutsch(DE) 	</msg>
   <msg key="READ_THESE">LESEN SIE BITTE DIESES</msg>
   <msg key="Recipients">Empfänger</msg>
   <msg key="Refund">Rückerstattung</msg>
+  <msg key="rel_bulk_add_confirm">Löschen von Beziehungen bestätigen</msg>
   <msg key="Related_contact">Beziehung zu</msg>
   <msg key="Relationship">Beziehung</msg>
   <msg key="Relationship_Added">Beziehung hinzugefügt</msg>

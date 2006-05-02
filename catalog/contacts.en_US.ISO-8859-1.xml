@@ -27,6 +27,10 @@
   <msg key="Add_Organization">Add Organization</msg>
   <msg key="Add_Person">Add Person</msg>
   <msg key="Add_Relationship">Add Relationship</msg>
+  <msg key="Add_relationship_role_one_count">Amount of relationships to be deleted</msg>
+  <msg key="Add_relationship_role_two_count">Amount of relationships to be deleted</msg>
+  <msg key="Add_relationship_to_these_contacts">Add relationship to these contacts</msg>
+  <msg key="Add_relationship_to_this_contact">Add relationship to this contact</msg>
   <msg key="Add_Search">Add Search</msg>
   <msg key="Add_Signature">Add Signature</msg>
   <msg key="Add_the_selected_contacts_to_a_category">Add the selected contacts to a category</msg>
@@ -74,6 +78,7 @@
   <msg key="Bulk_Update">Bulk Update</msg>
   <msg key="Bulk_Update_these_Contacts">Bulk update these contacts</msg>
   <msg key="Cancel">Cancel</msg>
+  <msg key="cancel_and_return">Cancel and return</msg>
   <msg key="CC">CC</msg>
   <msg key="cc_help">Send copy to multiple addresses separated by &quot;;&quot;</msg>
   <msg key="Changed_date">Changed Date:</msg>
@@ -107,6 +112,7 @@
   <msg key="contacts">contacts</msg>
   <msg key="Contacts_to_Export">Contacts to export</msg>
   <msg key="contains_-">contains -&gt;</msg>
+  <msg key="continue_with_delete">Continue with delete</msg>
   <msg key="Copy">Copy</msg>
   <msg key="Country">Country</msg>
   <msg key="country_code_is_-">country code is -&gt;</msg>
@@ -506,6 +512,7 @@
   <msg key="READ_THESE">READ THESE</msg>
   <msg key="Recipients">Recipients</msg>
   <msg key="Refund">Refund</msg>
+  <msg key="rel_bulk_add_confirm">Confirm deleting relationships</msg>
   <msg key="Related_contact">Related contact</msg>
   <msg key="Relationship">Relationship</msg>
   <msg key="Relationship_Added">Relationship Added</msg>
