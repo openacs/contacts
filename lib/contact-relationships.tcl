@@ -39,32 +39,30 @@ set groups_belonging_to [db_list get_party_groups { select group_id from group_d
 lappend groups_belonging_to [contacts::default_group]
 
 db_foreach get_relationships {} {
-    if { [contact::visible_p -party_id $other_party_id] } {
-	set contact_url [contact::url -party_id $other_party_id]
-	if {[organization::organization_p -party_id $other_party_id]} {
-	    set other_object_type "organization"
-	} else {
-	    set other_object_type "person"
-	} 
-	if {[string eq $rel_type "contact_rels_employment"]} {
-	    set relation_url [export_vars -base "[ad_conn package_url]add/$other_object_type" -url {{group_ids $groups_belonging_to} {object_id_two "$party_id"} rel_type}]    
-	} else {
-	    set relation_url ""
-	}
+    set contact_url [contact::url -party_id $other_party_id]
+    if {[organization::organization_p -party_id $other_party_id]} {
+	set other_object_type "organization"
+    } else {
+	set other_object_type "person"
+    } 
+    if {[string eq $rel_type "contact_rels_employment"]} {
+	set relation_url [export_vars -base "[ad_conn package_url]add/$other_object_type" -url {{group_ids $groups_belonging_to} {object_id_two "$party_id"} rel_type}]    
+    } else {
+	set relation_url ""
+    }
 
-	set creation_date [lc_time_fmt $creation_date %q]
-	set role_singular [lang::util::localize $role_singular]
-	multirow append rels $role_singular $relation_url $other_name $contact_url {} {} $creation_date
+    set creation_date [lc_time_fmt $creation_date %q]
+    set role_singular [lang::util::localize $role_singular]
+    multirow append rels $role_singular $relation_url $other_name $contact_url {} {} $creation_date
+    
+    # NOT YET IMPLEMENTED - Checking to see if role_singular or role_plural is needed
 
-	# NOT YET IMPLEMENTED - Checking to see if role_singular or role_plural is needed
-
-	if { [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}] } {
-	    set details_list [ams::values -package_key "contacts" -object_type $rel_type -list_name $package_id -object_id $rel_id -format "text"]
-	    
-	    if { [llength $details_list] > 0 } {
-		foreach {section attribute_name pretty_name value} $details_list {
-		    multirow append rels $role_singular $relation_url $other_name $contact_url $pretty_name $value $creation_date
-		}
+    if { [ams::list::exists_p -package_key "contacts" -object_type ${rel_type} -list_name ${package_id}] } {
+	set details_list [ams::values -package_key "contacts" -object_type $rel_type -list_name $package_id -object_id $rel_id -format "text"]
+	
+	if { [llength $details_list] > 0 } {
+	    foreach {section attribute_name pretty_name value} $details_list {
+		multirow append rels $role_singular $relation_url $other_name $contact_url $pretty_name $value $creation_date
 	    }
 	}
     }

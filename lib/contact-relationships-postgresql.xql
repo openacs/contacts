@@ -16,8 +16,10 @@ select rel_id, other_name, other_party_id, role_singular, role_plural, rel_type,
 	    and acs_objects.object_id = acs_rels.rel_id
             and ( object_id_one = :party_id or object_id_two = :party_id )
             and acs_rels.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
-       ) rels_temp, acs_objects
+       ) rels_temp, acs_objects, group_distinct_member_map
 	where rels_temp.rel_id = acs_objects.object_id
+          and rels_temp.other_party_id = group_distinct_member_map.member_id
+          and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
  order by upper(role_singular) asc, $sort_order
       </querytext>
 </fullquery>
