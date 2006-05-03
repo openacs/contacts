@@ -45,17 +45,11 @@ set contact_name_two [contact::name -party_id $party_two]
 set contact_type_one [contact::type -party_id $party_id]
 if { $contact_type_one == "user" } {
     set contact_type_one "person"
-    callback contact::person_new_rel -package_id $package_id -party_id $party_id -object_id_two $party_two -rel_type $rel_type
-    util_memoize_flush_regexp "::contact::employee::get_not_cached -employee_id $party_id *"
-    util_memoize_flush_regexp "::contact::employee_not_cached -employee_id $party_id"
 }
-contact::flush -party_id $party_id
-
 set contact_type_two [contact::type -party_id $party_two]
 if { $contact_type_two == "user" } {
     set contact_type_two "person"
 }
-contact::flush -party_id $party_two
 
 set secondary_role_pretty [lang::util::localize [db_string get_secondary_role_pretty {}]]
 if { ![exists_and_not_null rel_type] } {
@@ -81,6 +75,14 @@ if { ![exists_and_not_null rel_type] } {
 
 
 if { [exists_and_not_null rel_type] } {
+
+    if { $contact_type_one eq "person" } {
+	callback contact::person_new_rel -package_id $package_id -party_id $party_id -object_id_two $party_two -rel_type $rel_type
+    } else {
+	callback contact::organization_new_rel -package_id $package_id -party_id $party_id -object_id_two $party_two -rel_type $rel_type
+    }
+    contact::flush -party_id $party_id
+    contact::flush -party_id $party_two
 
     db_1row get_roles {}
 
