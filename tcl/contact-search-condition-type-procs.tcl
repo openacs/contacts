@@ -923,40 +923,60 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
             set role [lindex $var_list 0]
 	    set union "
 (
-( select object_id_one as party_id
-    from acs_rels where rel_type in ( select rel_type
-                                        from acs_rel_types
-                                       where rel_type in ( select object_type
-                                                             from acs_object_types
-                                                            where supertype = 'contact_rel' )
-                                         and role_two = '$role' ) )
+( select acs_rels.object_id_one as party_id
+    from acs_rels,
+         group_distinct_member_map
+   where acs_rels.rel_type in ( select rel_type
+                         from acs_rel_types
+                        where rel_type in ( select object_type
+                                              from acs_object_types
+                                             where supertype = 'contact_rel' )
+                          and role_two = '$role' ) 
+     and acs_rels.object_id_two = group_distinct_member_map.member_id
+     and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+)
 union
-( select object_id_two as party_id
-    from acs_rels where rel_type in ( select rel_type
-                                        from acs_rel_types
-                                       where rel_type in ( select object_type
-                                                             from acs_object_types
-                                                            where supertype = 'contact_rel' )
-                                         and role_one = '$role' ) )
+( select acs_rels.object_id_two as party_id
+    from acs_rels,
+         group_distinct_member_map
+   where acs_rels.rel_type in ( select rel_type
+                                  from acs_rel_types
+                                 where rel_type in ( select object_type
+                                                       from acs_object_types
+                                                      where supertype = 'contact_rel' )
+                                   and role_one = '$role' )
+     and acs_rels.object_id_one = group_distinct_member_map.member_id
+     and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+)
 )
 "
 	    set union_reverse "
 (
-( select object_id_two as party_id
-    from acs_rels where rel_type in ( select rel_type
-                                        from acs_rel_types
-                                       where rel_type in ( select object_type
-                                                             from acs_object_types
-                                                            where supertype = 'contact_rel' )
-                                         and role_two = '$role' ) )
+( select acs_rels.object_id_two as party_id
+    from acs_rels,
+         group_distinct_member_map
+   where acs_rels.rel_type in ( select rel_type
+                                  from acs_rel_types
+                                 where rel_type in ( select object_type
+                                                       from acs_object_types
+                                                      where supertype = 'contact_rel' )
+                                   and role_two = '$role' )
+     and acs_rels.object_id_one = group_distinct_member_map.member_id
+     and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+)
 union
-( select object_id_one as party_id
-    from acs_rels where rel_type in ( select rel_type
-                                        from acs_rel_types
-                                       where rel_type in ( select object_type
-                                                             from acs_object_types
-                                                            where supertype = 'contact_rel' )
-                                         and role_one = '$role' ) )
+( select acs_rels.object_id_one as party_id
+    from acs_rels,
+         group_distinct_member_map
+   where acs_rels.rel_type in ( select rel_type
+                                  from acs_rel_types
+                                 where rel_type in ( select object_type
+                                                       from acs_object_types
+                                                      where supertype = 'contact_rel' )
+                                   and role_one = '$role' )
+     and acs_rels.object_id_two = group_distinct_member_map.member_id
+     and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+)
 )
 "
 
