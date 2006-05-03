@@ -11,7 +11,7 @@
 	      <a href="@rels.contact_url@">@rels.contact@</a>
 	    </strong><font size=-2>[@rels.creation_date@]</font>
 	  </dd>
-	  <group column="contact_url">
+	  <group column="rel_id">
 	    <if @rels.attribute@ not nil>
 	      <dt class="attribute-name">@rels.attribute@:</dt>
 	      <dd class="attribute-value">@rels.value;noquote@</dd>
