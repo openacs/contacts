@@ -78,6 +78,21 @@ if { $recipients_num <= 1 } {
     }
 }
 
+# Get the list of files from the file storage folder
+set file_folder_id [parameter::get_from_package_key -package_key "acs-mail-lite" -parameter "FolderID"]
+if {![string eq "" $file_folder_id]} {
+    # get the list of files in an option
+    set file_options [db_list_of_lists files "select name, item_id from cr_items where parent_id = :file_folder_id and content_type = 'file_storage_object'"]
+    if {![string eq "" $file_options]} {
+	append form_elements {
+	    {files_extend:text(checkbox),optional 
+		{label "[_ acs-mail-lite.Additional_files]"}
+		{options $file_options}
+	    }
+	}
+    }
+}
+
 
 if { [exists_and_not_null file_ids] } {
     set files [list]
@@ -198,6 +213,13 @@ ad_form -action $action \
 				 -parent_id $party_id]
 
 	    lappend file_ids $revision_id
+	}
+
+	# Append the additional files
+	if {[exists_and_not_null files_extend]} {
+	    foreach file_id $files_extend {
+		lappend file_ids $file_id
+	    }
 	}
 
 	set locale [lang::system::site_wide_locale]

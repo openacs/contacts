@@ -14,6 +14,7 @@ ad_page_contract {
     {footer_id:integer ""}
     {return_url "./"}
     {file_ids ""}
+    {files_extend:integer,multiple,optional ""}
     {item_id:integer ""}
     {folder_id:integer ""}
     {signature_id:integer ""}

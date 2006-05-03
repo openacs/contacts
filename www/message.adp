@@ -28,6 +28,7 @@
         	return_url=@return_url;noquote@ 
 	        party_ids=@party_ids@ 
 	        file_ids=@file_ids@ 
+		files_extend=@files_extend@
 		item_id=@item_id@
 	        signature_id=@signature_id@ 
 	        recipients=@recipients;noquote@
