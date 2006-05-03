@@ -12,7 +12,7 @@
  	where
 	p.party_id = group_distinct_member_map.member_id
 	and ci.item_id = p.party_id and ci.latest_revision = cr.revision_id
-        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
 	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.party_id" -revision_id "revision_id" -limit_type_p "0"]
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
@@ -26,7 +26,7 @@
         group_distinct_member_map
  	where
 	organizations.organization_id = group_distinct_member_map.member_id
-        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
 	and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id
 	[contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
 	[template::list::orderby_clause -orderby -name "contacts"]
@@ -41,7 +41,7 @@
         group_distinct_member_map
  	where
 	persons.person_id = group_distinct_member_map.member_id
-        and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')
+        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
 	and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id
 	[contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
 	[template::list::orderby_clause -orderby -name "contacts"]

@@ -55,7 +55,7 @@
     select 1
       from group_approved_member_map
      where member_id = :party_id
-       and group_id in ('[join [contacts::default_groups -package_id $package_id] "','"]')
+       and group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
      limit 1
   </querytext>
 </fullquery>

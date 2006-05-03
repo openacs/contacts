@@ -239,7 +239,7 @@ ad_proc -private contact::party_id_in_sub_search_clause {
     if {[exists_and_not_null search_id]} {
         set group_where_clause ""
     } else {
-        set group_where_clause "and group_distinct_member_map.group_id in ('[join [contacts::default_groups] "','"]')"
+        set group_where_clause "and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])"
 #        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
     }
     set query "
