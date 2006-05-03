@@ -72,6 +72,11 @@ append form_elements {
         {help_text "[_ contacts.PS_help_text]"}
         {html {size 45 maxlength 1000}}
     }
+    {account_manager_p:text(select)
+	{label "[_ contacts.Account_Manager_P]"}
+	{help_text "[_ contacts.Account_Manager_P_help_text]"}
+	{options {{"[_ contacts.account_manager]" "t"} {"[_ contacts.yourself]" "f"}}}
+    }
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
@@ -166,7 +171,12 @@ ad_form -action message \
 	    
 	    # Retrieve information about the creation user so it can be used in the template
 	    # First check if there is an account manager
-	    set account_manager_id [contacts::util::get_account_manager -organization_id $organization_id]
+	    if {[string eq $account_manager_p "t"]} {
+		set account_manager_id [contacts::util::get_account_manager -organization_id $organization_id]
+	    } else {
+		set account_manager_id ""
+	    }
+
 	    if {[string eq "" $account_manager_id]} {
 		set user_id [ad_conn user_id]
 	    } else {
