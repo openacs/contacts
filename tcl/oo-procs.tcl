@@ -183,6 +183,79 @@ ad_proc -public contact::oo::import_oo_pdf {
     }
 }
 
+ad_proc -public contact::oo::join_pdf {
+    -filenames:required
+    {-title ""}
+    {-item_id ""}
+    {-parent_id ""}
+    {-no_import:boolean}
+    {-return_pdf:boolean}
+} {
+    Joins given pdf files and inserts the resulting PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.
+    
+    @param filenames The full path to the pdf-files to be joined.
+    @param title Title which will be used for the resulting content item and file name if none was given in the item
+    @param item_id The item_id of the content item to which the content should be associated.
+    @param parent_id Needed to set the parent of this object
+    @param no_import If this flag is specified the location of the generated PDF will be returned, but the pdf will not be stored in the content repository
+    @param return_pdf If this flag is specified the location of the generated PDF will be returned and the PDF will be stored in the content repository (in contrast to "no_import"
+    @return item_id of the revision that contains the file
+    @return file location of the file if "no_import" has been specified.
+} {
+    # This exec command is missing all the good things about openacs
+    # Add the parameter to whatever package you put this procedure in.
+    set pdfjoin_bin [parameter::get -parameter "PdfJoinBin" -default "/usr/bin/pdfjoin"]
+    set pdf_filename "[ns_tmpnam].pdf"
+
+    catch {eval exec $pdfjoin_bin --outfile $pdf_filename [join $filenames " "]} result
+    set mime_type "application/pdf"
+
+    if {![file exists $pdf_filename]} {
+	error "$result - couldn't join pdfs"
+	return
+    }
+
+    if {$no_import_p} {
+	return [list $mime_type $pdf_filename]
+    }
+
+    set pdf_filesize [file size $pdf_filename]
+    
+    set file_name [file tail $pdf_filename]
+    if {$title eq ""} {
+	set title $file_name
+    }
+    
+    if {[exists_and_not_null $item_id]} {
+	set parent_id [get_parent -item_id $item_id]
+	
+	set revision_id [cr_import_content \
+			     -title $title \
+			     -item_id $item_id \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $file_name ]
+    } else {
+	set revision_id [cr_import_content \
+			     -title $title \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $file_name ]
+    }	
+
+    content::item::set_live_revision -revision_id $revision_id
+    if {$return_pdf_p} {
+	return [list $mime_type $pdf_filename]
+    } else {
+	ns_unlink $pdf_filename
+	return [content::revision::item_id -revision_id $revision_id]
+    }
+}
+
 ad_proc -public contact::oo::change_content {
     -path:required
     -document_filename:required
