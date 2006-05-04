@@ -244,7 +244,7 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
     }
     foreach element $element_list {
 	if {[template::element::exists $form $element]} {
-	    set value [template::element::get_value $form $element]
+	    set value [string trim [template::element::get_value $form $element]]
 	    switch $element {
 		email {
 		    if { [contact::type -party_id $party_id] eq "user" } {
