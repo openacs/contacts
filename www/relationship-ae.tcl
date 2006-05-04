@@ -96,12 +96,12 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
 
     # send them on their way
     if { ![exists_and_not_null return_url] } {
-        set return_url "[contact::url -party_id $party_id]relationships"
+        set return_url "[contact::url -party_id $party_id -package_id $package_id]relationships"
     }
     set redirect_rel_types [parameter::get -parameter EditDataAfterRel -package_id [ad_conn package_id] -default ""]
     if { [regexp {\*} $redirect_rel_types match] || [lsearch $redirect_rel_types $rel_type] >= 0 } {
         # we need to redirect the party to the attribute add/edit page
-        set return_url [export_vars -base "[contact::url -party_id $party_id]edit" -url {return_url}]
+        set return_url [export_vars -base "[contact::url -party_id $party_id -package_id $package_id]edit" -url {return_url}]
         append message ". [_ contacts.lt_update_contact_if_needed]"
     }
 
