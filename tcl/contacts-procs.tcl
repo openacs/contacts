@@ -522,6 +522,19 @@ ad_proc -private contact::employee::get_not_cached {
             set local_array(town_line) $address_array(town_line)
 	    set company_address_p 1
 	}
+    } else {
+	# There is no employer info, so we just return empty values
+	set local_array(organization_id) ""
+	foreach attribute $employer_attributes {
+	    set local_array($attribute) ""
+	}
+	set local_array(address) ""
+	set local_array(municipality) ""
+	set local_array(region) ""
+	set local_array(postal_code) ""
+	set local_array(country_code) ""
+	set local_array(country) ""
+	set local_array(town_line) ""
     }
     
     # Set the attributes
