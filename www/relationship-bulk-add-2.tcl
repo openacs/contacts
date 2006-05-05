@@ -32,8 +32,8 @@ foreach party $party_ids {
 set contacts [join $contacts ", "]
 set party_two [contact::link -party_id $object_id_two]
 
-ad_form -name delete_confirm -action relationship-bulk-add-2 -export {return_url remove_role_one remove_role_two switch_roles_p party_ids object_id_two} -form {
-    {rel_type:key}
+ad_form -name delete_confirm -action relationship-bulk-add-2 -export {return_url remove_role_one remove_role_two switch_roles_p party_ids rel_type} -form {
+    {object_id_two:key}
 }
 
 if {$remove_role_one == "1"} {
@@ -57,7 +57,7 @@ ad_form -extend -name delete_confirm -form {
 ad_form -extend -name delete_confirm -edit_request {
 } -after_submit {
     if {$confirmation} {
-	ad_returnredirect [export_vars -base relationship-bulk-add-3 {party_ids object_id_two rel_type remove_role_one remove_role_two switch_roles_p}]
+	ad_returnredirect [export_vars -base relationship-bulk-add-3 {party_ids object_id_two rel_type remove_role_one remove_role_two switch_roles_p return_url}]
     } else {
 	ad_returnredirect $return_url
     }
