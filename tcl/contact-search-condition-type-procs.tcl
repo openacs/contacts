@@ -562,6 +562,8 @@ ad_proc -private contacts::search::condition_type::contact {
                                      [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
                                      [list "[_ contacts.lt_interacted_in_the_last_-]" "interacted"] \
                                      [list "[_ contacts.lt_not_interacted_in_the_la]" "not_interacted"] \
+                                     [list "[_ contacts.lt_interacted_between_-]" "interacted_between"] \
+                                     [list "[_ contacts.lt_not_interacted_betwe]" "not_interacted_between"] \
                                      [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
                                      [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"] \
                                      [list "[_ contacts.lt_created_in_the_last_-]" "created"] \
@@ -598,7 +600,10 @@ ad_proc -private contacts::search::condition_type::contact {
                                            [list label {}] \
                                            [list options $search_options] \
                                           ]
-            } else {
+            } elseif { [lsearch [list interacted_between not_interacted_between] ${operand}] >= 0 } {
+		lappend form_elements [list ${var1}:textdate [list label {}] [list after_html "and"]]
+		lappend form_elements [list ${var2}:textdate [list label {}]]
+	    } else {
                 set interval_options [list \
                                           [list days days] \
                                           [list months months] \
@@ -620,6 +625,16 @@ ad_proc -private contacts::search::condition_type::contact {
                             return [list ${operand} [set ${var1}]]
                         }
                     }
+		    interacted_between - not_interacted_between {
+			if { [exists_and_not_null ${var1}] && [exists_and_not_null ${var2}] } {
+			    if { ![db_0or1row get_it " select 1 where '[set ${var1}]'::date <= '[set ${var2}]'::date "] } {
+				template::element::set_error $form_name $var1 [_ contacts.Start_must_be_before_end]
+			    }
+			    if { [template::form::is_valid $form_name] } {
+				return [list ${operand} [template::element::get_value $form_name $var1] [template::element::get_value $form_name $var2]]
+			    }
+			}
+		    }
                     default {
                         if { [exists_and_not_null ${var1}] && [exists_and_not_null ${var2}] } {
                             return [list ${operand} [set ${var1}] [set ${var2}]]
@@ -631,6 +646,8 @@ ad_proc -private contacts::search::condition_type::contact {
         sql - pretty {
             set operand [lindex $var_list 0]
             set interval "[lindex $var_list 1] [lindex $var_list 2]"
+            set start_date [lindex $var_list 1]
+	    set end_date [lindex $var_list 2]
             switch $operand {
                 in_search {
                     set search_id [lindex $var_list 1]
@@ -652,27 +669,34 @@ ad_proc -private contacts::search::condition_type::contact {
                     set output_pretty "[_ contacts.lt_Contact_not_updated_i]"
                     set output_code   "CASE WHEN ( select creation_date from acs_objects where object_id = $revision_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
-                interacted {
+                interacted - not_interacted - interacted_between - not_interacted_between {
 		    if { [util_memoize [list ::db_table_exists acs_mail_log]] } {
 			# mail-tracking is installed so we use this table as well as the contact_message_log
 			set interacted_table "( select recipient_id, sent_date from acs_mail_log union select recipient_id, sent_date from contact_message_log ) as messages"
 		    } else {
 			set interacted_table "contact_message_log"
 		    }
-                    set output_pretty "[_ contacts.lt_Contact_interacted_in_th]"
-                    set output_code   "$party_id in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date > ( now() - '$interval'::interval ) order by recipient_id, sent_date desc )"
-  
-               }
-                not_interacted {
-		    if { [util_memoize [list ::db_table_exists acs_mail_log]] } {
-			# mail-tracking is installed so we use this table as well as the contact_message_log
-			set interacted_table "( select recipient_id, sent_date from acs_mail_log union select recipient_id, sent_date from contact_message_log ) as messages"
-		    } else {
-			set interacted_table "contact_message_log"
-		    }
-                    set output_pretty "[_ contacts.lt_Contact_not_interacted_i]"
-                    set output_code   "$party_id not in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date > ( now() - '$interval'::interval ) order by recipient_id, sent_date desc )"
-                }
+		    set start_date_pretty [lc_time_fmt $start_date %x]
+		    set end_date_pretty [lc_time_fmt $end_date %x]
+		    switch $operand {
+			interacted {
+			    set output_pretty "[_ contacts.lt_Contact_interacted_in_th]"
+			    set output_code   "$party_id in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date > ( now() - '$interval'::interval ) order by recipient_id, sent_date desc )"
+			}
+			not_interacted {
+			    set output_pretty "[_ contacts.lt_Contact_not_interacted_i]"
+			    set output_code   "$party_id not in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date > ( now() - '$interval'::interval ) order by recipient_id, sent_date desc )"
+			}
+			interacted_between {
+			    set output_pretty "[_ contacts.lt_Contact_interacted_between]"
+			    set output_code   "$party_id in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date BETWEEN '${start_date}' AND '${end_date}' )"
+			}
+			not_interacted_between {
+			    set output_pretty "[_ contacts.lt_Contact_not_interacted_bet]"
+			    set output_code   "$party_id not in ( select distinct on (recipient_id) recipient_id from $interacted_table where sent_date BETWEEN '${start_date}' AND '${end_date}' )"
+			}
+		    }  
+		}
                 comment {
                     set output_pretty "[_ contacts.lt_Contact_commented_on_]"
                     set output_code   "CASE WHEN (select creation_date from acs_objects where object_id in ( select comment_id from general_comments where object_id = $party_id ) order by creation_date desc limit 1 ) > ( now() - '$interval'::interval ) THEN 't'::boolean ELSE 'f'::boolean END"
