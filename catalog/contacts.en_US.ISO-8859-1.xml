@@ -204,12 +204,14 @@
   <msg key="invalid">Invalid</msg>
   <msg key="Invalid_Object_Type">Invalid Object Type</msg>
   <msg key="irrelevant">irrelevant</msg>
+  <msg key="is">is</msg>
   <msg key="is_-">is -&gt;</msg>
   <msg key="is_after_-">is after -&gt;</msg>
   <msg key="is_before_-">is before -&gt;</msg>
   <msg key="is_greater_than_-">is greater than -&gt;</msg>
   <msg key="is_less_than_-">is less than -&gt;</msg>
   <msg key="is_more_than_-">is more than -&gt;</msg>
+  <msg key="is_not">is not</msg>
   <msg key="is_not_-">is not -&gt;</msg>
   <msg key="is_not_set">is not set</msg>
   <msg key="is_recurrence_within_last_-">annual recurrence within last -&gt;</msg>
@@ -356,6 +358,8 @@
   <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Remove all other relationships of this type for the related contact</msg>
   <msg key="lt_role_exists">%role% exists</msg>
   <msg key="lt_role_in_the_search_search_link">%role% in the search %search_link%</msg>
+  <msg key="lt_role_is_contact_name">%role% is &lt;a href=&quot;%contact_url%&quot;&gt;%contact_name%&lt;/a&gt;</msg>
+  <msg key="lt_role_is_not_contact_name">%role% is not &lt;a href=&quot;%contact_url%&quot;&gt;%contact_name%&lt;/a&gt;</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% not in the search %search_link%</msg>
   <msg key="lt_Search_again_over_50_orgs">Search again - over 50 organizations found...</msg>
   <msg key="lt_Search_again_over_50_people">Search again - over 50 people found...</msg>
