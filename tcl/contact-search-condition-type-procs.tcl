@@ -840,6 +840,7 @@ ad_proc -private contacts::search::condition_type::relationship {
     set operand   [ns_queryget "${prefix}operand"]
     set times     [ns_queryget "${prefix}${role}times"]
     set search_id [ns_queryget "${prefix}${role}search_id"]
+    set contact_id [ns_queryget "${prefix}${role}contact_id"]
 
     if { ![exists_and_not_null object_type] } {
 	set object_type "party"
@@ -867,6 +868,8 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
             set operand_options [list \
                                      [list "[_ contacts.exists]" "exists"] \
                                      [list "[_ contacts.does_not_exists]" "not_exists"] \
+                                     [list "[_ contacts.is] ->" "is"] \
+                                     [list "[_ contacts.is_not] ->" "not_is"] \
                                      [list "[_ contacts.in_the_search] ->" "in_search"] \
                                      [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
                                     ]
@@ -915,6 +918,12 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
 					       [list options $search_options] \
 					      ]
 		}
+		is - not_is {
+		    lappend form_elements [list \
+					       ${prefix}${role}contact_id:contact_search(contact_search) \
+					       [list label {}] \
+					      ]
+		}
             }
             return $form_elements
         }
@@ -934,6 +943,13 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
 			    lappend results $search_id
 			} else {
 			    set not_complete_p 1
+			}
+		    }
+		    is - not_is {
+			if { [exists_and_not_null contact_id] && [template::form is_valid $form_name] } {
+			    lappend results $contact_id
+			} else {
+			    set not_complete_p
 			}
 		    }
 		}
@@ -1009,6 +1025,11 @@ union
 	    switch $operand {
 		min_number - max_number { set times [lindex $var_list 2] }
 		in_search - not_in_search { set search_id [lindex $var_list 2] }
+                is - not_is {
+                    set contact_id [lindex $var_list 2]
+                    set contact_name [contact::name -party_id $contact_id]
+                    set contact_url  [contact::url -party_id $contact_id]
+                }
 	    }
 	    if { $request == "pretty" } {
 		if { [exists_and_not_null times] } {
@@ -1020,9 +1041,7 @@ union
 		} else {
 		      set role [lang::util::localize [db_string get_pretty_role { select pretty_name from acs_rel_roles where role = :role } -default {}]]
                 }
-	    } else {
-                set role ""
-            }
+	    }
             switch $operand {
 		exists {
 		    set output_pretty [_ contacts.lt_role_exists]
@@ -1055,7 +1074,6 @@ group by party_id
 where rel_count >= $times )"
 		}
                 in_search {
-                    set role [lindex $var_list 0]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_in_the_search_search_link]
                     set output_code "
@@ -1070,17 +1088,46 @@ $party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.o
 
                 }
                 not_in_search {
-                    set role [lindex $var_list 0]
                     set search_link "<a href=\"[export_vars -base {./} -url {search_id}]\">[contact::search::title -search_id $search_id]</a>"
                     set output_pretty [_ contacts.lt_role_not_in_the_search_search_link]
                     set output_code "
-$party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+$party_id not in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
                 from acs_rels, acs_rel_types
                where acs_rels.rel_type = acs_rel_types.rel_type
                  and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
                  and ( acs_rel_types.role_two = '$role' or acs_rel_types.role_one = '$role' )
                  and [contact::party_id_in_sub_search_clause -not -search_id $search_id -party_id "CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_two ELSE acs_rels.object_id_one END"]
             )
+"
+                }
+                is {
+                     set output_pretty [_ contacts.lt_role_is_contact_name]
+                     set output_code "
+$party_id in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+                from acs_rels, acs_rel_types
+               where acs_rels.rel_type = acs_rel_types.rel_type
+                 and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
+                 and ( 
+                       ( acs_rel_types.role_two = '$role' and acs_rels.object_id_two = $contact_id )
+                     or
+                       ( acs_rel_types.role_one = '$role' and acs_rels.object_id_one = $contact_id )
+                     )
+             )
+"
+                }
+                not_is {
+                     set output_pretty [_ contacts.lt_role_is_not_contact_name]
+                     set output_code "
+$party_id not in ( select CASE WHEN acs_rel_types.role_two = '$role' THEN acs_rels.object_id_one ELSE acs_rels.object_id_two END as party_id
+                from acs_rels, acs_rel_types
+               where acs_rels.rel_type = acs_rel_types.rel_type
+                 and acs_rel_types.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel' )
+                 and ( 
+                       ( acs_rel_types.role_two = '$role' and acs_rels.object_id_two = $contact_id )
+                     or
+                       ( acs_rel_types.role_one = '$role' and acs_rels.object_id_one = $contact_id )
+                     )
+                 )
 "
                 }
             }
