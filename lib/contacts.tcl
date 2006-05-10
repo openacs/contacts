@@ -231,15 +231,13 @@ if { [exists_and_not_null search_id] } {
     set page_query_name "contacts_pagination"
 }
 
-set elements [list \
-		  contact [list \
-			       label \
-			       {<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>} \
-			       display_template \
-			       { 
+set elements [list]
+lappend elements contact [list \
+			      label {<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>} \
+			      display_template { 
 				   <a href="@contacts.contact_url@">@contacts.name;noquote@</a>@contacts.orga_info;noquote@
 				   <span class="contact-editlink">
-				   \[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]
+                                       \[<a href="${base_url}contact-edit?party_id=@contacts.party_id@">[_ contacts.Edit]</a>\]
 				   </span>
 				   <if @contacts.email@ not nil or @contacts.url@ not nil>
 				       <span class="contact-attributes">
@@ -254,14 +252,16 @@ set elements [list \
  		                       </if>
 				       </span>
                         	   </if>
-			       }] \
-		  contact_id [list display_col party_id] \
-		  first_names [list display_col first_names] \
-		  last_name [list display_col last_name] \
-		  publish_date [list display_col publish_date] \
-		  organization [list display_col organization] \
-		  email [list display_col email] \
-		  name [list display_col name]]
+			      }]
+
+
+lappend elements contact_id [list display_col party_id]
+lappend elements first_names [list display_col first_names label [_ contacts.First_Names]]
+lappend elements last_name [list display_col last_name label [_ contacts.Last_Name]]
+lappend elements publish_date [list display_col publish_date label [_ contacts.Last_Modified]]
+lappend elements organization [list display_col organization label [_ contacts.Organization]]
+lappend elements email [list display_col email label [_ contacts.Email]]
+lappend elements name [list display_col name label [_ contacts.Name]]
 
 if { $format == "csv" } {
     set row_list [list contact_id {} name {}]
