@@ -4,4 +4,4 @@
 # which is running on the display port. This could either be VNC or something else.
 
 export HOME=/home/malte
-/etc/openoffice.org-2.0/program/soffice.bin -writer -headless -pt pdfconv $1 -display lektor:1.0
+/etc/openoffice.org-2.0/program/soffice.bin -writer -headless -pt pdfconv $1 -display lektor2:1.0

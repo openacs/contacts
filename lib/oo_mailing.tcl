@@ -147,12 +147,34 @@ ad_form -action message \
 	
 	template::multirow create messages revision_id to_addr to_party_id subject content_body
 
-	set file_revisions [list]
-	
 	# We need to set the original date here
 	set orig_date $date
 
+	# Number of seconds the PDF takes for the generation
+	set seconds_per_user 10
+	set num_of_users [llength $party_ids]
+	set seconds_to_finish [expr $num_of_users * $seconds_per_user]
+	set package_id [ad_conn package_id]
+	set pdf_filenames [list]
+	
+	set from [ad_conn user_id]
+	set from_addr [contact::email -party_id $from]
+	
+	# Now parse the content for openoffice
+	set content_format [template::util::richtext::get_property format $content]
+	set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
+	eval [template::adp_compile -string $content]
+	set content $__adp_output
+
+
+	if {$num_of_users >1} {
+	    ad_progress_bar_begin -title "[_ contacts.Sending_Mailing]" -message_1 "[_ contacts.lt_We_are_sending_the_mailing]" -message_2 "[_ contacts.lt_We_will_continue_auto]"
+	}
+
 	foreach party_id $party_ids {
+
+	    # Reset the file_ids
+	    set file_ids ""
 
             # get the user information
             if {[contact::employee::get -employee_id $party_id -array employee]} {
@@ -187,12 +209,6 @@ ad_form -action message \
 		ad_return_error $user_id "User is not an employee"
 	    }
 
-	    # Now parse the content for openoffice
-	    set content_format [template::util::richtext::get_property format $content]
-	    set content [contact::oo::convert -content [string trim [template::util::richtext::get_property content $content]]]
-	    eval [template::adp_compile -string $content]
-	    set content $__adp_output
-
 	    # And do the same for PS
 	    eval [template::adp_compile -string $ps]
 	    set ps $__adp_output
@@ -209,25 +225,23 @@ ad_form -action message \
             close $file
 	    
             eval [template::adp_compile -string $template_content]
-            set content $__adp_output
+            set oo_content $__adp_output
 
             eval [template::adp_compile -string $style_content]
             set style $__adp_output
 
-	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $content "styles.xml" $style]]
+	    ns_log Notice "Content:: $content"
+	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $oo_content "styles.xml" $style]]
 
-	    set item_id [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id -title "${title}.pdf"] 
-	    set revision_id [content::item::get_best_revision -item_id $item_id]
-	    lappend file_revisions $revision_id
-
-	    # Now we need to find a way to join all these files. Probably using a new procedure to join all the revision ids
-	    
 	    # Subject is set => we send an email.
 	    if {$subject ne ""} {
 
+		# Create the pdf and store it
+		set item_id [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id -title "${title}.pdf"] 
+		set revision_id [content::item::get_best_revision -item_id $item_id]
+
 		# Differentiate between person and organization
 		if {[person::person_p -party_id $party_id]} {
-		    contact::employee::get -employee_id $party_id -array employee
 		    set first_names $employee(first_names)
 		    set last_name $employee(last_name)
 		    set name [string trim "$employee(person_title) $first_names $last_name"]
@@ -235,23 +249,52 @@ ad_form -action message \
 		    set directphone $employee(directphoneno)
 		    set mailing_address $employee(mailing_address)
 		    set locale $employee(locale)
-		    set to_addr $employee(email)
 		} else {
 		    set name [contact::name -party_id $party_id]
-		    set to_addr [contact::message::email_address -party_id $party_id]
 		    set salutation "Dear ladies and gentlemen"
 		    set locale [lang::user::site_wide_locale -user_id $party_id]
 		}
-		
+
+		set to_addr [contact::message::email_address -party_id $party_id]		
 		set values [list]
 		foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		    lappend values [list "{$element}" [set $element]]
 		}
 		
-		# We are going to create a multirow which knows about the file (revision_id) and contains
-		# the parsed e-mail.
-		set to_addr [contact::message::email_address -party_id $party_id]
-		template::multirow append messages $revision_id $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $email_content -values $values]
+		# Append the file(s)
+		if {[exists_and_not_null revision_id]} {
+		    set file_ids $revision_id
+		}
+	    
+		# Append the additional files
+		if {[exists_and_not_null files_extend]} {
+		    foreach file_id $files_extend {
+			lappend file_ids $file_id
+		    }
+		}
+
+		# Send the e-mail to each of the users
+		acs_mail_lite::complex_send \
+		    -to_addr $to_addr \
+		    -from_addr "$from_addr" \
+		    -subject "[contact::message::interpolate -text $subject -values $values]" \
+		    -body "[contact::message::interpolate -text $email_content -values $values]" \
+		    -package_id $package_id \
+		    -file_ids $file_ids \
+		    -mime_type "text/plain" \
+		    -object_id $item_id
+	    } else {
+		if {$num_of_users > 1} {
+		    set pdf_filename [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id -title "${title}.pdf" -return_pdf] 
+		    if {[string eq [lindex $pdf_filename 0] "application/pdf"]} {
+			lappend pdf_filenames [lindex $pdf_filename 1]
+		    } else {
+			ns_log Error "could not generate PDF for $odt_filename"
+		    }
+		} else {
+		    set print_item_id [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id -title "${title}.pdf"] 
+		    set print_revision_id [content::item::get_best_revision -item_id $print_item_id]
+		}
 	    }
 
 	    # Log that we have been sending this oo-mailing
@@ -265,47 +308,33 @@ ad_form -action message \
 		-content_format "text/html"
 	}	    
 
-	if {$subject ne ""} {
-	    set from [ad_conn user_id]
-	    set from_addr [contact::email -party_id $from]
-	    set package_id [ad_conn package_id]
-
-	    # Append the file(s)
-	    if {[exists_and_not_null revision_id]} {
-		if {[exists_and_not_null file_ids]} {
-		    append file_ids " $revision_id"
-		} else {
-		    set file_ids $revision_id
-		}
-	    }
-	    
-	    # Append the additional files
-	    if {[exists_and_not_null files_extend]} {
-		foreach file_id $files_extend {
-		    lappend file_ids $file_id
-		}
-	    }
-
-	    template::multirow foreach messages {
-
-		# Send the e-mail to each of the users
-		acs_mail_lite::complex_send \
-		    -to_addr $to_addr \
-		    -from_addr "$from_addr" \
-		    -subject "$subject" \
-		    -body "$content_body" \
-		    -package_id $package_id \
-		    -file_ids $file_ids \
-		    -mime_type "text/plain" \
-		    -object_id $item_id
-	    }
-	} else {
-	    
-	    # We are not sending the e-mail but write the file back to the user
-	    if {[llength $file_revisions]>=1} {
-		cr_write_content -revision_id [lindex $file_revisions 0]
+	if {$subject eq ""} {
+	    if {$num_of_users > 1} {
+		if {[llength $pdf_filenames] > 1} {
+		    # We are not sending the e-mail but write the file as an email back to the user
+		    set pdf_path [contact::oo::join_pdf -filenames $pdf_filenames -parent_id $user_id -title "mailing.pdf" -no_import] 
+		    
+		    # We are sending the mail from and to the same user. This is why from_addr = to_addr
+		    acs_mail_lite::complex_send \
+			-to_addr $from_addr \
+			-from_addr "$from_addr" \
+			-subject "Joined PDF attached" \
+			-body "See attached file" \
+			-package_id $package_id \
+			-files [list [list "mailing.pdf" "[lindex $pdf_path 0]" "[lindex $pdf_path 1]"]] \
+			-mime_type "text/plain"
+		} 
+	    } else {
+		# We are not sending the e-mail but write the file back to the user
+		cr_write_content -revision_id $print_revision_id
 	    }
 	}
-	ad_returnredirect [contact::url -party_id $party_id]
+	
+	if {$num_of_users > 1} {
+	    ad_progress_bar_end -url  [contact::url -party_id $party_id]
+	} else {
+	    ad_returnredirect [contact::url -party_id $party_id]
+	}
+
     }
 

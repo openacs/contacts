@@ -124,19 +124,24 @@ ad_form -name "rel_type" \
 	
     } -on_submit {
 
+	if {![exists_and_not_null banner]} {
+	    set banner ""
+	}
+	if {![exists_and_not_null ps]} {
+	    set ps ""
+	}
+	if {![exists_and_not_null content]} {
+	    set content ""
+	}
+	if {![exists_and_not_null description]} {
+	    set description ""
+	}
 	if { $message_type != "email" } {
 	    set content_format [template::util::richtext::get_property format $content]
 	    set content [template::util::richtext::get_property content $content]
 	    set description ""
 	} else {
 	    set content_format "text/plain"
-	}
-
-	if {![exists_and_not_null banner]} {
-	    set banner ""
-	}
-	if {![exists_and_not_null ps]} {
-	    set ps ""
 	}
 
 	contact::message::save \
