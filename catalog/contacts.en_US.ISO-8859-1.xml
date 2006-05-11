@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b9" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b10" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -8,6 +8,9 @@
   <msg key="--Not_Specified--">-- Not Specified --</msg>
   <msg key="--remove_column--">-- remove column --</msg>
   <msg key="--select_one--">--select one--</msg>
+  <msg key="account_manager">Account Manager</msg>
+  <msg key="Account_Manager_P">Absender</msg>
+  <msg key="Account_Manager_P_help_text">Please select if you send this message yourself or the account manager</msg>
   <msg key="Action">Action</msg>
   <msg key="Actions">Actions</msg>
   <msg key="Add">Add:</msg>
@@ -60,6 +63,7 @@
   <msg key="Archive">Archive</msg>
   <msg key="Archive_the_checked_contacts">Archive the checked contacts</msg>
   <msg key="Archived">Archived</msg>
+  <msg key="Are_you_sure_you_want_to_delete">Are you sure you want to delete this contact?</msg>
   <msg key="area_code_is_-">area code is -&gt;</msg>
   <msg key="area_code_is_not_-">area code is not -&gt;</msg>
   <msg key="Art_of_Relationship">Type of Relationship</msg>
@@ -204,14 +208,12 @@
   <msg key="invalid">Invalid</msg>
   <msg key="Invalid_Object_Type">Invalid Object Type</msg>
   <msg key="irrelevant">irrelevant</msg>
-  <msg key="is">is</msg>
   <msg key="is_-">is -&gt;</msg>
   <msg key="is_after_-">is after -&gt;</msg>
   <msg key="is_before_-">is before -&gt;</msg>
   <msg key="is_greater_than_-">is greater than -&gt;</msg>
   <msg key="is_less_than_-">is less than -&gt;</msg>
   <msg key="is_more_than_-">is more than -&gt;</msg>
-  <msg key="is_not">is not</msg>
   <msg key="is_not_-">is not -&gt;</msg>
   <msg key="is_not_set">is not set</msg>
   <msg key="is_recurrence_within_last_-">annual recurrence within last -&gt;</msg>
@@ -282,17 +284,16 @@
   <msg key="lt_Contact_has_never_log">Contact has never logged in</msg>
   <msg key="lt_Contact_has_not_logge">Contact has not logged in within the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_in_the_search_search_link">in the search %search_link%</msg>
-  <msg key="lt_Contact_interacted_between">Contact interacted with between %start_date_pretty% and %end_date_pretty%</msg>
   <msg key="lt_Contact_interacted_in_th">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
-  <msg key="lt_Contact_not_interacted_bet">Contact not interacted with between %start_date_pretty% and %end_date_pretty%</msg>
   <msg key="lt_Contact_not_interacted_i">Contact last interaction not in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
   <msg key="lt_Contact_Relationships">Contact Relationships</msg>
   <msg key="lt_Contact_Rels_Employme">Contact Rels Employment</msg>
   <msg key="lt_Contact_updated_in_th">Contact updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_contacts_was_deleted">contact has been deleted</msg>
   <msg key="lt_contacts_was_removed_from_group">The contact was removed from the group</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
@@ -321,7 +322,6 @@
   <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above critera. So, for example if our contacts database contains these entries:</msg>
   <msg key="lt_Instance_Permissions_">Instance Permissions - Not done yet</msg>
   <msg key="lt_Insufficient_Permissi">Insufficient Permissions</msg>
-  <msg key="lt_interacted_between_-">interacted with between -&gt;</msg>
   <msg key="lt_interacted_in_the_last_-">last interaction in the last -&gt;</msg>
   <msg key="lt_Invalid_input_you_spe">Invalid input, you specified form as '%form%' but should only specify: top, bottom, none</msg>
   <msg key="lt_labels_are_not_implem">labels are not implemented yet</msg>
@@ -335,7 +335,6 @@
   <msg key="lt_No_perm_to_delete_from_hist">You do not have permission to delete this item from this contacts history </msg>
   <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
   <msg key="lt_not_created_in_the_la">not created in the last -&gt;</msg>
-  <msg key="lt_not_interacted_betwe">not interacted with between -&gt;</msg>
   <msg key="lt_not_interacted_in_the_la">last interacted not in the last -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">not updated in the last -&gt;</msg>
   <msg key="lt_of_the_following_cond">of the following conditions:&lt;br&gt;</msg>
@@ -358,8 +357,6 @@
   <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Remove all other relationships of this type for the related contact</msg>
   <msg key="lt_role_exists">%role% exists</msg>
   <msg key="lt_role_in_the_search_search_link">%role% in the search %search_link%</msg>
-  <msg key="lt_role_is_contact_name">%role% is &lt;a href=&quot;%contact_url%&quot;&gt;%contact_name%&lt;/a&gt;</msg>
-  <msg key="lt_role_is_not_contact_name">%role% is not &lt;a href=&quot;%contact_url%&quot;&gt;%contact_name%&lt;/a&gt;</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% not in the search %search_link%</msg>
   <msg key="lt_Search_again_over_50_orgs">Search again - over 50 organizations found...</msg>
   <msg key="lt_Search_again_over_50_people">Search again - over 50 people found...</msg>
@@ -406,6 +403,7 @@
   <msg key="lt_updated_in_the_last_-">updated in the last -&gt;</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Upgrade this person to a user</msg>
   <msg key="lt_We_are_creating_the_c">We are creating the club for this organization. Please wait, this might take a while ...</msg>
+  <msg key="lt_We_are_sending_the_mailing">We are sending the mailing. This will take %seconds_to_finish% seconds</msg>
   <msg key="lt_We_will_continue_auto">We will continue automatically</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">You cannot add this contact to more groups.</msg>
@@ -569,6 +567,7 @@
   <msg key="Send">Send</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Send an email message to the selected contacts</msg>
   <msg key="Send_Email">Send Email</msg>
+  <msg key="Sending_Mailing">Sending Mailing</msg>
   <msg key="Set_default">Set Default</msg>
   <msg key="Set_default_extend">Set default</msg>
   <msg key="Settings">Settings</msg>
@@ -579,7 +578,6 @@
   <msg key="signatures">signatures</msg>
   <msg key="Sort_By">Sort By</msg>
   <msg key="Sort_by">Sort by</msg>
-  <msg key="Start_must_be_before_end">Start date must be before or equal to end date</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>
   <msg key="Status">Status</msg>
   <msg key="Stored_extended">Stored Extended Options</msg>
@@ -641,4 +639,5 @@
   <msg key="You_can_extend">You can extend this search by:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Your message was sent to: &lt;strong&gt;%recipients%&lt;/strong&gt;</msg>
   <msg key="your_signatures">your signatures</msg>
+  <msg key="yourself">Yourself</msg>
 </message_catalog>

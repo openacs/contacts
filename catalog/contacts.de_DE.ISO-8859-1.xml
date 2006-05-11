@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b9" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b10" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
+  <msg key="--add_column--">-- Reihe hinzufügen --</msg>
   <msg key="--Create_New_Message--">-- Neue Nachricht erstellen --</msg>
   <msg key="--none--">-- Keine --</msg>
+  <msg key="--Not_Specified--">-- Nicht definiert --</msg>
+  <msg key="--remove_column--">-- Reihe entfernen --</msg>
   <msg key="--select_one--">-- Bitte auswählen --</msg>
+  <msg key="account_manager">Account Manager</msg>
+  <msg key="Account_Manager_P">Absender</msg>
+  <msg key="Account_Manager_P_help_text">Bitte wählen Sie ob die Nachricht von Ihnen oder dem Account Manager verschickt wird</msg>
   <msg key="Action">Aktion</msg>
   <msg key="Actions">Aktionen</msg>
   <msg key="Add">Hinzufügen:</msg>
@@ -46,6 +52,8 @@
   <msg key="Aggregated">Aggregiert</msg>
   <msg key="aggregated_by">zusammengefasst nach:</msg>
   <msg key="aggregated_help">Auf &quot;Wahr&quot; setzen wenn Sie dieses Erweiterung der Liste in der &quot;Aggregierten Ergebnisseite&quot; sehen wollen</msg>
+  <msg key="Aggregated_Report">Aggregierter Report</msg>
+  <msg key="ago">her</msg>
   <msg key="All">Alle</msg>
   <msg key="All__Edit">Daten ändern</msg>
   <msg key="All_Contacts">Alle Kontakte</msg>
@@ -55,6 +63,7 @@
   <msg key="Archive">Archiv</msg>
   <msg key="Archive_the_checked_contacts">Die markierten Kontakte archivieren</msg>
   <msg key="Archived">Archiviert</msg>
+  <msg key="Are_you_sure_you_want_to_delete">Sind Sie sicher diesen Kontakt endgültig löschen zu wollen?</msg>
   <msg key="area_code_is_-">Gebietsschlüssel ist -&gt;</msg>
   <msg key="area_code_is_not_-">Gebietsschlüssel ist nicht -&gt;</msg>
   <msg key="Art_of_Relationship">Art der Beziehung</msg>
@@ -71,6 +80,7 @@
   <msg key="Belongs_to">Gehört zu</msg>
   <msg key="Body">Haupttext</msg>
   <msg key="Bulk_Update">Massen Update</msg>
+  <msg key="Bulk_Update_these_Contacts">Diese Kontakte in einem Rutsch updaten</msg>
   <msg key="Cancel">Abbrechen</msg>
   <msg key="cancel_and_return">Abbrechen und zurück</msg>
   <msg key="CC">CC</msg>
@@ -104,9 +114,11 @@
   <msg key="Contact_Type_Two">Kontakttyp zwei</msg>
   <msg key="Contacts">Kontakte</msg>
   <msg key="contacts">Kontakte</msg>
+  <msg key="Contacts_to_Export">Kontakte die zu exportieren sind</msg>
   <msg key="contains_-">enthält -&amp;gt;</msg>
   <msg key="continue_with_delete">Fortfahren mit löschen</msg>
   <msg key="Copy">Kopieren</msg>
+  <msg key="Country">Land</msg>
   <msg key="country_code_is_-">Landeskennziffer ist -&gt;</msg>
   <msg key="country_is_-">Land ist -&gt;</msg>
   <msg key="country_is_not_-">Land ist nicht -&gt;</msg>
@@ -117,6 +129,8 @@
   <msg key="Create_a_user_account_for_this_person">Für diesen User einen User Account erzeugen</msg>
   <msg key="Create_Club">&lt;font color=red&gt;Kundenportal Anlegen&lt;/font&gt;</msg>
   <msg key="create_email">e-Mail anlegen</msg>
+  <msg key="create_envelope">Umschlag erzeugen</msg>
+  <msg key="create_label">Etiketten generieren</msg>
   <msg key="create_letter">Einen Brief anlegen</msg>
   <msg key="create_oo_mailing">Mailing erstellen</msg>
   <msg key="create_project">Neues Projekt anlegen</msg>
@@ -133,6 +147,7 @@
   <msg key="Default_attributes">Standardattribute</msg>
   <msg key="Delete">Löschen</msg>
   <msg key="Delete_from">Löschen</msg>
+  <msg key="dependent_on_role_of_related_contact">abhängig von der Rolle des in Beziehung stehenden Kontaktes</msg>
   <msg key="Description">Beschreibung:</msg>
   <msg key="description_help">Eine kurze Beschreibung, was die (Unter)Abfrage macht</msg>
   <msg key="Details">Details</msg>
@@ -151,6 +166,7 @@
   <msg key="Employees">Angestellte</msg>
   <msg key="Employer">Arbeitgeber</msg>
   <msg key="Employers">Arbeitgeber</msg>
+  <msg key="Envelopes">Umschläge</msg>
   <msg key="Error">Fehler</msg>
   <msg key="even">gleich</msg>
   <msg key="exists">existiert</msg>
@@ -171,6 +187,7 @@
   <msg key="Freelancer_bookings">Fremdaufträge</msg>
   <msg key="Freelancers">Freelancer</msg>
   <msg key="From">Von</msg>
+  <msg key="Generating_PDF">PDF wird generiert</msg>
   <msg key="Get">Lade</msg>
   <msg key="Glossars">Glossare</msg>
   <msg key="Go">Suche</msg>
@@ -187,6 +204,7 @@
   <msg key="History">Historie</msg>
   <msg key="In_Searches">Suchen</msg>
   <msg key="in_the_search">in der Suche</msg>
+  <msg key="Include_address_for_windowed_">Nutzen Sie Name und Anschrift für Fenster- Briefumschläge</msg>
   <msg key="invalid">Unberechtigt</msg>
   <msg key="Invalid_Object_Type">ungültiger Objekttyp</msg>
   <msg key="irrelevant">irrelevant</msg>
@@ -198,7 +216,11 @@
   <msg key="is_more_than_-">ist mehr als -&gt;</msg>
   <msg key="is_not_-">ist nicht -&gt;</msg>
   <msg key="is_not_set">ist nicht eingerichtet</msg>
+  <msg key="is_recurrence_within_last_-">jährlich wiederkehrendes Ereignis innerhalb der letzten -&gt;</msg>
+  <msg key="is_recurrence_within_next_-">jährlich wiederkehrendes Ereignis innerhalb der nächsten -&gt;</msg>
   <msg key="is_set">ist eingerichtet</msg>
+  <msg key="Label_Type">Etiketten Typ</msg>
+  <msg key="Labels">Etiketten</msg>
   <msg key="last">letztes</msg>
   <msg key="Last_Modified">Letzte Änderung</msg>
   <msg key="Last_Name">Nachnamen</msg>
@@ -213,13 +235,16 @@
   <msg key="lt_--_no_not_include_a_s">-- keine Signatur einbinden --</msg>
   <msg key="lt_--_Recent_Searches_--">-- kürzlich durchgeführte Suchen --</msg>
   <msg key="lt_--_top_level_group_--">-- Gruppe erste Ebene --</msg>
+  <msg key="lt_-contact_link-_was_upgraded_to_a_user">%contact_link% wurde zum Benutzer gemacht</msg>
   <msg key="lt_Add_new_in_Selected_Groups">Eine neue %object_type% hinzufügen und den ausgewählten Gruppen zuordnen</msg>
   <msg key="lt_Add_new_relsrelations">Hinzufügen neuer %rels.relationship%</msg>
+  <msg key="lt_Add_relationship_to_sel">Beziehung zu den ausgewählten Kontakten hinzufügen</msg>
   <msg key="lt_Add_relationship_to_these_orgs">Beziehung zu diesen Organisationen hinzufügen</msg>
   <msg key="lt_Add_relationship_to_these_people">Beziehung zu folgenden Personen hinzufügen</msg>
   <msg key="lt_Add_relationship_type">Hinzufügen Beziehungstyp</msg>
   <msg key="lt_Add_to_Selected_Group">Zu markierter/n Gruppe/n hinzufügen</msg>
   <msg key="lt_Advanced_searches_are">Erweiterte Suchen sind sehr vielfältig, aber sie benötigen spezifischen Input</msg>
+  <msg key="lt_Aggregated_reports_require_added_columns">Aggregierte Reports erfordern mindestens eine zusätzliche Reihe</msg>
   <msg key="lt_All_searches_are_case">Alle Suchen beachten keine Groß- und Kleinschreibung. Wenn mehr als ein Kontakt der Suche entspricht, so wird eine Ergebnisliste angezeigt. Wenn nur ein Kontakt den Suchkriterien entspricht, dann wird dieser direkt angezeigt.</msg>
   <msg key="lt_At_least_times_role_are_related">Wenigstens %times% %role% sind verwandt</msg>
   <msg key="lt_attribute_pretty_area"> %attribute_pretty% Gebietskennziffer ist: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
@@ -240,8 +265,11 @@
   <msg key="lt_attribute_pretty_is_s">%attribute_pretty% ist gesetzt</msg>
   <msg key="lt_attribute_pretty_is_s_1">%attribute_pretty% ist: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_s_2">%attribute_pretty% ist: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_more_than">%attribute_pretty% ist weniger als &lt;strong&gt;%interval%&lt;/strong&gt; her</msg>
   <msg key="lt_attribute_pretty_stat">%attribute_pretty% Bundesland/Bezirk ist: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_stat_1">%attribute_pretty% Bundesland/Bezirk ist nicht: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_within_last_">%attribute_pretty%'s jährliche Wiederholung innerhalb der letzten&lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_within_next_">%attribute_pretty%'s jährliche Wiederholung innerhalb der nächsten&lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_zipp">%attribute_pretty% PLZ startet mit: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_zipp_1">%attribute_pretty% PLZ startet nicht mit: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_brbrsave_this_search_">&lt;br&gt;&lt;br&gt;Diese Suche speichern unter</msg>
@@ -256,13 +284,16 @@
   <msg key="lt_Contact_has_never_log">Kontakt hat sich nie eingeloggt</msg>
   <msg key="lt_Contact_has_not_logge">Kontakt hat sich in den letzten &lt;strong&gt;%interval%&lt;/strong&gt; nicht eingeloggt.</msg>
   <msg key="lt_Contact_in_the_search_search_link">In der Suche %search_link%</msg>
+  <msg key="lt_Contact_interacted_in_th">Letzte Interaktion mit dem Kontakt innerhalb der letzten: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_commented">Zu dem Kontakt wurde seit &lt;strong&gt;%interval%&lt;/strong&gt; kein Kommentar hinterlassen.</msg>
   <msg key="lt_Contact_not_created_i">Der Kontakt wurde nicht innerhalb der letzten &lt;strong&gt;%interval%&lt;/strong&gt; erstellt.</msg>
+  <msg key="lt_Contact_not_interacted_i">Letzte Interaktion mit dem Kontakt nicht innerhalb der letzten: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Der Kontakt wurde seit &lt;strong&gt;%interval%&lt;/strong&gt; nicht upgedatet</msg>
   <msg key="lt_Contact_Rel_Employmen">Kontakt Rel Arbeitverhältnis</msg>
   <msg key="lt_Contact_Relationships">Kontakt Beziehungen</msg>
   <msg key="lt_Contact_Rels_Employme">Kontakt Rels Arbeitsverhältnisse</msg>
   <msg key="lt_Contact_updated_in_th">Der Kontakt wurde in den letzten &lt;strong&gt;%interval%&lt;/strong&gt; upgedatet.</msg>
+  <msg key="lt_contacts_was_deleted">Kontakt wurde gelöscht</msg>
   <msg key="lt_contacts_was_removed_from_group">Der Kontakt wurde von der Gruppe entfernt</msg>
   <msg key="lt_contacts_were_deleted">%contacts@ wurden gelöscht</msg>
   <msg key="lt_country_code_is_not_-">Länderkennziffer ist nicht -&gt;</msg>
@@ -271,6 +302,7 @@
   <msg key="lt_dear_ladies_and">Sehr geehrte Damen und Herren</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Nur SW Admins sehen dies</msg>
   <msg key="lt_Define_a_new_relation">Definition eines neuen Beziehungstyps</msg>
+  <msg key="lt_Delete_requires_return_url">Einen Eintrag aus der Historie zu entfernen benötigt eine return_url</msg>
   <msg key="lt_Delete_the_selected_C">Selektierte Kontakte löschen</msg>
   <msg key="lt_Delete_the_selectted_">Löschen der markierten Dateien</msg>
   <msg key="lt_Delete_this_contact">Diesen Kontakt komplett löschen (nicht wieder rückgängig machbare Aktion!)</msg>
@@ -279,6 +311,8 @@
   <msg key="lt_Existing_Relationship">Bestehende Beziehungen</msg>
   <msg key="lt_First_Names_contains_">&quot;First Names&quot; enthält &quot;Search_Word&quot; oder</msg>
   <msg key="lt_First_Names_is_requir">Vorname ist erfoderlich</msg>
+  <msg key="lt_Generating_the_envelopes_">Die Umschläge werden generiert</msg>
+  <msg key="lt_Generating_the_labels_">Die Etiketten werden erzeugt</msg>
   <msg key="lt_Group_group_name_Crea">Gruppe'%group_name%' erstellt</msg>
   <msg key="lt_Group_group_name_Upda">Gruppe '%group_name%' upgedated
 Deutsch(DE) 	</msg>
@@ -289,6 +323,7 @@ Deutsch(DE) 	</msg>
   <msg key="lt_If_multiple_words_are">Wenn mehrere Wörter verwendet werden, dann müssen alle Wörter den o.g. Kriterien entsprechen. Wenn z.B. unsere Kontaktdatenbank die folgenden Einträge enthält:</msg>
   <msg key="lt_Instance_Permissions_">Instanz Berechtigungen - !NOCH UNFERTIG!</msg>
   <msg key="lt_Insufficient_Permissi">Ungenügende Berechtigungen</msg>
+  <msg key="lt_interacted_in_the_last_-">letzte Interaktion innerhalb der letzten -&gt;</msg>
   <msg key="lt_Invalid_input_you_spe">Ungültige Eingabe, Sie gaben für die Eingabemaske '%form%'an,  sollten aber nur eingeben: top, bottom, none</msg>
   <msg key="lt_labels_are_not_implem">Labels wurden bisher nicht implementiert</msg>
   <msg key="lt_Last_Name_contains_Se">&quot;Last Name&quot; enthält &quot;Search_Word&quot; oder</msg>
@@ -297,10 +332,16 @@ Deutsch(DE) 	</msg>
   <msg key="lt_li_The_role_you_enter">&lt;li&gt; Die von Ihnen eingegebene Rolle \&quot;%pretty_name%\&quot; oder der Plural \&quot;%pretty_plural%\&quot; existieren bereits.</msg>
   <msg key="lt_Make_sure_you_do_not_">Gehen Sie sicher, dass Sie nicht die gleichen Attribute zu mehreren Gruppen hinzufügen</msg>
   <msg key="lt_neither_person_nor_or">Weder der Personen- noch der Organisationstypus ist gültig, was ist da passiert Admin?</msg>
+  <msg key="lt_no_matches_for_-query-">Keine Ergebnisse für'%query%'</msg>
+  <msg key="lt_No_perm_to_delete_from_hist">Sie haben nicht die Berechtigung diesen Eintrag aus der Kontakthistorie zu löschen</msg>
   <msg key="lt_not_commented_on_in_l">nicht kommentiert in den letzten -&gt;</msg>
   <msg key="lt_not_created_in_the_la">nicht erstellt in den letzten -&gt;</msg>
+  <msg key="lt_not_interacted_in_the_la">letzte Interaktion nicht innerhalb der letzten -&gt;</msg>
   <msg key="lt_not_updated_in_the_la">nicht upgedatet in den letzten -&gt;</msg>
   <msg key="lt_of_the_following_cond">der folgenden Bedingungen:&lt;br&gt;</msg>
+  <msg key="lt_Once_done_printing_plural">&lt;p&gt;Wenn Sie die Briefe gedruckt haben können sie &lt;a href=&quot;%return_url%&quot;&gt;zurückkehren woher Sie gekommen sind&lt;/a&gt; oder &lt;a href=&quot;%labels_url%&quot;&gt;Etiketten&lt;/a&gt; oder &lt;a href=&quot;%envelopes_url%&quot;&gt;Umschläge&lt;/a&gt; für diese Briefe generieren&lt;p&gt;</msg>
+  <msg key="lt_Once_done_printing_singular">&lt;p&gt;When you have printed this letter you may &lt;a href=&quot;%return_url%&quot;&gt;return to where you were&lt;/a&gt; or create a &lt;a href=&quot;%labels_url%&quot;&gt;label&lt;/a&gt; or &lt;a href=&quot;%envelopes_url%&quot;&gt;envelope&lt;/a&gt; for this letter.&lt;p&gt;</msg>
+  <msg key="lt_Once_finished_you_get">Sobald wir fertig sind werden Sie umgeleitet und eine Nachricht wird in der Kopfzeile erscheinen, welche Ihnen erlaubt ein PDF herunter zu laden</msg>
   <msg key="lt_Once_ready_for_releas">Sobald der Release ansteht, wird dieses im Softwarecode berücksichtigt.</msg>
   <msg key="lt_Organization_Name_con">&quot;Organization Name&quot; enthält &quot;Search_Word&quot; oder</msg>
   <msg key="lt_Organization_Relation">Organisationsbeziehung</msg>
@@ -318,6 +359,8 @@ Deutsch(DE) 	</msg>
   <msg key="lt_role_exists">%role% existiert</msg>
   <msg key="lt_role_in_the_search_search_link">%role% ist in der Suche %search_link%</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% nicht in der Suche %search_link%</msg>
+  <msg key="lt_Search_again_over_50_orgs">Noch einmal suchen - über 50 Organizationen wurden gefunden</msg>
+  <msg key="lt_Search_again_over_50_people">Noch einmal suchen - über 50 Personen wurden gefunden</msg>
   <msg key="lt_Some_of_the_required_">Einige der notwendigen Elemente für dieses Formular fehlen. Bitte kontaktieren Sie einen Adminstrator und gehen Sie sicher, dass die folgenden Attribute in dem Formular der Standardgruppe für diesen Objekttypen vorhanden sind:</msg>
   <msg key="lt_Some_of_the_required__1">Einige der notwendigen Elemente dieses Formulars fehlen. Bitte kontaktieren Sie einen Adminstrator und gehen Sie sicher, dass die folgenden Attribute eingebunden sind:</msg>
   <msg key="lt_stateprovince_is_not_">Bundesland/Region ist nicht -&gt;</msg>
@@ -327,6 +370,7 @@ Deutsch(DE) 	</msg>
   <msg key="lt_The_contact_is_NOT_in">Der Kontakt ist nicht in der Gruppe: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_specified">Der spezifizierte KOntakt existiert nicht</msg>
   <msg key="lt_The_contact_specified_1">Der spezifizierte Kontakt ist keiner der Kontakte in dieser Beziehung</msg>
+  <msg key="lt_The_contacts_were_merged">Die Kontakte wurden zusammengeführt und der andere Kontakt wurde gelöscht</msg>
   <msg key="lt_The_default_group_mus">Die Standardgruppe muss den Vornamen und den Nachnamen für ein Personenformblatt enthalten sowie einen Organisationsnamen für ein Organisationsformblatt, beide benötigen eine E-Mail Adresse.</msg>
   <msg key="lt_The_file_lindex_messa">Die Datei %message% wurde erfolgreich upgeloadet</msg>
   <msg key="lt_The_files_join_messag">Die Dateien %message% wurden erfolgreich upgeloadet</msg>
@@ -334,6 +378,7 @@ Deutsch(DE) 	</msg>
   <msg key="lt_The_first_role_specif">Die erste spezifizierte Rolle existiert nicht</msg>
   <msg key="lt_The_parameter_RecentO">Der Parameter RecentOnTopP ist für das General Comments Package nicht korrekt gesetzt, bitte geben Sie entweder eine '0' oder eine '1' ein.</msg>
   <msg key="lt_The_party_id_specifie">Die party_id existiert nicht</msg>
+  <msg key="lt_The_pdf_you_requested_-pdf_url-">Das PDF ist &lt;a href=&quot;%pdf_url%&quot;&gt;verfügbar zum download&lt;/a&gt;.</msg>
   <msg key="lt_The_query_type_var_li">Die Abfrage \&quot;%type% %var_list%\&quot; ist nicht länger gültig, da: %error_message</msg>
   <msg key="lt_The_query_type_var_li_1">Die Abfrage \&quot;%type% %var_list%\&quot; ist nicht länger gültig. Kontaktieren Sie einen Administrator.</msg>
   <msg key="lt_The_recipeints_name_a">Der Name des Empfängers und seine Anschriftdaten werden automatisch eingefügt. Es ist möglich mit UMschlägen mit Sichtfenstern zu arbeiten.</msg>
@@ -346,17 +391,24 @@ Deutsch(DE) 	</msg>
   <msg key="lt_This_group_is_already">Diese Gruppe ist bereits der Standard</msg>
   <msg key="lt_This_group_is_already_1">Diese Gruppe wurde schon zugewiesen (mapped)</msg>
   <msg key="lt_this_is_my_default_si">Dies ist meine Standard Signatur</msg>
+  <msg key="lt_this_may_take_a_bit">(dies kann eine Weile dauern)</msg>
   <msg key="lt_This_signature_specif">Die spezifizierte Signatur existiert entweder nicht oder sie gehört nicht zu Ihnen</msg>
   <msg key="lt_This_user_is_awaiting">Der User wartet noch auf Genehmigung vom Administrator</msg>
   <msg key="lt_This_users_has_not_be">Dieser User wurde noch nicht genehmigt</msg>
   <msg key="lt_Title_is_not_shown_in_the_message">Der Titel wird in der Nachricht nicht angezeigt, er wird dafür genutzt, die richtige Nachricht auszuwählen.</msg>
+  <msg key="lt_To_many_contacts_found_search_again">Zu viele Suchergebnisse. Bitte suchen Sie erneut um eine Person oder Organization auszuwählen</msg>
+  <msg key="lt_To_many_orgs_found_search_again">Zu viele Suchergebnisse. Bitte suchen Sie erneut um eine Organization auszuwählen</msg>
+  <msg key="lt_To_many_people_found_search_again">Zu viele Suchergebnisse. Bitte suchen Sie erneut um eine Person auszuwählen</msg>
   <msg key="lt_Unable_to_retrieve_gr">Nicht möglich die group-id abzurufen</msg>
+  <msg key="lt_update_contact_if_needed">Wenn nötig, bitte erneuern Sie die Kontaktinformationen</msg>
   <msg key="lt_updated_in_the_last_-">Upgedatet in den letzten -&gt;</msg>
   <msg key="lt_Upgrade_this_person_to_a_user">Dieser Person als User registrieren/ upgraden</msg>
   <msg key="lt_We_are_creating_the_c">Das Kundenportal für diese Organization wird erstellt. Bitte warten Sie, dies kann etwas dauern.</msg>
+  <msg key="lt_We_are_sending_the_mailing">Wir versenden das Mailing. Dies wird ungefähr %seconds_to_finish% Sekunden in Anspruch nehmen.</msg>
   <msg key="lt_We_will_continue_auto">Es geht automatisch weiter</msg>
   <msg key="lt_What_role_does_contac">What role does %contact_name_one% have when %contact_name_two% is a %secondary_role_pretty%:</msg>
   <msg key="lt_You_cannot_add_this_c">Sie können diesen Kontakt nicht zu mehr Gruppen zuweisen.</msg>
+  <msg key="lt_You_cannot_create_a_label_for_invalid_recipients">Etiketten werden nicht für die folgenden Personen gedruckt (weil sie keine gültige Addresse haben): %invalid_recipients%</msg>
   <msg key="lt_You_cannot_make_sub_g">Sie können keine Untergruppen als Standardgruppe bestimmen</msg>
   <msg key="lt_You_cannot_map_groups">Sie können keine Gruppen zuweisen (mappen), deren Eltern-Gruppen nicht zugewiesen (mapped) sind</msg>
   <msg key="lt_You_cannot_send_a_letter_to_invalid_recipients">Sie können keinen Brief an den folgenden Kontakt schicken: %invalid_recipients%</msg>
@@ -364,11 +416,14 @@ Deutsch(DE) 	</msg>
   <msg key="lt_You_cannot_send_an_email_to_invalid_recipients">Sie können keine e-Mail an die folgenden Kontakte schicken: %invalid_recipients%</msg>
   <msg key="lt_You_cannot_unmap_the_">Sie können die Standardgruppe nicht lösen (unmap)</msg>
   <msg key="lt_You_do_not_have_permi">Sie haben keine Berechtigung dafür, User Gruppen zuzuweisen</msg>
+  <msg key="lt_You_do_not_have_permi_">Die haben keine Berechtigung Personen aus der Gruppe %group_name% zu entfernen.</msg>
   <msg key="lt_You_have_not_specifie">Sie haben keinen gültigen Kontakttypen spezifiziert</msg>
   <msg key="lt_You_have_specified_an">Sie haben einen ungültigen Objekttypen spezifiziert</msg>
   <msg key="lt_You_have_specified_an_1">Sie haben eine ungültige Größe für eine Textfläche spezifiziert</msg>
   <msg key="lt_You_need_parties_to_bulk_update">Sie müssen einige Kontakte markieren, um einen Massen-Update durchführen zu können</msg>
+  <msg key="lt_You_no_merge_with_self">Sie können keinen Kontakt mit sich selbst zusammenführen.</msg>
   <msg key="lt_Your_administrator_mu">Ihr Administrator muss eine Standardgruppe auf den Seiten &lt;a href=&quot;admin&quot;&gt;admin pages&lt;/a&gt; zuweisen und hinzufügen</msg>
+  <msg key="lt_your_bulk_update_was_successful">Der Bulk update war erfolgreich</msg>
   <msg key="lt_Your_need_to_provide_">Sie müssen einige Kontakte bereitstellen, um eine Nachricht senden zu können</msg>
   <msg key="lt_Your_provided_an_inva">Sie haben einen ungültigen Nachrichtentyp angebenen</msg>
   <msg key="lt_zippostal_does_not_st">PLZ startet nicht mit -&gt;</msg>
@@ -381,12 +436,15 @@ Deutsch(DE) 	</msg>
   <msg key="Make_Public">veröffentlichen</msg>
   <msg key="Make_the_checked_contacts_current">Die markierten Kontakte aktuell machen</msg>
   <msg key="Manage_group_categories">Kategorien für diese Gruppe</msg>
+  <msg key="Merge_with">Zusammenführen mit</msg>
   <msg key="Message">Nachricht</msg>
   <msg key="Message_is_required">Nachricht wird benötigt</msg>
   <msg key="Messages">Vorlagen</msg>
   <msg key="messages">Mitteilungen</msg>
   <msg key="mine-">mein-</msg>
   <msg key="Modify_by">Modifiziert durch:</msg>
+  <msg key="months">Monate</msg>
+  <msg key="more">mehr</msg>
   <msg key="My_Messages">Meine Nachrichten:</msg>
   <msg key="My_Searches">Meine Suchen</msg>
   <msg key="My_Signatures">Meine Signaturen</msg>
@@ -412,9 +470,11 @@ Deutsch(DE) 	</msg>
   <msg key="oo_mailing">Open Office Mailing</msg>
   <msg key="oo_message">Mailing Vorlage</msg>
   <msg key="open">Offen</msg>
+  <msg key="Options">Optionen</msg>
   <msg key="or">oder</msg>
   <msg key="Ordering">Reihenfolge</msg>
   <msg key="Organization">Organisation</msg>
+  <msg key="organization">Organization</msg>
   <msg key="Organization_Form">Organisationen Formblatt</msg>
   <msg key="Organizations">Organisationen</msg>
   <msg key="organizations">Organisationen</msg>
@@ -435,6 +495,7 @@ Deutsch(DE) 	</msg>
   <msg key="Permissions">Berechtigungen</msg>
   <msg key="Permissions_for_default_group">Zugriffsrechte für Standardgruppe</msg>
   <msg key="Person">Person</msg>
+  <msg key="person">Person</msg>
   <msg key="Person_Form">Personen Formblatt</msg>
   <msg key="Please_choose_a_contact">Bitte wählen Sie einen Kontakt</msg>
   <msg key="pp">i.V.</msg>
@@ -454,6 +515,7 @@ Deutsch(DE) 	</msg>
   <msg key="Public_Messages">Öffentliche Nachrichten</msg>
   <msg key="Public_Page">Öffentliche Seite</msg>
   <msg key="Public_Searches">Öffentlich verfügbare Suchen</msg>
+  <msg key="Quantity">Menge</msg>
   <msg key="Query">Abfrage</msg>
   <msg key="READ_THESE">LESEN SIE BITTE DIESES</msg>
   <msg key="Recipients">Empfänger</msg>
@@ -474,6 +536,7 @@ Deutsch(DE) 	</msg>
   <msg key="Remove_From_to_Group">Von Gruppe entfernen</msg>
   <msg key="Required">Erforderlich</msg>
   <msg key="Results">Ergebnisse:</msg>
+  <msg key="Return_to_history">Zurück zur Historie</msg>
   <msg key="Return_to_title">Zurück zu %title%</msg>
   <msg key="Role">Rolle</msg>
   <msg key="Role_for_these_contacts">Art der Beziehung dieser Kontakte</msg>
@@ -506,6 +569,7 @@ Deutsch(DE) 	</msg>
   <msg key="Send">Senden</msg>
   <msg key="Send_an_email_message_to_the_selected_contacts">Eine e-Mail Nachricht an die markierten Kontakte schicken</msg>
   <msg key="Send_Email">e-Mail senden</msg>
+  <msg key="Sending_Mailing">Mailing wird versendet</msg>
   <msg key="Set_default">Standard (Default) setzen</msg>
   <msg key="Set_default_extend">Standard (Default) setzen</msg>
   <msg key="Settings">Einstellungen</msg>
@@ -538,6 +602,8 @@ Deutsch(DE) 	</msg>
   <msg key="The_search_-title-_was_copied_to_your_searches">Die Suche &quot;%title%&quot; wurde zu Ihren Suchen kopiert</msg>
   <msg key="The_search_-title-_was_deleted">Die Suche &quot;%title%&quot; wurde gelöscht</msg>
   <msg key="The_search_-title-_was_made_public">Die Suche &quot;%title%&quot; wurde öffentlich zur Verfügung gestellt</msg>
+  <msg key="The_selected_relationship_requires_related_org">Die ausgewählte Beziehung erfordert das der andere Kontakt eine Organization ist</msg>
+  <msg key="The_selected_relationship_requires_related_person">Die ausgewählte Beziehung erfordert das der andere Kontakt eine Person ist</msg>
   <msg key="This_contact_doesnt">Dieser Kunde hat keine E-Mail Addresse daher wird die Addresse des Arbeitgebers benutzt (%emp_addr%)</msg>
   <msg key="this_var_name">Dieser &quot;Variablen Name&quot; existiert schon</msg>
   <msg key="Times">Zeiten</msg>
@@ -561,15 +627,19 @@ Deutsch(DE) 	</msg>
   <msg key="Var_name">Variablen Name</msg>
   <msg key="var_name_help">Name der Variable, die in der erweiterten Suche verwendent werden soll.</msg>
   <msg key="View_all_roles">Alle Rollen ansehen</msg>
+  <msg key="View_Contacts">Kontakte ansehen</msg>
   <msg key="View_next">Nächstes sehen</msg>
   <msg key="Visit_Club">Zum Kundenportal</msg>
   <msg key="Watch_all_changes">Alle Veränderungen ansehen</msg>
+  <msg key="werbemailing">Werbemailing</msg>
   <msg key="which_match">die übereinstimmen mit</msg>
   <msg key="Widget">Widget</msg>
   <msg key="with">mit</msg>
   <msg key="with_best_regards">Mit freundlichen Grüßen</msg>
   <msg key="Working_project_tasks">Projektaufgaben in Arbeit</msg>
+  <msg key="years">Jahre</msg>
   <msg key="You_can_extend">Sie können diese Suche ausweiten durch:</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Ihre Nachricht wurde an: &lt;strong&gt;%recipients%&lt;/strong&gt; gesendet.</msg>
   <msg key="your_signatures">Ihre Signaturen</msg>
+  <msg key="yourself">Sie selbst</msg>
 </message_catalog>
