@@ -249,12 +249,27 @@ ad_proc -private contacts::search::condition_type::attribute {
             set form_elements [list]
 
             if { !$only_multiple_p } {
-		set attribute_options [db_list_of_lists get_attributes {
-		    select pretty_name, attribute_id
-		    from ams_attributes	
-		    where object_type in ('organization','party','person','user') 
-		    and ams_attribute_id is not null
-		}] 
+		if { $object_type eq "" } { set object_type "party" }
+		set list_ids [contact::util::get_ams_list_ids -privilege "read" -object_type $object_type]
+		if { [llength $list_ids] == 0 } {
+		    return {}
+		}
+		if { $object_type ne "party" } {
+		    set object_type_clause "and object_type in ('party','${object_type}')"
+		} else {
+		    set object_type_clause ""
+		}
+
+		set attribute_options [db_list_of_lists get_all_attributes "
+                        select pretty_name, attribute_id
+                          from ams_attributes
+                         where attribute_id in ( select attribute_id
+                                                   from ams_list_attribute_map
+                                                  where list_id in ([template::util::tcl_to_sql_list $list_ids])
+                                               )
+                           $object_type_clause
+                           and not deprecated_p
+                "]
 	    } else {
 		set attribute_options [contacts::attribute::options_attribute]
 	    }
