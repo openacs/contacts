@@ -205,7 +205,7 @@ set return_url "[ad_conn url]?[ad_conn query]"
 # }
 if { [exists_and_not_null search_id] } {
 
-    set object_type [db_string get_object_type {}]
+    set object_type [db_string get_object_type {} -default {party}]
     switch $object_type {
 	person { 
 	    set page_query_name "person_pagination"
