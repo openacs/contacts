@@ -308,6 +308,67 @@ ad_proc -private contact::util::get_employers_not_cached {
     return $contact_list
 }
 
+ad_proc -public contact::util::get_ams_list_ids {
+    {-user_id ""}
+    {-package_id ""}
+    {-privilege:required}
+    {-object_type "party"}
+} {
+    Get a list of ams_list_ids that the user has the provided privilege on for the provided object_type
+
+    @return List of ams list ids the provided user has the privilege for
+} {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    if { $user_id eq "" } {
+	set user_id [ad_conn user_id]
+    }
+    if { [lsearch [list party organization person user] $object_type] < 0 } {
+	error "You supplied an invalid object_type to contact::util::get_ams_list_ids"
+    }
+    if { $object_type eq "user" } {
+	set object_type "person"
+    }
+
+    set list_ids [list]
+    set group_ids [list]
+    foreach group [contact::groups_list -package_id $package_id] {
+	lappend group_ids [lindex $group 0]
+    }
+    # since contact::groups_list doesn't get the default_groups
+    # we have to add them here
+    set group_ids [concat $group_ids [contacts::default_groups -package_id $package_id]]
+
+    foreach group_id $group_ids {
+	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege $privilege] } {
+	    continue
+	}
+	if { $object_type ne "organization" } {
+	    set list_id [ams::list::get_list_id \
+			     -package_key "contacts" \
+			     -object_type "person" \
+			     -list_name "${package_id}__${group_id}"]
+	    if { $list_id ne "" } {
+		lappend list_ids $list_id
+	    }
+	}
+	if { $object_type ne "person" } {
+	    set list_id [ams::list::get_list_id \
+			     -package_key "contacts" \
+			     -object_type "organization" \
+			     -list_name "${package_id}__${group_id}"]
+	    if { $list_id ne "" } {
+		lappend list_ids $list_id
+	    }
+	}
+    }
+    return $list_ids
+
+}
+
+
+
 ad_proc -public contact::salutation {
     {-party_id:required}
     {-type salutation}
