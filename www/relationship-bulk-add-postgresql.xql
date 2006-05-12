@@ -56,6 +56,14 @@ select acs_rel_type__role_pretty_name(primary_role),
       </querytext>
 </fullquery>
 
+<fullquery name="get_role_one">
+      <querytext>
+select role_one
+  from acs_rel_types
+ where rel_type = :rel_type
+      </querytext>
+</fullquery>
+
 <fullquery name="delete_rel">
       <querytext>
 select acs_object__delete(rel_id)

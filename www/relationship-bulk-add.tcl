@@ -11,7 +11,6 @@ ad_page_contract {
     {role_one ""}
     {role_two ""}
     {remove_role_one:optional}
-    {switch_roles_p 0}
 }
 
 set title [_ contacts.Add_Relationship]
@@ -37,7 +36,7 @@ foreach party $party_ids {
 }
 
 if { [llength $organization_ids] > 0 && [llength $person_ids] > 0 } {
-    ad_complain "babab"
+    ad_complain [_ contacts.lt_You_need_parties_to_bulk_update]
 } elseif { [llength $person_ids] > 0 } {
     set contact_type "person"
 } elseif { [llength $organization_ids] > 0 } {
@@ -75,7 +74,7 @@ if { $role_two ne "" } {
 }
 
 
-ad_form -name "add_edit" -method "GET" -export {party_ids return_url switch_roles_p} -form {
+ad_form -name "add_edit" -method "GET" -export {party_ids return_url} -form {
     {remove_role_one:boolean(checkbox),optional
 	{label ""}
 	{options {{"[_ contacts.lt_Remove_others_of_this_role_from_these_contacts]" 1}}}
@@ -151,6 +150,14 @@ ad_form -extend -name "add_edit" -form {
     #171498 kopieren duplicate key
 
 } -after_submit {
+    # we need to determine if this relationship is switched.
+    if { $role_one eq [db_string get_role_one {}] } {
+	set switch_roles_p 0
+    } else {
+	set switch_roles_p 1
+    }
+
+    #[db_string get_it { select role_one from acs_rel_types where rel_type }
     if { $remove_role_one eq "1" || $remove_role_two eq "1" } {
 	ad_returnredirect [export_vars -base relationship-bulk-add-2 {party_ids object_id_two rel_type return_url remove_role_one remove_role_two switch_roles_p}]
     } else {
