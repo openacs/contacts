@@ -652,38 +652,7 @@ ad_proc -public -callback contacts::extensions -impl attributes {
 } {
 } {
 
-    set list_ids ""
-    set group_ids [list]
-    foreach group [contact::groups_list] {
-	lappend group_ids [lindex $group 0]
-    }
-    # since contact::groups_list doesn't get the default_groups
-    # we have to add them here
-    set group_ids [concat $group_ids [contacts::default_groups]]
-
-    foreach group_id $group_ids {
-	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege read] } {
-	    continue
-	}
-	if { $object_type ne "organization" } {
-	    set list_id [ams::list::get_list_id \
-			     -package_key "contacts" \
-			     -object_type "person" \
-			     -list_name "${package_id}__${group_id}"]
-	    if { $list_id ne "" } {
-		lappend list_ids $list_id
-	    }
-	}
-	if { $object_type ne "person" } {
-	    set list_id [ams::list::get_list_id \
-			     -package_key "contacts" \
-			     -object_type "organization" \
-			     -list_name "${package_id}__${group_id}"]
-	    if { $list_id ne "" } {
-		lappend list_ids $list_id
-	    }
-	}
-    }
+    set list_ids [contact::util::get_ams_list_ids -user_id $user_id -package_id $package_id -privilege "read" -object_type $object_type]
 
     if { [llength $list_ids] == 0 } {
 	return {}
