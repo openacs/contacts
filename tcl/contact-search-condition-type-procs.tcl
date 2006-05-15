@@ -250,7 +250,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 
             if { !$only_multiple_p } {
 		if { $object_type eq "" } { set object_type "party" }
-		set list_ids [contact::util::get_ams_list_ids -privilege "read" -object_type $object_type]
+		set list_ids [contact::util::get_ams_list_ids -privilege "read" -object_type $object_type -package_id $package_id]
 		if { [llength $list_ids] == 0 } {
 		    return {}
 		}
