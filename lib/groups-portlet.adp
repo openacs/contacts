@@ -16,4 +16,3 @@
   </td>
 </tr>
 </table>
-  **PLEASE REMEMBER TO CHANGE THE GROUP STATUS 

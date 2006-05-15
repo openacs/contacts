@@ -94,7 +94,13 @@ append form_elements {
 set file_folder_id [parameter::get_from_package_key -package_key "acs-mail-lite" -parameter "FolderID"]
 if {![string eq "" $file_folder_id]} {
     # get the list of files in an option
-    set file_options [db_list_of_lists files "select name, item_id from cr_items where parent_id = :file_folder_id and content_type = 'file_storage_object'"]
+    set file_options [db_list_of_lists files {
+	select r.title, i.item_id
+	from cr_items i, cr_revisions r
+	where i.parent_id = :file_folder_id
+	and i.content_type = 'file_storage_object'
+	and r.revision_id = i.latest_revision
+    }]
     if {![string eq "" $file_options]} {
 	append form_elements {
 	    {files_extend:text(checkbox),optional 

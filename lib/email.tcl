@@ -11,7 +11,7 @@ foreach required_param {party_ids} {
     }
 }
 
-foreach optional_param {return_url content export_vars file_ids object_id cc item_id} {
+foreach optional_param {return_url content export_vars file_ids object_id cc bcc item_id} {
     if {![info exists $optional_param]} {
 	set $optional_param {}
     }
@@ -56,6 +56,11 @@ if { $recipients_num <= 1 } {
 	    {html {size 56}}
 	    {help_text "[_ contacts.cc_help]"}
 	}
+	{bcc:text(text),optional
+	    {label "[_ acs-mail-lite.BCC]:"} 
+	    {html {size 56}}
+	    {help_text "[_ contacts.cc_help]"}
+	}
     }
 } else {
     set form_elements {
@@ -82,7 +87,13 @@ if { $recipients_num <= 1 } {
 set file_folder_id [parameter::get_from_package_key -package_key "acs-mail-lite" -parameter "FolderID"]
 if {![string eq "" $file_folder_id]} {
     # get the list of files in an option
-    set file_options [db_list_of_lists files "select name, item_id from cr_items where parent_id = :file_folder_id and content_type = 'file_storage_object'"]
+    set file_options [db_list_of_lists files {
+	select r.title, i.item_id
+	from cr_items i, cr_revisions r
+	where i.parent_id = :file_folder_id
+	and i.content_type = 'file_storage_object'
+	and r.revision_id = i.latest_revision
+    }]
     if {![string eq "" $file_options]} {
 	append form_elements {
 	    {files_extend:text(checkbox),optional 
@@ -93,18 +104,28 @@ if {![string eq "" $file_folder_id]} {
     }
 }
 
+# See if the contacts and mail-tracking packages are installed.
+set contacts_p [apm_package_installed_p "contacts"]
+set tracking_p [apm_package_installed_p "mail-tracking"]
 
 if { [exists_and_not_null file_ids] } {
     set files [list]
     foreach file $file_ids {
-	set file_title [lang::util::localize [db_string get_file_title { } -default "[_ contacts.Untitled]"]]
-	lappend files "<a href=\"/tracking/download/$file_title?version_id=$file\">$file_title</a> "
+	set file_title [lang::util::localize [content::item::get_title -item_id $file]]
+	if {[empty_string_p $file_title]} {
+	    set file_title "empty"
+	}
+	if { $tracking_p } {
+	    lappend files "<a href=\"/tracking/download/$file_title?file_id=$file\">$file_title</a> "
+	} else {
+	    lappend files "$file_title "
+	}
     }
     set files [join $files ", "]
 
     append form_elements {
-        {files_display:text(inform),optional {label "[_ contacts.Associated_files]"} {value "$files" }}
-	{file_ids:text(hidden),optional {value $file_ids}}
+        {file_ids:text(hidden) {value $file_ids}}
+        {files:text(inform),optional {label "[_ acs-mail-lite.Associated_files]"} {value $files}}
     }
 }
 
@@ -194,14 +215,16 @@ ad_form -action $action \
 	set from [ad_conn user_id]
 	set from_addr [contact::email -party_id $from]
 
-	# Remove all spaces in cc
+	# Remove all spaces in cc and bcc
 	regsub -all " " $cc "" cc
+	regsub -all " " $bcc "" bcc
 
 	set cc_list [split $cc ";"]
+	set bcc_list [split $bcc ";"]
 
 	set mime_type [template::util::richtext::get_property format $content_body]
 	set content_body [template::util::richtext::get_property contents $content_body]
-	template::multirow create messages message_type to_addr to_party_id subject content_body
+
 
 	# Insert the uploaded file linked under the package_id
 	set package_id [ad_conn package_id]
@@ -214,19 +237,19 @@ ad_form -action $action \
 
 	    lappend file_ids $revision_id
 	}
-
+	
 	# Append the additional files
 	if {[exists_and_not_null files_extend]} {
 	    foreach file_id $files_extend {
 		lappend file_ids $file_id
 	    }
 	}
-
+	
 	set locale [lang::system::site_wide_locale]
-
+	
 	# Send the mail to all parties.
 	foreach party_id $to {
-
+	    
 	    # Differentiate between person and organization
 	    if {[person::person_p -party_id $party_id]} {
 		contact::employee::get -employee_id $party_id -array employee
@@ -242,204 +265,43 @@ ad_form -action $action \
 		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
 	    }
-
-	    set to_addr [contact::message::email_address -party_id $party_id]
+	    
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    set to $name
-
-	    if {[empty_string_p $to_addr]} {
-#		ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing]
-#		break
-	    }
-
-	    lappend recipients_addr $to_addr
 	    
 	    set values [list]
 	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		lappend values [list "{$element}" [set $element]]
 	    }
-
-	    template::multirow append messages $message_type $to_addr $party_id [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
+	    
+	    set subject [contact::message::interpolate -text $subject -values $values]
+	    set content_body [contact::message::interpolate -text $content_body -values $values]
+	    acs_mail_lite::complex_send \
+		-to_party_ids $party_id \
+		-cc_addr $cc_list \
+		-bcc_addr $bcc_list \
+		-from_addr "$from_addr" \
+		-subject "$subject" \
+		-body "$content_body" \
+		-package_id $package_id \
+		-file_ids $file_ids \
+		-mime_type $mime_type \
+		-object_id $object_id \
+		-no_callback_p $no_callback_p \
+		    -single_email
 	    
 	    # Link the files to all parties
 	    if {[exists_and_not_null revision_id]} {
 		application_data_link::new -this_object_id $revision_id -target_object_id $party_id
 	    }
-	}
-
-	
-	# Send the email to all CC in cc_list
-	foreach email_addr $cc_list {
-	    set party_id [party::get_by_email -email $email_addr]
-
-	    # The CC E-Mail is unknown in the system. Create the person.
-	    if {[string eq "" $party_id]} {
-		if {[regexp {(.+)[\.|_](.+)@(.+)} $email_addr match first_names last_name url]} {
-		    set name "$first_names $last_name"
-		} else {
-		    set name $email_addr
-		    set first_names "."
-		    set last_name [lindex [split $email_addr "@"] 0]
-		}
-		if {$contacts_p} {
-		    set party_id [contacts::person::new -email $email_addr -first_names $first_names -last_name $last_name]
-		    ns_log Notice "Contact generated for $first_names $last_name at $email_addr"
-		} else {
-		    set party_id [person::new -email $email_addr -first_names $first_names -last_name $last_name]
-		    ns_log Notice "Person generated for $first_names $last_name at $email_addr"
-		}
-	    }
-	    
-	    set date [lc_time_fmt [dt_sysdate] "%q"]
-	    set to $name
-	    set to_addr $email_addr
-	    lappend recipients_addr $to_addr
-	    set values [list]
-	    foreach element [list first_names last_name name date] {
-		lappend values [list "{$element}" [set $element]]
-	    }
-	    set party_revision_id [contact::live_revision -party_id $party_id]
-
-	    if { [exists_and_not_null attribute_id] } {
-		set salutation [ams::value \
-				    -attribute_id $attribute_id \
-				    -attribute_name "salutation" \
-				    -object_id $party_revision_id \
-				    -locale $locale]
-	    } else {
-		set salutation ""
-	    }
-	    if {![empty_string_p $salutation]} {
-		lappend values [list "{salutation}" $salutation]
-	    }
-	    template::multirow append messages $message_type $to_addr "" [contact::message::interpolate -text $subject -values $values] [contact::message::interpolate -text $content_body -values $values]
-	    
-	}
-
-	set to_list [list]
-	template::multirow foreach messages {
-
-	    lappend to_list [list $to_addr]
-
-	    if {[exists_and_not_null file_ids]} {
-		# If the no_callback_p is set to "t" then no callback will be executed
-		if { $no_callback_p ne "f" } {
-
-		    acs_mail_lite::complex_send \
-			-to_addr $to_addr \
-			-from_addr "$from_addr" \
-			-subject "$subject" \
-			-body "$content_body" \
-			-package_id $package_id \
-			-file_ids $file_ids \
-			-mime_type $mime_type \
-			-object_id $object_id \
-			-no_callback
-
-		} else {
-
-		    acs_mail_lite::complex_send \
-			-to_addr $to_addr \
-			-from_addr "$from_addr" \
-			-subject "$subject" \
-			-body "$content_body" \
-			-package_id $package_id \
-			-file_ids $file_ids \
-			-mime_type $mime_type \
-			-object_id $object_id
-
-		}
-
-	    } else {
-
-		# acs_mail_lite does not know about sending the
-		# correct mime types....
-		if {$mime_type == "text/html"} {
-
-
-		    if { $no_callback_p } {
-			# If the no_callback_p is set to "t" then no callback will be executed			
-
-			acs_mail_lite::complex_send \
-			    -to_addr $to_addr \
-			    -from_addr "$from_addr" \
-			    -subject "$subject" \
-			    -body "$content_body" \
-			    -package_id $package_id \
-			    -mime_type $mime_type \
-			    -object_id $object_id \
-			    -no_callback
-
-		    } else {
-
-			acs_mail_lite::complex_send \
-			    -to_addr $to_addr \
-			    -from_addr "$from_addr" \
-			    -subject "$subject" \
-			    -body "$content_body" \
-			    -package_id $package_id \
-			    -mime_type $mime_type \
-			    -object_id $object_id
-
-		    }
-		    
-		} else {
-		    
-		    if { [exists_and_not_null object_id] } {
-			# If the no_callback_p is set to "t" then no callback will be executed
-			if { $no_callback_p } {
-			    acs_mail_lite::complex_send \
-				-to_addr $to_addr \
-				-from_addr "$from_addr" \
-				-subject "$subject" \
-				-body "$content_body" \
-				-package_id $package_id \
-				-mime_type "text/html" \
-				-object_id $object_id \
-				-no_callback
-			} else {
-
-			    acs_mail_lite::complex_send \
-				-to_addr $to_addr \
-				-from_addr "$from_addr" \
-				-subject "$subject" \
-				-body "$content_body" \
-				-package_id $package_id \
-				-mime_type "text/html" \
-				-object_id $object_id 
-			}
-		    } else {
-			
-			if { $no_callback_p } {
-
-			    # If the no_callback_p is set to "t" then no callback will be executed
-			    acs_mail_lite::complex_send \
-				-to_addr $to_addr \
-				-from_addr "$from_addr" \
-				-subject "$subject" \
-				-body "$content_body" \
-				-package_id $package_id \
-				-no_callback
-
-			} else {
-			    acs_mail_lite::complex_send \
-				-to_addr $to_addr \
-				-from_addr "$from_addr" \
-				-subject "$subject" \
-				-body "$content_body" \
-				-package_id $package_id 
-			}
-			
-		    }
-		}
-	    }
-
-	    if { ![empty_string_p $to_party_id] && ![empty_string_p $item_id]} {
-
+		
+	    # Log the sending of the mail in contacts history
+	    if { ![empty_string_p $item_id]} {
+		
 		contact::message::log \
 		    -message_type "email" \
 		    -sender_id $from \
-		    -recipient_id $to_party_id \
+		    -recipient_id $party_id \
 		    -title $title \
 		    -description $subject \
 		    -content $content_body \
@@ -447,12 +309,27 @@ ad_form -action $action \
 		    -item_id "$item_id"
 		
 		lappend recipients "<a href=\"[contact::url -party_id $to_party_id]\">$to</a>"
-
+		
 	    } else {
 		lappend recipients "$to"
 	    }
 	}
-	set recipients [join $recipients_addr ", "]
+
+	if {$to eq ""} {
+	    acs_mail_lite::complex_send \
+		-cc_addr $cc_list \
+		-bcc_addr $bcc_list \
+		-from_addr "$from_addr" \
+		-subject "$subject" \
+		-body "$content_body" \
+		-package_id $package_id \
+		-file_ids $file_ids \
+		-mime_type $mime_type \
+		-object_id $object_id \
+		-no_callback_p $no_callback_p \
+		-single_email
+	}
+	
         util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
 
     } -after_submit {
