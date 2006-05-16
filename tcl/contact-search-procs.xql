@@ -36,11 +36,12 @@
 
 <fullquery name="contact::search::results_count_not_cached.select_party_results_count">
   <querytext>
-    select count(distinct party_id)
-      from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ) , group_approved_member_map
-     where parties.party_id = group_approved_member_map.member_id
+    select count(distinct cr_items.item_id)
+      from cr_items,cr_revisions,group_approved_member_map
+     where cr_items.item_id = group_approved_member_map.member_id
+       and cr_items.latest_revision = cr_revisions.revision_id
        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
-    [contact::search_clause -and -search_id $search_id -query $query -party_id "parties.party_id" -revision_id "revision_id" -limit_type_p "0"]
+    [contact::search_clause -and -search_id $search_id -query $query -party_id "cr_items.item_id" -revision_id "revision_id" -limit_type_p "0"]
   </querytext>
 </fullquery>
 
