@@ -24,6 +24,7 @@ ad_page_contract {
     {page:optional 1}
     {context_id:integer ""}
     {cc ""}
+    {bcc ""}
 } -validate {
     valid_message_type -requires {message_type} {
 	if { ![db_0or1row check_for_it { select 1 from contact_message_types where message_type = :message_type and message_type not in ('header','footer') }] } {
@@ -52,18 +53,6 @@ if { [exists_and_not_null party_id] } {
 if { [exists_and_not_null to] } {
     foreach party_id $to {
 	lappend party_ids $party_id
-    }
-}
-
-if { [exists_and_not_null cc] } {
-    foreach email $cc {
-	set email_party_id [party::get_by_email -email $email]
-	lappend party_ids $email_party_id
-    }
-
-    # We might not have a party_id
-    if {![exists_and_not_null party_id]} {
-	set party_id $email_party_id
     }
 }
 

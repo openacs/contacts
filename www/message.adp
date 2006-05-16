@@ -36,6 +36,8 @@
 	        header_id=@header_id@
 	        folder_id=@folder_id@
 		title=@title@
+		cc=@cc@	
+		bcc=@bcc@
 	        >
   </else>
 </if>
