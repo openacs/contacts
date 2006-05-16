@@ -13,6 +13,9 @@ namespace eval template::data {}
 namespace eval template::data::transform {}
 namespace eval template::data::validate {}
 namespace eval template::widget {}
+namespace eval template::util {}
+namespace eval template::util::contact_search {}
+
 
 ad_proc -public template::widget::contact_search { element_reference tag_attributes } {
 
@@ -111,7 +114,7 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
     if { [info exists element(search)] } {
 	set search $element(search)
     } else {
-	set search "contacts"
+	set search "parties"
     }
 
     switch $search {
@@ -123,14 +126,14 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
 	    set persons_p 0
 	    set orgs_p 1
 	}
-	contacts {
+	parties {
 	    set persons_p 1
 	    set orgs_p 1
 	}
 	default {
 	    # this error will be caught by developers and does not need
 	    # to be converted to an acs-lang message
-	    error "The type of '$search' was specified and is not valid for the widget '$element_id', the only valid options are: persons, organizations and contacts (default)"
+	    error "The type of '$search' was specified and is not valid for the widget '$element_id', the only valid options are: persons, organizations and parties (default)"
 	}
     }
 
@@ -147,18 +150,18 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
 	    error "You cannot use the contact_search widget without specifying a package_id of a contacts instance in which to search (done the same way you would specifiy html attributes)"
 	}
     }
-    set persons [list]
-    set orgs [list]
+    set person_ids [list]
+    set organization_ids [list]
     # search in persons
     if { $persons_p } {
-	set persons [db_list_of_lists search_persons {}]
+	set person_ids [db_list search_persons {}]
     }
     # search in orgs
     if { $orgs_p } {
-	set orgs [db_list_of_lists search_orgs {}]
+	set organization_ids [db_list search_orgs {}]
     }
 
-    if { [llength $persons] == 0 && [llength $orgs] == 0 } {
+    if { [llength $person_ids] == 0 && [llength $organization_ids] == 0 } {
         # no search results so return text entry back to the user
 
         catch { unset element(options) }
@@ -168,27 +171,27 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
         # we need to return a select list
 
         set options [list]
-        if { [llength $persons] > 0 } {
-	    if { [llength $persons] > 50 } {
+        if { [llength $person_ids] > 0 } {
+	    if { [llength $person_ids] > 50 } {
 		set options [list [list [_ contacts.lt_Search_again_over_50_people] ":search:"]]
 		template::element::set_error $element(form_id) $element_id [_ contacts.lt_To_many_people_found_search_again]
 	    } else {
-		foreach person_with_id $persons {
-		    lappend options [list [lindex $person_with_id 0] [lindex $person_with_id 1] [_ contacts.Select_a_person]]
+		foreach person_id $person_ids {
+		    lappend options [list [template::util::contact_search::contact_option -party_id $person_id] $person_id [_ contacts.Select_a_person]]
 		}
 	    }
         }
-        if { [llength $orgs] > 0 } {
-	    if { [llength $orgs] > 50 } {
+        if { [llength $organization_ids] > 0 } {
+	    if { [llength $organization_ids] > 50 } {
 		set options [concat $options [list [list [_ contacts.lt_Search_again_over_50_orgs] ":search:"]]]
-		if { [llength $persons] > 50 || [llength $persons] == 0 } {
+		if { [llength $person_ids] > 50 || [llength $person_ids] == 0 } {
 		    template::element::set_error $element(form_id) $element_id [_ contacts.Search_again]
 		} else {
 		    template::element::set_error $element(form_id) $element_id [_ contacts.lt_To_many_orgs_found_search_again]
 		}
 	    } else {
-		foreach org_with_id $orgs {
-		    lappend options [list [lindex $org_with_id 0] [lindex $org_with_id 1] [_ contacts.Select_an_organization]]
+		foreach organization_id $organization_ids {
+		    lappend options [list [template::util::contact_search::contact_option -party_id $organization_id] $organization_id [_ contacts.Select_an_organization]]
 		}
 	    }
         }
@@ -210,4 +213,21 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
     }
 
     return $value
+}
+
+
+ad_proc -public template::util::contact_search::contact_option {
+    {-party_id:required}
+} {
+    this returns the contact's name to be returned in the contact search widget.
+    this exists in a seperate proc so that it can be customized on a per site
+    basis if need be.
+} {
+    set option "[contact::name -party_id $party_id]"
+    set email [party::email -party_id $party_id]
+    if { $email ne "" } {
+	append option " &lt;${email}&gt;"
+    }
+    append option " \#$party_id"
+    return $option
 }
