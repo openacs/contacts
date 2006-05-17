@@ -66,6 +66,16 @@ ad_proc -public -callback contacts::multirow::extend {
 } {
 } -
 
+ad_proc -public -callback contacts::merge {
+    {-from_party_id:required}
+    {-to_party_id:required}
+} {
+    This callback is executed when merging two contacts. Packages should move all information
+    from the from_party_id to the to_party_id. Contacts will attempt to delete the from_party_id
+    at the end of the merge process.
+} -
+
+
 ad_proc -public -callback contacts::extensions {
     {-multirow}
     {-user_id}
