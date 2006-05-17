@@ -43,6 +43,11 @@ if { [lsearch [list top bottom none] $form] < 0 } {
     error "[_ contacts.lt_Invalid_input_you_spe]"
 }
 
+if { ![exists_and_not_null hide_form_p] } {
+    set hide_form_p 0
+}
+
+if { [string is false $hide_form_p] } {
 ad_form -name comment_add \
    -action "[ad_conn package_url]comment-add" \
     -form "
@@ -53,7 +58,7 @@ ad_form -name comment_add \
     " -on_request {
     } -after_submit {
     }
-
+}
 set user_id [ad_conn user_id]
 
 

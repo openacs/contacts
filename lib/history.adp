@@ -1,4 +1,4 @@
-<if @form@ eq top>
+<if @form@ eq top and @hide_form_p@ false>
 <formtemplate id="comment_add" style="../../../contacts/resources/forms/inline"></formtemplate>
 </if>
 
@@ -19,7 +19,7 @@
 </multiple>
   </dl>
 </if>
-<if @form@ eq bottom>
+<if @form@ eq bottom and @hide_form_p@ false>
 <formtemplate id="comment_add" style="../../../contacts/resources/forms/inline"></formtemplate>
 </if>
 
