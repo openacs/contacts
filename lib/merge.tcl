@@ -246,7 +246,15 @@ if { [exists_and_not_null primary] && [string is true $display_contacts] } {
 	    }
 	}
 
-	error "we need to deal with application_data_links"
+	# Application data links
+	set party_links [application_data_link::get -object_id $party_id]
+	foreach linked_object_id [application_data_link::get -object_id $merge_party_id] {
+	    if { [lsearch $party_links $linked_object_id] < 0 } {
+		application_data_link::new -this_object_id $party_id -target_object_id $linked_object_id
+	    }
+	}
+	application_data_link::delete_links -object_id $merge_party_id
+
 
 	# first we delete the contact_party_revisions
 	db_dml update_it { update cr_items set live_revision = NULL, latest_revision = NULL where item_id = :merge_party_id }
