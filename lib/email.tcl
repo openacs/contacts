@@ -111,12 +111,16 @@ set tracking_p [apm_package_installed_p "mail-tracking"]
 if { [exists_and_not_null file_ids] } {
     set files [list]
     foreach file $file_ids {
-	set file_title [lang::util::localize [content::item::get_title -item_id $file]]
+	set file_item_id [content::revision::item_id -revision_id $file] 
+	if {$file_item_id eq ""} {
+	    set file_item_id $file
+	}
+	set file_title [lang::util::localize [content::item::get_title -item_id $file_item_id]]
 	if {[empty_string_p $file_title]} {
 	    set file_title "empty"
 	}
 	if { $tracking_p } {
-	    lappend files "<a href=\"/tracking/download/$file_title?file_id=$file\">$file_title</a> "
+	    lappend files "<a href=\"/tracking/download/$file_title?file_id=$file_item_id\">$file_title</a> "
 	} else {
 	    lappend files "$file_title "
 	}
