@@ -221,9 +221,33 @@ ad_proc -public contact::search::results_count_not_cached {
     Get the total number of results from a search
 } {
 
-    # Get the results depening on the object_type
-    set object_type [db_string get_object_type {} -default "party"]
-
+    if { [exists_and_not_null search_id] } {
+	# Get the results depening on the object_type
+	set object_type [db_string get_object_type {} -default "party"]
+	switch $object_type {
+	    party { 
+		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "cr_items.item_id" -revision_id "revision_id" -limit_type_p "0"]
+		set cr_where "and ci.item_id = parties.party_id and ci.latest_revision = cr.revision_id"
+	    } 
+	    organization {
+		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
+		set cr_where "and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id"
+	    } 
+	    person {
+		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
+		set cr_where "and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id"
+	    } 
+	}
+	set cr_from "cr_items ci, cr_revisions cr,"	
+    } else {
+	set object_type "party"
+	set page_query_name "contacts_pagination"
+	set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]"
+	set cr_from ""
+	set cr_where ""
+    }
+    
+    
     return [db_string select_${object_type}_results_count {}]
 
 }
@@ -525,6 +549,7 @@ ad_proc -public contact::search::where_clause_not_cached {
 	# openacs installs so this bypasses that problem
 	set db_conditions [db_list_of_lists select_queries {}]
 	foreach condition $db_conditions {
+	    set type [lindex $condition 0]
 	    lappend where_clauses [contacts::search::condition_type \
 				       -type [lindex $condition 0] \
 				       -request sql \
@@ -532,7 +557,7 @@ ad_proc -public contact::search::where_clause_not_cached {
 				       -revision_id $revision_id \
 				       -party_id $party_id \
 				       -object_type $object_type
-				      ]
+				  ]
 	}
 	
 

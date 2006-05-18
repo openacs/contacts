@@ -7,13 +7,13 @@
 		distinct p.party_id, $sort_item
   	from 
 		parties p
-	$left_join, cr_items ci, cr_revisions cr,
-        group_distinct_member_map
+	$left_join, $cr_from
+        group_approved_member_map
  	where
-	p.party_id = group_distinct_member_map.member_id
-	and ci.item_id = p.party_id and ci.latest_revision = cr.revision_id
-        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.party_id" -revision_id "revision_id" -limit_type_p "0"]
+	p.party_id = group_approved_member_map.member_id
+	$cr_where
+        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list $group_in_list])
+	$search_clause
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>
@@ -22,13 +22,13 @@
     <querytext>
 	select 
 	organizations.organization_id as party_id
-  	from organizations, cr_items ci, cr_revisions cr,
-        group_distinct_member_map
+  	from organizations, $cr_from
+        group_approved_member_map
  	where
-	organizations.organization_id = group_distinct_member_map.member_id
-        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
-	and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
+	organizations.organization_id = group_approved_member_map.member_id
+        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list $group_in_list])
+	$cr_where
+	$search_clause
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>
@@ -37,13 +37,13 @@
     <querytext>
 	select 
 	persons.person_id as party_id
-  	from persons, cr_items ci, cr_revisions cr,
-        group_distinct_member_map
+  	from persons,$cr_from
+        group_approved_member_map
  	where
-	persons.person_id = group_distinct_member_map.member_id
-        and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])
-	and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id
-	[contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
+	persons.person_id = group_approved_member_map.member_id
+        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list $group_in_list])
+	$cr_where
+	$search_clause
 	[template::list::orderby_clause -orderby -name "contacts"]
       </querytext>
 </fullquery>

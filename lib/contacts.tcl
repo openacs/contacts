@@ -199,6 +199,8 @@ template::multirow foreach bulk_acts {
 
 set return_url "[ad_conn url]?[ad_conn query]"
 
+set group_in_list [contacts::default_groups]
+
 # Delete file is not there, taking out the code to display the delete button
 # if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
 #    lappend bulk_actions "[_ contacts.Delete]" "${base_url}delete" "[_ contacts.lt_Delete_the_selected_C]"
@@ -213,6 +215,8 @@ if { [exists_and_not_null search_id] } {
 		set orderby "first_names,asc"
 	    }
 #	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
+	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
+	    set cr_where "and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id"
 	}
 	organization { 
 	    set page_query_name "organization_pagination"
@@ -220,16 +224,25 @@ if { [exists_and_not_null search_id] } {
 		set orderby "organization,asc"
 	    }
 #	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
+	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
+	    set cr_where "and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id"
 	}
 	party { 
 	    set page_query_name "contacts_pagination"
 #	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
+	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.party_id" -revision_id "revision_id" -limit_type_p "0"]
+	    set cr_where "and ci.item_id = parties.party_id and ci.latest_revision = cr.revision_id"
 	}
     }
+    set cr_from "cr_items ci, cr_revisions cr,"
 } else {
     set object_type "party"
     set page_query_name "contacts_pagination"
+    set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "p.party_id" -limit_type_p "0"]"
+    set cr_from ""
+    set cr_where ""
 }
+
 
 set elements [list]
 lappend elements contact [list \
