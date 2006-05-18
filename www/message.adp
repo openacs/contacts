@@ -38,6 +38,8 @@
 		title=@title@
 		cc=@cc@	
 		bcc=@bcc@
+		context_id=@context_id@
+		object_od=@object_id@
 	        >
   </else>
 </if>

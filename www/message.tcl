@@ -190,6 +190,8 @@ if {[exists_and_not_null object_id]} {
 	    }
 	}
     }
+} else {
+    set object_id ""
 }
 
 if {[exists_and_not_null file_list]} {
@@ -201,6 +203,8 @@ set form_elements {
     party_ids:text(hidden)
     return_url:text(hidden)
     folder_id:text(hidden)
+    object_id:text(hidden)
+    context_id:text(hidden)
     {to_name:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
 }
 

@@ -25,6 +25,11 @@ if {![info exists no_callback_p]} {
     set no_callback_p f
 }
 
+if {[exists_and_not_null context_id]} {
+    set object_id $context_id
+}
+
+ns_log Notice "MY CONTEXT:: $context_id MY OBJECT $object_id"
 # Somehow when the form is submited the party_ids values became
 # only one element of a list, this avoid that problem
 
@@ -162,6 +167,7 @@ append form_elements {
     {upload_file:file(file),optional
 	{label "[_ contacts.Upload_file]"}
     }
+    {object_id:integer(hidden),optional}
 }
 
 if { [exists_and_not_null item_id] } {
@@ -292,7 +298,7 @@ ad_form -action $action \
 		-mime_type $mime_type \
 		-object_id $object_id \
 		-no_callback_p $no_callback_p \
-		    -single_email
+		-single_email
 	    
 	    # Link the files to all parties
 	    if {[exists_and_not_null revision_id]} {

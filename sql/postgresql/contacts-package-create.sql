@@ -185,25 +185,28 @@ as '
 declare
         p_party_id              alias for $1;
         p_recursive_p           alias for $2;
-        v_first_names           varchar;
-        v_last_name             varchar;
-        v_organization          varchar;
         v_name                  varchar;
 begin
 
-        select first_names, last_name
-          into v_first_names, v_last_name 
-          from persons where person_id = p_party_id;
-
         select name
-          into v_organization
+          into v_name
           from organizations where organization_id = p_party_id;
 
-        v_name := contact__name(v_first_names,v_last_name,v_organization,p_recursive_p);
+        if v_name is null then
 
+        if p_recursive_p = ''t'' then
+          select last_name || '', '' || first_names
+          into v_name
+          from persons where person_id = p_party_id;
+        else 
+          select first_names || '' '' || last_name
+          into v_name
+          from persons where person_id = p_party_id;
+        end if;
+
+        end if;
         return v_name;
 end;' language 'plpgsql';
-
 
 create or replace function contact_group__member_count (
         integer                 -- group_id

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b10" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b11" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--add_column--">-- Reihe hinzufügen --</msg>
@@ -178,6 +178,7 @@
   <msg key="extended_by">erweitert um:</msg>
   <msg key="Extended_search_opt">Erweiterte Suchoptionen</msg>
   <msg key="False">falsch</msg>
+  <msg key="fax">Fax</msg>
   <msg key="File">Datei</msg>
   <msg key="Files">Dateien</msg>
   <msg key="files">Dateien</msg>
