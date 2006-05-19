@@ -81,7 +81,7 @@ if { [exists_and_not_null search_id] } {
 }
 
 if { $object_type eq "employee" } {
-    set actual_object_type "person"
+    set actual_object_type "organization"
 } else {
     set actual_object_type $object_type
 }

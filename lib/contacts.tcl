@@ -180,8 +180,8 @@ if { [exists_and_not_null search_id] } {
 	    set party_column "parties.party_id"
 	}
         employee {
-	    set actual_object_type "person"
-	    set party_column "persons.person_id"
+	    set actual_object_type "organization"
+	    set party_column "acs_rels.object_id_two"
 	    set page_query_name "employee_pagination"
 	}
     }

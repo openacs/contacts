@@ -84,7 +84,7 @@
            acs_rels
      where persons.person_id = group_approved_member_map.member_id
        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
-       and persons.person_id = acs_rels.object_id_two
+       and persons.person_id = acs_rels.object_id_one
        and acs_rels.rel_type = 'contact_rels_employment'
         $cr_where
         $search_clause

@@ -235,11 +235,11 @@ ad_proc -public contact::search::results_count_not_cached {
 		set party_column "persons.person_id"
 	    } 
             employee {
-		set party_column "persons.person_id"
+		set party_column "acs_rels.object_id_two"
 	    }
 	}
 	set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
-	if { [lsearch -exact [db_list get_condition_types {}] "attribute"] > 0 } {
+	if { [lsearch -exact [db_list get_condition_types {}] "attribute"] > -1 } {
 	    # We don't need to search for attributes so we don't need to join
 	    # on the cr_items table. This should speed things up. This assumes
             # that packages other than contacts that add search condition
@@ -559,8 +559,6 @@ ad_proc -public contact::search::where_clause_not_cached {
 		append result "$party_id = persons.person_id\n"
 	    } elseif { $object_type == "organization" } {
 		append result "$party_id = organizations.organization_id\n"
-	    } elseif { $object_type == "employee" } {
-		append result "$party_id in ( select acs_rels_employee_limitation.object_id_two from acs_rels acs_rels_employee_limitation where acs_rels_employee_limitation.rel_type = 'contact_rels_employment' )"      
 	    }
 	}
 	# the reason we do not put this in the db_foreach statement is because we 

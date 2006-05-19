@@ -106,6 +106,7 @@ ad_proc -private contacts::search::condition_type::attribute {
     @param without_arrow_p Show the elementes in the select menu without the "->"
     @param only_multiple_p Only show those elements that have multiple choices
 } {
+    
     switch $request {
         ad_form_widgets {
             set attribute_id [ns_queryget ${prefix}attribute_id]
