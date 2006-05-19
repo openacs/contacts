@@ -226,27 +226,43 @@ ad_proc -public contact::search::results_count_not_cached {
 	set object_type [db_string get_object_type {} -default "party"]
 	switch $object_type {
 	    party { 
-		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "cr_items.item_id" -revision_id "revision_id" -limit_type_p "0"]
-		set cr_where "and ci.item_id = parties.party_id and ci.latest_revision = cr.revision_id"
-	    } 
+		set party_column "parties.party_id"
+	    }
 	    organization {
-		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
-		set cr_where "and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id"
+		set party_column "organizations.organization_id"
 	    } 
 	    person {
-		set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
-		set cr_where "and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id"
+		set party_column "persons.person_id"
 	    } 
+            employee {
+		set party_column "persons.person_id"
+	    }
 	}
-	set cr_from "cr_items ci, cr_revisions cr,"	
+	set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
+	if { [lsearch -exact [db_list get_condition_types {}] "attribute"] > 0 } {
+	    # We don't need to search for attributes so we don't need to join
+	    # on the cr_items table. This should speed things up. This assumes
+            # that packages other than contacts that add search condition
+            # types do not need the revision_id column, and only needs the
+            # party_id column. If this is not the case we may want to add a
+            # callback here to check if another package needs the revisions 
+            # table.
+	    #
+	    # If this needs to change you should also update the
+            # contacts/lib/contacts.tcl file which behave the same way.
+	    set cr_where "and cr_items.item_id = $party_column"
+	    set cr_from "cr_items,"
+	} else {
+	    set cr_where ""
+	    set cr_from ""
+	}
     } else {
 	set object_type "party"
 	set page_query_name "contacts_pagination"
-	set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]"
+	set search_clause [contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]
 	set cr_from ""
 	set cr_where ""
     }
-    
     
     return [db_string select_${object_type}_results_count {}]
 
@@ -348,6 +364,8 @@ ad_proc -public contact::search_pretty_not_cached {
 	set object_type [_ contacts.people]
     } elseif { $search_info(object_type) == "organization" } {
 	set object_type [_ contacts.organizations]
+    } elseif { $search_info(object_type) == "employee" } {
+	set object_type [_ contacts.employees]
     } else {
 	set object_type [_ contacts.people_or_organizations]
     }
@@ -541,6 +559,8 @@ ad_proc -public contact::search::where_clause_not_cached {
 		append result "$party_id = persons.person_id\n"
 	    } elseif { $object_type == "organization" } {
 		append result "$party_id = organizations.organization_id\n"
+	    } elseif { $object_type == "employee" } {
+		append result "$party_id in ( select acs_rels_employee_limitation.object_id_two from acs_rels acs_rels_employee_limitation where acs_rels_employee_limitation.rel_type = 'contact_rels_employment' )"      
 	    }
 	}
 	# the reason we do not put this in the db_foreach statement is because we 

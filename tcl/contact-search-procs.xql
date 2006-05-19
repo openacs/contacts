@@ -45,6 +45,14 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::results_count_not_cached.get_condition_types">
+  <querytext>
+    select type 
+      from contact_search_conditions
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::search::results_count_not_cached.select_person_results_count">
   <querytext>
     select count(distinct person_id)
@@ -59,7 +67,8 @@
 <fullquery name="contact::search::results_count_not_cached.select_organization_results_count">
   <querytext>
     select count(distinct organization_id)
-      from organizations, $cr_from group_approved_member_map
+      from organizations, $cr_from
+           group_approved_member_map
      where organizations.organization_id = group_approved_member_map.member_id
        and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
 	$cr_where
@@ -67,6 +76,20 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::results_count_not_cached.select_employee_results_count">
+  <querytext>
+    select count(distinct person_id)
+      from persons, $cr_from
+           group_approved_member_map,
+           acs_rels
+     where persons.person_id = group_approved_member_map.member_id
+       and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+       and persons.person_id = acs_rels.object_id_two
+       and acs_rels.rel_type = 'contact_rels_employment'
+        $cr_where
+        $search_clause
+  </querytext>
+</fullquery>
 
 <fullquery name="contact::search::results_count_not_cached.get_object_type">
   <querytext>

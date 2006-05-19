@@ -26,7 +26,7 @@ ad_page_contract {
     {remove_column ""}
 } -validate {
     valid_object_type -requires {object_type} {
-        if { [lsearch [list party person organization] $object_type] < 0 } {
+        if { [lsearch [list party person organization employee] $object_type] < 0 } {
             ad_complain "[_ contacts.You_have_specified_an_invalid_object_type]"
         }
     }
@@ -47,6 +47,7 @@ ad_page_contract {
 	}
     }
 }
+
 
 set package_url [ad_conn package_url]
 
@@ -79,6 +80,11 @@ if { [exists_and_not_null search_id] } {
     }
 }
 
+if { $object_type eq "employee" } {
+    set actual_object_type "person"
+} else {
+    set actual_object_type $object_type
+}
 
 if { $search_exists_p } {
 
@@ -87,12 +93,12 @@ if { $search_exists_p } {
     # permissions for what attributes/extensions are visible to this
     # user are to be handled by this callback proc. The callback
     # MUST only return keys that are visible to this user
-    
+
     callback contacts::extensions \
 	-user_id [ad_conn user_id] \
 	-multirow ext \
 	-package_id [ad_conn package_id] \
-	-object_type $object_type
+	-object_type $actual_object_type
     
     set add_columns [list]
     set remove_columns [list]
@@ -174,6 +180,7 @@ if { $search_exists_p } {
 set object_type_pretty_name(party)        [_ contacts.People_or_Organizations]
 set object_type_pretty_name(person)       [_ contacts.People]
 set object_type_pretty_name(organization) [_ contacts.Organizations]
+set object_type_pretty_name(employee)     [_ contacts.Employees]
 
 if { ![exists_and_not_null owner_id] } {
     set owner_id [ad_conn user_id]
@@ -197,6 +204,7 @@ if { $search_exists_p } {
     set query_pretty ""
 }
 
+set display_employers_p [parameter::get -boolean -parameter DisplayEmployersP -default "0"]
 # FORM HEADER
 set form_elements {
     {search_id:key}
@@ -212,7 +220,11 @@ if { [exists_and_not_null object_type] } {
     }
 } else {
     set object_type_options [list]
-    foreach object_type_temp [list party person organization] {
+    set object_types [list party person organization]
+    if { $display_employers_p } {
+	lappend object_types "employee"
+    }
+    foreach object_type_temp $object_types {
         lappend object_type_options [list $object_type_pretty_name($object_type_temp) $object_type_temp]
     }
     append form_elements {
@@ -258,7 +270,7 @@ if { [exists_and_not_null object_type] } {
 #get condition types widgets
 set form_elements [concat \
 		       $form_elements \
-			   [contacts::search::condition_type -type $type -request ad_form_widgets -form_name advanced_search -object_type $object_type] \
+			   [contacts::search::condition_type -type $type -request ad_form_widgets -form_name advanced_search -object_type $actual_object_type] \
 		      ]
 if { !$employee_p } {
     # Show the Ok button
@@ -267,7 +279,7 @@ if { !$employee_p } {
 
 
 if { $search_exists_p } {
-    
+
     set results_count [contact::search::results_count -search_id $search_id] 
 
     append form_elements {
@@ -275,20 +287,33 @@ if { $search_exists_p } {
         {save:text(submit) {label "[_ contacts.Save]"} {value "save"}}
         {search:text(submit) {label "[_ contacts.Search]"} {value "search"}}
         {clear:text(submit) {label "[_ contacts.Clear]"} {value "clear"}}
-        {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"} \
-	     {after_html "<br>[_ contacts.Aggregate_by]:<br>"}
-	}
     }
 
-    append form_elements [contacts::search::condition_type::attribute \
-			      -request ad_form_widgets \
-			      -prefix "aggregate_" \
-			      -without_arrow_p "t" \
-			      -only_multiple_p "t" \
-			      -package_id [ad_conn package_id]]
+    
+    if { $display_employers_p } {
 
-    append form_elements {
-	{aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"} {after_html "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> <a href=\"[export_vars -base ./ -url {search_id}]\">$results_count</a>"}}
+	append form_elements {
+	    {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"} \
+		 {after_html "<br>[_ contacts.Aggregate_by]:<br>"}
+	    }
+	}
+	append form_elements [contacts::search::condition_type::attribute \
+				  -request ad_form_widgets \
+				  -prefix "aggregate_" \
+				  -without_arrow_p "t" \
+				  -only_multiple_p "t" \
+				  -package_id [ad_conn package_id]]
+
+	append form_elements {
+	    {aggregate:text(submit) {label "[_ contacts.Aggregate]"} {value "aggregate"} {after_html "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> <a href=\"[export_vars -base ./ -url {search_id}]\">$results_count</a>"}}
+	}
+    } else {
+	append form_elements {
+	    {delete:text(submit) {label "[_ contacts.Delete]"} {value "delete"} \
+		 {after_html "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results]</span> <a href=\"[export_vars -base ./ -url {search_id}]\">$results_count</a>"}
+	    }
+	    aggregate:text(hidden),optional
+	}
     }
 }
 

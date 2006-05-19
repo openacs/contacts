@@ -64,9 +64,9 @@ if { [string is true $report_p] && $report_p ne "" } {
 
 
 # This is for showing the employee_id and employeer relationship
-set type_list [db_list get_condition_type { }] 
+set condition_type_list [db_list get_condition_types {}] 
 
-if { ![string equal [lsearch -exact $type_list "employees"] "-1"] } {
+if { ![string equal [lsearch -exact $condition_type_list "employees"] "-1"] } {
     set multirow_query_name "employees_select"
 } else {
     set multirow_query_name "contacts_select"
@@ -129,58 +129,6 @@ set last_modified_join ""
 set last_modified_clause ""
 set last_modified_rows ""
 
-set first_names_url   [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {first_names,asc}}}]
-set last_name_url     [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_name,asc}}}]
-set organization_url  [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {organization,asc}}}]
-set last_modified_url [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_modified,desc}}}]
-switch $orderby {
-    "first_names,asc" {
-        set name_label "[_ contacts.Sort_by] [_ contacts.First_Names] | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join persons on (p.party_id = persons.person_id)"
-	set sort_item "lower(first_names), lower(last_name)"
-    }
-    "last_name,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join persons on (p.party_id = persons.person_id)"
-	set sort_item "lower(last_name), lower(first_names)"
-    }
-    "organization,asc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
-	set left_join "left join organizations on (p.party_id = organizations.organization_id)"
-	set sort_item "lower(organizations.name)"
-    }
-    "last_modified,desc" {
-        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
-	set left_join ""
-	set sort_item "cr.publish_date"
-	set last_modified_rows [list publish_date {}]
-    }
-}
-
-
-
-append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
-
-
-set valid_page_sizes [list 25 50 100 500]
-if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
-    set page_size [parameter::get -parameter "DefaultPageSize" -default "50"]
-}
-foreach page_s $valid_page_sizes {
-    if { $page_size == $page_s } {
-        lappend page_size_list $page_s
-    } else {
-        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby extended_columns {page_size $page_s}}]\">$page_s</a>"
-    }
-}
-append name_label [join $page_size_list " | "]
-
-if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] } {
-    set format normal
-} else {
-    append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size extended_columns}]\">[_ contacts.CSV]</a>"
-}
-
 template::multirow create bulk_acts pretty link detailed
 template::multirow append bulk_acts "[_ contacts.Add_to_Group]" "${base_url}group-parties-add" "[_ contacts.Add_to_group]"
 template::multirow append bulk_acts "[_ contacts.Remove_From_Group]" "${base_url}group-parties-remove" "[_ contacts.lt_Remove_from_this_Grou]"
@@ -199,7 +147,7 @@ template::multirow foreach bulk_acts {
 
 set return_url "[ad_conn url]?[ad_conn query]"
 
-set group_in_list [contacts::default_groups]
+
 
 # Delete file is not there, taking out the code to display the delete button
 # if { [permission::permission_p -object_id $package_id -privilege "delete"] } {
@@ -208,39 +156,121 @@ set group_in_list [contacts::default_groups]
 if { [exists_and_not_null search_id] } {
 
     set object_type [db_string get_object_type {} -default {party}]
+    set actual_object_type $object_type
     switch $object_type {
 	person { 
-	    set page_query_name "person_pagination"
-	    if {[string eq $orderby "organization,asc"]} {
+            set page_query_name "person_pagination"
+            if {[string eq $orderby "organization,asc"]} {
 		set orderby "first_names,asc"
-	    }
-#	    set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
-	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "persons.person_id" -revision_id "revision_id" -limit_type_p "0"]
-	    set cr_where "and ci.item_id = persons.person_id and ci.latest_revision = cr.revision_id"
+            }
+            # set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
+	    set party_column "persons.person_id"
 	}
 	organization { 
 	    set page_query_name "organization_pagination"
 	    if {[string eq $orderby "first_names,asc"] || [string eq $orderby "last_name,asc"]} {
 		set orderby "organization,asc"
 	    }
-#	    set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
-	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "organizations.organization_id" -revision_id "revision_id" -limit_type_p "0"]
-	    set cr_where "and ci.item_id = organizations.organization_id and ci.latest_revision = cr.revision_id"
+            # set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
+	    set party_column "organizations.organization_id"
 	}
 	party { 
 	    set page_query_name "contacts_pagination"
-#	    set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
-	    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id "p.party_id" -revision_id "revision_id" -limit_type_p "0"]
-	    set cr_where "and ci.item_id = parties.party_id and ci.latest_revision = cr.revision_id"
+            # set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
+	    set party_column "parties.party_id"
+	}
+        employee {
+	    set actual_object_type "person"
+	    set party_column "persons.person_id"
+	    set page_query_name "employee_pagination"
 	}
     }
-    set cr_from "cr_items ci, cr_revisions cr,"
+    set search_clause 	[contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
+    if { $orderby eq "last_modified,desc" } {
+	# we need the cr_items and cr_revisions table since we need the
+        # cr_revisions.publish date
+	append cr_where " and $party_column = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
+        append cr_from " cr_items, cr_revisions,"
+    } elseif { [string equal [lsearch -exact $condition_type_list "attribute"] "-1"] } {
+	# We don't need to search for attributes so we don't need to join
+	# on the cr_items table. This should speed things up. This assumes
+	# that packages other than contacts that add search condition
+	# types do not need the revision_id column, and only needs the
+	# party_id column. If this is not the case we may want to add a
+	# callback here to check if another package needs the revisions 
+	# table.
+	#
+	# If this needs to change you should also update the
+	# contact::search::results_count_not_cached proc which behaves the
+        # same way.
+	set cr_where ""
+	set cr_from ""
+    } else {
+	set cr_where "and cr_items.item_id = $party_column"
+	set cr_from "cr_items,"
+    }
 } else {
     set object_type "party"
+    set actual_object_type "party"
     set page_query_name "contacts_pagination"
     set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "p.party_id" -limit_type_p "0"]"
-    set cr_from ""
-    set cr_where ""
+    if { $orderby eq "last_modified,desc" } {
+	set cr_from "cr_items, cr_revisions,"
+	set cr_where "and parties.party_id = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
+    } else {
+	set cr_from ""
+	set cr_where ""
+    }
+}
+
+set first_names_url   [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {first_names,asc}}}]
+set last_name_url     [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_name,asc}}}]
+set organization_url  [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {organization,asc}}}]
+set last_modified_url [export_vars -base $base_url -url {format search_id query page page_size extended_columns {orderby {last_modified,desc}}}]
+
+switch $orderby {
+    "first_names,asc" {
+        set name_label "[_ contacts.Sort_by] [_ contacts.First_Names] | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
+	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set sort_item "lower(persons.first_names), lower(persons.last_name)"
+    }
+    "last_name,asc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | [_ contacts.Last_Name] | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
+	set left_join "left join persons on (parties.party_id = persons.person_id)"
+	set sort_item "lower(persons.last_name), lower(persons.first_names)"
+    }
+    "organization,asc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | [_ contacts.Organization] | <a href=\"${last_modified_url}\">[_ contacts.Last_Modified]</a>"
+	set left_join "left join organizations on (parties.party_id = organizations.organization_id)"
+	set sort_item "lower(organizations.name)"
+    }
+    "last_modified,desc" {
+        set name_label "[_ contacts.Sort_by] <a href=\"${first_names_url}\">[_ contacts.First_Names]</a> | <a href=\"${last_name_url}\">[_ contacts.Last_Name]</a> | <a href=\"${organization_url}\">[_ contacts.Organization]</a> | [_ contacts.Last_Modified]"
+	set left_join ""
+	set sort_item "cr_revisions.publish_date"
+	set last_modified_rows [list publish_date {}]
+    }
+}
+
+append name_label " &nbsp;&nbsp; [_ contacts.Show]: "
+
+set valid_page_sizes [list 25 50 100 500]
+if { ![exists_and_not_null page_size] || [lsearch $valid_page_sizes $page_size] < 0 } {
+    set page_size [parameter::get -parameter "DefaultPageSize" -default "50"]
+}
+foreach page_s $valid_page_sizes {
+    if { $page_size == $page_s } {
+        lappend page_size_list $page_s
+    } else {
+        lappend page_size_list "<a href=\"[export_vars -base $base_url -url {format search_id query page orderby extended_columns {page_size $page_s}}]\">$page_s</a>"
+    }
+}
+append name_label [join $page_size_list " | "]
+
+if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] } {
+    set format normal
+} else {
+    append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size extended_columns}]\">[_ contacts.CSV]</a>"
 }
 
 
@@ -332,7 +362,7 @@ callback contacts::extensions \
     -user_id [ad_conn user_id] \
     -multirow ext \
     -package_id [ad_conn package_id] \
-    -object_type $object_type
+    -object_type $actual_object_type
 
 
 set add_columns [list]
@@ -396,13 +426,13 @@ if { [string is false $report_p] } {
 	} -orderby {
 	    first_names {
 		label "[_ contacts.First_Name]"
-		orderby_asc  "lower(first_names) asc, lower(last_name) asc"
-		orderby_desc "lower(first_names) desc, lower(last_name) desc"
+		orderby_asc  "lower(persons.first_names) asc, lower(persons.last_name) asc"
+		orderby_desc "lower(persons.first_names) desc, lower(persons.last_name) desc"
 	    }
 	    last_name {
 		label "[_ contacts.Last_Name]"
-		orderby_asc  "lower(last_name) asc, lower(first_names) asc"
-		orderby_desc "lower(last_name) desc, lower(first_names) desc"
+		orderby_asc  "lower(persons.last_name) asc, lower(persons.first_names) asc"
+		orderby_desc "lower(persons.last_name) desc, lower(persons.first_names) desc"
 	    }
 	    organization {
 		label "[_ contacts.Organization]"
@@ -411,8 +441,8 @@ if { [string is false $report_p] } {
 	    }
 	    last_modified {
 		label "[_ contacts.Last_Modified]"
-		orderby_asc "cr.publish_date"
-		orderby_desc "cr.publish_date"
+		orderby_asc "cr_revisions.publish_date asc"
+		orderby_desc "cr_revisions.publish_date desc"
 	    }
 	    default_value first_names,asc
 	} -formats {
