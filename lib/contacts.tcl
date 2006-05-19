@@ -213,7 +213,7 @@ if { [exists_and_not_null search_id] } {
     set object_type "party"
     set actual_object_type "party"
     set page_query_name "contacts_pagination"
-    set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "p.party_id" -limit_type_p "0"]"
+    set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]"
     if { $orderby eq "last_modified,desc" } {
 	set cr_from "cr_items, cr_revisions,"
 	set cr_where "and parties.party_id = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
