@@ -58,6 +58,16 @@ ad_proc -public -callback contact::contact_form_validate {
 } {
 }
 
+ad_proc -public -callback contact::contact_form_after_submit {
+    {-package_id:required}
+    {-form:required}
+    {-object_type:required}
+    {-party_id:required}
+} {
+    After the contact-edit and/or contact-add form have been completely submitted,
+    and data has been flushed you can do something for your site.
+} -
+
 ad_proc -public -callback contacts::multirow::extend {
     {-type}
     {-key}
@@ -74,7 +84,6 @@ ad_proc -public -callback contacts::merge {
     from the from_party_id to the to_party_id. Contacts will attempt to delete the from_party_id
     at the end of the merge process.
 } -
-
 
 ad_proc -public -callback contacts::extensions {
     {-multirow}

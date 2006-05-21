@@ -327,6 +327,9 @@ ad_form -extend -name party_ae \
     } -after_submit {
 	contact::flush -party_id $party_id
 	contact::search::flush_results_counts
+
+	callback contact::contact_form_after_submit -party_id $party_id -package_id $package_id -object_type $object_type -form "party_ae"
+
 	#the formbutton does not work. No clue how to fix it.
 #        if { [exists_and_not_null formbutton\:save_add_another] } {
 #            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]

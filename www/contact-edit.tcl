@@ -185,6 +185,8 @@ ad_form -extend -name party_ae \
 	contact::flush -party_id $party_id
 	contact::search::flush_results_counts
 
+	callback contact::contact_form_after_submit -party_id $party_id -package_id $package_id -object_type $object_type -form "party_ae"
+
 	if { ![exists_and_not_null return_url] } {
 	    set return_url [contact::url -party_id $party_id] 
 	}
