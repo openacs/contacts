@@ -282,7 +282,7 @@ ad_proc -private contact::message::mailing_address_attribute_id_priority_not_cac
 } {
     Returns the order of priority of attribute_ids for the letter mailing address
 } {
-    set attribute_ids [parameter::get -parameter "MailingAddressAttributeIdOrder" -default {}]
+    set attribute_ids [parameter::get -package_id $package_id -parameter "MailingAddressAttributeIdOrder" -default {}]
     if { [llength $attribute_ids] == 0 } {
         # no attribute_id preference was specified so we get all postal_address attribute types and order them
         set postal_address_attributes [db_list_of_lists get_postal_address_attributes { select pretty_name, attribute_id from ams_attributes where widget = 'postal_address'}]
