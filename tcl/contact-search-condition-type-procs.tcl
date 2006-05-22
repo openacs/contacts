@@ -601,18 +601,29 @@ ad_proc -private contacts::search::condition_type::contact {
             # login and not_login do not need special elements
             if { [lsearch [list in_search not_in_search] ${operand}] >= 0 || ${operand} == "" } {
                 set user_id [ad_conn user_id]
-                set search_options [db_list_of_lists get_my_searches {
-                        select title,
-                               search_id
-                          from contact_searches
-                         where owner_id = :user_id
-                           and title is not null
-                           and not deleted_p
-                         order by lower(title)
-                    }]
-                set search_options [concat [list [list "" ""]] $search_options]
+		set search_options [list [list "" "" ""]]
+                db_foreach get_my_searches {
+                        select acs_objects.title,
+                               contact_searches.search_id,
+                               contact_searches.owner_id
+                          from contact_searches,
+                               acs_objects
+                         where contact_searches.owner_id in ( :user_id, :package_id )
+                           and contact_searches.search_id = acs_objects.object_id
+                           and acs_objects.title is not null
+                           and not contact_searches.deleted_p
+                           and acs_objects.package_id = :package_id
+                         order by CASE WHEN contact_searches.owner_id = :package_id THEN '1'::integer ELSE '2' END, lower(acs_objects.title)
+		} {
+		    if { $owner_id eq $package_id } {
+			set section_title [_ contacts.Public_Searches]
+		    } else {
+			set section_title [_ contacts.My_Searches]
+		    }
+		    lappend search_options [list $title $search_id $section_title]
+		}
                 lappend form_elements [list \
-                                           ${var1}:integer(select) \
+                                           ${var1}:integer(select_with_optgroup),optional \
                                            [list label {}] \
                                            [list options $search_options] \
                                           ]
@@ -639,7 +650,9 @@ ad_proc -private contacts::search::condition_type::contact {
                     in_search - not_in_search {
                         if { [exists_and_not_null ${var1}] } {
                             return [list ${operand} [set ${var1}]]
-                        }
+                        } else {
+			    template::element::set_error $form_name ${var1} "Required."
+			}
                     }
 		    interacted_between - not_interacted_between {
 			if { [exists_and_not_null ${var1}] && [exists_and_not_null ${var2}] } {
