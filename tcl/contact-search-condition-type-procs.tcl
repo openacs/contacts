@@ -651,7 +651,7 @@ ad_proc -private contacts::search::condition_type::contact {
                         if { [exists_and_not_null ${var1}] } {
                             return [list ${operand} [set ${var1}]]
                         } else {
-			    template::element::set_error $form_name ${var1} "Required."
+			    template::element::set_error $form_name ${var1} [_ contacts.Required]
 			}
                     }
 		    interacted_between - not_interacted_between {
