@@ -158,7 +158,6 @@ if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
     db_multirow -extend {map_url} -unclobber contacts contacts_select {} {
 	set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
     }
-    
 
 }
 
@@ -169,31 +168,50 @@ set rel_options [ams::util::localize_and_sort_list_of_lists -list $rel_options]
 
 set rel_options [concat [list [list "[_ contacts.--select_one--]" ""]] $rel_options]
 
-ad_form -name "search" -method "GET" -export {party_id} -form {
+set form_elements {
     {role_two:text(select),optional {label "[_ contacts.Add]"} {options $rel_options}}
     {query:text(text),optional {label ""} {html {size 24}}}
     {search:text(submit) {label "[_ contacts.Search_Existing]"}}
-    {add:text(submit) {label "[_ contacts.Add_New]"}}
-} -on_request {
-} -edit_request {
-} -on_refresh {
-} -on_submit {
-    if {[exists_and_not_null add]} {
-	if {$person_valid_p} {
-	    ad_returnredirect [export_vars -base "${package_url}/add/person" -url {group_ids {object_id_two "$party_id"} role_two}]
-	} 
-	if {$org_valid_p} {
-	    ad_returnredirect [export_vars -base "${package_url}/add/organization" -url {group_ids {object_id_two "$party_id"} role_two}]
-	}
-    } 
-    if { ![exists_and_not_null role_two] } {
-	template::element::set_error search role_two "[_ contacts.A_role_is_required]"
-    }
-    if { ![template::form::is_valid search] } {
-	break
-    }
-} -after_submit {
 }
+
+if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
+    if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
+	lappend form_elements [list add:text(submit) [list label "[_ contacts.Add_New]"]]
+    }
+} else {
+    lappend form_elements [list add:text(submit) [list label "[_ contacts.Add_New]"]]
+}
+
+
+ad_form \
+    -name "search" \
+    -method "GET" \
+    -export {party_id} \
+    -form $form_elements \
+    -on_request {
+    } -edit_request {
+    } -on_refresh {
+    } -on_submit {
+	if { ![exists_and_not_null role_two] } {
+	    template::element set_error search role_two [_ contacts.Required]
+	    break
+	}
+	if {[exists_and_not_null add]} {
+	    if {$person_valid_p} {
+		ad_returnredirect [export_vars -base "${package_url}/add/person" -url {group_ids {object_id_two "$party_id"} role_two}]
+	    } 
+	    if {$org_valid_p} {
+		ad_returnredirect [export_vars -base "${package_url}/add/organization" -url {group_ids {object_id_two "$party_id"} role_two}]
+	    }
+	} 
+	if { ![exists_and_not_null role_two] } {
+	    template::element::set_error search role_two "[_ contacts.A_role_is_required]"
+	}
+	if { ![template::form::is_valid search] } {
+	    break
+	}
+    } -after_submit {
+    }
 
 template::list::create \
     -html {width 100%} \
