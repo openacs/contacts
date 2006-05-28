@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
     
-    <version name="1.2b12" url="http://openacs.org/repository/download/apm/contacts-1.2b12.apm">
+    <version name="1.2b13" url="http://openacs.org/repository/download/apm/contacts-1.2b13.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2006-03-31</release-date>
+        <release-date>2006-05-27</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b12"/>
+        <provides url="contacts" version="1.2b13"/>
         <requires url="acs-datetime" version="4.1"/>
         <requires url="acs-events" version="0.5d3"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
@@ -26,8 +26,8 @@
 
         <callbacks>
             <callback type="after-install"  proc="contacts::install::package_install"/>
-            <callback type="after-upgrade"  proc="contacts::install::package_upgrade"/>
             <callback type="after-instantiate"  proc="contacts::install::package_instantiate"/>
+            <callback type="after-upgrade"  proc="contacts::install::package_upgrade"/>
         </callbacks>
         <parameters>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="AcceptableFileUploadMIMETypes"  default="*" description="* for any. CSV of acceptable MIME Types for File Upload" section_name="File Upload"/>
@@ -70,10 +70,11 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="MailingAddressAttributeIdOrder"  description="A list of attribute_ids for postal addresses in order of priority. In doing a letter mail merge the first attribute_id in this list that a contact has a value for will be used as the mailing address. If no attribute_ids are specified all postal_address attribute_ids will be used in alphabetical order."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Message"  default="/packages/contacts/templates/message" description="The template src for the message page" section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="OOMailingPath"  default="/packages//contacts/templates/oo-mailing" description="The directory that contains all files needed for a proper OO mailing. This is the document.odt, content.xml, styles.xml and the banner directory" section_name="Templates"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PdfJoinBin"  default="/usr/bin/pdfjoin" description="Absolute path from computer root to directory containing pdfjoin executables" section_name=""/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PdfJoinBin"  default="/usr/bin/pdfjoin" description="Absolute path from computer root to directory containing pdfjoin executables"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PortraitSize"  default="200x200" description="Max dimensions for portrait" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PortraitThumbnailSize"  default="50x50" description="Max dimensions of portrait thumbnail" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="RequireAdminForTemplatesP"  default="0" description="Do we allow users to create templates in the system. If set to 1, only admins can create templates." section_name="Templates"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SpouseSyncedAttributes"  description="A tcl list of a person or party object types attribute_names or attribute_ids that you want people in a spousal relationship to keep in sync. For example, if you change a wife's home_phone and home_address you might want it to automatically update the husband's record as well you could put in 'home_phone home_address', or you might possibly want last_names to stay in sync (depending on cultural context), etc."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SquareThumbnails"  default="1" description="0 for no, 1 for yes. If yes we crop either the top or the bottom of the image to create square thumbnails and portraits" section_name="Photos"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ThumbnailSize"  default="125x125" description="Max dimension for thumbnail image" section_name="Photos"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UseSubsiteAsDefaultGroup"  default="0" description="Default '0'. Should we use this contact's instances subsite's application group as the default group? If yes set to '1'. Using the subsites application group as the default group will automatically add all subsite users to this contacts instance. This should only be changed at install time."/>

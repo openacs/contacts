@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b12" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b13" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -288,6 +288,7 @@
   <msg key="lt_Contact_has_not_logge">Contact has not logged in within the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_in_the_search_search_link">in the search %search_link%</msg>
   <msg key="lt_Contact_interacted_in_th">Contact last interaction in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_contact_link_was_updated">%contact_link% was updated</msg>
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_interacted_i">Contact last interaction not in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
@@ -334,6 +335,7 @@
   <msg key="lt_li_The_role_you_enter">&lt;li&gt; The role you entered \&quot;%pretty_name%\&quot; or the plural \&quot;%pretty_plural%\&quot; already exists.</msg>
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
   <msg key="lt_neither_person_nor_or">neither person nor org type is valid, what happened admin?</msg>
+  <msg key="lt_No_marrying_yourself">You cannot be married to yourself. Please correct this problem.</msg>
   <msg key="lt_no_matches_for_-query-">No matches for '%query%'</msg>
   <msg key="lt_No_perm_to_delete_from_hist">You do not have permission to delete this item from this contacts history </msg>
   <msg key="lt_not_commented_on_in_l">not commented on in last -&gt;</msg>
@@ -358,13 +360,16 @@
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
   <msg key="lt_Remove_others_of_this_role_from_these_contacts">Remove all other relationships of this type for these contacts</msg>
   <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Remove all other relationships of this type for the related contact</msg>
+  <msg key="lt_Removing_spouse_name_as_spouse">%spouse_name% was automatically removed as a spouse</msg>
   <msg key="lt_role_exists">%role% exists</msg>
   <msg key="lt_role_in_the_search_search_link">%role% in the search %search_link%</msg>
   <msg key="lt_role_not_in_the_search_search_link">%role% not in the search %search_link%</msg>
   <msg key="lt_Search_again_over_50_orgs">Search again - over 50 organizations found...</msg>
   <msg key="lt_Search_again_over_50_people">Search again - over 50 people found...</msg>
+  <msg key="lt_Select_spouse_value_in_sync">Select the appropriate values for both of these contacts.</msg>
   <msg key="lt_Some_of_the_required_">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included in the default group's form for this object type:</msg>
   <msg key="lt_Some_of_the_required__1">Some of the required elements for this form are missing. Please contact an administrator and make sure that the following attributes are included:</msg>
+  <msg key="lt_spouse_spouse_link_was_updated">Spouse %spouse_link% was updated</msg>
   <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
   <msg key="lt_The_-object_type-_-contact_link-_was_added">The object type %contact_link% was added</msg>
   <msg key="lt_the_action_supplied_i">the action supplied is not valid</msg>
@@ -386,6 +391,7 @@
   <msg key="lt_The_recipeints_name_a">The recipeints name and mailing address will automatically be included so that they work with window envelopes</msg>
   <msg key="lt_The_second_contact_sp">The second contact specified does not exist</msg>
   <msg key="lt_The_second_role_speci">The second role specified does not exist</msg>
+  <msg key="lt_There_is_no_spouse">This contact does not have a spousal relationship set. You have reached this page in error.</msg>
   <msg key="lt_There_was_a_problem_w">There was a problem with your input. this type of relationship cannot exist.</msg>
   <msg key="lt_there_was_an_error_processing">There was an error processing your request</msg>
   <msg key="lt_This_action_cannot_be">This action cannot be taken for unmapped groups</msg>
@@ -395,6 +401,7 @@
   <msg key="lt_this_is_my_default_si">this is my default signature</msg>
   <msg key="lt_this_may_take_a_bit">(this may take a bit)</msg>
   <msg key="lt_This_signature_specif">This signature specified either does not exist or does not belong to you</msg>
+  <msg key="lt_This_system_no_polygamy">This system does not allow polygamy.</msg>
   <msg key="lt_This_user_is_awaiting">This user is awaiting administrator approval</msg>
   <msg key="lt_This_users_has_not_be">This users has not been approved</msg>
   <msg key="lt_Title_is_not_shown_in_the_message">Title is not shown in the message, it is used to select the appropriate message.</msg>

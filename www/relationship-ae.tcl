@@ -28,6 +28,8 @@ ad_page_contract {
     }
 }
 
+
+
 contact::require_visiblity -party_id $object_id_one
 contact::require_visiblity -party_id $object_id_two
 
@@ -46,13 +48,13 @@ if { $list_exists_p } {
         {object_id_two:integer(hidden)}
         {party_id:integer(hidden)}
         {rel_type:text(hidden)}
-        {return_url:text(hidden),optional}
     }
     append form_elements [ams::ad_form::elements -package_key "contacts" -object_type $rel_type -list_name [ad_conn package_id]]
 
     ad_form -name rel_form \
         -mode "edit" \
         -form $form_elements \
+	-export {return_url} \
         -on_request {
         } -new_request {
         } -edit_request {
@@ -99,10 +101,16 @@ if { !$list_exists_p || [template::form::is_valid "rel_form"] } {
         set return_url "[contact::url -party_id $party_id -package_id $package_id]relationships"
     }
     set redirect_rel_types [parameter::get -parameter EditDataAfterRel -package_id [ad_conn package_id] -default ""]
+
     if { [regexp {\*} $redirect_rel_types match] || [lsearch $redirect_rel_types $rel_type] >= 0 } {
         # we need to redirect the party to the attribute add/edit page
         set return_url [export_vars -base "[contact::url -party_id $party_id -package_id $package_id]edit" -url {return_url}]
         append message ". [_ contacts.lt_update_contact_if_needed]"
+    }
+
+    # they have the special contact spouse rel enabled
+    if { $rel_type eq "contact_rels_spouse" && [contacts::spouse_enabled_p -package_id $package_id] } {
+	set return_url [export_vars -base "[contact::url -party_id $party_id]spouse-sync"]
     }
 
     util_user_message -message $message

@@ -839,6 +839,63 @@ ad_proc -public -callback contacts::extensions -impl relationships {
     }
 }
 
+ad_proc -public -callback contacts::multirow::extend -impl relationships {
+    {-type}
+    {-key}
+    {-select_query}
+    {-format "html"}
+} {
+} {
+    set results [list]
+    if { $type eq "groups" && [string is integer $key] && $key ne ""} {
+	set true [_ contacts.True]
+	set false [_ contacts.False]
+	db_foreach get_group_members "
+	    select parties.party_id,
+                   gm.member_id
+              from parties left join ( select member_id from group_approved_member_map where group_id = :key ) gm on (parties.party_id = gm.member_id)
+             where parties.party_id in ( $select_query )
+	" {
+	    if { $member_id eq "" } {
+		# they are a not member
+		lappend results $party_id $false
+	    } else {
+		lappend results $party_id $true
+	    }
+	}
+    }
+    return $results
+}
+
+
+ad_proc -public -callback contacts::extensions -impl groups {
+    {-multirow}
+    {-user_id}
+    {-package_id}
+    {-object_type}
+} {
+} {
+    ns_log notice "starting groups impl"
+    set groups_list [list]
+    foreach group [contact::groups_list -package_id $package_id] {
+	util_unlist $group group_id group_name member_count component_count mapped_p default_p
+	# ns_log notice "$mapped_p $group_name"
+	if { [string is true $mapped_p] } {
+	    if { [permission::permission_p -object_id $group_id -party_id $user_id -privilege "read"] } {
+		lappend groups_list [list $group_id $group_name]
+	    }
+	}
+    }
+    if { [llength $groups_list] > 0 } {
+	set groups_pretty [_ contacts.Groups]
+	foreach group [ams::util::localize_and_sort_list_of_lists -list $groups_list -position "1"] {
+	    util_unlist $group group_id group_name
+	    template::multirow append $multirow groups groups $groups_pretty $group_id $group_name
+	}
+    }
+    ns_log notice "ending groups impl..."
+}
+
 ad_proc -public -callback contacts::redirect -impl contactspdfs {
     {-party_id ""}
     {-action ""}
@@ -864,4 +921,43 @@ ad_proc -public -callback contacts::redirect -impl contactspdfs {
 	}
     }
 
+}
+
+
+ad_proc -public -callback contact::contact_form_after_submit -impl spouse_sync {
+    -party_id:required
+    -package_id:required
+    -object_type:required
+    -form:required
+} {
+    Sync information from a spousal relationship (if such a relationship exists)
+} {
+    if { [contacts::spouse_enabled_p -package_id $package_id] } {
+	# the special spousal relationship exists
+	set spouse_id [contact::spouse_id_not_cached -party_id $party_id]
+	if { $spouse_id ne "" } {
+	    # this party has a spouse, the edit form has already save
+            # all of the attributes for the party so we only need to save
+            # attributes for the spouse
+
+	    set party_revision_id [contact::live_revision -party_id $party_id]
+
+	    set spouse_revision_id [contact::live_revision -party_id $spouse_id]
+	    set new_spouse_revision_id [contact::revision::new -party_id $spouse_id]
+	    ams::object_copy -from $spouse_revision_id -to $new_spouse_revision_id
+
+	    set attribute_ids [contacts::spouse_sync_attribute_ids -package_id [ad_conn package_id]]
+	    foreach attribute_id $attribute_ids {
+		set value_id [db_string get_value_id { select value_id from ams_attribute_values where attribute_id = :attribute_id and object_id = :party_revision_id } -default {}]
+		ams::attribute::value_save -object_id $new_spouse_revision_id -attribute_id $attribute_id -value_id $value_id
+	    }
+
+	    set spouse_link [contact::link -party_id $spouse_id]
+	    util_user_message -html -message [_ contacts.lt_spouse_spouse_link_was_updated]
+
+	    contact::flush -party_id $spouse_id
+	    contact::search::flush_results_counts
+
+	}
+    }
 }

@@ -61,6 +61,19 @@ ad_proc -public contacts::install::package_install {
 	"0" \
 	""
 
+
+    rel_types::create_role -role "spouse" -pretty_name "Spouse" -pretty_plural "Spouses"
+    rel_types::new -table_name "contact_rel_employment" -create_table_p "t" -supertype "contact_rel" -role_one "spouse" -role_two "spouse" \
+	"contact_rels_spouse" \
+	"#contacts.lt_Contact_Rel_Spouse#" \
+	"#contacts.lt_Contact_Rels_Spous#" \
+	"person" \
+	"0" \
+	"" \
+	"person" \
+	"0" \
+	""
+
     # Creation of contact_complaint_track table
     content::type::new -content_type "contact_complaint" \
 	-pretty_name "Contact Complaint" \

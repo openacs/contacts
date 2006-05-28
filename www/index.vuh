@@ -32,7 +32,7 @@ if { $party_is_contact_p } {
         }
 
 
-        set valid_pages [list "" edit files groups relationships comments message merge history changes mail-tracking create-club]
+        set valid_pages [list "" edit files groups relationships comments message merge spouse-sync history changes mail-tracking create-club]
 
         if { [lsearch $valid_pages $action] >= 0 && [llength $file_list] == "2" } {
            switch $action {
@@ -43,6 +43,7 @@ if { $party_is_contact_p } {
                comments      { set file "comments" }
                message       { set file "message" }
                merge         { set file "/packages/contacts/lib/merge" }
+	       spouse-sync   { set file "/packages/contacts/lib/spouse-sync" }
 	       letter        { set file "letter" }
 	       email         { set file "email" }
 	       complaint     { set file "complaint" }
@@ -52,7 +53,6 @@ if { $party_is_contact_p } {
 	       create-club   { set file "create-club" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }
-
            set form_supplied_party_id [ns_queryget party_id] 
            if { [exists_and_not_null form_supplied_party_id] } {
                 if { $form_supplied_party_id != $party_id } {

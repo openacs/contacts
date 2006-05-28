@@ -143,6 +143,66 @@ ad_proc -public contacts::multirow {
     }
 }
 
+ad_proc -public contacts::spouse_sync_attribute_ids {
+    {-package_id:required}
+} {
+    Get the attribute_ids to keep in sync for the contact_rels_spouse relationship
+} {
+    set attribute_ids [list]
+    foreach attribute [parameter::get -parameter "SpouseSyncedAttributes" -default "" -package_id $package_id] {
+	if { [string is integer $attribute] } {
+	    lappend attribute_ids $attribute
+	} else {
+	    set person_attribute_id [attribute::id -object_type person -attribute_name ${attribute}]
+	    if { $person_attribute_id ne "" } {
+		lappend attribute_ids $person_attribute_id
+	    } else {
+		set party_attribute_id [attribute::id -object_type party -attribute_name ${attribute}]
+		if { $party_attribute_id ne "" } {
+		    lappend attribute_ids $party_attribute_id
+		}
+	    }
+	}
+    }
+
+    if { [llength $attribute_ids] == "0" } {
+	return {}
+    } else {
+	# now we have a list of attribute_ids, we verify that they in are in fact valid by searching
+	# for those attributes that have widgets
+	return [db_list get_valid_attribute_ids {}]
+    }
+
+}
+
+ad_proc -public contacts::spouse_enabled_p {
+    {-package_id ""}
+} {
+    Is the special contact_rels_spouse enabled for this contacts instance. Cached.
+} {
+    if { [string is false [exists_and_not_null package_id]] } {
+	set package_id [ad_conn package_id]
+    }
+    
+    if { [util_memoize [list contacts::spouse_rel_type_enabled_p -package_id $package_id]] } {
+	# parameter get is cached
+	set spouse_synced_attributes [util_memoize [list contacts::spouse_sync_attribute_ids -package_id $package_id]]
+	if { [llength $spouse_synced_attributes] > 0 } {
+	    return 1
+	}
+    }
+    return 0
+
+}
+
+ad_proc -public contacts::spouse_rel_type_enabled_p {
+    {-package_id:required}
+} {
+    Does the special contact_rels_spouse exist.
+} {
+    return [db_0or1row rel_type_enabled_p {}]
+}
+
 ad_proc -private contact::util::generate_filename {
     {-title:required}
     {-extension:required}
@@ -525,6 +585,57 @@ ad_proc -public contact::subsite_user_group {
 	return [item::get_live_revision $party_id]} else {
 	    return ""
 	}
+}
+
+ad_proc -public contact::spouse_id_not_cached {
+    {-party_id:required}
+    {-package_id ""}
+} {
+    this returns the contact's spouse_id, if and only if
+    the special spousal relationship exists. It also automatically
+    deletes multiple spouse records leaving the longest established
+    one - should the contact have more than one spousal relationship set
+} {
+    if { $package_id eq "" } {
+	set package_id [ad_conn package_id]
+    }
+    set spouse_id [db_list get_spouse_id {}]
+
+    # we do not allow for more than one spouse at a time since
+    # this system is not programmed to deal with polygamy situations
+    # we automatically delete the newer spousal relationship
+    if { [llength $spouse_id] > 1 } {
+	set active_p 0
+	foreach spouse $spouse_id {
+	    if { [contact::visible_p -party_id $spouse -package_id $package_id] } {
+		 # they are visible to this instance, we do not delete
+		 # if they are the first contact in this instance that
+		 # is visible
+		 if { [string is true $active_p] } {
+		     db_list delete_rel {}
+		     set spouse_name [contact::name -party_id $spouse]
+		     util_user_message -message [_ contacts.lt_This_system_no_polygamy]
+		     util_user_message -message [_ contacts.lt_Removing_spouse_name_as_spouse]
+		 } else {
+		     set active_p 1
+		     set spouse_id $spouse
+		 }
+	     }
+	}
+    } elseif { [lindex $spouse_id 0] ne "" } {
+	if { ![contact::visible_p -party_id [lindex $spouse_id 0] -package_id $package_id] } {
+	    set spouse_id {}
+	}
+    }
+
+    if { $spouse_id eq $party_id } {
+	util_user_message -message [_ contacts.lt_No_marrying_yourself]
+	# this is set here for the delete query
+	set spouse $spouse_id
+	db_list delete_rel {}
+	set spouse_id {}
+    }
+    return $spouse_id
 }
 
 ad_proc -private contact::person_upgrade_to_user {
