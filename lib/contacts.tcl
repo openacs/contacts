@@ -536,14 +536,13 @@ if { [string is false $report_p] } {
     db_multirow contacts report_contacts_select {} {
 	lappend party_ids $party_id
     }
-    ns_log notice "party_ids [llength $party_ids]"
+
     if { [llength $party_ids] < 10000 } {
 	# postgresql cannot deal with lists larger than 10000
 	set select_query [template::util::tcl_to_sql_list $party_ids]
     } else {
 	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
     }
-#	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
 
     if { $format == "csv" } {
 	set extend_format "text"
