@@ -121,8 +121,16 @@ ad_form -extend -name party_ae \
     } -edit_data {
 
 	callback contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
+
+        set previous_revision_id [contact::live_revision -party_id $party_id]
         set revision_id [contact::revision::new -party_id $party_id]
 
+	# we copy all the attributes from the old id to the new one
+        # a user may not have permission to view all attributes
+        # for a contact, and this way the values of the attributes
+        # they do not have permission to edit are preserved the follwing
+        # foreach saves the values they have edited
+	ams::object_copy -from $previous_revision_id -to $revision_id
 	
 
         foreach form $ams_forms {
@@ -155,9 +163,8 @@ ad_form -extend -name party_ae \
 				    -object_id $attr_id]
 	}
 	
-
-	
-	util_user_message -html -message "The $object_type <a href=\"contact?party_id=$party_id\">[contact::name -party_id $party_id]</a> was updated"
+	set contact_link [contact::link -party_id $party_id]
+	util_user_message -html -message [_ contacts.lt_contact_link_was_updated]
 
 	set cat_ids [list]
 	foreach group_id $groups_belonging_to {
