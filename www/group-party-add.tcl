@@ -24,7 +24,6 @@ switch $object_type {
 	set rel_type "membership_rel"
     }
 }
-ns_log notice "\#\#\# rel_type $rel_type"
 if {$rel_type == "organization_rel"} {
     set user_id [ad_conn user_id]
     set ip_addr [ad_conn peeraddr]

@@ -875,11 +875,9 @@ ad_proc -public -callback contacts::extensions -impl groups {
     {-object_type}
 } {
 } {
-    ns_log notice "starting groups impl"
     set groups_list [list]
     foreach group [contact::groups_list -package_id $package_id] {
 	util_unlist $group group_id group_name member_count component_count mapped_p default_p
-	# ns_log notice "$mapped_p $group_name"
 	if { [string is true $mapped_p] } {
 	    if { [permission::permission_p -object_id $group_id -party_id $user_id -privilege "read"] } {
 		lappend groups_list [list $group_id $group_name]
@@ -893,7 +891,6 @@ ad_proc -public -callback contacts::extensions -impl groups {
 	    template::multirow append $multirow groups groups $groups_pretty $group_id $group_name
 	}
     }
-    ns_log notice "ending groups impl..."
 }
 
 ad_proc -public -callback contacts::redirect -impl contactspdfs {
