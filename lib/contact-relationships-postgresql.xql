@@ -17,7 +17,7 @@ select rel_id, other_name, other_party_id, role_singular, rel_type, creation_dat
             and object_id_one = :party_id
 	    and acs_rel_types.role_two = acs_rel_roles.role
 	    and object_id_two = group_distinct_member_map.member_id
-	    and group_distinct_member_map.group_id in ('-2')
+	    and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
             and acs_rels.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
 	 union 
 	 select contact__name(object_id_one,'t') as other_name,
@@ -33,7 +33,7 @@ select rel_id, other_name, other_party_id, role_singular, rel_type, creation_dat
             and object_id_two = :party_id
 	    and acs_rel_types.role_one = acs_rel_roles.role
 	    and object_id_one = group_distinct_member_map.member_id
-	    and group_distinct_member_map.group_id in ('-2')
+	    and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
             and acs_rels.rel_type in ( select object_type from acs_object_types where supertype = 'contact_rel')
        ) rels_temp, acs_objects
 where rels_temp.rel_id = acs_objects.object_id
