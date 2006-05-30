@@ -6,6 +6,10 @@
 --
 --
 
+drop table contact_message_log;
+drop table contact_message_items;
+drop table contact_message_types;
+
 drop table contact_search_extend_map;
 drop table contact_search_conditions;
 drop table contact_searches;
