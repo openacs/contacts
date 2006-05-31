@@ -368,7 +368,6 @@ ad_proc -private contact::salutation_not_cached {
 }
 
 
-
 ad_proc -private contact::flush {
     {-party_id:required}
 } {

@@ -414,12 +414,10 @@ ad_proc -public contact::util::get_employee_organization_not_cached {
 } {
     set contact_list {}
     db_foreach select_employee_ids {
-	select CASE WHEN object_id_one = :employee_id
-                    THEN object_id_two
-                    ELSE object_id_one END as other_party_id
+	select object_id_two as other_party_id
 	from acs_rels, acs_rel_types
 	where acs_rels.rel_type = acs_rel_types.rel_type
-	and ( object_id_one = :employee_id or object_id_two = :employee_id )
+	and object_id_one = :employee_id
 	and acs_rels.rel_type = 'contact_rels_employment'
     } {
 	if { [contact::visible_p -party_id $other_party_id -package_id $package_id] } {
