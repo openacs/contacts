@@ -63,7 +63,7 @@ ad_proc -public contacts::install::package_install {
 
 
     rel_types::create_role -role "spouse" -pretty_name "Spouse" -pretty_plural "Spouses"
-    rel_types::new -table_name "contact_rel_employment" -create_table_p "t" -supertype "contact_rel" -role_one "spouse" -role_two "spouse" \
+    rel_types::new -table_name "contact_rel_spouse" -create_table_p "t" -supertype "contact_rel" -role_one "spouse" -role_two "spouse" \
 	"contact_rels_spouse" \
 	"#contacts.lt_Contact_Rel_Spouse#" \
 	"#contacts.lt_Contact_Rels_Spous#" \
