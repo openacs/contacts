@@ -42,6 +42,24 @@ foreach group [contact::groups -expand "all" -privilege_required "read"] {
 
 append form_elements " [ams::ad_form::elements -package_key "contacts" -object_type $object_type -list_names $ams_forms]"
 
+
+if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+    set privacy_setting_options [list]
+    if { $object_type eq "organization" } {
+	lappend privacy_setting_options [list [_ contacts.This_organization_has_closed_down] gone_p]
+    } else {
+	lappend privacy_setting_options [list [_ contacts.This_person_is_deceased] gone_p]
+    }
+    lappend privacy_setting_options [list [_ contacts.Do_not_email] email_p]
+    lappend privacy_setting_options [list [_ contacts.Do_not_mail] mail_p]
+    lappend privacy_setting_options [list [_ contacts.Do_not_phone] phone_p]
+
+    lappend form_elements [list contact_privacy_settings:boolean(checkbox),multiple,optional \
+			       [list label [_ contacts.Privacy_Settings]] \
+			       [list options $privacy_setting_options] \
+			      ]
+}
+
 ad_form -name party_ae \
     -mode "edit" \
     -export {return_url} \
@@ -83,6 +101,13 @@ ad_form -extend -name party_ae \
 	    ad_return_error "[_ contacts.Configuration_Error]" "[_ contacts.lt_Some_of_the_required__1]<ul><li>[join $missing_elements "</li><li>"]</li></ul>" 
 	}
 
+	if { [db_0or1row select_privacy_settings { select * from contact_privacy where party_id = :party_id }] } {
+	    set contact_privacy_settings [list]
+	    if { [string is false $email_p] } { lappend contact_privacy_settings email_p }
+	    if { [string is false $mail_p] } { lappend contact_privacy_settings mail_p }
+	    if { [string is false $phone_p] } { lappend contact_privacy_settings phone_p }
+	    if { [string is true $gone_p] } { lappend contact_privacy_settings gone_p }
+	}
     } -edit_request {
         set revision_id [contact::live_revision -party_id $party_id]
         foreach form $ams_forms {
@@ -187,6 +212,35 @@ ad_form -extend -name party_ae \
 	    }
 	} else {
 	    callback contact::person_add -package_id $package_id -person_id $party_id
+	}
+	if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+	    set contact_privacy_settings [template::element::get_values party_ae contact_privacy_settings]
+	    set gone_p 0
+	    set email_p 1
+	    set mail_p 1
+	    set phone_p 1
+	    if { [lsearch $contact_privacy_settings gone_p] >= 0 } {
+		set gone_p 1
+		set email_p 0
+		set mail_p 0
+		set phone_p 0
+	    } else {
+		if { [lsearch $contact_privacy_settings email_p] >= 0 } {
+		    set email_p 0
+		}
+		if { [lsearch $contact_privacy_settings mail_p] >= 0 } {
+		    set mail_p 0
+		}
+		if { [lsearch $contact_privacy_settings phone_p] >= 0 } {
+		    set phone_p 0
+		}
+	    }
+	    contact::privacy_set \
+		-party_id $party_id \
+		-email_p $email_p \
+		-mail_p $mail_p \
+		-phone_p $phone_p \
+		-gone_p $gone_p
 	}
     } -after_submit {
 	contact::flush -party_id $party_id

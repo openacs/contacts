@@ -6,6 +6,7 @@
 --
 --
 
+drop table contact_privacy;
 drop table contact_message_log;
 drop table contact_message_items;
 drop table contact_message_types;

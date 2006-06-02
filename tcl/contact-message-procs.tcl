@@ -157,33 +157,44 @@ ad_proc -private contact::message::log {
 ad_proc -private contact::message::email_address_exists_p {
     {-party_id:required}
     {-package_id ""}
+    {-override_privacy_p "f"}
 } {
     Does a message email address exist for this party or his/her employer. Cached via contact::message::email_address.
 } {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    return [string is false [empty_string_p [contact::message::email_address -party_id $party_id -package_id [ad_conn package_id]]]]
+    return [string is false [empty_string_p [contact::message::email_address -party_id $party_id -package_id $package_id -override_privacy_p $override_privacy_p]]]
 }
 
 ad_proc -private contact::message::email_address {
     {-party_id:required}
     {-package_id ""}
+    {-override_privacy_p "f"}
 } {
     Does a message email address exist for this party
+
+    @param override_privacy_p override the privacy contacts settings to force the information to be returned if it exists
 } {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    return [util_memoize [list ::contact::message::email_address_not_cached -party_id $party_id -package_id $package_id]]
+    return [util_memoize [list ::contact::message::email_address_not_cached -party_id $party_id -package_id $package_id -override_privacy_p $override_privacy_p]]
 }
 
 ad_proc -private contact::message::email_address_not_cached {
     {-party_id:required}
     {-package_id:required}
+    {-override_privacy_p:required}
 } {
     Does a message email address exist for this party
+
 } {
+    if { [string is false $override_privacy_p] } {
+	if { [contact::privacy_prevents_p -party_id $party_id -package_id $package_id -type "email"] } {
+	    return {}
+	}
+    }
     set email [contact::email -party_id $party_id]
     if { $email eq "" } {
 	# if this person is the employee of
@@ -202,6 +213,7 @@ ad_proc -private contact::message::email_address_not_cached {
 ad_proc -private contact::message::mailing_address_exists_p {
     {-party_id:required}
     {-package_id ""}
+    {-override_privacy_p "f"}
 } {
     Does a mailing address exist for this party. Cached via contact::message::mailing_address.
 } {
@@ -214,15 +226,19 @@ ad_proc -private contact::message::mailing_address_exists_p {
     # this simplifies the code and thus "pre" caches the address
     # for the user, which overall is faster
 
-    return [string is false [empty_string_p [contact::message::mailing_address -party_id $party_id -format "text" -package_id $package_id]]]
+    return [string is false [empty_string_p [contact::message::mailing_address -party_id $party_id -format "text" -package_id $package_id -override_privacy_p $override_privacy_p]]]
 }
 
 ad_proc -private contact::message::mailing_address {
     {-party_id:required}
     {-format "text/plain"}
     {-package_id ""}
+    {-override_privacy_p "f"}
 } {
     Returns a parties mailing address. Cached
+
+    @param override_privacy_p override the privacy contacts settings to force the information to be returned if it exists
+
 } {
     regsub -all "text/" $format "" format
     if { $format != "html" } {
@@ -231,16 +247,22 @@ ad_proc -private contact::message::mailing_address {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id $package_id]]
+    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id $package_id -override_privacy_p $override_privacy_p]]
 }
 
 ad_proc -private contact::message::mailing_address_not_cached {
     {-party_id:required}
     {-format:required}
     {-package_id:required}
+    {-override_privacy_p:required}
 } {
     Returns a parties mailing address
 } {
+    if { [string is false $override_privacy_p] } {
+	if { [contact::privacy_prevents_p -party_id $party_id -package_id $package_id -type "mail"] } {
+	    return {}
+	}
+    }
     set attribute_ids [contact::message::mailing_address_attribute_id_priority -package_id $package_id]
     set revision_id [contact::live_revision -party_id $party_id]
     set mailing_address {}
@@ -258,7 +280,7 @@ ad_proc -private contact::message::mailing_address_not_cached {
         # an organization we can attempt to use
         # that organizations email address
 	foreach employer [contact::util::get_employers -employee_id $party_id -package_id $package_id] {
-	    set mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id]
+	    set mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id -override_privacy_p $override_privacy_p]
 	    if { $mailing_address ne "" } {
 		break
 	    }

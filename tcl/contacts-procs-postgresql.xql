@@ -26,7 +26,7 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contacts::create_revisions_sweeper.get_persons_without_items">
+<fullquery name="contacts::sweeper.get_persons_without_items">
   <querytext>
     select person_id
       from persons
@@ -34,11 +34,21 @@
   </querytext>
 </fullquery>
 
-<fullquery name="contacts::create_revisions_sweeper.get_organizations_without_items">
+<fullquery name="contacts::sweeper.get_organizations_without_items">
   <querytext>
     select organization_id
       from organizations
      where organization_id not in ( select item_id from cr_items )
+  </querytext>
+</fullquery>
+
+<fullquery name="contacts::sweeper.insert_privacy_records">
+  <querytext>
+    insert into contact_privacy
+           ( party_id, nomail_p, noemail_p, nophone_p, gone_p )
+    select party_id, 'f'::boolean, 'f'::boolean, 'f'::boolean, 'f'::boolean
+      from parties
+     where party_id not in ( select party_id from contact_privacy )
   </querytext>
 </fullquery>
 
@@ -57,6 +67,42 @@
     select 1
       from acs_rel_types
      where rel_type = 'contact_rels_spouse'
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::privacy_allows_p.is_type_allowed_p">
+  <querytext>
+    select ${type}_p
+      from contact_privacy
+     where party_id = :party_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::privacy_set.record_exists_p">
+  <querytext>
+    select 1
+      from contact_privacy
+     where party_id = :party_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::privacy_set.update_privacy">
+  <querytext>
+    update contact_privacy
+       set email_p = :email_p,
+           mail_p = :mail_p,
+           phone_p = :phone_p,
+           gone_p = :gone_p
+     where party_id = :party_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::privacy_set.insert_privacy">
+  <querytext>
+    insert into contact_privacy
+           ( party_id, email_p, mail_p, phone_p, gone_p )
+           values
+           ( :party_id, :email_p, :mail_p, :phone_p, :gone_p )
   </querytext>
 </fullquery>
 

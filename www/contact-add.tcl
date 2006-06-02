@@ -100,6 +100,26 @@ set form_definition [ams::ad_form::elements \
 			 -object_type $object_type \
 			 -list_names $list_names]
 
+
+if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+    set privacy_setting_options [list]
+    if { $object_type eq "organization" } {
+	lappend privacy_setting_options [list [_ contacts.This_organization_has_closed_down] gone_p]
+    } else {
+	lappend privacy_setting_options [list [_ contacts.This_person_is_deceased] gone_p]
+    }
+    lappend privacy_setting_options [list [_ contacts.Do_not_email] email_p]
+    lappend privacy_setting_options [list [_ contacts.Do_not_mail] mail_p]
+    lappend privacy_setting_options [list [_ contacts.Do_not_phone] phone_p]
+
+    lappend form_definition [list contact_privacy_settings:boolean(checkbox),multiple,optional \
+				 [list label [_ contacts.Privacy_Settings]] \
+				 [list options $privacy_setting_options] \
+				]
+}
+
+
+
 #ad_return_error "$object_type" "$list_names :: $form_definition"
 
 # Creating the form
@@ -323,6 +343,35 @@ ad_form -extend -name party_ae \
 	set object_type [_ contacts.$object_type]
 	util_user_message -html -message "[_ contacts.lt_The_-object_type-_-contact_link-_was_added]"
 
+	if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+	    set contact_privacy_settings [template::element::get_values party_ae contact_privacy_settings]
+	    set gone_p 0
+	    set email_p 1
+	    set mail_p 1
+	    set phone_p 1
+	    if { [lsearch $contact_privacy_settings gone_p] >= 0 } {
+		set gone_p 1
+		set email_p 0
+		set mail_p 0
+		set phone_p 0
+	    } else {
+		if { [lsearch $contact_privacy_settings email_p] >= 0 } {
+		    set email_p 0
+		}
+		if { [lsearch $contact_privacy_settings mail_p] >= 0 } {
+		    set mail_p 0
+		}
+		if { [lsearch $contact_privacy_settings phone_p] >= 0 } {
+		    set phone_p 0
+		}
+	    }
+	    contact::privacy_set \
+		-party_id $party_id \
+		-email_p $email_p \
+		-mail_p $mail_p \
+		-phone_p $phone_p \
+		-gone_p $gone_p
+	}
 
     } -after_submit {
 	contact::flush -party_id $party_id

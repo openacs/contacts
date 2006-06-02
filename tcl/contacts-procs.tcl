@@ -81,7 +81,7 @@ ad_proc -private contacts::default_groups_not_cached {
     }
 }
 
-ad_proc -private contacts::create_revisions_sweeper {
+ad_proc -private contacts::sweeper {
 } {
     So that contacts searches work correctly, and quickly
     every person or organization in the system
@@ -93,16 +93,17 @@ ad_proc -private contacts::create_revisions_sweeper {
     associated item_id and live_revisions.
 } {
     db_foreach get_persons_without_items {} {
-	ns_log notice "contacts::create_revisions_sweeper creating content_item and content_revision for party_id: $person_id"
+	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
 	contact::revision::new -party_id $person_id
     }
     db_foreach get_organizations_without_items {} {
-	ns_log notice "contacts::create_revisions_sweeper creating content_item and content_revision for organization_id: $organization_id"
+	ns_log notice "contacts::sweeper creating content_item and content_revision for organization_id: $organization_id"
 	contact::revision::new -party_id $organization_id
     }
     if { ![info exists person_id] && ![info exists organization_id] } {
-	ns_log notice "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
+	ns_log notice "contacts::sweeper no person or organization objects exist that do not have associated content_items"
     }
+    db_dml insert_privacy_records {}
 }
 
 ad_proc -public contacts::multirow {
@@ -201,6 +202,69 @@ ad_proc -public contacts::spouse_rel_type_enabled_p {
     Does the special contact_rels_spouse exist.
 } {
     return [db_0or1row rel_type_enabled_p {}]
+}
+
+ad_proc -public contact::privacy_allows_p {
+    {-party_id:required}
+    {-type:required}
+    {-package_id ""}
+} {
+    @param party_id the party_id to check permission for
+    @param type either 'email', 'mail' or 'phone'
+    @returns 1 or 0 if the specified type of communication is allowed
+} {
+    if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+	if { $package_id eq "" } {
+	    if { [ad_conn package_key] eq "contacts" } {
+		set package_id [ad_conn package_id]
+	    } else {
+		error "You must specify a valid contacts package id if your are accessing this procedure from a package other than contacts"
+	    }
+	}
+	if { [lsearch [list email mail phone] $type] < 0 } {
+	    error "contact::privacy_allows_p, you specified an invalid type: '${type}' (you must specify, email, mail or phone)"
+	}
+	if { [db_string is_type_allowed_p {} -default {1}] } {
+	    return 1
+	} else {
+	    return 0
+	}
+    }
+    # by default permission is allowed
+    return 1
+}
+
+ad_proc -public contact::privacy_prevents_p {
+    {-party_id:required}
+    {-type:required}
+    {-package_id ""}
+} {
+    @param party_id the party_id to check permission for
+    @param type either 'email', 'mail' or 'phone'
+    @returns 1 or 0 if the specified type of communication is allowed
+} {
+    if { [contact::privacy_allows_p -party_id $party_id -type $type -package_id $package_id] } {
+	return 0
+    } else {
+	return 1
+    }
+}
+
+ad_proc -public contact::privacy_set {
+    {-party_id:required}
+    {-email_p:required}
+    {-mail_p:required}
+    {-phone_p:required}
+    {-gone_p:required}
+} {
+} {
+    db_transaction {
+	if { [db_0or1row record_exists_p {}] } {
+	    db_dml update_privacy {}
+	} else {
+	    db_dml insert_privacy {}
+	}
+    }
 }
 
 ad_proc -private contact::util::generate_filename {

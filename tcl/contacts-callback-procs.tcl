@@ -839,7 +839,7 @@ ad_proc -public -callback contacts::extensions -impl relationships {
     }
 }
 
-ad_proc -public -callback contacts::multirow::extend -impl relationships {
+ad_proc -public -callback contacts::multirow::extend -impl groups {
     {-type}
     {-key}
     {-select_query}
@@ -890,6 +890,50 @@ ad_proc -public -callback contacts::extensions -impl groups {
 	    util_unlist $group group_id group_name
 	    template::multirow append $multirow groups groups $groups_pretty $group_id $group_name
 	}
+    }
+}
+
+ad_proc -public -callback contacts::multirow::extend -impl privacy {
+    {-type}
+    {-key}
+    {-select_query}
+    {-format "html"}
+} {
+} {
+    set results [list]
+    if { $type eq "privacy" } {
+	set true [_ contacts.True]
+	set false [_ contacts.False]
+	db_foreach get_group_members "
+	    select party_id,
+                   $key as permission_p
+              from contact_privacy
+             where party_id in ( $select_query )
+	" {
+	    if { $permission_p } {
+		lappend results $party_id $false
+	    } else {
+		lappend results $party_id $true
+	    }
+	}
+    }
+    return $results
+}
+
+
+ad_proc -public -callback contacts::extensions -impl privacy {
+    {-multirow}
+    {-user_id}
+    {-package_id}
+    {-object_type}
+} {
+} {
+    if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+	set pretty_group [_ contacts.Privacy_Settings]
+	template::multirow append $multirow privacy privacy $pretty_group gone_p  [_ contacts.Closed_down_or_deceased]
+	template::multirow append $multirow privacy privacy $pretty_group email_p [_ contacts.Do_not_email]
+	template::multirow append $multirow privacy privacy $pretty_group mail_p [_ contacts.Do_not_mail]
+	template::multirow append $multirow privacy privacy $pretty_group phone_p [_ contacts.Do_not_phone]
     }
 }
 
@@ -951,6 +995,19 @@ ad_proc -public -callback contact::contact_form_after_submit -impl spouse_sync {
 
 	    set spouse_link [contact::link -party_id $spouse_id]
 	    util_user_message -html -message [_ contacts.lt_spouse_spouse_link_was_updated]
+
+	    if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+		# we copy privacy settings from the most recently edited contact, i.e. party_id
+                # UNLESS this person is deceased
+		if { [db_0or1row get_info { select * from contact_privacy where party_id = :party_id and gone_p is false }] } {
+		    db_dml update_privacy { update contact_privacy
+                                               set email_p = :email_p,
+                                                   mail_p = :mail_p,
+                                                   phone_p = :phone_p
+                                             where party_id = :party_id
+                                               and gone_p is false }
+		}
+	    }
 
 	    contact::flush -party_id $spouse_id
 	    contact::search::flush_results_counts

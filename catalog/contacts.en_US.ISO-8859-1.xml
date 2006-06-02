@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b13" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b14" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -91,6 +91,7 @@
   <msg key="Clear">Clear</msg>
   <msg key="Clear_the_currently_selected_Category">Clear the currently selected Category</msg>
   <msg key="Clear_the_currently_selected_Search">Clear the currently selected Search</msg>
+  <msg key="Closed_down_or_deceased">Closed down or deceased</msg>
   <msg key="Comment_Added">Comment Added</msg>
   <msg key="Comments">Comments</msg>
   <msg key="Complaint">Complaint</msg>
@@ -151,6 +152,9 @@
   <msg key="Description">Description:</msg>
   <msg key="description_help">A short description of what the subquery does.</msg>
   <msg key="Details">Details</msg>
+  <msg key="Do_not_email">Do not email</msg>
+  <msg key="Do_not_mail">Do not mail</msg>
+  <msg key="Do_not_phone">Do not phone</msg>
   <msg key="does_not_contain_-">does not contain -&gt;</msg>
   <msg key="does_not_exists">does not exist</msg>
   <msg key="Done">Done</msg>
@@ -162,6 +166,8 @@
   <msg key="Email">Email</msg>
   <msg key="email">EMail</msg>
   <msg key="Email_Address">Email Address</msg>
+  <msg key="emailing_allowed">emailing allowed</msg>
+  <msg key="emailing_not_allowed">emailing not allowed</msg>
   <msg key="Employee">Employee</msg>
   <msg key="Employees">Employees</msg>
   <msg key="employees">employees</msg>
@@ -200,8 +206,10 @@
   <msg key="Group_Name">Group Name</msg>
   <msg key="Groups">Groups</msg>
   <msg key="groups">groups</msg>
+  <msg key="has_closed_down_or_is_deceased">has closed down or is deceased</msg>
   <msg key="has_logged_in">has logged in</msg>
   <msg key="has_never_logged_in">has never logged in</msg>
+  <msg key="has_not_closed_down_and_is_not_deceased">has not closed down and is not deceased</msg>
   <msg key="Header">Header</msg>
   <msg key="Help_Text">Help Text</msg>
   <msg key="History">History</msg>
@@ -441,6 +449,8 @@
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
   <msg key="Mail_to_contact">Mail to contact</msg>
+  <msg key="mailing_allowed">mailing allowed</msg>
+  <msg key="mailing_not_allowed">mailing not allowed</msg>
   <msg key="Make_Current">Make Current</msg>
   <msg key="Make_Public">Make Public</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
@@ -505,6 +515,8 @@
   <msg key="Person">Person</msg>
   <msg key="person">person</msg>
   <msg key="Person_Form">Person Form</msg>
+  <msg key="phoning_allowed">phoning allowed</msg>
+  <msg key="phoning_not_allowed">phoning not allowed</msg>
   <msg key="Please_choose_a_contact">Please choose a contact</msg>
   <msg key="pp">pp.</msg>
   <msg key="Pretty_name">Pretty Name</msg>
@@ -512,6 +524,7 @@
   <msg key="Preview">Preview</msg>
   <msg key="Print">Print</msg>
   <msg key="Print_Letter">Print Letter</msg>
+  <msg key="Privacy_Settings">Privacy Settings</msg>
   <msg key="Processes">Processes</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Project">Project:</msg>
@@ -613,6 +626,8 @@
   <msg key="The_selected_relationship_requires_related_org">The selected relationship requires that the related contact be an organization</msg>
   <msg key="The_selected_relationship_requires_related_person">The selected relationship requires that the related contact be a person</msg>
   <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use it's employer email (%emp_addr%)</msg>
+  <msg key="This_organization_has_closed_down">This organization has closed down</msg>
+  <msg key="This_person_is_deceased">This person is deceased</msg>
   <msg key="this_var_name">This &quot;Variable Name&quot; is already present</msg>
   <msg key="Times">times</msg>
   <msg key="Title">Title</msg>

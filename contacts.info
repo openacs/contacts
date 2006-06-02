@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
     
-    <version name="1.2b13" url="http://openacs.org/repository/download/apm/contacts-1.2b13.apm">
+    <version name="1.2b14" url="http://openacs.org/repository/download/apm/contacts-1.2b14.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
-        <release-date>2006-05-27</release-date>
+        <release-date>2006-06-02</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b13"/>
+        <provides url="contacts" version="1.2b14"/>
         <requires url="acs-datetime" version="4.1"/>
         <requires url="acs-events" version="0.5d3"/>
         <requires url="acs-tcl" version="5.2.0b3"/>
@@ -41,6 +41,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Contact"  default="/packages/contacts/templates/contact" description="The template src for contact." section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ContactGroups"  default="/packages/contacts/templates/contact-groups" description="The template src of the for contact-groups" section_name="Portal Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ContactMaster"  default="/packages/contacts/lib/contact-master" description="The master template for an individual contact" section_name="Templates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ContactPrivacyEnabledP"  default="0" description="If '1' (True) then we allow a contact to be marked &quot;No Mail&quot;, &quot;No Email&quot;, and &quot;No Phone&quot;. People can be marked deceased and organizations can be closed down (which automatically gives the contact all three privacy settings). This prevents mail merges for the type of contact specified but does not prevent the storage, searching, display or exporting of this contact information. It also puts notices on the contact's summary page and attribute edit page about their privacy wishes. If '0' (False) privacy is not controlled."/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ContactSummaryViewTemplate"  default="/packages/contacts/www/contact" description="The contact summary view template to be used" section_name="Templates"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ContactsMaster"  default="/packages/contacts/lib/contacts-master" description="The master template for this contacts instance. All pages except indiviual contacts page (as specified by ContactMaster)
 " section_name="Templates"/>

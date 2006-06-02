@@ -571,26 +571,41 @@ ad_proc -private contacts::search::condition_type::contact {
         ad_form_widgets {
 
             set form_elements [list]
-            set contact_options [list \
-                                     [list "[_ contacts.in_the_search] ->" "in_search"] \
-                                     [list "[_ contacts.not_in_the_search] ->" "not_in_search"] \
-                                     [list "[_ contacts.lt_updated_in_the_last_-]" "update"] \
-                                     [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"] \
-                                     [list "[_ contacts.lt_interacted_in_the_last_-]" "interacted"] \
-                                     [list "[_ contacts.lt_not_interacted_in_the_la]" "not_interacted"] \
-                                     [list "[_ contacts.lt_interacted_between_-]" "interacted_between"] \
-                                     [list "[_ contacts.lt_not_interacted_betwe]" "not_interacted_between"] \
-                                     [list "[_ contacts.lt_commented_on_in_last_]" "comment"] \
-                                     [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"] \
-                                     [list "[_ contacts.lt_created_in_the_last_-]" "created"] \
-                                     [list "[_ contacts.lt_not_created_in_the_la]" "not_created"] \
-                                    ]
+
+            set contact_options [list]
+	    lappend contact_options [list "[_ contacts.in_the_search] ->" "in_search"]
+	    lappend contact_options [list "[_ contacts.not_in_the_search] ->" "not_in_search"]
+
+	    if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
+		lappend contact_options [list "[_ contacts.has_closed_down_or_is_deceased]" "privacy_gone_true"]
+		lappend contact_options [list "[_ contacts.has_not_closed_down_and_is_not_deceased]" "privacy_gone_false"]
+		lappend contact_options [list "[_ contacts.emailing_not_allowed]" "privacy_email_false"]
+		lappend contact_options [list "[_ contacts.emailing_allowed]" "privacy_email_true"]
+		lappend contact_options [list "[_ contacts.mailing_not_allowed]" "privacy_mail_false"]
+		lappend contact_options [list "[_ contacts.mailing_allowed]" "privacy_mail_true"]
+		lappend contact_options [list "[_ contacts.phoning_not_allowed]" "privacy_phone_false"]
+		lappend contact_options [list "[_ contacts.phoning_allowed]" "privacy_phone_true"]
+
+	    }
+
+	    lappend contact_options [list "[_ contacts.lt_updated_in_the_last_-]" "update"]
+	    lappend contact_options [list "[_ contacts.lt_not_updated_in_the_la]" "not_update"]
+	    lappend contact_options [list "[_ contacts.lt_interacted_in_the_last_-]" "interacted"]
+	    lappend contact_options [list "[_ contacts.lt_not_interacted_in_the_la]" "not_interacted"]
+	    lappend contact_options [list "[_ contacts.lt_interacted_between_-]" "interacted_between"]
+	    lappend contact_options [list "[_ contacts.lt_not_interacted_betwe]" "not_interacted_between"]
+	    lappend contact_options [list "[_ contacts.lt_commented_on_in_last_]" "comment"]
+	    lappend contact_options [list "[_ contacts.lt_not_commented_on_in_l]" "not_comment"]
+	    lappend contact_options [list "[_ contacts.lt_created_in_the_last_-]" "created"]
+	    lappend contact_options [list "[_ contacts.lt_not_created_in_the_la]" "not_created"]
+
             if { $object_type == "person" } {
                 lappend contact_options [list "[_ contacts.has_logged_in]" "login"]
                 lappend contact_options [list "[_ contacts.has_never_logged_in]" "not_login"]
                 lappend contact_options [list "[_ contacts.lt_has_logged_in_within_]" "login_time"]
                 lappend contact_options [list "[_ contacts.lt_has_not_logged_in_wit]" "not_login_time"]
             }
+
             lappend form_elements [list \
                                        ${prefix}operand:text(select) \
                                        [list label {}] \
@@ -630,7 +645,7 @@ ad_proc -private contacts::search::condition_type::contact {
             } elseif { [lsearch [list interacted_between not_interacted_between] ${operand}] >= 0 } {
 		lappend form_elements [list ${var1}:textdate [list label {}] [list after_html "and"]]
 		lappend form_elements [list ${var2}:textdate [list label {}]]
-	    } else {
+	    } elseif { [lsearch [list privacy_gone_true privacy_gone_false privacy_email_true privacy_email_false privacy_mail_true privacy_mail_false privacy_phone_true privacy_phone_false] ${operand}] < 0 } {
                 set interval_options [list \
                                           [list days days] \
                                           [list months months] \
@@ -646,6 +661,9 @@ ad_proc -private contacts::search::condition_type::contact {
                 switch ${operand} {
                     login - not_login {
                         return [set ${operand}]
+                    }
+		    privacy_gone_true - privacy_gone_false - privacy_email_true - privacy_email_false - privacy_mail_true - privacy_mail_false - privacy_phone_true - privacy_phone_false {
+                        return ${operand}
                     }
                     in_search - not_in_search {
                         if { [exists_and_not_null ${var1}] } {
@@ -758,6 +776,43 @@ ad_proc -private contacts::search::condition_type::contact {
                     set output_pretty "[_ contacts.lt_Contact_has_not_logge]"
                     set output_code   "CASE WHEN ( select last_visit from users where user_id = $party_id ) > ( now() - '$interval'::interval ) THEN 'f'::boolean ELSE 't'::boolean END"
                 }
+		privacy_gone_true - privacy_gone_false - privacy_email_true - privacy_email_false - privacy_mail_true - privacy_mail_false - privacy_phone_true - privacy_phone_false {
+		    switch ${operand} {
+			privacy_gone_true {
+			    set output_pretty [_ contacts.has_closed_down_or_is_deceased]
+			    set condition "gone_p is true"
+			}
+			privacy_gone_false {
+			    set output_pretty [_ contacts.has_not_closed_down_and_is_not_deceased]
+			    set condition "gone_p is false"
+			}
+			privacy_email_false {
+			    set output_pretty [_ contacts.emailing_not_allowed]
+			    set condition "email_p is false"
+			}
+			privacy_email_true {
+			    set output_pretty [_ contacts.emailing_allowed]
+			    set condition "email_p is true"
+			}
+			privacy_mail_false {
+			    set output_pretty [_ contacts.mailing_not_allowed]
+			    set condition "mail_p is false"
+			}
+			privacy_mail_true {
+			    set output_pretty [_ contacts.mailing_allowed]
+			    set condition "mail_p is true"
+			}
+			privacy_phone_false {
+			    set output_pretty [_ contacts.phoning_not_allowed]
+			    set condition "phone_p is false"
+			}
+			privacy_phone_true {
+			    set output_pretty [_ contacts.phoning_allowed]
+			    set condition "phone_p is true"
+			}
+		    }
+		    set output_code "${party_id} in ( select party_id from contact_privacy where $condition )"
+		}
             }
             if { $request == "pretty" } {
                 return $output_pretty

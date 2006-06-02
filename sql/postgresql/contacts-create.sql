@@ -151,7 +151,33 @@ create table contact_deleted_history (
         unique(party_id,object_id)
 );
 
--- create the content type
+-- Table that allows you to control the privacy of
+-- a contact. This prevents you from contacting a
+-- contact in a way the that is not liked if enabled
+-- via a parameter
+
+create table contact_privacy (
+        party_id        integer primary key
+                        constraint contact_privacy_party_id_fk references parties(party_id) on delete cascade,
+        email_p         boolean not null default 't',
+        mail_p          boolean not null default 't',
+        phone_p         boolean not null default 't',
+        gone_p          boolean not null default 'f' -- if a person is deceased or an organization is closed down
+                        constraint contact_privacy_gone_p_ck check (
+                               ( gone_p is TRUE AND ( mail_p is FALSE and email_p is FALSE and phone_p is FALSE ))
+                            or ( gone_p is FALSE )
+                        )
+);
+
+-- pre populate the contact_privacy table with
+-- all of the parties already in the system
+insert into contact_privacy
+( party_id, email_p, mail_p, phone_p, gone_p )
+select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
+  from parties
+ where party_id not in ( select party_id from contact_privacy )
+ order by party_id;
+
 
 
 \i contacts-package-create.sql
