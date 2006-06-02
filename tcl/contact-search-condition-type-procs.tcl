@@ -811,7 +811,7 @@ ad_proc -private contacts::search::condition_type::contact {
 			    set condition "phone_p is true"
 			}
 		    }
-		    set output_code "${party_id} in ( select party_id from contact_privacy where $condition )"
+		    set output_code "${party_id} in ( select ${operand}${prefix}.party_id from contact_privacy ${operand}${prefix} where ${operand}${prefix}.$condition )"
 		}
             }
             if { $request == "pretty" } {

@@ -45,8 +45,8 @@
 <fullquery name="contacts::sweeper.insert_privacy_records">
   <querytext>
     insert into contact_privacy
-           ( party_id, nomail_p, noemail_p, nophone_p, gone_p )
-    select party_id, 'f'::boolean, 'f'::boolean, 'f'::boolean, 'f'::boolean
+           ( party_id, email_p, mail_p, phone_p, gone_p )
+    select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
       from parties
      where party_id not in ( select party_id from contact_privacy )
   </querytext>
