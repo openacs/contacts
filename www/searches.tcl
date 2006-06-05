@@ -9,6 +9,13 @@ ad_page_contract {
     {owner_id:optional}
     {format "noraml"}
 } -validate {
+    valid_owner_id -requires {owner_id} {
+	if { $owner_id ne [ad_conn user_id] && $owner_id ne [ad_conn package_id] } {
+	    if { ![parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0"] || ![acs_user::site_wide_admin_p] } {
+		ad_complain [_ contacts.lt_Cannot_view_others_searches]
+	    }
+	}
+    }
 }
 
 set user_id [ad_conn user_id]
@@ -16,7 +23,13 @@ set package_id [ad_conn package_id]
 if { ![exists_and_not_null owner_id] } {
     set owner_id $user_id
 }
-set owner_options [db_list_of_lists select_owner_options {}]
+
+if { [parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0"] || [acs_user::site_wide_admin_p] } {
+    set owner_options [db_list_of_lists select_owner_options {}]
+} else {
+    set owner_options [list [list [_ contacts.My_Searches] $user_id]]
+}
+
 set owner_options [concat [list [list [_ contacts.Public_Searches] "${package_id}"]] $owner_options]
 
 template::list::create \

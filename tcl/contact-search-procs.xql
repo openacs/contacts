@@ -15,6 +15,17 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::search::permitted.select_search_info">
+  <querytext>
+    select cs.owner_id,
+           ao.package_id
+      from contact_searches cs,
+           acs_objects ao
+     where cs.search_id = ao.object_id
+       and cs.search_id = :search_id
+      </querytext>
+</fullquery>
+
 <fullquery name="contact::search::get.select_search_info">
   <querytext>
     select contact_searches.*, acs_objects.title, acs_objects.package_id
@@ -23,7 +34,6 @@
        and contact_searches.search_id = acs_objects.object_id
   </querytext>
 </fullquery>
-
 
 <fullquery name="contact::search_pretty_not_cached.select_conditions">
   <querytext>

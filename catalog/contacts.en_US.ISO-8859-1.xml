@@ -285,6 +285,7 @@
   <msg key="lt_attribute_pretty_zipp_1">%attribute_pretty% zip/postal does not start with: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_brbrsave_this_search_">&lt;br&gt;&lt;br&gt;save this search as</msg>
   <msg key="lt_Bulk_update_the_seclected_C">Bulk update the selected contacts</msg>
+  <msg key="lt_Cannot_view_others_searches">You do not have permission to view other users searches</msg>
   <msg key="lt_commented_on_in_last_">commented on in last -&gt;</msg>
   <msg key="lt_commentspretty_date_a">%comments.pretty_date% at %comments.pretty_time% -</msg>
   <msg key="lt_Contact_Administratio">Contact Administration</msg>
@@ -510,6 +511,7 @@
   <msg key="People_or_Organizations">People or Organizations</msg>
   <msg key="people_or_organizations">people or organizations</msg>
   <msg key="Percent">Percent:</msg>
+  <msg key="Permission_Denied">Permission Denied</msg>
   <msg key="Permissions">Permissions</msg>
   <msg key="Permissions_for_default_group">Permissions for default group</msg>
   <msg key="Person">Person</msg>

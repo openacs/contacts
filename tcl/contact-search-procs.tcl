@@ -50,6 +50,30 @@ ad_proc -public contact::search::title {
     return [db_string select_title {} -default {}]
 }
 
+
+ad_proc -public contact::search::permitted {
+    {-search_id:required}
+    {-user_id ""}
+} {
+} {
+    if { $search_id ne "" } {
+	if { [db_0or1row select_search_info {}] } {
+	    if { $user_id eq "" } {
+		set user_id [ad_conn user_id]
+	    }
+	    if { ![acs_user::site_wide_admin_p -user_id $user_id] && $owner_id ne $user_id && $owner_id ne $package_id } {
+		# the user is not site wide admin
+		# the user does not own the search
+		if { ![parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0" -package_id $package_id] } {
+		    ns_log notice "contact::search::permitted: user $user_id does not have permission to search_id $search_id (package $package_id owner $owner_id)"
+		    ad_return_forbidden  [_ contacts.Permission_Denied] "<blockquote>[_ contacts.lt_Cannot_view_others_searches]</blockquote>"
+		    ad_script_abort
+		}
+	    }
+	}
+    }
+}
+
 ad_proc -public contact::search::get {
     -search_id:required
     -array:required
@@ -408,7 +432,6 @@ ad_proc -public contact::search_pretty_not_cached {
     }
 }
 
-
 ad_proc -public contact::search::query_clause {
     {-and:boolean}
     {-query ""}
@@ -525,6 +548,7 @@ ad_proc -public contact::search::where_clause {
     {-limit_type_p "1"}
 } {
 } {
+    contact::search::permitted -search_id $search_id
     if { $and_p } {
         return [util_memoize [list ::contact::search::where_clause_not_cached \
                                   -search_id $search_id \
