@@ -200,7 +200,21 @@ if { [exists_and_not_null primary] && [string is true $display_contacts] } {
 	    db_dml update_contexts { update acs_objects set creation_user = :party_id where object_id in ( select message_id from forums_messages where user_id = :merge_party_id ) }
 	    db_dml update_messages { update forums_messages set user_id = :party_id where user_id = :merge_party_id }
 	}
+
+	# Mail Lite
+	if { [apm_package_installed_p acs-mail-lite] } {
+	    
+	    db_dml update_acs_mail_lite_mail_log { update acs_mail_lite_mail_log set party_id = :party_id where party_id = :merge_party_id }
+	    
+	}
 	
+	# Mail Tracking
+	if { [apm_package_installed_p mail-tracking] } {
+	    
+	    db_dml update_acs_mail_log_sender    { update acs_mail_log set sender_id = :party_id where sender_id = :merge_party_id }
+	    db_dml update_acs_mail_log_recipient { update acs_mail_log set recipient_id = :party_id where recipient_id = :merge_party_id }
+	    
+	}
 
 	# Notifications
 	# if contacts becomes ubiquitous enough this should be moved to a callback managed by the notifications package
