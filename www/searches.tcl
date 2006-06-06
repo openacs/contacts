@@ -11,7 +11,7 @@ ad_page_contract {
 } -validate {
     valid_owner_id -requires {owner_id} {
 	if { $owner_id ne [ad_conn user_id] && $owner_id ne [ad_conn package_id] } {
-	    if { ![parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0"] || ![acs_user::site_wide_admin_p] } {
+	    if { ![parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0"] && ![acs_user::site_wide_admin_p] } {
 		ad_complain [_ contacts.lt_Cannot_view_others_searches]
 	    }
 	}
