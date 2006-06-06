@@ -9,6 +9,7 @@ set _format "normal"
 set _page_size "25"
 set admin_p 0
 
+
 if { [string is false [exists_and_not_null package_id]] } {
     set package_id [ad_conn package_id]
 }
@@ -32,6 +33,12 @@ foreach default_param $default_param_list {
 	set $default_param [set _${default_param}]
     }
 }
+
+# if a double colon is in the query then the paginator messes up because it evals
+# the page string and attempts to run it as a proc, so we remove all double colons
+# here.
+while { [regsub -all {::} $query {:} query] } {}
+
 
 # see if the person is attemping to add
 # or remove a column
