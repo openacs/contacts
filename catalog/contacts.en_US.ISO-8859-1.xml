@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b14" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b15" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -435,6 +435,7 @@
   <msg key="lt_You_cannot_unmap_the_">You cannot unmap the default group</msg>
   <msg key="lt_You_do_not_have_permi">You do not have permission to add users to groups</msg>
   <msg key="lt_You_do_not_have_permi_">You do not have permission to remove people from %group_name%.</msg>
+  <msg key="lt_You_do_not_have_permission_to_edit_this_search">You do not have permission to edit this search</msg>
   <msg key="lt_You_have_not_specifie">You have not specified a valid contact type</msg>
   <msg key="lt_You_have_specified_an">You have specified an invalid Object Type</msg>
   <msg key="lt_You_have_specified_an_1">You have specified an invalid size for the textarea</msg>
