@@ -82,7 +82,9 @@ ad_proc -public -callback contacts::merge {
 } {
     This callback is executed when merging two contacts. Packages should move all information
     from the from_party_id to the to_party_id. Contacts will attempt to delete the from_party_id
-    at the end of the merge process.
+    at the end of the merge process. DO NOT USE db_foreach AND PUT UPDATES IN IT. The merge
+    is done within a db_transaction and if you use db_foreach and do updates within that the 
+    database hangs. You should use db_list_of_lists and then foreach the tcl list to perform updates
 } -
 
 ad_proc -public -callback contacts::extensions {
