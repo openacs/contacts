@@ -8,6 +8,7 @@ ad_proc -public contact::employee::get {
     {-organization_id ""}
     {-package_id ""}
     {-use_cache:boolean}
+    {-format "html"}
 } {
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Cached.
 
@@ -46,9 +47,9 @@ ad_proc -public contact::employee::get {
 	set package_id [ad_conn package_id]
     }
     if {$use_cache_p} {
-	set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]]
+	set values [util_memoize [list ::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id -format $format]]
     } else {
-	set values [::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id]
+	set values [::contact::employee::get_not_cached -employee_id $employee_id -organization_id $organization_id -package_id $package_id -format $format]
     }
     if {![empty_string_p $values]} {
 	array set local_array $values
@@ -62,6 +63,7 @@ ad_proc -private contact::employee::get_not_cached {
     {-employee_id:required}
     {-organization_id}
     {-package_id:required}
+    {-format:required}
 } {
     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
     Get full employee information. If employee does not have a phone number, fax number, or an e-mail address, the employee will be assigned the corresponding employer value, if an employer exists. Uncached.
@@ -82,7 +84,8 @@ ad_proc -private contact::employee::get_not_cached {
 	foreach attribute $employer_attributes {
 	    set value [ams::value \
 			   -object_id $employer_rev_id \
-			   -attribute_name $attribute
+			   -attribute_name $attribute \
+			   -format $format
 		      ]
 	    switch $attribute {
 		company_phone { set attribute "directphoneno" }
@@ -141,7 +144,8 @@ ad_proc -private contact::employee::get_not_cached {
 	foreach attribute $employer_attributes {
 	    set value [ams::value \
 			   -object_id $employer_rev_id \
-			   -attribute_name $attribute
+			   -attribute_name $attribute \
+			   -format $format
 		      ]
 	    switch $attribute {
 		company_phone { set attribute "directphoneno" }
@@ -180,7 +184,8 @@ ad_proc -private contact::employee::get_not_cached {
     foreach attribute $employee_attributes {
 	set value [ams::value \
 		       -object_id $employee_rev_id \
-		       -attribute_name $attribute
+		       -attribute_name $attribute \
+		       -format $format
 		  ]
 	set local_array($attribute) $value
     }
