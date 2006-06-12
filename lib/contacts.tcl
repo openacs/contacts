@@ -198,7 +198,10 @@ if { [exists_and_not_null search_id] } {
         # cr_revisions.publish date
 	append cr_where " and $party_column = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
         append cr_from " cr_items, cr_revisions,"
-    } elseif { [string equal [lsearch -exact $condition_type_list "attribute"] "-1"] } {
+    } elseif {[lsearch -exact $condition_type_list "attribute"] > -1 || [lsearch -exact $condition_type_list "contact"] > -1 } {
+	set cr_where "and cr_items.item_id = $party_column"
+	set cr_from "cr_items,"
+    } else {
 	# We don't need to search for attributes so we don't need to join
 	# on the cr_items table. This should speed things up. This assumes
 	# that packages other than contacts that add search condition
@@ -212,9 +215,6 @@ if { [exists_and_not_null search_id] } {
         # same way.
 	set cr_where ""
 	set cr_from ""
-    } else {
-	set cr_where "and cr_items.item_id = $party_column"
-	set cr_from "cr_items,"
     }
 } else {
     set object_type "party"
