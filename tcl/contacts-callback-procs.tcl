@@ -180,6 +180,13 @@ ad_proc -public -callback contact::append_attribute {
 } {
 }
 
+ad_proc -public -callback contact::contact_rels {
+} {
+    This callback is executed in the relationship add page.
+    It is used to extend the display so you could add additional attributes 
+    That make clear e.g. which organization or user you are talking about.
+} - 
+
 ad_proc -public -callback contact::after_instantiate {
     {-package_id:required}
 } {

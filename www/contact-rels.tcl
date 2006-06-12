@@ -157,6 +157,8 @@ if { [exists_and_not_null query] && [exists_and_not_null role_two] } {
     set original_party_id $party_id
     db_multirow -extend {map_url} -unclobber contacts contacts_select {} {
 	set map_url [export_vars -base "${package_url}relationship-add" -url {{party_one $original_party_id} {party_two $party_id} {role_two $role_two}}]
+
+	callback contact::contact_rels
     }
 
 }
