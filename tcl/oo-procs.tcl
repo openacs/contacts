@@ -278,7 +278,7 @@ ad_proc -public contact::oo::change_content {
 	# Save the content to a file.
 	set file [open "${dir}/$filename" w]
 	fconfigure $file -encoding utf-8
-	puts $file $content_array($filename)
+	puts $file [contact::oo::convert -content $content_array($filename)]
 	flush $file
 	close $file
     }
