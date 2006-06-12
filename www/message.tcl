@@ -190,6 +190,8 @@ if {[exists_and_not_null object_id]} {
 	    }
 	}
     }
+    # If we have files we need to unset the object_id
+    set object_id ""
 } else {
     set object_id ""
 }
