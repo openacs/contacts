@@ -263,7 +263,12 @@ ad_proc -public contact::search::results_count_not_cached {
 	    }
 	}
 	set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
-	if { [lsearch -exact [db_list get_condition_types {}] "attribute"] > -1 } {
+	
+	set condition_types [db_list get_condition_types {}]
+	if { [lsearch -exact $condition_types "attribute"] > -1 || [lsearch -exact $condition_types "contact"] > -1 } {
+	    set cr_where "and cr_items.item_id = $party_column"
+	    set cr_from "cr_items,"
+	} else {
 	    # We don't need to search for attributes so we don't need to join
 	    # on the cr_items table. This should speed things up. This assumes
             # that packages other than contacts that add search condition
@@ -274,9 +279,6 @@ ad_proc -public contact::search::results_count_not_cached {
 	    #
 	    # If this needs to change you should also update the
             # contacts/lib/contacts.tcl file which behave the same way.
-	    set cr_where "and cr_items.item_id = $party_column"
-	    set cr_from "cr_items,"
-	} else {
 	    set cr_where ""
 	    set cr_from ""
 	}
