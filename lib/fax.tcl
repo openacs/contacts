@@ -40,8 +40,6 @@ if {[exists_and_not_null footer_id]} {
 }
 
 set template_path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]"
-set banner_options [util::find_all_files -extension jpg -path "${template_path}/banner"]
-set banner_options [concat [list ""] $banner_options]
 set template_path "[acs_root_dir]/templates/pdf/fax"
 
 set date [split [dt_sysdate] "-"]
@@ -54,12 +52,6 @@ append form_elements {
     {recipients:text(inform)
 	{label "[_ contacts.Recipients]"}
     }
-    {banner:text(select),optional
-        {label "[_ contacts.Banner]"} 
-        {help_text "[_ contacts.Banner_help_text]"}
-	{options $banner_options}
-	{section "[_ contacts.oo_message]"}
-    }
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
@@ -69,6 +61,11 @@ append form_elements {
 	{label "[_ contacts.oo_message]"}
 	{html {cols 70 rows 24}}
 	{help_text {[_ contacts.fax_content_help]}}
+    }
+    {pages:integer(text),optional
+	{label "[_ contacts.fax_pages]"}
+	{html {cols 70 rows 24}}
+	{help_text {[_ contacts.fax_pages_help]}}
     }
     {account_manager_p:text(select)
 	{label "[_ contacts.Account_Manager_P]"}
@@ -94,7 +91,6 @@ ad_form -action message \
 			    ]
 	    set content [list $content $message_info(content_format)]
 	    set title $message_info(title)
-            set banner $message_info(banner)
 	} else {
 	    if { [exists_and_not_null signature] } {
 		set content [list $signature "text/html"]

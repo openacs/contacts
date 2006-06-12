@@ -11,7 +11,7 @@ foreach required_param {party_ids} {
     }
 }
 
-foreach optional_param {return_url content export_vars file_ids object_id cc bcc item_id} {
+foreach optional_param {return_url content export_vars file_ids cc bcc item_id context_id} {
     if {![info exists $optional_param]} {
 	set $optional_param {}
     }
@@ -25,11 +25,6 @@ if {![info exists no_callback_p]} {
     set no_callback_p f
 }
 
-if {[exists_and_not_null context_id]} {
-    set object_id $context_id
-}
-
-ns_log Notice "MY CONTEXT:: $context_id MY OBJECT $object_id"
 # Somehow when the form is submited the party_ids values became
 # only one element of a list, this avoid that problem
 
@@ -134,6 +129,7 @@ if { [exists_and_not_null file_ids] } {
 
     append form_elements {
         {file_ids:text(hidden) {value $file_ids}}
+        {context_id:text(hidden) {value $context_id}}
         {files:text(inform),optional {label "[_ acs-mail-lite.Associated_files]"} {value $files}}
     }
 }
@@ -167,7 +163,6 @@ append form_elements {
     {upload_file:file(file),optional
 	{label "[_ contacts.Upload_file]"}
     }
-    {object_id:integer(hidden),optional}
 }
 
 if { [exists_and_not_null item_id] } {
@@ -296,7 +291,7 @@ ad_form -action $action \
 		-package_id $package_id \
 		-file_ids $file_ids \
 		-mime_type $mime_type \
-		-object_id $object_id \
+		-object_id $context_id \
 		-no_callback_p $no_callback_p \
 		-single_email
 	    
@@ -335,7 +330,7 @@ ad_form -action $action \
 		-package_id $package_id \
 		-file_ids $file_ids \
 		-mime_type $mime_type \
-		-object_id $object_id \
+		-object_id $context_id \
 		-no_callback_p $no_callback_p \
 		-single_email
 	}
