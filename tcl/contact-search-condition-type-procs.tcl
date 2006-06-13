@@ -51,6 +51,7 @@ ad_proc -public contacts::search::condition_type {
 	    type_name {
 	    }
 	}
+	ns_log notice "Contacts SEARCH CONDITION: contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id "
 	return [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id]
     } else {
 	# the widget requested did not exist
@@ -614,7 +615,7 @@ ad_proc -private contacts::search::condition_type::contact {
                                       ]
 
             # login and not_login do not need special elements
-            if { [lsearch [list in_search not_in_search] ${operand}] >= 0 || ${operand} == "" } {
+            if { [lsearch [list in_search not_in_search] ${operand}] >= 0 } {
                 set user_id [ad_conn user_id]
 		set search_options [list [list "" "" ""]]
                 db_foreach get_my_searches {
@@ -657,6 +658,7 @@ ad_proc -private contacts::search::condition_type::contact {
             return $form_elements
         }
         form_var_list {
+	    ns_log notice "$operand [set $var1] [set $var2]"
             if { [exists_and_not_null operand] } {
                 switch ${operand} {
                     login - not_login {
@@ -666,10 +668,10 @@ ad_proc -private contacts::search::condition_type::contact {
                         return ${operand}
                     }
                     in_search - not_in_search {
-                        if { [exists_and_not_null ${var1}] } {
+                        if { [string is integer [set ${var1}]] && [set ${var1}] ne "" } {
                             return [list ${operand} [set ${var1}]]
                         } else {
-			    template::element::set_error $form_name ${var1} [_ contacts.Required]
+			     template::element::set_error $form_name ${var1} [_ contacts.Required]
 			}
                     }
 		    interacted_between - not_interacted_between {
@@ -689,6 +691,7 @@ ad_proc -private contacts::search::condition_type::contact {
                     }
                 }
             }
+	    return {}
         }
         sql - pretty {
             set operand [lindex $var_list 0]
@@ -814,6 +817,12 @@ ad_proc -private contacts::search::condition_type::contact {
 		    set output_code "${party_id} in ( select ${operand}${prefix}.party_id from contact_privacy ${operand}${prefix} where ${operand}${prefix}.$condition )"
 		}
             }
+	    if { ![exists_and_not_null output_pretty] } {
+		set output_pretty "no pretty output"
+	    }
+	    if { ![exists_and_not_null output_code] } {
+		set output_code "1 = 1"
+	    }
             if { $request == "pretty" } {
                 return $output_pretty
             } else {
