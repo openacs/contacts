@@ -646,7 +646,7 @@ ad_proc -private contacts::search::condition_type::contact {
             } elseif { [lsearch [list interacted_between not_interacted_between] ${operand}] >= 0 } {
 		lappend form_elements [list ${var1}:textdate [list label {}] [list after_html "and"]]
 		lappend form_elements [list ${var2}:textdate [list label {}]]
-	    } elseif { [lsearch [list privacy_gone_true privacy_gone_false privacy_email_true privacy_email_false privacy_mail_true privacy_mail_false privacy_phone_true privacy_phone_false] ${operand}] < 0 } {
+	    } elseif { [lsearch [list privacy_gone_true privacy_gone_false privacy_email_true privacy_email_false privacy_mail_true privacy_mail_false privacy_phone_true privacy_phone_false] ${operand}] < 0 && $operand ne "" } {
                 set interval_options [list \
                                           [list days days] \
                                           [list months months] \
