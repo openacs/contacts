@@ -757,6 +757,7 @@ ad_proc -private contact::person_upgrade_to_user {
 	    error "There was an error in contact::person_upgrade_to_user: $errmsg"
 	    return 0
 	}
+	contact::flush -party_id $person_id
     }
 }
 
@@ -984,6 +985,35 @@ ad_proc -public contacts::merge {
     get in on the action of this proc.
 } {
     
+
+
+    set to_type [contact::type -party_id $to_party_id]
+    set from_type [contact::type -party_id $from_party_id]
+
+    if { [lsearch [list person user organization] $to_type] < 0 } {
+	error "To type is not a contact"
+	ad_script_abort
+    }
+    if { [lsearch [list person user organization] $from_type] < 0 } {
+	error "From type is not a contact"
+	ad_script_abort
+    }
+
+    if { $to_type eq "organization" && $from_type ne "organization" } {
+	error "You cannot merge an organization with a person"
+	ad_script_abort
+    } elseif { $to_type eq "person" && $from_type eq "user" } {
+#	error "You cannot merge a user into a person"
+#	ad_script_abort
+	set original_to_party_id $to_party_id
+	set to_party_id $from_party_id
+	set from_party_id $original_to_party_id
+    }
+
+    ns_log notice "Starting merge to $to_party_id ([contact::name -party_id $to_party_id]) from $from_party_id ([contact::name -party_id $from_party_id])"
+
+
+
     foreach name [ns_cache names util_memoize] {
 	ns_cache flush util_memoize $name
     } 
@@ -1047,12 +1077,10 @@ ad_proc -public contacts::merge {
 
 
 	# files
-	db_dml update_it { update acs_objects set context_id = :to_party_id where object_id in ( select item_id from cr_items where parent_id = :from_party_id ) }
 	db_dml update_it { update cr_items set parent_id = :to_party_id where parent_id = :from_party_id }
 	
 
 	# cr_child _rels
-	db_dml update_it { update acs_objects set context_id = :to_party_id where object_id in ( select rel_id from cr_child_rels where parent_id = :from_party_id ) }
 	db_dml update_it { update cr_child_rels set parent_id = :to_party_id where parent_id = :from_party_id }
 
 
@@ -1063,7 +1091,6 @@ ad_proc -public contacts::merge {
 	}
 
 	# General Comments
-	db_dml update_contexts { update acs_objects set context_id = :to_party_id where object_id in ( select comment_id from general_comments where object_id = :from_party_id ) }
 	db_dml update_comments { update general_comments set object_id = :to_party_id where object_id = :from_party_id }
 
 	# Forums Messages
@@ -1152,6 +1179,10 @@ ad_proc -public contacts::merge {
 	# now we delete group membership
 	db_list do_it { select acs_rel__delete(rel_id) from acs_rels where object_id_one = :from_party_id or object_id_two = :from_party_id }
 
+
+	# update contexts
+	db_dml update_it { update acs_objects set context_id = :to_party_id where context_id = :from_party_id }
+
 	# now we update creation_user logs
 	db_dml update_it { update acs_objects set creation_user = :to_party_id where creation_user = :from_party_id }
 	db_dml update_it { update acs_objects set modifying_user = :to_party_id where modifying_user = :from_party_id }
@@ -1181,6 +1212,9 @@ ad_proc -public contacts::merge {
     } 
     contact::flush -party_id $to_party_id
     contact::flush -party_id $from_party_id
+
+    ns_log notice "merge finished."
+
 
 }
 
