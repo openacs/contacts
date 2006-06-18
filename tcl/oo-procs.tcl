@@ -51,6 +51,7 @@ ad_proc -public contact::oo::import_oo_pdf {
     {-parent_id ""}
     {-no_import:boolean}
     {-return_pdf:boolean}
+    {-return_pdf_with_id:boolean}
 } {
     Imports an OpenOffice file (.sxw / .odt) as a PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.
     
@@ -61,6 +62,7 @@ ad_proc -public contact::oo::import_oo_pdf {
     @param parent_id Needed to set the parent of this object
     @param no_import If this flag is specified the location of the generated PDF will be returned, but the pdf will not be stored in the content repository
     @param return_pdf If this flag is specified the location of the generated PDF will be returned and the PDF will be stored in the content repository (in contrast to "no_import"
+    @param return_pdf_with_id Same as return_pdf but it will return a list with three elements: file_item_id, file_mime_type and pdf_filename
     @return item_id of the revision that contains the file
     @return file location of the file if "no_import" has been specified.
 } {
@@ -177,7 +179,9 @@ ad_proc -public contact::oo::import_oo_pdf {
     content::item::set_live_revision -revision_id $revision_id
     if {$return_pdf_p} {
 	return [list $mime_type $pdf_filename]
-    } else {
+    } elseif {$return_pdf_with_id_p} {
+	return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
+    } else  {
 	ns_unlink $pdf_filename
 	return [content::revision::item_id -revision_id $revision_id]
     }
