@@ -3,13 +3,15 @@
 
 <fullquery name="public_searches">
       <querytext>
-    select title,
-           search_id
-      from contact_searches
-     where owner_id = :package_id
-       and title is not null
-       and not deleted_p
-     order by lower(title)
+    select acs_objects.title,
+           contact_searches.search_id
+      from contact_searches,
+           acs_objects
+     where contact_searches.owner_id = :package_id
+       and contact_searches.search_id = acs_objects.object_id
+       and acs_objects.title is not null
+       and not contact_searches.deleted_p
+     order by lower(acs_objects.title)
       </querytext>
 </fullquery>
 
