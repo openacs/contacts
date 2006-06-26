@@ -129,8 +129,7 @@
 
 <fullquery name="contact::search::where_clause_not_cached.get_search_info">
   <querytext>
-    select title,
-           owner_id,
+    select owner_id,
            all_or_any,
            object_type
       from contact_searches
