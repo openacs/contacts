@@ -183,5 +183,6 @@ select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
 \i contacts-package-create.sql
 \i contacts-search-create.sql
 \i contacts-messages-create.sql
+\i contacts-list-create.sql
 
 

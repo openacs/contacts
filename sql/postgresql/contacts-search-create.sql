@@ -10,7 +10,6 @@ create table contact_searches (
         search_id               integer
                                 constraint contact_searches_id_fk references acs_objects(object_id) on delete cascade
                                 constraint contact_searches_id_pk primary key,
-        title                   varchar(255),
         owner_id                integer
                                 constraint contact_searches_owner_id_fk references acs_objects(object_id) on delete cascade
                                 constraint contact_searches_owner_id_nn not null,

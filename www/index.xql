@@ -15,19 +15,29 @@
       </querytext>
 </fullquery>
 
-<fullquery name="my_recent_searches">
+<fullquery name="my_searches">
       <querytext>
-    select ao.title as recent_title,
-           cs.search_id as recent_search_id
-      from contact_searches cs, contact_search_log csl, acs_objects ao
-     where csl.user_id = :user_id
-       and cs.search_id = csl.search_id
-       and cs.search_id = ao.object_id
+    select ao.title as my_searches_title,
+           cs.search_id as my_searches_search_id
+      from contact_searches cs,
+           acs_objects ao
+     where cs.search_id = ao.object_id
        and ao.title is not null
-       and cs.owner_id != :package_id
+       and cs.owner_id = :user_id
        and not cs.deleted_p
-     order by csl.last_search desc
-     limit 10
+     order by upper(ao.title)
+      </querytext>
+</fullquery>
+
+<fullquery name="my_lists">
+      <querytext>
+    select ao.title as my_lists_title,
+           cl.list_id as my_lists_list_id
+      from contact_lists cl,
+           acs_objects ao
+     where cl.list_id = ao.object_id
+       and ao.object_id in ( select object_id from contact_owners where owner_id in ( :user_id , :package_id ))
+     order by upper(ao.title)
       </querytext>
 </fullquery>
 

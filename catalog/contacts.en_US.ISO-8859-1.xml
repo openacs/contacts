@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b15" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b16" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -24,10 +24,13 @@
   <msg key="Add_Email_Message">Add Email Message</msg>
   <msg key="Add_Group">Add Group</msg>
   <msg key="Add_Letter_Message">Add Letter Message</msg>
+  <msg key="Add_List">Add List</msg>
   <msg key="Add_Message">Add Message</msg>
   <msg key="Add_New">Add New</msg>
   <msg key="Add_new_in_Group">Add new %object_type% selected groups</msg>
+  <msg key="Add_new_owner">Add new owner</msg>
   <msg key="Add_Organization">Add Organization</msg>
+  <msg key="Add_Owner">Add Owner</msg>
   <msg key="Add_Person">Add Person</msg>
   <msg key="Add_Relationship">Add Relationship</msg>
   <msg key="Add_relationship_role_one_count">Amount of relationships to be deleted</msg>
@@ -41,6 +44,8 @@
   <msg key="Add_to_Group">Add to Group</msg>
   <msg key="Add_to_group">Add to group</msg>
   <msg key="Add_to_Groups">Add to Groups</msg>
+  <msg key="Add_to_List">Add to List</msg>
+  <msg key="Add_to_Lists">Add to Lists</msg>
   <msg key="Add_User">Add User</msg>
   <msg key="Address">Address</msg>
   <msg key="Admin">Admin</msg>
@@ -63,7 +68,9 @@
   <msg key="Archive">Archive</msg>
   <msg key="Archive_the_checked_contacts">Archive the checked contacts</msg>
   <msg key="Archived">Archived</msg>
+  <msg key="Are_you_sure">Are you sure?</msg>
   <msg key="Are_you_sure_you_want_to_delete">Are you sure you want to delete this contact?</msg>
+  <msg key="Are_you_sure_you_want_to_delete_list">Are you sure you want to delete this list?</msg>
   <msg key="area_code_is_-">area code is -&gt;</msg>
   <msg key="area_code_is_not_-">area code is not -&gt;</msg>
   <msg key="Art_of_Relationship">Type of Relationship</msg>
@@ -85,6 +92,8 @@
   <msg key="cancel_and_return">Cancel and return</msg>
   <msg key="CC">CC</msg>
   <msg key="cc_help">Send copy to multiple addresses separated by &quot;;&quot;</msg>
+  <msg key="Change">Change</msg>
+  <msg key="Change_Sharing">Change Sharing</msg>
   <msg key="Changed_date">Changed Date:</msg>
   <msg key="Changes">Changes</msg>
   <msg key="check_uncheck">Check/Uncheck</msg>
@@ -138,6 +147,7 @@
   <msg key="Create_role">Create role</msg>
   <msg key="Create_user">Create User</msg>
   <msg key="Creating_Club">Creating Club</msg>
+  <msg key="Creator">Creator</msg>
   <msg key="CSV">CSV</msg>
   <msg key="Current">Current</msg>
   <msg key="Customer">Customer:</msg>
@@ -216,6 +226,7 @@
   <msg key="In_Searches">Searches</msg>
   <msg key="in_the_search">in the search</msg>
   <msg key="Include_address_for_windowed_">include name and mailing address for use with windowed envelopes</msg>
+  <msg key="Insufficient_permission_to_edit_sharing">Insufficient permission to edit sharing</msg>
   <msg key="invalid">Invalid</msg>
   <msg key="Invalid_Object_Type">Invalid Object Type</msg>
   <msg key="irrelevant">irrelevant</msg>
@@ -241,6 +252,10 @@
   <msg key="letter">Letter</msg>
   <msg key="Letterhead">Letterhead</msg>
   <msg key="Limit_Contacts_to">Limit Contacts to</msg>
+  <msg key="List">List</msg>
+  <msg key="List_already_exists_with_this_name">A list already exists with this name</msg>
+  <msg key="Lists">Lists</msg>
+  <msg key="lists">lists</msg>
   <msg key="lt_--_Groups_-----------">-- Groups --------------------------</msg>
   <msg key="lt_--_My_Searches_------">-- My Searches ---------------------</msg>
   <msg key="lt_--_no_not_include_a_s">-- no not include a signature --</msg>
@@ -254,6 +269,7 @@
   <msg key="lt_Add_relationship_to_these_people">Add relationship to these people</msg>
   <msg key="lt_Add_relationship_type">Add relationship type</msg>
   <msg key="lt_Add_to_Selected_Group">Add to Selected Group(s)</msg>
+  <msg key="lt_Add_to_Selected_Lists">Add to Selected Lists</msg>
   <msg key="lt_Advanced_searches_are">Advanced searches are very powerful but in return they require very specific input...</msg>
   <msg key="lt_Aggregated_reports_require_added_columns">Aggregated reports require at least one added column</msg>
   <msg key="lt_All_searches_are_case">All searches are case insensitive, capitalization does not matter. If more than one contact match the search a list of results is returned. If only one contact meets the search criteria you are redirected to that contact.</msg>
@@ -276,6 +292,7 @@
   <msg key="lt_attribute_pretty_is_s">%attribute_pretty% is set</msg>
   <msg key="lt_attribute_pretty_is_s_1">%attribute_pretty% is: &lt;strong&gt;%option_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_is_s_2">%attribute_pretty% is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
+  <msg key="lt_attribute_pretty_less_than">%attribute_pretty% less than %interval% ago</msg>
   <msg key="lt_attribute_pretty_more_than">%attribute_pretty% is less than &lt;strong&gt;%interval%&lt;/strong&gt; ago</msg>
   <msg key="lt_attribute_pretty_stat">%attribute_pretty% state/province is: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
   <msg key="lt_attribute_pretty_stat_1">%attribute_pretty% state/province is not: &lt;strong&gt;%value%&lt;/strong&gt;</msg>
@@ -365,7 +382,9 @@
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
   <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {mailing_address}, {directphone} and {date}</msg>
+  <msg key="lt_Remove_from_List">Remove from List</msg>
   <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>
+  <msg key="lt_Remove_from_selected_Lists">Remove from selected lists</msg>
   <msg key="lt_Remove_from_this_Grou">Remove from this Group</msg>
   <msg key="lt_Remove_others_of_this_role_from_these_contacts">Remove all other relationships of this type for these contacts</msg>
   <msg key="lt_Remove_others_of_this_role_from_this_related_contact">Remove all other relationships of this type for the related contact</msg>
@@ -382,8 +401,10 @@
   <msg key="lt_stateprovince_is_not_">state/province is not -&gt;</msg>
   <msg key="lt_The_-object_type-_-contact_link-_was_added">The object type %contact_link% was added</msg>
   <msg key="lt_the_action_supplied_i">the action supplied is not valid</msg>
+  <msg key="lt_The_contact_in_list">Contact in the list &lt;strong&gt;%title%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_is_in_the">The contact is in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_is_NOT_in">The contact is NOT in the group: &lt;strong&gt;%group_pretty%&lt;/strong&gt;</msg>
+  <msg key="lt_The_contact_NOT_in_li">Contact is NOT in the list &lt;strong&gt;%title%&lt;/strong&gt;</msg>
   <msg key="lt_The_contact_specified">The contact specified does not exist</msg>
   <msg key="lt_The_contact_specified_1">The contact specified is not one of the contacts in this relationship</msg>
   <msg key="lt_The_contacts_were_merged">The contacts were merged and the other one was deleted.</msg>
@@ -457,6 +478,8 @@
   <msg key="Make_Public">Make Public</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
   <msg key="Manage_group_categories">Manage Group Categories</msg>
+  <msg key="Members">Members</msg>
+  <msg key="Merge_Contacts">Merge Contacts</msg>
   <msg key="Merge_with">Merge with</msg>
   <msg key="Message">Message</msg>
   <msg key="Message_is_required">Message is required</msg>
@@ -473,6 +496,7 @@
   <msg key="Name_is_required">Name is required</msg>
   <msg key="New">New</msg>
   <msg key="Next">Next</msg>
+  <msg key="No_Lists">No Lists</msg>
   <msg key="none">(none)</msg>
   <msg key="Normal_Searches">Normal Searches</msg>
   <msg key="Not_Configured">Not Configured</msg>
@@ -501,6 +525,8 @@
   <msg key="Other_Options">Other Options</msg>
   <msg key="Output">Output</msg>
   <msg key="Owner">Owner</msg>
+  <msg key="Owners">Owners</msg>
+  <msg key="Owners_Only">Owners Only</msg>
   <msg key="Paid">Paid:</msg>
   <msg key="Paper_Type">Paper Type</msg>
   <msg key="Parent_Group">Parent Group</msg>
@@ -528,6 +554,7 @@
   <msg key="Print">Print</msg>
   <msg key="Print_Letter">Print Letter</msg>
   <msg key="Privacy_Settings">Privacy Settings</msg>
+  <msg key="Private">Private</msg>
   <msg key="Processes">Processes</msg>
   <msg key="PROJECT">PROJECT</msg>
   <msg key="Project">Project:</msg>
@@ -555,13 +582,16 @@
   <msg key="relationships">relationships</msg>
   <msg key="Remove_default">Remove Default</msg>
   <msg key="Remove_default_options">Remove extended options set as default for search_id #%search_id%</msg>
-  <msg key="Remove_From_Group">Remove From Group</msg>
+  <msg key="Remove_From_Group">Remove from Group</msg>
   <msg key="Remove_from_Groups">Remove from Group</msg>
+  <msg key="Remove_from_List">Remove from List</msg>
+  <msg key="Remove_from_Lists">Remove from Lists</msg>
   <msg key="Remove_From_to_Group">Remove from Group</msg>
   <msg key="Required">Required</msg>
   <msg key="Results">Results</msg>
   <msg key="Return_to_history">Return to history</msg>
   <msg key="Return_to_title">Return to %title%</msg>
+  <msg key="Return_to_where_you_were">Return to where you were</msg>
   <msg key="Role">Role</msg>
   <msg key="Role_for_these_contacts">Role for these contacts</msg>
   <msg key="Role_Name">Role Name</msg>
@@ -597,7 +627,9 @@
   <msg key="Set_default">Set Default</msg>
   <msg key="Set_default_extend">Set default</msg>
   <msg key="Settings">Settings</msg>
+  <msg key="Shared">Shared</msg>
   <msg key="Shared_Searches">Shared Searches</msg>
+  <msg key="Sharing">Sharing</msg>
   <msg key="Show">Show</msg>
   <msg key="Showing">Showing</msg>
   <msg key="Signature">Signature</msg>
@@ -628,6 +660,7 @@
   <msg key="The_search_-title-_was_made_public">The search &quot;%title%&quot; was made public</msg>
   <msg key="The_selected_relationship_requires_related_org">The selected relationship requires that the related contact be an organization</msg>
   <msg key="The_selected_relationship_requires_related_person">The selected relationship requires that the related contact be a person</msg>
+  <msg key="There_must_be_at_least_one_owner">There must be at least one owner</msg>
   <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use it's employer email (%emp_addr%)</msg>
   <msg key="This_organization_has_closed_down">This organization has closed down</msg>
   <msg key="This_person_is_deceased">This person is deceased</msg>
@@ -665,6 +698,8 @@
   <msg key="Working_project_tasks">Working Project Tasks</msg>
   <msg key="years">years</msg>
   <msg key="You_can_extend">You can extend this search by:</msg>
+  <msg key="You_cannot_remove_creator_unless">You cannot remove the list creator unless you are an administrator</msg>
+  <msg key="You_do_not_own_any_lists">You do not own any lists. You must first create a list to use this feature.</msg>
   <msg key="Your_message_was_sent_to_-recipients-">Your message was sent to: &lt;strong&gt;%recipients%&lt;/strong&gt;</msg>
   <msg key="your_signatures">your signatures</msg>
   <msg key="yourself">Yourself</msg>

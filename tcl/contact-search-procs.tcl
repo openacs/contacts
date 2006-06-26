@@ -552,19 +552,36 @@ ad_proc -public contact::search::where_clause {
 } {
     contact::search::permitted -search_id $search_id
     if { $and_p } {
-        return [util_memoize [list ::contact::search::where_clause_not_cached \
-                                  -search_id $search_id \
-                                  -and \
-                                  -party_id $party_id \
-                                  -revision_id $revision_id \
-				  -limit_type_p $limit_type_p]]
+        set resutls [util_memoize [list ::contact::search::where_clause_not_cached \
+				       -search_id $search_id \
+				       -and \
+				       -party_id $party_id \
+				       -revision_id $revision_id \
+				       -limit_type_p $limit_type_p]]
     } else {
-        return [util_memoize [list ::contact::search::where_clause_not_cached \
-                                  -search_id $search_id \
-                                  -party_id $party_id \
-                                  -revision_id $revision_id \
-				  -limit_type_p $limit_type_p]]
+        set results [util_memoize [list ::contact::search::where_clause_not_cached \
+				       -search_id $search_id \
+				       -party_id $party_id \
+				       -revision_id $revision_id \
+				       -limit_type_p $limit_type_p]]
     }
+
+    if { $results eq "" } {
+	# we allow for the special case that somebody supplied a
+	# list_id instead of a search_id, if this was the case and
+	# they have permission to read this list
+	if { [contact::list::exists_p -list_id $search_id] } {
+	    if { [contact::owner_read_p -object_id $search_id -owner_id [ad_conn user_id]] } {
+		set result {}
+		if { $and_p } {
+		    append results " and "
+		}
+		append results " $party_id in ( select party_id from contact_list_members where list_id = $search_id ) "
+	    }
+	}
+    }
+    return $results
+
 }
 
 ad_proc -public contact::search::where_clause_not_cached {
@@ -620,15 +637,14 @@ ad_proc -public contact::search::where_clause_not_cached {
 		append result [lindex $where_clauses 0]
 	    }
 	}
-
-	if { [exists_and_not_null result] } {
-	    set result "( $result )"
-	    if { $and_p } {
-		set result "and $result"
-	    }
+    }
+    if { [exists_and_not_null result] } {
+	set result "( $result )"
+	if { $and_p } {
+	    set result "and $result"
 	}
     } else {
-        set result {}
+	set result {}
     }
 
     return $result

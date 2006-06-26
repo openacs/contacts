@@ -6,6 +6,11 @@
 --
 --
 
+drop view contact_owners;
+drop table contact_owner_rels;
+drop table contact_list_members;
+drop table contact_lists;
+
 drop table contact_privacy;
 drop table contact_message_log;
 drop table contact_message_items;
@@ -18,6 +23,7 @@ drop table contact_extend_options;
 select drop_package('contact_search');
 select acs_object__delete(search_id) from contact_searches;
 select acs_object_type__drop_type('contact_search','t');
+select acs_object_type__drop_type ('contact_list','t');
 
 drop view contact_rel_types;
 drop table contact_signatures;
@@ -28,6 +34,7 @@ drop table contact_complaint_track;
 
 select content_type__drop_type ('contact_party_revision','t','t');
 --drop table contact_party_revisions;
+select acs_rel_type__drop_type('contact_owner','t');
 select acs_rel_type__drop_type('organization_rel','t');
 select acs_rel_type__drop_type(object_type,'t') from acs_object_types where supertype = 'contact_rel';
 select acs_rel_type__drop_type('contact_rel','t');
@@ -36,5 +43,7 @@ select acs_rel_type__drop_type('contact_rel','t');
 select drop_package('contact');
 select drop_package('contact_rel');
 select drop_package('contact_party_revision');
+select drop_package('contact_list');
+select drop_package('contact_owner');
 
 drop sequence contact_extend_search_seq;

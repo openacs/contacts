@@ -915,6 +915,87 @@ ad_proc -private contacts::search::condition_type::group {
     }
 }
 
+ad_proc -private contacts::search::condition_type::group {
+    -request:required
+    -package_id:required
+    {-var_list ""}
+    {-form_name ""}
+    {-party_id ""}
+    {-revision_id ""}
+    {-prefix "contact"}
+    {-object_type ""}
+} {
+    Return all widget procs. Each list element is a list of the first then pretty_name then the widget
+
+    @param party_id the sql column where a party id can be found (normally something like parties.party_id, but it might be persons.person_id, or organizations.organization_id)
+} {
+    set operand  [ns_queryget "${prefix}operand"]
+    set list_id [ns_queryget "${prefix}list_id"]
+
+    switch $request {
+        ad_form_widgets {
+	    set user_id [ad_conn user_id]
+            set form_elements [list]
+	    set operand_options [list \
+                                     [list "[_ contacts.contact_is_in_-]" "in"] \
+                                     [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
+                                    ]
+
+            set list_options [db_list_of_lists get_readable_lists {
+		select ao.title,
+                       cl.list_id
+                  from contact_lists cl,
+                       acs_objects ao
+                 where cl.list_id = ao.object_id
+                   and cl.list_id in ( select object_id from contact_owners where owner_id in ( :user_id, :package_id ))
+	    }]
+
+            lappend form_elements [list ${prefix}operand:text(select) [list label {}] [list options $operand_options] [list value $operand]]
+            lappend form_elements [list ${prefix}list_id:integer(select) [list label {}] [list options $list_options] [list value $list_id]]
+            return $form_elements
+        }
+        form_var_list {
+            if { [exists_and_not_null operand] && [exists_and_not_null list_id] } {
+		if { [contact::owner_read_p -object_id $list_id -owner_id [ad_conn user_id]] } {
+		    return [list $operand $list_id]
+		}
+            }
+	    return {}
+        }
+        sql - pretty {
+            set operand [lindex $var_list 0]
+            set list_id [lindex $var_list 1]
+	    set title [db_string get_title { select title from acs_objects where object_id = :list_id } -default {}]
+	    if { $title eq "" } {
+		# this list has been deleted or they don't have permission to read it any more
+		if { $request eq "pretty" } {
+		    return "[_ contacts.List] [_ contacts.Deleted]"
+		} else {
+		    return " t = f "
+		}
+	    }
+            switch $operand {
+                in {
+                    set output_pretty "[_ contacts.lt_The_contact_in_list]"
+		    set output_code "${party_id} in ( select clm${list_id}.party_id from contact_list_members clm${list_id} where clm${list_id}.list_id = $list_id )"
+                }
+                not_in {
+                    set output_pretty "[_ contacts.lt_The_contact_NOT_in_li]"
+		    set output_code "${party_id} not in ( select clm${list_id}.party_id from contact_list_members clm${list_id} where clm${list_id}.list_id = $list_id )"
+                }
+            }
+            if { $request == "pretty" } {
+                return $output_pretty
+            } else {
+                return $output_code
+            }
+        }
+        type_name {
+            return [_ contacts.List]
+        }
+    }
+}
+
 
 
 ad_proc -private contacts::search::condition_type::relationship {

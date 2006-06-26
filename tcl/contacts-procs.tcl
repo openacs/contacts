@@ -632,11 +632,15 @@ ad_proc -public contact::live_revision {
 } {
     create a contact revision
 } {
-    if {[db_0or1row revision_exists_p {select 1 from cr_items where item_id = :party_id}]} {
-	return [item::get_live_revision $party_id]
-    } else {
-	return ""
-    }
+    # since we run the sweeper to create cr_items for every contact
+    # we know that it has a cr_item, so we can simply use the item
+    # proc.
+    #if {[db_0or1row revision_exists_p {select 1 from cr_items where item_id = :party_id}]} {
+    #	return [item::get_live_revision $party_id]
+    #} else {
+    #	return ""
+    #}
+    return [item::get_live_revision $party_id]
 }
 
 ad_proc -public contact::subsite_user_group {

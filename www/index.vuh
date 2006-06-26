@@ -91,7 +91,19 @@ if { $party_is_contact_p } {
                     rp_form_put object_type "organization"
                }
                rp_internal_redirect contact-add
-           } 
+           }
+           lists {
+               rp_internal_redirect /packages/contacts/lib/lists
+           }
+           list-parties-add {
+               rp_internal_redirect /packages/contacts/lib/list-parties-add
+           }
+           list-parties-remove {
+               rp_internal_redirect /packages/contacts/lib/list-parties-remove
+           }
+           sharing {
+               rp_internal_redirect /packages/contacts/lib/sharing
+           }
            default {
                ns_returnnotfound
                ad_script_abort

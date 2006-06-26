@@ -70,11 +70,15 @@ if { [exists_and_not_null search_id] } {
 }
 set public_searches [lang::util::localize_list_of_lists -list [db_list_of_lists public_searches {}]]
 set search_options [concat [list [list [_ contacts.All_Contacts] ""]] $public_searches]
-set searchcount 1
-db_foreach my_recent_searches {} {
-    lappend search_options [list "${searchcount}) ${recent_title}" ${recent_search_id}]
-    incr searchcount
+
+db_foreach my_searches {} {
+    lappend search_options [list "${my_searches_title}" ${my_searches_search_id} [_ contacts.My_Searches]]
 }
+db_foreach my_lists {} {
+    lappend search_options [list "${my_lists_title}" ${my_lists_list_id} [_ contacts.Lists]]
+}
+
+
 if { [exists_and_not_null search_id] } {
     set search_in_list_p 0
     foreach search_option $search_options {
@@ -93,7 +97,7 @@ lang::util::localize_list_of_lists -list $search_options
 set package_url [ad_conn package_url]
 
 set form_elements {
-    {search_id:integer(select),optional {label ""} {options $search_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
+    {search_id:integer(select_with_optgroup),optional {label ""} {options $search_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
     {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
     {save:text(submit) {label {[_ contacts.Search]}} {value "go"}}
     {results_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results] $contacts_total_count </span>"}}
