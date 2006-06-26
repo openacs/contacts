@@ -1026,7 +1026,7 @@ ad_proc -public contacts::merge {
     db_transaction {
 	# contact lists
 	foreach list_id [db_list get_lists { select list_id from contact_list_members where party_id = :from_party_id }] {
-	    contact::list::member_add -list_id $list_id -party_id $new_party_id
+	    contact::list::member_add -list_id $list_id -party_id $to_party_id
 	    contact::list::member_delete -list_id $list_id -party_id $from_party_id
 	}
 
