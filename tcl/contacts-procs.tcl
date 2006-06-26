@@ -65,7 +65,7 @@ ad_proc -private contacts::default_groups_not_cached {
 } {
     if { [parameter::get -package_id $package_id -parameter "IncludeChildPackages" -default "0"] } {
         set node_id [site_node::get_node_id_from_object_id -object_id $package_id]
-        set parent_node_id [site_node::get_parent_id -node_id $node_id]
+       set parent_node_id [site_node::get_parent_id -node_id $node_id]
         # this search currently does not differentiate between child
         # instances mounted on subsites or on other packages. Don't
         # know if this is good or bad... matthewg
@@ -1024,6 +1024,13 @@ ad_proc -public contacts::merge {
 
 
     db_transaction {
+	# contact lists
+	foreach list_id [db_list get_lists { select list_id from contact_list_members where party_id = :from_party_id }] {
+	    contact::list::member_add -list_id $list_id -party_id $new_party_id
+	    contact::list::member_delete -list_id $list_id -party_id $from_party_id
+	}
+
+
 	# contact messages
 	db_dml update_message_log { update contact_message_log set recipient_id = :to_party_id where recipient_id = :from_party_id }
 	
