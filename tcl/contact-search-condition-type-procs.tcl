@@ -915,7 +915,7 @@ ad_proc -private contacts::search::condition_type::group {
     }
 }
 
-ad_proc -private contacts::search::condition_type::group {
+ad_proc -private contacts::search::condition_type::lists {
     -request:required
     -package_id:required
     {-var_list ""}
@@ -925,6 +925,10 @@ ad_proc -private contacts::search::condition_type::group {
     {-prefix "contact"}
     {-object_type ""}
 } {
+    This procedure cannot be name condition_type::list because it breaks the ::list command in 
+    other search condition types.
+
+
     Return all widget procs. Each list element is a list of the first then pretty_name then the widget
 
     @param party_id the sql column where a party id can be found (normally something like parties.party_id, but it might be persons.person_id, or organizations.organization_id)
