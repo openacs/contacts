@@ -289,8 +289,13 @@ ad_proc -public contact::search::results_count_not_cached {
 	set cr_from ""
 	set cr_where ""
     }
-    
-    return [db_string select_${object_type}_results_count {}]
+
+    set results ""
+    db_transaction {
+	# we don't want to break the contact searches page if there is an error.
+	set results [db_string select_${object_type}_results_count {}]
+    } on_error {}
+    return $results
 
 }
 
@@ -308,6 +313,7 @@ ad_proc -private contact::party_id_in_sub_search_clause {
         set group_where_clause "and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])"
 #        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
     }
+
     set query "
     select parties.party_id
       from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
@@ -316,6 +322,10 @@ ad_proc -private contact::party_id_in_sub_search_clause {
      $group_where_clause
     [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
     "
+
+
+
+
     if { [exists_and_not_null query] } {
         set result ${party_id}
         if { $not_p } {
@@ -403,12 +413,12 @@ ad_proc -public contact::search_pretty_not_cached {
     set db_conditions [db_list_of_lists select_conditions {}]
     set conditions [list]
     foreach condition $db_conditions {
-        lappend conditions [contacts::search::condition_type \
+	lappend conditions [contacts::search::condition_type \
 				-type [lindex $condition 0] \
 				-request pretty \
 				-var_list [lindex $condition 1] \
 				-object_type $object_type
-			       ]
+			   ]
     }
 
     if { [llength $conditions] > 0 } {
