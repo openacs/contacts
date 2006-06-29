@@ -888,7 +888,7 @@ ad_proc -private contacts::search::condition_type::group {
             set operand [lindex $var_list 0]
             set group_id [lindex $var_list 1]
             if { $request == "pretty" } {
-                set group_pretty [lang::util::localize [db_string select_group_name { select group_name from groups where group_id = :group_id }]]
+                set group_pretty [lang::util::localize [db_string select_group_name { select group_name from groups where group_id = :group_id } -default {}]]
             } else {
                 set group_pretty ""
             }
