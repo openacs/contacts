@@ -59,7 +59,7 @@ set form_elements {
     {recipients:text(inform),optional {label "[_ contacts.Contacts]"}}
 }
 
-set list_options [db_list_of_lists get_lists { select ao.title, cl.list_id from contact_lists cl, acs_objects ao where cl.list_id = ao.object_id and cl.list_id in ( select object_id from contact_owners where owner_id in ( :user_id, :package_id )) }]
+set list_options [db_list_of_lists get_lists { select ao.title, cl.list_id from contact_lists cl, acs_objects ao where cl.list_id = ao.object_id and cl.list_id in ( select object_id from contact_owners where owner_id in ( :user_id, :package_id )) order by upper(ao.title) }]
 
 if { [llength $list_options] == "0" } {
     ad_return_error "[_ contacts.No_Lists]" "[_ contacts.You_do_not_own_any_lists]"
