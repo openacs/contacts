@@ -51,8 +51,15 @@ ad_proc -public contacts::search::condition_type {
 	    type_name {
 	    }
 	}
-	ns_log notice "Contacts SEARCH CONDITION: contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id "
-	return [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id]
+	set output ""
+	if { [catch {
+	    set output [contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id]
+	} errmsg] } {
+	    ns_log Error "Contacts SEARCH CONDITION Error: contacts::search::condition_type::${type} -request $request -form_name $form_name -var_list $var_list -party_id $party_id -revision_id $revision_id -object_type $object_type -prefix $prefix -package_id $package_id \n\n $errmsg"
+	    set output ""
+
+	}
+	return $output
     } else {
 	# the widget requested did not exist
 	ns_log Debug "Contacts: the contacts search condition type \"${type}\" was requested and the associated ::contacts::search::condition_type::${type} procedure does not exist"
@@ -615,6 +622,7 @@ ad_proc -private contacts::search::condition_type::contact {
                                       ]
 
             # login and not_login do not need special elements
+	    # the limitiation on contact_search_conditions is there to prevent infinit loops of search in another search
             if { [lsearch [list in_search not_in_search] ${operand}] >= 0 } {
                 set user_id [ad_conn user_id]
 		set search_options [list [list "" "" ""]]
@@ -629,6 +637,7 @@ ad_proc -private contacts::search::condition_type::contact {
                            and acs_objects.title is not null
                            and not contact_searches.deleted_p
                            and acs_objects.package_id = :package_id
+                           and contact_searches.search_id not in ( select search_id from contact_search_conditions where var_list like ('in_searc%') or var_list like ('not_in_searc%') )
                          order by CASE WHEN contact_searches.owner_id = :package_id THEN '1'::integer ELSE '2' END, lower(acs_objects.title)
 		} {
 		    if { $owner_id eq $package_id } {
@@ -1069,29 +1078,32 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
 		}
 		in_search - not_in_search {
 		    set user_id [ad_conn user_id]
-		    set search_options [db_list_of_lists get_my_searches {
-			select ao.title,
-			cs.search_id
-			from contact_searches cs, acs_objects ao
-			where cs.search_id = ao.object_id
-			and cs.owner_id = :user_id
-			and ao.title is not null
-			and ao.package_id = :package_id
-			and not cs.deleted_p
-			order by lower(ao.title)
-                    }]
-		    set public_searches [db_list_of_lists public_searches {
-			select title,
-			search_id
-			from contact_searches
-			where owner_id = :package_id
-			and title is not null
-			and not deleted_p
-			order by lower(title)
-		    }]
-		    set search_options [lang::util::localize [concat [list [list "" ""]] $search_options $public_searches]]
+		    set search_options [list [list "" "" ""]]
+		    # the limitiation on contact_search_conditions is there to prevent infinit loops of search in another search
+		    db_foreach get_my_searches {
+                        select acs_objects.title,
+			       contact_searches.search_id,
+                               contact_searches.owner_id
+                          from contact_searches,
+                               acs_objects
+                         where contact_searches.owner_id in ( :user_id, :package_id )
+                           and contact_searches.search_id = acs_objects.object_id
+                           and acs_objects.title is not null
+                           and not contact_searches.deleted_p
+                           and acs_objects.package_id = :package_id
+                           and contact_searches.search_id not in ( select search_id from contact_search_conditions where var_list like ('in_searc%') or var_list like ('not_in_searc%') )
+                         order by CASE WHEN contact_searches.owner_id = :package_id THEN '1'::integer ELSE '2' END, lower(acs_objects.title)
+		    } {
+			if { $owner_id eq $package_id } {
+			    set section_title [_ contacts.Public_Searches]
+			} else {
+			    set section_title [_ contacts.My_Searches]
+			}
+			lappend search_options [list $title $search_id $section_title]
+		    }
+
 		    lappend form_elements [list \
-					       ${prefix}${role}search_id:integer(select) \
+					       ${prefix}${role}search_id:integer(select_with_optgroup) \
 					       [list label {}] \
 					       [list options $search_options] \
 					      ]
