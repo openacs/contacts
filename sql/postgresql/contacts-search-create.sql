@@ -91,6 +91,8 @@ begin
         p_title,
         p_package_id
     );
+    -- the acs_object__new proc is broken
+    update acs_objects set title = p_title where object_id = v_search_id ;
 
     insert into contact_searches
     (search_id,owner_id,all_or_any,object_type,deleted_p)
