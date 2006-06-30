@@ -104,6 +104,7 @@ db_foreach get_messages "
                 content_format
            from contact_message_log
           where recipient_id = :party_id
+            and content not like ('%Manage your notifications at: http:%')
 " {
 
     set message_url [export_vars -base "[ad_conn package_url]message-log" -url {message_id}]
