@@ -291,10 +291,12 @@ ad_proc -public contact::search::results_count_not_cached {
     }
 
     set results ""
-    db_transaction {
-	# we don't want to break the contact searches page if there is an error.
+    if { [catch {
 	set results [db_string select_${object_type}_results_count {}]
-    } on_error {}
+    } errmsg] } {
+	ns_log Error "contact::search::results_count_not_cached contact search $search_id had a problem \n\n$errmsg"
+    }
+
     return $results
 
 }
