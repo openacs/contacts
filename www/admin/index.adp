@@ -23,4 +23,10 @@
 </ul>
 <listtemplate name="groups"></listtemplate>
 
-
+<h2>#contacts.Exports#</h2>
+<p>#contacts.lt_Full_exports_take_a_long_time#</p>
+<ul>
+  <li><a href="full-people">#contacts.Export_all_people#</a></li>
+  <li><a href="full-organizations">#contacts.Export_all_organizations#</a></li>
+  <li><a href="full-rels">#contacts.Export_all_relationships#</a></li>
+</ul>
