@@ -190,6 +190,10 @@
   <msg key="exists">exists</msg>
   <msg key="exists_at_least">exists at least</msg>
   <msg key="exists_at_most">exists at most</msg>
+  <msg key="Export_all_organizations">Export all organizations</msg>
+  <msg key="Export_all_people">Export all people</msg>
+  <msg key="Export_all_relationships">Export all relationships</msg>
+  <msg key="Exports">Exports</msg>
   <msg key="ext_del_message">Extend Option # %extend_id% deleted.</msg>
   <msg key="extend_error_msg">The &quot;Extended Query&quot; return an error</msg>
   <msg key="Extend_result_list_by">Extend result list by</msg>
@@ -317,6 +321,7 @@
   <msg key="lt_contact_link_was_updated">%contact_link% was updated</msg>
   <msg key="lt_Contact_not_commented">Contact not commented on in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_created_i">Contact not created in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
+  <msg key="lt_Contact_not_in_the_search_search_link">Contact not in the search %search_link%</msg>
   <msg key="lt_Contact_not_interacted_i">Contact last interaction not in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_not_updated_i">Contact not updated in the last: &lt;strong&gt;%interval%&lt;/strong&gt;</msg>
   <msg key="lt_Contact_Rel_Employmen">Contact Rel Employment</msg>
@@ -341,6 +346,7 @@
   <msg key="lt_Existing_Relationship">Existing Relationships</msg>
   <msg key="lt_First_Names_contains_">&quot;First Names&quot; contains &quot;Search_Word&quot; or</msg>
   <msg key="lt_First_Names_is_requir">First Names is required</msg>
+  <msg key="lt_Full_exports_take_a_long_time">Full exports can take a very long time please be patient. If it takes too long and your browser times out you may need to get the csv file from the /tmp/ folder on the webserver.</msg>
   <msg key="lt_Generating_the_envelopes_">Generating the envelopes you requested</msg>
   <msg key="lt_Generating_the_labels_">Generating the labels you requested</msg>
   <msg key="lt_Group_group_name_Crea">Group '%group_name%' Created</msg>
@@ -350,7 +356,7 @@
   <msg key="lt_has_not_logged_in_wit">has not logged in within -&gt;</msg>
   <msg key="lt_If_in_a_normal_search">If in a normal search we search for &quot;D Jane&quot;. The first Search_Word (&quot;D&quot;) matches contacts 123 (via &quot;Doe&quot;), 234 (via &quot;Doe&quot;), and 345 (via &quot;Alfred&quot;). And the second Search_Word (&quot;Jane&quot;) matches only contact 123. Thus only one contact meets both requirements and &quot;Jane Doe&quot; (contact 123) is returned.</msg>
   <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above critera. So, for example if our contacts database contains these entries:</msg>
-  <msg key="lt_Instance_Permissions_">Instance Permissions - Not done yet</msg>
+  <msg key="lt_Instance_Permissions_">Package Instance Permissions</msg>
   <msg key="lt_Insufficient_Permissi">Insufficient Permissions</msg>
   <msg key="lt_interacted_in_the_last_-">last interaction in the last -&gt;</msg>
   <msg key="lt_Invalid_input_you_spe">Invalid input, you specified form as '%form%' but should only specify: top, bottom, none</msg>
@@ -378,6 +384,25 @@
   <msg key="lt_Organization_Relation_1">Organization Relationships</msg>
   <msg key="lt_Party_ID_equals_Searc">&quot;Party ID&quot; equals &quot;Search_Word&quot;</msg>
   <msg key="lt_People_or_Organizatio">People or Organizations</msg>
+  <msg key="lt_permissions_for_groups_explained">&lt;p&gt;&lt;strong&gt;Read&lt;/strong&gt; lets you search for and see whether or not somebody is party of this group&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Create&lt;/strong&gt; lets you add add people to groups and remove them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Write&lt;/strong&gt; is not used for groups yet&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Delete&lt;/strong&gt; on the default group lets you remove a user from contacts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Admin&lt;/strong&gt; lets you do all of the above&lt;/p&gt;
+</msg>
+  <msg key="lt_permissions_for_package_explained">&lt;p&gt;&lt;strong&gt;Read&lt;/strong&gt; lets you read contact records information - for information managed by the contacts package not information displayed here from other packages.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Write&lt;/strong&gt; lets you update contact contact attributes&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Create&lt;/strong&gt; lets you create new people or organizations&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Delete&lt;/strong&gt; is not used unless it applies to an object that inherits its permissions from contacts&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Admin&lt;/strong&gt; is all of the above, plus it allows you to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;merge contacts&lt;/li&gt;
+&lt;li&gt;make lists, messages and searches public&lt;/li&gt;
+&lt;li&gt;delete information from a contact's history&lt;/li&gt;
+&lt;li&gt;Upgrade a person to a user&lt;/li&gt;
+&lt;li&gt;Manage attributes, forms, relationship types, roles, etc. (i.e. everything in the admin directory)&lt;/li&gt;
+&lt;/ul&gt;
+</msg>
   <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
