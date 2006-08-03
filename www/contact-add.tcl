@@ -50,6 +50,8 @@ set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
 lappend form_elements {rel_type:text(hidden),optional}
 lappend form_elements {object_id_two:text(hidden),optional}
+# the following line added 2006/08/02 by cognovis/nfl 
+lappend form_elements {role_two:text(hidden),optional}
 
 if {[lsearch $group_ids $default_group] == -1} {
     lappend group_ids $default_group
@@ -129,11 +131,16 @@ ad_form -extend -name party_ae -form $form_definition
 
 if {[exists_and_not_null role_two]} {
     set rel_type [db_string select_rel_type "select rel_type from contact_rel_types where secondary_object_type = :object_type and secondary_role = :role_two" -default ""]
+    # the following line added 2006/08/02 by cognovis/nfl
+    if {$rel_type == ""} {
+	set rel_type [db_string select_rel_type "select rel_type from contact_rel_types where secondary_object_type = 'party' and secondary_role = :role_two" -default ""] 
+    }
 }
 
 if {[exists_and_not_null rel_type]} {
     ad_form -extend -name party_ae -form [ams::ad_form::elements -package_key "contacts" -object_type $rel_type -list_name [ad_conn package_id]]
 }
+
 
 # Append the option to create a user who get's a welcome message send
 # Furthermore set the title.
