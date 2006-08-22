@@ -190,7 +190,7 @@ ad_form -action message \
             eval [template::adp_compile -string $style_content]
             set style $__adp_output
 
-	    ns_log Notice "Content:: $content"
+	    ns_log debug "Content:: $content"
 	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $oo_content "styles.xml" $style]]
 
 	    if {$num_of_users > 1} {
