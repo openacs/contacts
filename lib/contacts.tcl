@@ -174,6 +174,7 @@ if { [exists_and_not_null search_id] } {
             }
             # set default_attr_extend [parameter::get -parameter "DefaultPersonAttributeExtension"]
 	    set party_column "persons.person_id"
+	    set item_column "persons.person_id"
 	}
 	organization { 
 	    set page_query_name "organization_pagination"
@@ -182,15 +183,18 @@ if { [exists_and_not_null search_id] } {
 	    }
             # set default_attr_extend [parameter::get -parameter "DefaultOrganizationAttributeExtension"]
 	    set party_column "organizations.organization_id"
+	    set item_column "organizations.organization_id"
 	}
 	party { 
 	    set page_query_name "contacts_pagination"
             # set default_attr_extend [parameter::get -parameter "DefaultPersonOrganAttributeExtension"]
 	    set party_column "parties.party_id"
+	    set item_column "parties.party_id"
 	}
         employee {
 	    set actual_object_type "organization"
-	    set party_column "acs_rels.object_id_two"
+	    set party_column "acs_rels.object_id_one"
+	    set item_column "acs_rels.object_id_two"
 	    set page_query_name "employee_pagination"
 	}
     }
@@ -198,10 +202,10 @@ if { [exists_and_not_null search_id] } {
     if { $orderby eq "last_modified,desc" } {
 	# we need the cr_items and cr_revisions table since we need the
         # cr_revisions.publish date
-	append cr_where " and $party_column = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
+	append cr_where " and $item_column = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"
         append cr_from " cr_items, cr_revisions,"
     } elseif {[lsearch -exact $condition_type_list "attribute"] > -1 || [lsearch -exact $condition_type_list "contact"] > -1 } {
-	set cr_where "and cr_items.item_id = $party_column"
+	set cr_where "and cr_items.item_id = $item_column"
 	set cr_from "cr_items,"
     } else {
 	# We don't need to search for attributes so we don't need to join
@@ -223,6 +227,7 @@ if { [exists_and_not_null search_id] } {
     set actual_object_type "party"
     set page_query_name "contacts_pagination"
     set search_clause "[contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]"
+
     if { $orderby eq "last_modified,desc" } {
 	set cr_from "cr_items, cr_revisions,"
 	set cr_where "and parties.party_id = cr_items.item_id and cr_items.live_revision = cr_revisions.revision_id"

@@ -248,25 +248,35 @@ ad_proc -public contact::search::results_count_not_cached {
     if { [exists_and_not_null search_id] } {
 	# Get the results depening on the object_type
 	set object_type [db_string get_object_type {} -default "party"]
+
+	# The party column is the column of the object we look for
+	# The item column is the column of the item which has the attributes
+	# This allows to search for the attributes of an organization, but have the party
+	# in a special search (employee search)
+	
 	switch $object_type {
 	    party { 
 		set party_column "parties.party_id"
+		set item_column "parties.party_id"
 	    }
 	    organization {
 		set party_column "organizations.organization_id"
+		set item_column "organizations.organization_id"
 	    } 
 	    person {
 		set party_column "persons.person_id"
+		set item_column "persons.person_id"
 	    } 
             employee {
-		set party_column "acs_rels.object_id_two"
+		set party_column "acs_rels.object_id_one"
+		set item_column "acs_rels.object_id_two"
 	    }
 	}
 	set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
 	
 	set condition_types [db_list get_condition_types {}]
 	if { [lsearch -exact $condition_types "attribute"] > -1 || [lsearch -exact $condition_types "contact"] > -1 } {
-	    set cr_where "and cr_items.item_id = $party_column"
+	    set cr_where "and cr_items.item_id = $item_column"
 	    set cr_from "cr_items,"
 	} else {
 	    # We don't need to search for attributes so we don't need to join
@@ -302,38 +312,77 @@ ad_proc -public contact::search::results_count_not_cached {
 }
 
 ad_proc -private contact::party_id_in_sub_search_clause {
-    {-search_id}
+    {-search_id:required}
     {-party_id "party_id"}
     {-not:boolean}
+    {-package_id ""}
 } {
 } {
-    # If we do not have a search_id, limit the list to only users in the default group.
-    
-    if {[exists_and_not_null search_id]} {
-        set group_where_clause ""
-    } else {
-        set group_where_clause "and group_distinct_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]])"
-#        set group_where_clause "and group_distinct_member_map.group_id = [contacts::default_group]"
+
+    if { $package_id eq ""} {
+	set package_id [ad_conn package_id]
     }
 
-    set query "
-    select parties.party_id
-      from parties left join cr_items on (parties.party_id = cr_items.item_id) left join cr_revisions on (cr_items.latest_revision = cr_revisions.revision_id ),
-           group_distinct_member_map
-     where parties.party_id = group_distinct_member_map.member_id
-     $group_where_clause
-    [contact::search_clause -and -search_id $search_id -query "" -party_id "parties.party_id" -revision_id "revision_id"]
-    "
+    # Get the results depening on the object_type
+    set object_type [db_string get_object_type {} -default "party"]
+    
+    # The party column is the column of the object we look for
+    # The item column is the column of the item which has the attributes
+    # This allows to search for the attributes of an organization, but have the party
+    # in a special search (employee search)
+    
+    switch $object_type {
+	party { 
+	    set party_column "parties.party_id"
+	    set item_column "parties.party_id"
+	}
+	organization {
+	    set party_column "organizations.organization_id"
+	    set item_column "organizations.organization_id"
+	} 
+	person {
+	    set party_column "persons.person_id"
+	    set item_column "persons.person_id"
+	} 
+	employee {
+	    set party_column "acs_rels.object_id_one"
+	    set item_column "acs_rels.object_id_two"
+	}
+    }
+    set search_clause [contact::search_clause -and -search_id $search_id -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
+    
+    set condition_types [db_list get_condition_types {}]
+    if { [lsearch -exact $condition_types "attribute"] > -1 || [lsearch -exact $condition_types "contact"] > -1 } {
+	set cr_where "and cr_items.item_id = $item_column"
+	set cr_from "cr_items,"
+    } else {
+	# We don't need to search for attributes so we don't need to join
+	# on the cr_items table. This should speed things up. This assumes
+	# that packages other than contacts that add search condition
+	# types do not need the revision_id column, and only needs the
+	# party_id column. If this is not the case we may want to add a
+	# callback here to check if another package needs the revisions 
+	# table.
+	#
+	# If this needs to change you should also update the
+	# contacts/lib/contacts.tcl file which behave the same way.
+	set cr_where ""
+	set cr_from ""
+    }
 
-
-
-
+    set results ""
+#    if { [catch {
+	set query [db_list select_${object_type} {}]
+#    } errmsg] } {
+#	ns_log Error "contact::search::results_count_not_cached contact search $search_id had a problem \n\n$errmsg"
+#    }
+    
     if { [exists_and_not_null query] } {
         set result ${party_id}
         if { $not_p } {
             append result " not"
         }
-        append result " in ( $query )"
+        append result " in ( [template::util::tcl_to_sql_list $query] )"
     } else {
         set result ""
     } 
@@ -462,7 +511,6 @@ ad_proc -public contact::search::query_clause {
 
     set query_clauses [list]
     set callback_query_clauses [callback contact::search::query_clauses -query $query -party_id $party_id]
-
     if { [llength $callback_query_clauses] > 0 } {
 	# the callback returns a list of the lists from the callbacks
 	foreach callback_clauses $callback_query_clauses {
