@@ -120,7 +120,8 @@ db_multirow -extend {query search_url make_public_url delete_url copy_url result
 # when this is included in the multirow code block above it can hang due to a lack
 # of db pools. So it has to be done here.
 template::multirow foreach searches {
-    set results [contact::search::results_count -search_id $search_id]
+#    set results [contact::search::results_count -search_id $search_id]
+    set results ""
     set query   [contact::search_pretty -search_id $search_id]
 }
 
