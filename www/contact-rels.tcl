@@ -199,6 +199,9 @@ ad_form \
 	    break
 	}
 	if {[exists_and_not_null add]} {
+	    if {$person_valid_p  && $org_valid_p} {
+		ad_returnredirect [export_vars -base "${package_url}/ask" -url {group_ids {object_id_two "$party_id"} role_two}]
+	    }
 	    if {$person_valid_p} {
 		ad_returnredirect [export_vars -base "${package_url}/add/person" -url {group_ids {object_id_two "$party_id"} role_two}]
 	    } 
