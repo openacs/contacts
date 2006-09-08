@@ -408,6 +408,12 @@ ad_proc -public contact::util::get_employee_organization {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
+
+    # Make sure the package_id belongs to a contacts package
+    if { ![string eq [apm_package_key_from_id $package_id] "contacts"]} {
+	set package_id [acs_object::package_id -object_id [content::item::get_best_revision -item_id $employee_id]]
+    }
+
     return [util_memoize [list ::contact::util::get_employee_organization_not_cached -employee_id $employee_id -package_id $package_id]]
 }
 

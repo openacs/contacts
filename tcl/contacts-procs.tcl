@@ -101,7 +101,7 @@ ad_proc -private contacts::sweeper {
 	contact::revision::new -party_id $organization_id
     }
     if { ![info exists person_id] && ![info exists organization_id] } {
-	ns_log notice "contacts::sweeper no person or organization objects exist that do not have associated content_items"
+	ns_log Debug "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
     }
     db_dml insert_privacy_records {}
 }
@@ -618,13 +618,20 @@ ad_proc -public contact::url {
 ad_proc -public contact::revision::new {
     {-party_id:required}
     {-party_revision_id ""}
+    {-package_id ""}
 } {
     create a contact revision
 } {
+    if {$package_id eq ""} {
+	set package_id [ad_conn package_id]
+    }
+
     set extra_vars [ns_set create]
     oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {party_id party_revision_id}
-    return [package_instantiate_object \
+    set party_revision_id [package_instantiate_object \
 		-extra_vars $extra_vars contact_party_revision]
+    db_dml update_package_id "update acs_objects set package_id = :package_id where object_id = :party_revision_id"
+    return $party_revision_id
 }
 
 ad_proc -public contact::live_revision {
@@ -718,7 +725,7 @@ ad_proc -private contact::person_upgrade_to_user {
 
 
     # Make sure that we do not upgrade an already existing user
-    if {![contact::user_p -party_id $person_id]} {
+    if {![contact::user_p -party_id $person_id] && [string eq "" [acs_user::get_by_username -username $username]]} {
 	db_transaction {
 	    db_dml upgrade_user {update acs_objects set object_type = 'user' where object_id = :user_id;
 		
