@@ -34,7 +34,7 @@ if {$sort_by_date_p} {
     set sort_order upper(other_name)
 }
 
-multirow create rels relationship relation_url rel_id contact contact_url attribute value creation_date 
+multirow create rels relationship relation_url rel_id contact contact_url attribute value creation_date role
 
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id  and group_id > 0}]
 lappend groups_belonging_to [contacts::default_group]
@@ -56,7 +56,7 @@ db_foreach get_relationships {} {
 	set creation_date [lc_time_fmt $creation_date %q]
 	set role_singular [lang::util::localize $role_singular]
 	set other_name [contact::name -party_id $other_party_id -reverse_order]
-	multirow append rels $role_singular $relation_url $rel_id $other_name $contact_url {} {} $creation_date
+	multirow append rels $role_singular $relation_url $rel_id $other_name $contact_url {} {} $creation_date $role
 	
 	# NOT YET IMPLEMENTED - Checking to see if role_singular or role_plural is needed
 	
@@ -65,11 +65,12 @@ db_foreach get_relationships {} {
 	    
 	    if { [llength $details_list] > 0 } {
 		foreach {section attribute_name pretty_name value} $details_list {
-		    multirow append rels $role_singular $relation_url $rel_id $other_name $contact_url $pretty_name $value $creation_date
+		    multirow append rels $role_singular $relation_url $rel_id $other_name $contact_url $pretty_name $value $creation_date $role
 		}
 	    }
 	}
     }
 }
 
-template::multirow sort rels relationship contact
+
+template::multirow sort rels role contact

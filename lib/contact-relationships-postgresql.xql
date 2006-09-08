@@ -3,7 +3,7 @@
 
 <fullquery name="get_relationships">
       <querytext>
-select rel_id, other_party_id, role_singular, rel_type, creation_date
+select rel_id, other_party_id, role, role_singular, rel_type, creation_date
   from ( select object_id_two as other_party_id,
                 role_two as role,
                 pretty_name as role_singular,

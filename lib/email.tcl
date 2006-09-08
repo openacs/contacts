@@ -251,6 +251,8 @@ ad_form -action $action \
 	}
 	
 	set locale [lang::system::site_wide_locale]
+
+	ad_returnredirect $return_url
 	
 	# Send the mail to all parties.
 	foreach party_id $to {
@@ -338,7 +340,6 @@ ad_form -action $action \
         util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
 
     } -after_submit {
-	ad_returnredirect $return_url
 	ad_script_abort
     }
 
