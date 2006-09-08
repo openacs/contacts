@@ -24,5 +24,12 @@
   </td>
 </tr>
 </table>
+	<form action="/contacts/add-edit-complaint">
+	#contacts.Add_complaint_to#: @select_menu;noquote@
+	     <input type="hidden" name="customer_id" value="@customer_id@">
+	     <input type="submit" value="#contacts.Add_1#">
+	</form>
+
+
 
 
