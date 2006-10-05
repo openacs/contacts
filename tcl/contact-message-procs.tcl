@@ -234,6 +234,7 @@ ad_proc -private contact::message::mailing_address {
     {-format "text/plain"}
     {-package_id ""}
     {-override_privacy_p "f"}
+    {-with_name:boolean}
 } {
     Returns a parties mailing address. Cached
 
@@ -247,7 +248,7 @@ ad_proc -private contact::message::mailing_address {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id $package_id -override_privacy_p $override_privacy_p]]
+    return [util_memoize [list ::contact::message::mailing_address_not_cached -party_id $party_id -format $format -package_id $package_id -override_privacy_p $override_privacy_p -with_name_p $with_name_p]]
 }
 
 ad_proc -private contact::message::mailing_address_not_cached {
@@ -255,6 +256,7 @@ ad_proc -private contact::message::mailing_address_not_cached {
     {-format:required}
     {-package_id:required}
     {-override_privacy_p:required}
+    {-with_name_p:required}
 } {
     Returns a parties mailing address
 } {
@@ -267,21 +269,28 @@ ad_proc -private contact::message::mailing_address_not_cached {
     set revision_id [contact::live_revision -party_id $party_id]
     set mailing_address {}
     foreach attribute_id $attribute_ids {
-	set mailing_address [ams::value \
+	append mailing_address [ams::value \
 				 -object_id $revision_id \
 				 -attribute_id $attribute_id \
 				 -format $format]
 	if { $mailing_address ne "" } {
+	    if {$with_name_p} {
+		set mailing_address "- [contact::name -party_id $party_id] -\n$mailing_address"
+	    }
 	    break
 	}
     }
     if { $mailing_address eq "" } {
 	# if this person is the employee of
         # an organization we can attempt to use
-        # that organizations email address
+        # that organizations address
 	foreach employer [contact::util::get_employers -employee_id $party_id -package_id $package_id] {
-	    set mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id -override_privacy_p $override_privacy_p]
+	    append mailing_address [contact::message::mailing_address -party_id [lindex $employer 0] -package_id $package_id -override_privacy_p $override_privacy_p]
 	    if { $mailing_address ne "" } {
+		# We should display the company name. Currently handled outside this.
+		if {$with_name_p} {
+		    set mailing_address "[contact::name -party_id [lindex $employer 0]]\n- [contact::name -party_id $party_id] -\n $mailing_address"
+		}
 		break
 	    }
 	}

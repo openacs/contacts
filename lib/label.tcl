@@ -53,19 +53,16 @@ if { [template::form::is_valid label] || [llength $label_options] == "1" } {
     
     set labels [list]
     foreach party_id $party_ids {
-	set name [contact::name -party_id $party_id]
-	set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/plain"]
+
+	set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/plain" -with_name]
 	if {[empty_string_p $mailing_address]} {
 	    ad_return_error [_ contacts.Error] [_ contacts.lt_there_was_an_error_processing_this_request]
 	    break
 	}
 	
-	set name            [openreport::clean_string_for_rml -string ${name}]
 	set mailing_address [openreport::clean_string_for_rml -string ${mailing_address}]
 	
-	set one "<para style=\"name\">
-${name}
-</para>
+	set one "<para style=\"header\">Wieners+Wieners GmbH - Postfach 1803 - 22908 Ahrensburg (bei Hamburg)</para>
 <xpre style=\"address\">
 ${mailing_address}
 </xpre>
@@ -73,7 +70,8 @@ ${mailing_address}
 	lappend labels [string trim $one]
     }
     
-    set rml "<!DOCTYPE document SYSTEM \"rml_1_0.dtd\"><document filename=\"filename.pdf\">"
+    set rml "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"no\" ?>
+<!DOCTYPE document SYSTEM \"rml_1_0.dtd\"><document filename=\"filename.pdf\">"
     append rml [lindex [callback contact::label -request "template" -for $label_type] 0]
     append rml "<story>"
     append rml [join $labels "<nextFrame /><condPageBreak height=\"0in\" />"]
