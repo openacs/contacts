@@ -13,6 +13,20 @@ ad_page_contract {
 }
 contact::require_visiblity -party_id $party_id
 
+# First flush the site node cache
+
+site_node::update_cache -sync_children -node_id 3061
+catch {
+    set fs_node [site_node::get -url /dotlrn/clubs/$party_id/file-storage]
+    site_node::unmount -node_id [lindex $fs_node 3]
+}
+
+catch {
+    set main_node [site_node::get -url /dotlrn/clubs/$party_id]
+    site_node::unmount -node_id [lindex $main_node 3]
+}
+
+site_node::update_cache -sync_children -node_id 3061
 
 ad_progress_bar_begin -title "[_ contacts.Creating_Club]" -message_1 "[_ contacts.lt_We_are_creating_the_c]" -message_2 "[_ contacts.lt_We_will_continue_auto]"
 
