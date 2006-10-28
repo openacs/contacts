@@ -1,6 +1,6 @@
 # Portlet for displaying all offer-item lists of projects that have the status Open
 
-foreach optional_param {status_id} {
+foreach optional_param {status_id actions} {
     if {![info exists $optional_param]} {
 	set $optional_param {}
     }
@@ -16,8 +16,10 @@ if {[exists_and_not_null organization_id]} {
     } 
 }
 
-if {[exists_and_not_null pm_base_url]} {
-    set actions [list "[_ project-manager.Projects]" $pm_base_url "[_ project-manager.Projects]" "[_ project-manager.Add_project]" "[export_vars -base "${pm_base_url}/add-edit" -url {{customer_id $organization_id}}]" "[_ project-manager.Add_project]"]
-} else {
-    set actions ""
+if {$actions eq ""} {
+    if {[exists_and_not_null pm_base_url]} {
+	set actions [list "[_ project-manager.Projects]" $pm_base_url "[_ project-manager.Projects]" "[_ project-manager.Add_project]" "[export_vars -base "${pm_base_url}/add-edit" -url {{customer_id $organization_id}}]" "[_ project-manager.Add_project]"]
+    } else {
+	set actions ""
+    }
 }
