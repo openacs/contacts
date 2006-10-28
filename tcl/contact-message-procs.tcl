@@ -275,7 +275,12 @@ ad_proc -private contact::message::mailing_address_not_cached {
 				 -format $format]
 	if { $mailing_address ne "" } {
 	    if {$with_name_p} {
-		set mailing_address "- [contact::name -party_id $party_id] -\n$mailing_address"
+		if {[person::person_p -party_id $party_id]} {
+		    set mailing_address "- [contact::name -party_id $party_id] -\n$mailing_address"
+		} else {
+		    set name "[contact::name -party_id $party_id] \n [ams::value -object_id $revision_id -attribute_name company_name_ext -format $format]"
+		    set mailing_address "$name \n$mailing_address"
+		}
 	    }
 	    break
 	}
@@ -289,7 +294,10 @@ ad_proc -private contact::message::mailing_address_not_cached {
 	    if { $mailing_address ne "" } {
 		# We should display the company name. Currently handled outside this.
 		if {$with_name_p} {
-		    set mailing_address "[contact::name -party_id [lindex $employer 0]]\n- [contact::name -party_id $party_id] -\n $mailing_address"
+		    set employer_id [lindex $employer 0]
+		    set employer_rev_id [contact::live_revision -party_id $employer_id]
+		    set name "[contact::name -party_id $employer_id]\n[ams::value -object_id $employer_rev_id -attribute_name company_name_ext -format $format]"
+		    set mailing_address "$name\n- [contact::name -party_id $party_id] -\n$mailing_address"
 		}
 		break
 	    }

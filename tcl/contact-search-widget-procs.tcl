@@ -88,6 +88,10 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
 	    template::element::set_error $element(form_id) $element_id "[_ contacts.Enter_a_query]"
 	    return [list]
 	}
+    } else {
+	if {[string is integer $value] && [db_string party_p {select 1 from parties where party_id = :value} -default 0]} {
+	    return $value
+	}
     }
 
     if { [string equal $value ":search:"] } {
@@ -152,6 +156,7 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
     }
     set person_ids [list]
     set organization_ids [list]
+
     # search in persons
     if { $persons_p } {
 	set person_ids [db_list search_persons {}]
@@ -228,6 +233,5 @@ ad_proc -public template::util::contact_search::contact_option {
     if { $email ne "" } {
 	append option " &lt;${email}&gt;"
     }
-    append option " \#$party_id"
     return $option
 }
