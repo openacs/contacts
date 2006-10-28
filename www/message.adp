@@ -1,24 +1,11 @@
-<if @party_count@ gt 1>
 <master>
 <property name="title">@title@</property>
 <property name="context">@context@</property>
 <property name="header_stuff">
     <link href="/resources/contacts/contacts.css" rel="stylesheet" type="text/css">
 </property>
-</if>
-<else>
-<master src="/packages/contacts/lib/contact-master">
-<property name="party_id">@party_id@</property>
-<if @party_ids@ eq "">
-<p>@error_message;noquote@</p>
-</if>
-</else>
 <property name="focus">comment_add.comment</property>
 
-<if @using_emp_email_p@>
-    #contacts.This_contact_doesnt#
-</if>    
-<if @party_ids@ ne "">
   <if @message_type@ eq "">
     <formtemplate id="message"></formtemplate>
   </if>
@@ -42,4 +29,3 @@
 		object_od=@object_id@
 	        >
   </else>
-</if>
