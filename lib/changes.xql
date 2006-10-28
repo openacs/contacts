@@ -5,7 +5,7 @@
     <querytext>	
 	select
 		cp.revision_id,
-		to_char(cp.publish_date, 'YYYY-MM-DD HH:MM:SS') as publish_date,
+		to_char(cp.publish_date, 'YYYY-MM-DD HH24:MI:SS') as publish_date,
 		cu.first_names ||' '|| cu.last_name as name,
 		i.live_revision
 	from 
