@@ -80,6 +80,16 @@ if { $recipients_num <= 1 } {
 	    {options  $recipients }
 	    {html {checked 1}}
 	}
+	{cc:text(text),optional
+	    {label "[_ contacts.CC]:"} 
+	    {html {size 56}}
+	    {help_text "[_ contacts.cc_help]"}
+	}
+	{bcc:text(text),optional
+	    {label "[_ acs-mail-lite.BCC]:"} 
+	    {html {size 56}}
+	    {help_text "[_ contacts.cc_help]"}
+	}
     }
 }
 
@@ -149,6 +159,12 @@ foreach var $export_vars {
     lappend form_elements $element
 }
 
+if {![exists_and_not_null mime_type]} {
+    set mime_type text/plain
+}
+
+set content_list [list $content $mime_type]
+
 append form_elements {
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
@@ -159,6 +175,7 @@ append form_elements {
 	{label "[_ contacts.Message]"}
 	{html {cols 55 rows 18}}
 	{help_text "[_ contacts.lt_remember_that_you_can]"}
+	{value $content_list}
     }
     {upload_file:file(file),optional
 	{label "[_ contacts.Upload_file]"}
@@ -188,6 +205,10 @@ ad_form -action $action \
     -form $form_elements \
     -on_request {
     } -new_request {
+	if {![exists_and_not_null mime_type]} {
+	    set mime_type "text/html"
+	}
+
 	if {[exists_and_not_null folder_id] } {
 	    callback contacts::email_subject -folder_id $folder_id
 	}
@@ -205,10 +226,9 @@ ad_form -action $action \
 	}
     } -edit_request {
 	if {![exists_and_not_null mime_type]} {
-	    set mime_type "text/plain"
+	    set mime_type "text/html"
 	}
 	
-	set content_list [list $content $mime_type]
     } -on_submit {
 	
 	# We get the attribute_id of the salutation attribute
@@ -271,10 +291,14 @@ ad_form -action $action \
 		set name [contact::name -party_id $party_id]
 		set salutation "Dear ladies and gentlemen"
 		set locale [lang::user::site_wide_locale -user_id $party_id]
+		# the following is a hot fix (nfl 2006/10/20)
+		set first_names ""
+		set last_name ""
+		set mailing_address ""
+		set directphone ""
 	    }
 	    
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
-	    set to $name
 	    
 	    set values [list]
 	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
@@ -315,11 +339,8 @@ ad_form -action $action \
 		    -content_format "text/plain" \
 		    -item_id "$item_id"
 		
-		lappend recipients "<a href=\"[contact::url -party_id $to_party_id]\">$to</a>"
-		
-	    } else {
-		lappend recipients "$to"
-	    }
+	    } 
+	    lappend recipients "<a href=\"[contact::url -party_id $party_id]\">$name</a>"
 	}
 
 	if {$to eq ""} {
@@ -336,7 +357,17 @@ ad_form -action $action \
 		-no_callback_p $no_callback_p \
 		-single_email
 	}
+		
 	
+	# Prepare the user message
+	foreach cc_addr [concat $cc_list $bcc_list] {
+	    set cc_id [party::get_by_email -email $cc_addr]
+	    if {$cc_id eq ""} {
+		lappend recipients $cc_addr
+	    } else {
+		lappend recipients "<a href=\"[contact::url -party_id $cc_id]\">[contact::name -party_id $cc_id]</a>"
+	    }
+	}
         util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
 
     } -after_submit {
