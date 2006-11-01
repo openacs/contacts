@@ -382,7 +382,6 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
     
     @error 
 } {
-    set community_id [dotlrn_community::get_community_id]
 
     # Try to retrieve the project_id from the folder
     set project_id [db_string get_project_id_from_folder {
@@ -406,10 +405,14 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 
     if {[empty_string_p $project_id]} {
 	# no project -> mail to all organization contacts
-	set contact_organizations [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"]
-	set contact_list ""
-	foreach party_id $contact_organizations {
-	    set contact_list [concat $contact_list [contact::util::get_employees -organization_id $party_id]]
+	# This only works if we have the whole setup with .LRN
+	if {[apm_package_installed_p "dotlrn"]} {
+	    set community_id [dotlrn_community::get_community_id]
+	    set contact_organizations [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"]
+	    set contact_list ""
+	    foreach party_id $contact_organizations {
+		set contact_list [concat $contact_list [contact::util::get_employees -organization_id $party_id]]
+	    }
 	}
     } else {
 	# project -> mail to project contact

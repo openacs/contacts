@@ -35,7 +35,7 @@ ad_proc -private contacts::default_group_not_cached {
     if { [string is true [parameter::get -package_id $package_id -parameter "UseSubsiteAsDefaultGroup" -default "0"]] } {
 	# we cannot trust ad_conn subsite_id because instances may be asking for subsites of numerous other packages.
         set node_id [site_node::get_node_id_from_object_id -object_id $package_id]
-        set package_id [db_string get_parent_subsite_id {}]
+        set package_id [site_node::closest_ancestor_package -node_id $node_id -package_key "acs-subsite"]
     }
 
     set group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
@@ -93,15 +93,34 @@ ad_proc -private contacts::sweeper {
     associated item_id and live_revisions.
 } {
     
-    set package_id [lindex [apm_package_id_from_key "contacts"] 0]
+    set contact_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
+    foreach contact_package_id $contact_package_ids {
+	set default_group_id [contacts::default_group -package_id $contact_package_id]
+	set contact_package($default_group_id) $contact_package_id
+	lappend default_groups $default_group_id
+    }
+
     db_foreach get_persons_without_items {} {
-	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
-	contact::revision::new -party_id $person_id -package_id $package_id
+	foreach group_id $default_groups {
+	    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
+		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
+		contact::revision::new -party_id $person_id -package_id $contact_package($group_id)
+		break
+	    }
+	}
     }
     db_foreach get_organizations_without_items {} {
+	foreach group_id $default_groups {
+	    if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
+		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $organization_id"
+		contact::revision::new -party_id $organization_id -package_id $contact_package($group_id)
+		break
+	    }
+	}
 	ns_log notice "contacts::sweeper creating content_item and content_revision for organization_id: $organization_id"
 	contact::revision::new -party_id $organization_id -package_id $package_id
     }
+
     if { ![info exists person_id] && ![info exists organization_id] } {
 	ns_log Debug "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
     }
@@ -637,7 +656,7 @@ ad_proc -public contact::revision::new {
     }
 
     set extra_vars [ns_set create]
-    oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {party_id party_revision_id}
+    oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {party_id party_revision_id package_id}
     set party_revision_id [package_instantiate_object \
 		-extra_vars $extra_vars contact_party_revision]
     db_dml update_package_id "update acs_objects set package_id = :package_id where object_id = :party_revision_id"
