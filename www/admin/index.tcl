@@ -59,6 +59,17 @@ template::list::create \
                 </else>
             }
         }
+        user_change {
+            label {User Change}
+            display_template {
+                <if @groups.user_change_p@>
+                  <a href="group-user-change?action=disallow&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
+                </if>
+                <else>
+                  <a href="group-user-change?action=allow&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
+                </else>
+            }
+        }
         person_form {
             display_template {
                 <a href="@groups.ams_person_url@" class="button">[_ contacts.Person_Form]</a>
@@ -84,7 +95,7 @@ template::list::create \
     }
 
 
-multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url
+multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url user_change_p
 
 set return_url [ad_conn url]
 foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all] {
@@ -94,6 +105,7 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
     set level [lindex $group 3]
     set mapped_p [lindex $group 4]
     set default_p [lindex $group 5]
+    set user_change_p [lindex $group 6]
     set ams_person_url [ams::list::url \
                           -package_key "contacts" \
                           -object_type "person" \
@@ -113,7 +125,7 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
     set edit_url [export_vars -base "/acs-lang/admin/edit-localized-message" {{package_key acs-translations} {locale "[ad_conn locale]"} {message_key "group_title_${group_id}"} {return_url [ad_return_url]}}]
 
     set categories_url [export_vars -base "/categories/cadmin/object-map" -url {{object_id $group_id}}]
-    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url
+    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url $user_change_p
 
 
 }
