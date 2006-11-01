@@ -31,8 +31,22 @@ set groups_belonging_to [db_list get_party_groups { select group_id from group_d
 set form_elements {party_id:key}
 lappend form_elements {object_type:text(hidden)}
 
-set ams_forms [list "${package_id}__[contacts::default_group]"]
-foreach group [contact::groups -expand "all" -privilege_required "read"] {
+set default_group_id [contacts::default_group]
+if {![permission::permission_p -object_id $default_group_id -party_id $user_id -privilege "write"]} {
+    if {$user_change_p} {
+	# Check if the user is editing himself
+	# If not, redirect to the return_url
+	if {![string eq $party_id $user_id]} {
+	    ad_return_redirect $return_url
+	}
+    } else {
+	ad_return_redirect $return_url
+    }
+}
+
+
+set ams_forms [list "${package_id}__$default_group_id"]
+foreach group [contact::groups -expand "all" -privilege_required "write" -package_id $package_id -party_id $party_id] {
     set group_id [lindex $group 1]
     if { [lsearch $groups_belonging_to $group_id] >= 0 } {
         lappend ams_forms "${package_id}__${group_id}"
