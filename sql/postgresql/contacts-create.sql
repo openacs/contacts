@@ -7,14 +7,16 @@
 --
 
 
--- all contacts are parties. we are making parties content repository items,
--- so we need party revisions
-
 create table contact_party_revisions (
         party_revision_id       integer
                                 constraint contact_party_revisions_id_fk references cr_revisions(revision_id)
                                 constraint contact_party_revisions_id_pk primary key
 );
+
+comment on table contact_party_revisions is '
+all contacts are parties. we are making parties content repository items,
+so we need party revisions
+';
 
 -- create the content type
 select content_type__create_type (
@@ -61,11 +63,33 @@ create table contact_groups (
                                 constraint contact_groups_id_nn not null,
         default_p               boolean default 'f'
                                 constraint contact_groups_default_p_nn not null,
+        user_change_p           boolean default 'f'
+                                constraint contact_groups_user_change_p_nn not null,
         package_id              integer
                                 constraint contact_groups_package_id_fk references apm_packages(package_id)
                                 constraint contact_groups_package_id_nn not null,
         unique(group_id,package_id)
 );
+
+comment on table contact_groups is '
+this mapping table notes what groups (this is acs groups) are can be used in a specific contacts package and therefore have special attributes.
+';
+
+comment on table contact_groups.group_id is '
+ACS Group ID which is linked to the contacts instance
+';
+
+comment on table contact_groups.package_id is '
+Package ID of the contacts instance the group is linked to
+';
+
+comment on table contact_groups.default_p is '
+Is this group a default group? This means that all contacts entered through this contacts instance are automatically added to this group
+';
+
+comment on table contact_groups.user_change_p is '
+Can a user change this his own attributes in this group?
+';
 
 create table contact_groups_allowed_rels (
         group_id                integer
@@ -94,6 +118,31 @@ create table contact_signatures (
                                 constraint contact_signatures_party_id_nn not null,
         unique(party_id,title,signature)
 );
+
+
+comment on table contact_signatures is '
+Contacts supports signatures for each party_id. This is where they are stored. THe signature is attached to each mailing the party sends out, if selected. A party can have multiple signatures, in this situation a select box is shown. The default signature is selected by default (if there is any).
+';
+
+comment on table contact_signatures.signature_id is '
+Primary key for identifying a signature
+';
+
+comment on table contact_signatures.title is '
+Title of the signature for nice display of the it.
+';
+
+comment on table contact_signatures.signature is '
+The signature itself. This will be attached to the mailing (if selected).
+';
+
+comment on table contact_signatures.default_p is '
+Is the signature the default signature.
+';
+
+comment on table contact_signatures.party_id is '
+Party_id of the user who is creating the mailing. This is not the signature for the recipient, but the sender of the mailing.
+';
 
 -- this view greatly simplifies getting available roles for various contact types
 create view contact_rel_types as 

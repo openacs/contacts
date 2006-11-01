@@ -56,6 +56,7 @@ begin
         return v_party_revision_id;
 end;' language 'plpgsql';
 
+
 create or replace function contact_party_revision__item_id (
         integer,                -- party_id
         timestamptz,            -- creation_date
