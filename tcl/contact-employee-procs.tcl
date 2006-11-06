@@ -350,7 +350,7 @@ ad_proc -private contact::util::get_employees_list_of_lists_not_cached {
 	    lappend contact_list [list [person::name -person_id $other_party_id] $other_party_id]
 	}
     }
-
+    return [lsort -dictionary $contact_list]
     return $contact_list
 }
 

@@ -889,6 +889,9 @@ ad_proc -public contact::groups {
     set group_list [list]
     foreach one_group [contact::groups_list -package_id $package_id] {
 	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p
+	if {$user_change_p eq ""} {
+	    set user_change_p 0
+	}
 	# We check if the group has the required privilege 
 	# specified on privilege_required switch, if not then
 	# we just simple continue with the next one
