@@ -874,7 +874,13 @@ ad_proc -public contact::groups {
     {-all:boolean}
     {-no_member_count:boolean}
     {-package_id ""}
+    {-party_id ""}
 } {
+    Return the groups that are mapped in contacts
+    @param indent_with What should we indent the group name with
+    @privilege_required Required privilege the user has to have on this group
+    @output Format in which to output the groups. A tcl list of lists is standard
+    @party_id If the privilege is write we need to check if the user is maybe writing on himself. Then he should have permission.
 } {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
@@ -882,20 +888,27 @@ ad_proc -public contact::groups {
     set user_id [ad_conn user_id]
     set group_list [list]
     foreach one_group [contact::groups_list -package_id $package_id] {
-	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p
+	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p
 	# We check if the group has the required privilege 
 	# specified on privilege_required switch, if not then
 	# we just simple continue with the next one
 	if { ![permission::permission_p -object_id $group_id -party_id $user_id -privilege $privilege_required] } {
-	    continue
+	    if { $privilege_required eq "write" && $user_change_p} {
+		# Check if the user is editing himself
+		if {![string eq $party_id $user_id]} {
+		    continue
+		}
+	    } else {
+		continue
+	    }
 	}
 
         if { $mapped_p || $all_p} {
-            lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p]
+            lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p $user_change_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
 		    if { $mapped_p || $all_p} {
-			lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p]
+			lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p $user_change_p]
 		    }
 		}
             }
