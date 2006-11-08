@@ -63,6 +63,10 @@ if { [exists_and_not_null group_id] } {
 		}
 	    }
 	}
+	if { $group_id == [contacts::default_group] } {
+	    # Also mark the user deleted
+	    acs_user::delete -user_id $party_id
+	}
 	ad_returnredirect $return_url
 	ad_script_abort
     } else {
