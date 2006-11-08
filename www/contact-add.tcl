@@ -294,20 +294,6 @@ ad_form -extend -name party_ae \
 	    callback contact::organization_new -package_id $package_id -contact_id $party_id -name $name
 	}
 	
-	# Now we have the organization or person created. Redirect as AMS can be saved in the background.
-	#the formbutton does not work. No clue how to fix it.
-#        if { [exists_and_not_null formbutton\:save_add_another] } {
-#            ad_returnredirect [export_vars -base "/contacts/$object_type/add" -url]
-#        } else {
-	if {[empty_string_p $object_id_two]} {
-	    ad_returnredirect [contact::url -party_id $party_id]
-#            ad_returnredirect [export_vars -base "/contacts" -url {{query_id $group_id}}] 
-	} else {
-	    ad_returnredirect "${package_url}/$object_id_two"
-	}
-	    #        }
-
-
 	# Save the contact information
 	# No clue why this is not part of the db_transaction though ....
 	callback contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
@@ -399,7 +385,13 @@ ad_form -extend -name party_ae \
 	contact::search::flush_results_counts
 
 	callback contact::contact_form_after_submit -party_id $party_id -package_id $package_id -object_type $object_type -form "party_ae"
-
+	# Now we have the organization or person created. Redirect as AMS can be saved in the background.
+	#the formbutton does not work. No clue how to fix it.
+	if {[empty_string_p $object_id_two]} {
+	    ad_returnredirect [contact::url -party_id $party_id]
+	} else {
+	    ad_returnredirect "${package_url}/$object_id_two"
+	}
 	ad_script_abort
     }
 
