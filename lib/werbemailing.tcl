@@ -115,7 +115,8 @@ ad_form -action message \
 	    if {![contact::employee::get -employee_id $user_id -array user_info]} {
 		ad_return_error $user_id "User is not an employee"
 	    }
-
+	    
+	    set employee(name) [encoding convertto utf-8 $employee(name)]
             set file [open "${template_path}/content.xml"]
             fconfigure $file -translation binary
             set template_content [read $file]
@@ -132,7 +133,7 @@ ad_form -action message \
             eval [template::adp_compile -string $style_content]
             set style $__adp_output
 
-	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $content "styles.xml" $style]]
+	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $content "styles.xml" $style] -encoding "iso8859-1"]
 	    set title "werbemailing"
 	    set item_id [contact::oo::import_oo_pdf -oo_file $odt_filename -parent_id $party_id -title "${title}.pdf"] 
 	    set revision_id [content::item::get_best_revision -item_id $item_id]
