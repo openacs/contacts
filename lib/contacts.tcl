@@ -281,7 +281,7 @@ foreach page_s $valid_page_sizes {
 }
 append name_label [join $page_size_list " | "]
 
-if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] } {
+if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] || ![acs_user::site_wide_admin_p] } {
     set format normal
 } else {
     append name_label "&nbsp;&nbsp;&nbsp;[_ contacts.Get]: <a href=\"[export_vars -base $base_url -url {{format csv} search_id query page orderby page_size extended_columns}]\">[_ contacts.CSV]</a>"

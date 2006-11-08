@@ -3,6 +3,11 @@
 #              If supplier_id equals "-100" then a null value is inserted
 # project_id.  Alternative for the customer_id, if you know the project_id
 
+# 2006/11/03 cognovis/nfl: project_id was never used - it seems to be just the remark above :-)
+#                          now, if a project_id was given, the title gets the value of the project title (content::item::get_title)
+#                          note: the project_id is an item_id
+
+
 if { ![info exist return_url] } {
     set return_url [get_referrer]
 }
@@ -20,11 +25,17 @@ if { ![exists_and_not_null complaint_id] } {
     set complaint_rev_id $complaint_id
 }
 
+set title_default_value ""
+if { [info exist project_id] } {
+    set title_default_value [lang::util::localize [content::item::get_title -item_id $project_id]]
+}
+
 ad_form -mode $mode -name complaint_form -form {
     complaint_id:key
     {title:text(text)
 	{label "[_ contacts.Title_1]"}
         {help_text "[_ contacts.complaint_title_help]"}
+	{value $title_default_value}
     }
     {return_url:text(hidden)
 	{value $return_url}
