@@ -217,4 +217,13 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contact::revision::new.insert_item">
+  <querytext>
+         insert into cr_items
+         (item_id,parent_id,name,content_type)
+         values
+         (:party_id,contact__folder_id(),:party_id,'contact_party_revision');
+     </querytext>
+</fullquery>
+
 </queryset>

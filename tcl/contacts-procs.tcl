@@ -81,6 +81,38 @@ ad_proc -private contacts::default_groups_not_cached {
     }
 }
 
+ad_proc -public contact::package_id {
+    -party_id:required
+} {
+    Return the contacts package_id of a party
+} {
+    # Maybe we are lucky and the package_id of the party is already set to the contacts package.
+    set package_id [acs_object::package_id -object_id $party_id]
+    if {$package_id eq ""} {
+
+	# Okay, we are not lucky. Figure this out based on groups
+	# Get all the default groups of all mounted contact packages
+	set contact_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
+	foreach contact_package_id $contact_package_ids {
+	    set default_group_id [contacts::default_group -package_id $contact_package_id]
+	    set contact_package($default_group_id) $contact_package_id
+	    lappend default_groups $default_group_id
+	}
+	
+	# Now find the first one the party is a member of
+	foreach group_id $default_groups {
+	    if {[group::party_member_p -party_id $party_id -group_id $group_id]} {
+		db_dml update_package_id "update acs_objects set package_id = $contact_package($group_id) where object_id = :party_id"
+		return $contact_package($group_id)
+	    }
+	}
+	# Ups, no package_id found. 
+	return ""
+    } else {
+	return $package_id
+    }
+}
+	
 ad_proc -private contacts::sweeper {
 } {
     So that contacts searches work correctly, and quickly
@@ -637,11 +669,11 @@ ad_proc -public contact::url {
 } {
     create a contact revision
 } {
-    if { [exists_and_not_null package_id] } {
-	return "[apm_package_url_from_id $package_id]${party_id}/"
-    } else {
-	return "[ad_conn package_url]${party_id}/"
+    if { ![exists_and_not_null package_id] } {
+	set package_id [contact::package_id -party_id $party_id]
     }
+
+    return "[apm_package_url_from_id $package_id]${party_id}/"
 }
 
 ad_proc -public contact::revision::new {
@@ -656,10 +688,15 @@ ad_proc -public contact::revision::new {
     }
 
     set extra_vars [ns_set create]
-    oacs_util::vars_to_ns_set -ns_set $extra_vars -var_list {party_id party_revision_id package_id}
-    set party_revision_id [package_instantiate_object \
-		-extra_vars $extra_vars contact_party_revision]
-    db_dml update_package_id "update acs_objects set package_id = :package_id where object_id = :party_revision_id"
+
+    if {![db_string item_exists_p "select 1 from cr_items where item_id = :party_id" -default 0]} {
+	db_dml insert_item {}
+    }
+    
+    set party_revision_id [content::revision::new -item_id $party_id -package_id $package_id -is_live "t"]
+    if {![db_string item_exists_p "select 1 from contact_party_revisions where party_revision_id = :party_revision_id" -default 0]} {
+	db_dml insert_contact_revision "insert into contact_party_revisions ( party_revision_id ) values ( :party_revision_id )"
+    }
     return $party_revision_id
 }
 
