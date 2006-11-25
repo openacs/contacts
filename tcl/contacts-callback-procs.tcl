@@ -405,23 +405,29 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 
     if {[empty_string_p $project_id]} {
 	# no project -> mail to all organization contacts
-	# This only works if we have the whole setup with .LRN
-	if {[apm_package_installed_p "dotlrn"]} {
+	# If we have a setup where .LRN provides the community
+	# And we just hope the community is linked to an organization
+	if {[apm_package_installed_p dotlrn]} {
 	    set community_id [dotlrn_community::get_community_id]
 	    set contact_organizations [application_data_link::get_linked -from_object_id $community_id -to_object_type "organization"]
 	    set contact_list ""
 	    foreach party_id $contact_organizations {
 		set contact_list [concat $contact_list [contact::util::get_employees -organization_id $party_id]]
 	    }
+	} else {
+	    # Ignore
+	    set contact_list ""
 	}
     } else {
 	# project -> mail to project contact
-	db_1row get_project_contact {
+	if {[catch {db_string get_project_contact "
 	    select p.contact_id as contact_list
 	    from pm_projects p, cr_items i
 	    where i.latest_revision = p.project_id
-	    and i.item_id = :project_id
+	    and i.item_id = :project_id"} contact_list]} {
+	    set contact_list ""
 	}
+	
     }
 
     # A lot of upvar magic is used here to set the variables in the folder-chunk.tcl

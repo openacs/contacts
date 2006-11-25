@@ -30,9 +30,7 @@ ad_proc -public contacts::populate::crm {
     ams::widgets_init
 
     if {[empty_string_p $package_id]} {
-	array set sn_array [site_node::get \
-				-url /contacts]
-	set contacts_package_id $sn_array(object_id)
+	set contacts_package_id [apm_package_id_from_key "contacts"]
     } else {
 	set contacts_package_id $package_id
     }
