@@ -53,6 +53,7 @@ if { $party_is_contact_p } {
 	       create-club   { set file "create-club" }
                default       { set file [parameter::get -parameter "ContactSummaryViewTemplate" -default "/packages/contacts/www/contact"] }
            }
+
            set form_supplied_party_id [ns_queryget party_id] 
            if { [exists_and_not_null form_supplied_party_id] } {
                 if { $form_supplied_party_id != $party_id } {

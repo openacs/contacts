@@ -56,8 +56,14 @@ if { [exists_and_not_null to] } {
     }
 }
 
+set invalid_party_ids  [list]
+
 foreach id $party_ids {
-    contact::require_visiblity -party_id $id
+    if {[contact::visible_p -party_id $id -package_id [ad_conn package_id]]} {
+	lappend valid_party_ids $id
+    } else {
+	append invalid_party_ids $id
+    }
 }
 
 set party_count [llength $party_ids]
@@ -66,7 +72,7 @@ set user_id [ad_conn user_id]
 set context [list $title]
 
 set recipients  [list]
-foreach party_id $party_ids {
+foreach party_id $valid_party_ids {
     set contact_name   [contact::name -party_id $party_id]
     set contact_url    [contact::url -party_id $party_id]
     set contact_link   "<a href=\"${contact_url}\">${contact_name}</a>"
@@ -74,11 +80,12 @@ foreach party_id $party_ids {
     # Check if the party has a valid e-mail address we can send to
     lappend recipients [list $contact_name $party_id $contact_link]
 }
+
 set sorted_recipients  [ams::util::sort_list_of_lists -list $recipients]
 set recipients         [list]
 set invalid_recipients [list]
 set party_ids          [list]
-set invalid_party_ids  [list]
+
 
 foreach recipient $sorted_recipients {
     set party_id       [lindex $recipient 1]
@@ -122,36 +129,9 @@ foreach recipient $sorted_recipients {
         } 
 
     } else {
-
-	# Check if we can send a letter to this party
-	set letter_p  [contact::message::mailing_address_exists_p -party_id $party_id]
-
-        if { $letter_p } {
-            lappend party_ids $party_id
-            lappend recipients $contact_link
-        } elseif { [party::email -party_id $party_id] eq "" } {
-	    # We are going to check if there is an employee relationship
-	    # if there is we are going to check if the employer has an
-	    # email adrres, if it does we are going to use that address
-	    set employer_id [lindex [contact::util::get_employee_organization -employee_id $party_id] 0]
-
-	    if { ![empty_string_p $employer_id] } {
-		set emp_addr [contact::email -party_id $employer_id]
-		if { ![empty_string_p $emp_addr] } {
-		    lappend party_ids $employer_id
-		    lappend recipients $contact_link
-		} else {
-		    lappend invalid_party_ids $party_id
-		    lappend invalid_recipients $contact_link
-		}
-	    } else {
-		lappend invalid_party_ids $party_id
-		lappend invalid_recipients $contact_link
-	    }
-        } else {
-	    lappend party_ids $party_id
-            lappend recipients $contact_link
-        } 
+	# We are unsure what to send, so just assume for the time being we can send it to them
+	lappend party_ids $party_id
+	lappend recipients $contact_link
     }
 }
 
