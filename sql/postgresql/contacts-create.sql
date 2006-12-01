@@ -75,19 +75,19 @@ comment on table contact_groups is '
 this mapping table notes what groups (this is acs groups) are can be used in a specific contacts package and therefore have special attributes.
 ';
 
-comment on table contact_groups.group_id is '
+comment on column contact_groups.group_id is '
 ACS Group ID which is linked to the contacts instance
 ';
 
-comment on table contact_groups.package_id is '
+comment on column contact_groups.package_id is '
 Package ID of the contacts instance the group is linked to
 ';
 
-comment on table contact_groups.default_p is '
+comment on column contact_groups.default_p is '
 Is this group a default group? This means that all contacts entered through this contacts instance are automatically added to this group
 ';
 
-comment on table contact_groups.user_change_p is '
+comment on column contact_groups.user_change_p is '
 Can a user change this his own attributes in this group?
 ';
 
@@ -124,23 +124,23 @@ comment on table contact_signatures is '
 Contacts supports signatures for each party_id. This is where they are stored. THe signature is attached to each mailing the party sends out, if selected. A party can have multiple signatures, in this situation a select box is shown. The default signature is selected by default (if there is any).
 ';
 
-comment on table contact_signatures.signature_id is '
+comment on column contact_signatures.signature_id is '
 Primary key for identifying a signature
 ';
 
-comment on table contact_signatures.title is '
+comment on column contact_signatures.title is '
 Title of the signature for nice display of the it.
 ';
 
-comment on table contact_signatures.signature is '
+comment on column contact_signatures.signature is '
 The signature itself. This will be attached to the mailing (if selected).
 ';
 
-comment on table contact_signatures.default_p is '
+comment on column contact_signatures.default_p is '
 Is the signature the default signature.
 ';
 
-comment on table contact_signatures.party_id is '
+comment on column contact_signatures.party_id is '
 Party_id of the user who is creating the mailing. This is not the signature for the recipient, but the sender of the mailing.
 ';
 
