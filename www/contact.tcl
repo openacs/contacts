@@ -49,7 +49,7 @@ set pm_package_id ""
 
 if { [string is false [empty_string_p [info procs "::application_data_link::get_linked"]]] } {
 
-    #set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
+    set project_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "pm_project"] 0]
     set dotlrn_club_id [lindex [application_data_link::get_linked -from_object_id $party_id -to_object_type "dotlrn_club"] 0]
 
     if {$project_id > 0 && $dotlrn_club_id <1} {

@@ -72,6 +72,12 @@ set user_id [ad_conn user_id]
 set context [list $title]
 
 set recipients  [list]
+
+if {![exists_and_not_null valid_party_ids]} {
+    ad_return_error "[_ contacts.No_valid_parties]" "[_ contacts.No_valid_parties_lt]"
+    ad_script_abort
+}
+
 foreach party_id $valid_party_ids {
     set contact_name   [contact::name -party_id $party_id]
     set contact_url    [contact::url -party_id $party_id]

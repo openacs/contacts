@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b16" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b19" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -534,6 +534,8 @@
   <msg key="New">New</msg>
   <msg key="Next">Next</msg>
   <msg key="No_Lists">No Lists</msg>
+  <msg key="No_valid_parties">No valid parties</msg>
+  <msg key="No_valid_parties_lt">No valid parties where selected. Please go back and select some parties.</msg>
   <msg key="none">(none)</msg>
   <msg key="Normal_Searches">Normal Searches</msg>
   <msg key="Not_Configured">Not Configured</msg>
