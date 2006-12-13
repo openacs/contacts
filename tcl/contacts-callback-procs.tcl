@@ -405,6 +405,7 @@ ad_proc -public -callback fs::folder_chunk::add_bulk_actions -impl contacts {
 
     if {[empty_string_p $project_id]} {
 	# no project -> mail to all organization contacts
+
 	# If we have a setup where .LRN provides the community
 	# And we just hope the community is linked to an organization
 	if {[apm_package_installed_p dotlrn]} {

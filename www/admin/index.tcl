@@ -150,3 +150,8 @@ set default_group [contacts::default_group]
 
 
 ad_return_template
+if {[attribute::id -object_type "organization" -attribute_name "short_name"] eq ""} {
+    set populate_url [export_vars -base "populate" -url {{populate_type "crm"}}]
+} else {
+    set populate_url ""
+}

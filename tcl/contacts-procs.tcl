@@ -320,6 +320,14 @@ ad_proc -public contact::privacy_set {
     }
 }
 
+ad_proc -public contact::util::get_account_manager {
+    {-organization_id:required}
+} {
+    get the account manager's party_id for an organization
+} {
+    return [db_list account_id "select object_id_one from acs_rels where rel_type='contact_rels_am' and object_id_two = :organization_id"]
+}
+
 ad_proc -private contact::util::generate_filename {
     {-title:required}
     {-extension:required}

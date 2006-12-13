@@ -8,6 +8,8 @@
 <a href="permissions" class="button">#contacts.lt_Instance_Permissions_#</a>
 <a href="@parameter_url@" class="button">#acs-subsite.Parameters#</a>
 <a href="ext-search-options" class="button">#contacts.Extended_search_opt#</a>
+<if @populate_url@ ne ""><a href="@populate_url@" class="button">#contacts.Populate_CRM#</a></if>
+
 </p>
 <h1>#contacts.READ_THESE#</h1>
 <ul>
