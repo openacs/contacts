@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
     
-    <version name="1.2b20" url="http://openacs.org/repository/download/apm/contacts-1.2b20.apm">
+    <version name="1.2b21" url="http://openacs.org/repository/download/apm/contacts-1.2b21.apm">
         <owner url="mailto:openacs@geddert.com">Matthew Geddert</owner>
         <summary>This application lets you collaboratively view, edit and categorize contacts.</summary>
         <release-date>2006-06-25</release-date>
         <description format="text/plain">Contacts is an application for managing all those people and or organization you need to keep track of. It has a complete UI for storing and categorizing contacts. Each contact can have an arbitrary number of custom attributes associated with it, including other contacts (i.e. a certain contact &quot;belongs&quot; to a certain organization). It also functions as a service contract provider for attributes related to users in your system</description>
         <maturity>0</maturity>
 
-        <provides url="contacts" version="1.2b20"/>
+        <provides url="contacts" version="1.2b21"/>
         <requires url="acs-datetime" version="4.1"/>
         <requires url="acs-events" version="0.5d3"/>
         <requires url="acs-tcl" version="5.3.0d2"/>
@@ -80,6 +80,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ThumbnailSize"  default="125x125" description="Max dimension for thumbnail image" section_name="Photos"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UseSubsiteAsDefaultGroup"  default="0" description="Default '0'. Should we use this contact's instances subsite's application group as the default group? If yes set to '1'. Using the subsites application group as the default group will automatically add all subsite users to this contacts instance. This should only be changed at install time."/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ViewOthersSearchesP"  default="0" description="Are users allowed to view other users searches. '1' is yes, '0' is no. The default is '0'. On sites where some users are not allowed to view certain attributes or search condition types this should be '0', since viewing searches from other users may allow you to gain access to information they must not access. Site wide administrators are automatically given permission to view all users searches."/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="OORemoteConverter"  default="" description="URL of the remote converter. If none is provided we will use the local converter" section_name="Templates"/>
         </parameters>
 
     </version>

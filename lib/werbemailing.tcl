@@ -105,7 +105,7 @@ ad_form -action message \
 	    
 	    # Retrieve information about the creation user so it can be used in the template
 	    # First check if there is an account manager
-	    set account_manager_id [contacts::util::get_account_manager -organization_id $organization_id]
+	    set account_manager_id [contact::util::get_account_manager -organization_id $organization_id]
 	    if {[string eq "" $account_manager_id]} {
 		set user_id [ad_conn user_id]
 	    } else {

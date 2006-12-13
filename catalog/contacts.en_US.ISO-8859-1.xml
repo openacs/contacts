@@ -587,6 +587,7 @@
   <msg key="phoning_allowed">phoning allowed</msg>
   <msg key="phoning_not_allowed">phoning not allowed</msg>
   <msg key="Please_choose_a_contact">Please choose a contact</msg>
+  <msg key="Populate_CRM">Populate CRM</msg>
   <msg key="pp">pp.</msg>
   <msg key="Pretty_name">Pretty Name</msg>
   <msg key="pretty_name_help">The Pretty Name to use in the list label.</msg>
