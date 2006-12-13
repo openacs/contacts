@@ -1176,4 +1176,117 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_cognovis_converter {
 	}
     }
 }
+
+
+#----------------------------------------------------------------------
+# This function does the same as contact::oo::import_oo_pdf_using_soffice (same API)
+# but it's using the Cognovis Remote Converter functions to convert into pdf.
+#----------------------------------------------------------------------
+# 2006/11/08 Developed/Created by Cognovis/NFL
+#----------------------------------------------------------------------
+ad_proc -public contact::oo::import_oo_pdf_using_remote_converter {
+    -oo_file:required
+    {-title ""}
+    {-item_id ""}
+    {-parent_id ""}
+    {-no_import:boolean}
+    {-return_pdf:boolean}
+    {-return_pdf_with_id:boolean}
+} {
+    Imports an OpenOffice file (.sxw / .odt) as a PDF file into the content repository. If item_id is specified a new revision of that item is created, else a new item is created.<br>
+    <br>
+    This function does the same as contact::oo::import_oo_pdf_using_soffice (same API, that means same function call)
+    but it's using the Cognovis Remote Converter functions to convert into PDF.<br>
+    <br>
+    The following parameters are not really used (and stay just here for compatibility reasons):<br>
+    -printer_name<br>
+    
+    @param oo_file The full path to the OpenOffice file that contains the data to be exported as PDF.
+    @param printer_name (NOT USED here: The name of the printer that is assigned as the PDF converter. Defaults to "pdfconv".)
+    @param title Title which will be used for the resulting content item and file name if none was given in the item
+    @param item_id The item_id of the content item to which the content should be associated.
+    @param parent_id Needed to set the parent of this object
+    @param no_import If this flag is specified the location of the generated PDF will be returned, but the pdf will not be stored in the content repository
+    @param return_pdf If this flag is specified the location of the generated PDF will be returned and the PDF will be stored in the content repository (in contrast to "no_import"        
+    @param return_pdf_with_id Same as return_pdf but it will return a list with three elements: file_item_id, file_mime_type and pdf_filename
+    @return item_id of the revision that contains the file
+    @return file location of the file if "no_import" has been specified.
+} {
+    set destination_file "[file rootname $oo_file].pdf"
+    set remote_server "http://cvs.cognovis.de:8080/contacts" 
+    
+    # Set the retrieve URL, making sure to trim the "/tmp/" part of it
+    set local_retrieve_url [export_vars -base "[ad_url][apm_package_url_from_key contacts]" -url {{filename "[string range $oo_file 5 end]"}}]
+    set page [lindex [ad_httpget -url [export_vars -base "${remote_server}/convert" -url {{url $local_retrieve_url}}]] 1]
+    set oo_file [ns_tmpnam]
+    set file [open "$oo_file" w]
+    puts $file $page
+    flush $file
+    close $file
+
+    # Test the PDF
+    if {[catch {exec -- /usr/bin/pdf2ps $destination_file /tmp/document.ps}]} {
+	ns_log Notice "PDF CONV:: Could not import using remoteconverter"
+	return 0
+	ad_script_abort
+    }
+    
+    
+    #--- the following code is identical to contact::oo::import_oo_pdf_using_soffice (on 2006/11/01+08) ---
+	
+    # Strip the extension.
+    set pdf_filename $destination_file
+	set mime_type "application/pdf"
+    if {![file exists $pdf_filename]} {
+        ###############
+	# this is a fix to use the oo file if pdf file could not be generated
+	###############
+	set pdf_filename $oo_file
+	set mime_type "application/odt"
+    } else {
+	ns_unlink $oo_file
+    }
+    
+    if {$no_import_p} {
+	return [list $mime_type $pdf_filename]
+    }
+    set pdf_filesize [file size $pdf_filename]    
+    
+    set file_name [file tail $pdf_filename]
+    if {$title eq ""} {
+	set title $file_name
+    }
+    
+    if {[exists_and_not_null $item_id]} {
+	set parent_id [get_parent -item_id $item_id]
+	
+	set revision_id [cr_import_content \
+			     -title $title \
+			     -item_id $item_id \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $file_name ]
+    } else {
+	set revision_id [cr_import_content \
+			     -title $title \
+			     $parent_id \
+			     $pdf_filename \
+			     $pdf_filesize \
+			     $mime_type \
+			     $file_name ]
+    }   
+    
+    content::item::set_live_revision -revision_id $revision_id
+    if {$return_pdf_p} {
+	return [list $mime_type $pdf_filename]
+    } elseif {$return_pdf_with_id_p} {
+	return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
+    } else  {
+	ns_unlink $pdf_filename                   
+	return [content::revision::item_id -revision_id $revision_id]
+    }
+}
+
 #----------------------------------------------------------------------   

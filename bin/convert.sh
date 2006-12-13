@@ -10,5 +10,5 @@ export HOME=/home/malte
 #/usr/bin/openoffice -writer -headless -pt pdfconv $1 -display lektor2:1.0
 
 # If you are going to use jooconverter
-/usr/bin/java -jar /usr/bin/jooconverter/jooconverter-2.1rc2/jooconverter-2.1rc2.jar $1 $2
-#/etc/openoffice.org-2.0/program/soffice.bin -writer -headless -pt pdfconv $1 -display lektor:1.0
+#/usr/bin/java -jar /usr/bin/jooconverter/jooconverter-2.1rc2/jooconverter-2.1rc2.jar $1 $2
+/usr/lib/openoffice/program/soffice.bin -writer -headless -pt pdfconv $1 -display localhost:1.0
