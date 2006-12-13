@@ -890,29 +890,26 @@ ad_proc -public contact::oo::import_oo_pdf {
 } {
     # set the parameters that are needed for any/every function call
     set command_parameter " -oo_file \"$oo_file\""
-    if {[info exists title]} {
+    if {[exists_and_not_null title]} {
 	append command_parameter " -title \"$title\""
     }
-    if {[info exists item_id]} {
+    if {[exists_and_not_null item_id]} {
         append command_parameter " -item_id \"$item_id\""
     }
-    if {[info exists parent_id]} {
+    if {[exists_and_not_null parent_id]} {
         append command_parameter " -parent_id $parent_id"
     }
     if {[info exists no_import_p]} {
-	#ns_log Notice ".*** no_import_p=$no_import_p"
 	if {$no_import_p} {
 	    append command_parameter " -no_import"
 	}
     }
     if {[info exists return_pdf_p]} {
-	#ns_log Notice ".*** return_pdf_p=$return_pdf_p"     
         if {$return_pdf_p} {
             append command_parameter " -return_pdf"
         }
     }          
     if {[info exists return_pdf_with_id_p]} {
-	#ns_log Notice ".*** return_pdf_with_id_p=$return_pdf_with_id_p"      
         if {$return_pdf_with_id_p} {
             append command_parameter " -return_pdf_with_id"
         }
@@ -925,74 +922,36 @@ ad_proc -public contact::oo::import_oo_pdf {
         append command $command_parameter
         set result [eval $command]
         return $result   
-    } else {
-	if {$force_jooconverter_p} {
-	    ns_log Notice "PDF conversion uses JooConverter(f): $oo_file"
-	    set command "contact::oo::import_oo_pdf_using_jooconverter"
-	    append command $command_parameter
-	    set result [eval $command]
-	    return $result                        
-	} else {
-	    if {$force_local_soffice_p} {
-		ns_log Notice "PDF conversion uses local SOffice(f): $oo_file" 
-		set command "contact::oo::import_oo_pdf_using_soffice"
-		if {[info exists printer_name]} {
-		    append command_parameter " -printer_name \"$printer_name\""
-		}
-		append command $command_parameter
-		set result [eval $command]
-		return $result                   
-	    } else {
-		# the function tries one after another
-		# (and yes, it could be coded cooler, i know, the function calls are duplicated, but it was faster now, 2006/11/07 nfl)
-
-		# 2006/11/08 three solutions
-		ns_log Notice "PDF conversion uses CognovisRemoteConverter(f): $oo_file"
-		set command "contact::oo::import_oo_pdf_using_remote_cognovis_converter"
-		append command $command_parameter
-		if { [catch { set result [eval $command] } errMsg] } {
-                    ns_log Warning "Command fails: $command"
-                    # an error occured, try the next function
-
-		    ns_log Notice "PDF conversion uses JooConverter: $oo_file" 
-		    set command "contact::oo::import_oo_pdf_using_jooconverter"   
-		    #ns_log Notice "**** command_parameter=$command_parameter"
-		    append command $command_parameter
-		    #ns_log Notice "**** command=$command"
-		
-		    if { [catch { set result [eval $command] } errMsg] } {
-			ns_log Warning "Command fails: $command"
-			# an error occured, try the next function
-			# it's not catched, because we have no third solution
-		    
-			ns_log Notice "PDF conversion uses local SOffice: $oo_file"   
-			set command "contact::oo::import_oo_pdf_using_soffice" 
-		    
-			if {[info exists printer_name]} {
-			    append command_parameter " -printer_name \"$printer_name\""
-			}        
-
-			#ns_log Notice "**** command_parameter=$command_parameter"
-			append command $command_parameter
-			#ns_log Notice "**** command=$command"
-		    
-			set result [eval $command]
-			#ns_log Notice "**** result=$result"           
-			return $result
-		    
-		    } else {
-			# first command was successful
-			#ns_log Notice "**** result=$result"
-			return $result
-		    }
-
-		} else {
-		    # CognovisRemoteConverter was successful
-		    return $result
-		}           
-	    }
-	}
+	ad_script_abort
     }
+
+    if {$force_jooconverter_p} {
+	ns_log Notice "PDF conversion uses JooConverter(f): $oo_file"
+	set command "contact::oo::import_oo_pdf_using_jooconverter"
+	append command $command_parameter
+	set result [eval $command]
+	return $result                        
+	ad_script_abort
+    }
+
+    if {$force_local_soffice_p} {
+	ns_log Notice "PDF conversion uses local SOffice(f): $oo_file" 
+	set command "contact::oo::import_oo_pdf_using_soffice"
+	if {[info exists printer_name]} {
+	    append command_parameter " -printer_name \"$printer_name\""
+	}
+	append command $command_parameter
+	set result [eval $command]
+	return $result                   
+	ad_script_abort
+    } 
+    
+    # no conversion was forced, now lets go for the parameter
+    # Lets use the remote converter
+    set command "contact::oo::import_oo_pdf_using_remote_converter"
+    append command $command_parameter
+    set result [eval $command]
+    return $result                   
 }
 
 #----------------------------------------------------------------------
