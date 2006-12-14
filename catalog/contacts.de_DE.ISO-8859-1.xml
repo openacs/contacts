@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b11" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b22" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--add_column--">-- Reihe hinzufügen --</msg>
@@ -433,6 +433,8 @@ Deutsch(DE) 	</msg>
   <msg key="Mail_Merge">Adresszusammenstellung</msg>
   <msg key="Mail_Merge_Results">Resultate der Mail Zusammenfassung (mail merge)</msg>
   <msg key="Mail_to_contact">Dateien an Kontakt schicken</msg>
+  <msg key="mailing_subject">Betreff</msg>
+  <msg key="mailing_subject_help">Geben Sie den Betreff ein für den Fall das die Vorlage dies unterstützt.</msg>
   <msg key="Make_Current">aktuell machen</msg>
   <msg key="Make_Public">veröffentlichen</msg>
   <msg key="Make_the_checked_contacts_current">Die markierten Kontakte aktuell machen</msg>
@@ -500,6 +502,7 @@ Deutsch(DE) 	</msg>
   <msg key="Person_Form">Personen Formblatt</msg>
   <msg key="Please_choose_a_contact">Bitte wählen Sie einen Kontakt</msg>
   <msg key="pp">i.V.</msg>
+  <msg key="preferred_locale">Kommunikationssprache</msg>
   <msg key="Pretty_name">Angezeigter Name</msg>
   <msg key="pretty_name_help">Der Name der bei dieser Liste als Überschrift angezeigt wird.</msg>
   <msg key="Preview">Voransicht</msg>

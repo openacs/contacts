@@ -33,6 +33,8 @@ create table contact_message_items (
 				constraint contact_message_items_locale_fk references ad_locales(locale),
         -- Banner contains the path to an image which can be inserted into the open office mailing document
         banner                 varchar(500),
+	-- Template contains the path to the oo_template directory for the template that is being used
+	oo_template	       varchar(500),
         -- PS is the post scriptum, which is commonly used in mailings.
         ps                      varchar(500)
 );
@@ -44,6 +46,7 @@ create view contact_messages as
 	   cmi.locale,
            cmi.banner,
            cmi.ps,
+	   cmi.oo_template,
            cr.title,
            cr.description,
            cr.content,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b19" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b22" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -511,6 +511,8 @@
   <msg key="Mail_to_contact">Mail to contact</msg>
   <msg key="mailing_allowed">mailing allowed</msg>
   <msg key="mailing_not_allowed">mailing not allowed</msg>
+  <msg key="mailing_subject">Subject</msg>
+  <msg key="mailing_subject_help">Enter the subject of e.g. the letter if the template supports this</msg>
   <msg key="Make_Current">Make Current</msg>
   <msg key="Make_Public">Make Public</msg>
   <msg key="Make_the_checked_contacts_current">Make the checked contacts current</msg>
@@ -552,6 +554,8 @@
   <msg key="oo_email_subject_help">Subject of the email. &lt;font color=red&gt;&lt;b&gt;Leave empty to print&lt;/b&gt;&lt;/font&gt;</msg>
   <msg key="oo_mailing">Open Office Mailing</msg>
   <msg key="oo_message">OO message</msg>
+  <msg key="OOTemplate">OpenOffice Template</msg>
+  <msg key="OOTemplate_help_text">Which OpenOffice mailing template should be used for this?</msg>
   <msg key="open">Open</msg>
   <msg key="Options">Options</msg>
   <msg key="or">or</msg>
@@ -589,6 +593,7 @@
   <msg key="Please_choose_a_contact">Please choose a contact</msg>
   <msg key="Populate_CRM">Populate CRM</msg>
   <msg key="pp">pp.</msg>
+  <msg key="preferred_locale">Preferred locale</msg>
   <msg key="Pretty_name">Pretty Name</msg>
   <msg key="pretty_name_help">The Pretty Name to use in the list label.</msg>
   <msg key="Preview">Preview</msg>

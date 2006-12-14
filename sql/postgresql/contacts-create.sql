@@ -235,3 +235,6 @@ select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
 \i contacts-list-create.sql
 
 
+-- Change the user_preferences table as at least with contacts it is a party references table
+alter table user_preferences drop constraint user_prefs_user_id_fk;
+alter table user_preferences add constraint user_prefs_user_id_fk foreign key  (user_id) references parties (party_id);
