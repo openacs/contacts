@@ -47,6 +47,7 @@ ad_proc -private contact::message::save {
     {-locale ""}
     {-banner ""}
     {-ps ""}
+    {-oo_template ""}
     {-package_id ""}
 } {
     save a contact message
@@ -72,9 +73,9 @@ ad_proc -private contact::message::save {
 
 	db_dml insert_into_message_items {
 	    insert into contact_message_items
-	    ( item_id, owner_id, message_type, locale, banner, ps )
+	    ( item_id, owner_id, message_type, locale, banner, ps, oo_template )
 	    values
-	    ( :item_id, :owner_id, :message_type, :locale, :banner, :ps )
+	    ( :item_id, :owner_id, :message_type, :locale, :banner, :ps, :oo_template )
 	}
         # contact item new does not set the package_id in acs_object so
         # we do it here
@@ -86,7 +87,7 @@ ad_proc -private contact::message::save {
 
     } else {
 	db_dml update_message_item {
-	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, banner = :banner, ps = :ps where item_id = :item_id
+	    update contact_message_items set owner_id = :owner_id, message_type = :message_type, locale = :locale, banner = :banner, ps = :ps, oo_template = :oo_template where item_id = :item_id
 	}
     }
 

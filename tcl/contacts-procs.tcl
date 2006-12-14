@@ -114,6 +114,7 @@ ad_proc -public contact::package_id {
 }
 	
 ad_proc -private contacts::sweeper {
+    {-contacts_package_ids ""}
 } {
     So that contacts searches work correctly, and quickly
     every person or organization in the system
@@ -124,9 +125,10 @@ ad_proc -private contacts::sweeper {
     by contacts (ones created by contacts automatically get
     associated item_id and live_revisions.
 } {
-    
-    set contact_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
-    foreach contact_package_id $contact_package_ids {
+    if {$contacts_package_ids eq ""} {
+	set contacts_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
+    }
+    foreach contact_package_id $contacts_package_ids {
 	set default_group_id [contacts::default_group -package_id $contact_package_id]
 	set contact_package($default_group_id) $contact_package_id
 	lappend default_groups $default_group_id
@@ -134,18 +136,26 @@ ad_proc -private contacts::sweeper {
 
     # Try to insert the persons into the package_id of the first group found
     db_foreach get_persons_without_items {} {
+	
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
 		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
-		contact::revision::new -party_id $person_id -package_id $contact_package($group_id)
+		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
 		break
 	    }
 	}
 	
-	# We did not found a group, so just use the first contacts instance.
-	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
-	contact::revision::new -party_id $person_id -package_id $contact_package_id
-	
+	if {$contact_revision_id eq ""} {
+	    # We did not found a group, so just use the first contacts instance.
+	    ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
+	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id]
+	}
+
+	# Add the default ams attributes
+	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "first_names" -value $first_names
+	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "last_name" -value $last_name
+	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "email" -value $email
+
 	# And insert into the default group for this package.
 	group::add_member -user_id $person_id -group_id $default_group_id
     }

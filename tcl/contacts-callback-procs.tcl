@@ -1129,3 +1129,77 @@ ad_proc -public -callback contact::contact_form_after_submit -impl spouse_sync {
 	}
     }
 }
+
+#
+# This is an example of how you can extend the entry forms.
+#
+
+ad_proc -public -callback contact::contact_form -impl wieners {
+    {-package_id:required}
+    {-form:required}
+    {-object_type:required}
+    {-party_id}
+    {-group_ids ""}
+    {-rel_type ""}
+} {
+    add locale form element for persons
+} {
+
+    # Allow for organizations and persons to set the locale
+    set list_of_locales [list]
+    db_foreach locale_loop {
+        select label, locale
+        from enabled_locales
+        order by label
+    } {
+        
+	if {[lang::message::message_exists_p $locale acs-lang.this-language]} {
+	    set label [lang::message::lookup $locale acs-lang.this-language]
+	}
+	lappend list_of_locales [list $label $locale]
+    }
+    
+    if {[exists_and_not_null party_id]} {
+	set locale [lang::user::site_wide_locale -user_id $party_id]
+    }
+    
+    if { ![exists_and_not_null locale] } {
+	set locale [lang::system::site_wide_locale]
+    }
+    
+    ad_form -extend -name $form -form {
+	{locale:text(select),optional {label "[_ contacts.preferred_locale]"} {options $list_of_locales} {value $locale}}
+    }    
+}
+
+ad_proc -public -callback contact::special_attributes::ad_form_save -impl contacts {
+    {-form:required}
+    {-party:required}
+} {
+    set locale for a new party
+} {
+    upvar locale locale
+    
+    # get defaults for locale if locale is empty / not set
+    if { ![exists_and_not_null locale] } {    
+        if {[exists_and_not_null party_id]} {
+            set locale [lang::user::site_wide_locale -user_id $party_id]
+        }
+        if { ![exists_and_not_null locale] } {
+            set locale [lang::system::site_wide_locale]
+        }
+    }
+    #---
+    
+    # Create the entry in user_preferences. 
+    # This only works if we drop the constraint on users.
+    db_dml insert_preference {
+        insert into user_preferences (user_id, locale)
+        select :party_id as user_id, :locale as locale
+        from dual
+        where not exists (select 1 from user_preferences where user_id = :party_id)
+    }
+    if {[exists_and_not_null locale]} {
+        lang::user::set_locale -user_id $party_id $locale
+    }
+}
