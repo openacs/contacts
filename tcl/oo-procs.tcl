@@ -1172,24 +1172,15 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_converter {
     @return file location of the file if "no_import" has been specified.
 } {
     set destination_file "[file rootname $oo_file].pdf"
-    set remote_server "http://cvs.cognovis.de:8080/contacts" 
+    set remote_server [parameter::get -parameter OORemoteConverter]
     
     # Set the retrieve URL, making sure to trim the "/tmp/" part of it
-    set local_retrieve_url [export_vars -base "[ad_url][apm_package_url_from_key contacts]" -url {{filename "[string range $oo_file 5 end]"}}]
+    set local_retrieve_url [export_vars -base "[ad_url]/retrieve" -url {{filename "[string range $oo_file 5 end]"}}]
     set page [lindex [ad_httpget -url [export_vars -base "${remote_server}/convert" -url {{url $local_retrieve_url}}]] 1]
-    set oo_file [ns_tmpnam]
-    set file [open "$oo_file" w]
+    set file [open "$destination_file" w]
     puts $file $page
     flush $file
     close $file
-
-    # Test the PDF
-    if {[catch {exec -- /usr/bin/pdf2ps $destination_file /tmp/document.ps}]} {
-	ns_log Notice "PDF CONV:: Could not import using remoteconverter"
-	return 0
-	ad_script_abort
-    }
-    
     
     #--- the following code is identical to contact::oo::import_oo_pdf_using_soffice (on 2006/11/01+08) ---
 	
