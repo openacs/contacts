@@ -41,7 +41,6 @@ if {[exists_and_not_null footer_id]} {
 
 set template_path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]"
 set banner_options [util::find_all_files -extension jpg -path "${template_path}/banner"]
-set banner_options [concat [list ""] $banner_options]
 
 set date [split [dt_sysdate] "-"]
 append form_elements {
@@ -49,6 +48,7 @@ append form_elements {
     party_ids:text(hidden)
     return_url:text(hidden)
     title:text(hidden),optional
+    oo_template_path:text(hidden),optional
     {message_type:text(hidden) {value "oo_mailing"}}
     {recipients:text(inform)
 	{label "[_ contacts.Recipients]"}
@@ -56,11 +56,29 @@ append form_elements {
     {date:date(date)
 	{label "[_ contacts.Date]"}
     }
-    {banner:text(select),optional
-        {label "[_ contacts.Banner]"} 
-        {help_text "[_ contacts.Banner_help_text]"}
-	{options $banner_options}
-	{section "[_ contacts.oo_message]"}
+}
+
+if {$banner_options eq ""} {
+    append form_elements {
+	{banner:text(hidden) {value ""}}
+    }
+} else {
+    set banner_options [concat [list ""] $banner_options]
+    append form_elements {
+	{banner:text(select),optional
+	    {label "[_ contacts.Banner]"} 
+	    {help_text "[_ contacts.Banner_help_text]"}
+	    {options $banner_options}
+	    {section "[_ contacts.oo_message]"}
+	}
+    }
+}
+
+append form_elements {
+    {mailing_subject:text(text),optional
+        {label "[_ contacts.mailing_subject]"} 
+        {help_text "[_ contacts.mailing_subject_help]"}
+        {html {size 45 maxlength 1000}}
     }
     {content:richtext(richtext)
 	{label "[_ contacts.oo_message]"}
@@ -72,11 +90,26 @@ append form_elements {
         {help_text "[_ contacts.PS_help_text]"}
         {html {size 45 maxlength 1000}}
     }
-    {account_manager_p:text(select)
-	{label "[_ contacts.Account_Manager_P]"}
-	{help_text "[_ contacts.Account_Manager_P_help_text]"}
-	{options {{"[_ contacts.account_manager]" "t"} {"[_ contacts.yourself]" "f"}}}
+}
+
+
+if {0} {
+    append form_elements {
+	{account_manager_p:text(select)
+	    {label "[_ contacts.Account_Manager_P]"}
+	    {help_text "[_ contacts.Account_Manager_P_help_text]"}
+	    {options {{"[_ contacts.account_manager]" "t"} {"[_ contacts.yourself]" "f"}}}
+	}
     }
+} else {
+    append form_elements {
+	{account_manager_p:text(hidden)
+	    {value "0"}
+	}
+    }
+}
+
+append form_elements {
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
 	{html {size 55}}
@@ -128,8 +161,10 @@ ad_form -action message \
 			    ]
 	    set content [list $content $message_info(content_format)]
 	    set title $message_info(title)
+	    set mailing_subject $title
             set ps $message_info(ps)
             set banner $message_info(banner)
+	    set oo_template_path $message_info(oo_template)
 	} else {
 	    if { [exists_and_not_null signature] } {
 		set content [list $signature "text/html"]
@@ -220,12 +255,12 @@ ad_form -action message \
 	    set ps $__adp_output
 	    set ps [contact::oo::convert -content $ps]
 
-            set file [open "${template_path}/content.xml"]
+            set file [open "${oo_template_path}/content.xml"]
             fconfigure $file -translation binary
             set template_content [read $file]
             close $file
 
-            set file [open "${template_path}/styles.xml"]
+            set file [open "${oo_template_path}/styles.xml"]
             fconfigure $file -translation binary
             set style_content [read $file]
             close $file
@@ -237,7 +272,7 @@ ad_form -action message \
             set style $__adp_output
 
 	    ns_log debug "Content:: $content"
-	    set odt_filename [contact::oo::change_content -path "${template_path}" -document_filename "document.odt" -contents [list "content.xml" $oo_content "styles.xml" $style]]
+	    set odt_filename [contact::oo::change_content -path "${oo_template_path}" -document_filename "document.odt" -contents [list "content.xml" $oo_content "styles.xml" $style]]
 
 	    # Subject is set => we send an email.
 	    if {$subject ne ""} {
