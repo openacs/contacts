@@ -132,6 +132,7 @@ ad_proc -private contacts::sweeper {
 	lappend default_groups $default_group_id
     }
 
+    # Try to insert the persons into the package_id of the first group found
     db_foreach get_persons_without_items {} {
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
@@ -140,7 +141,15 @@ ad_proc -private contacts::sweeper {
 		break
 	    }
 	}
+	
+	# We did not found a group, so just use the first contacts instance.
+	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
+	contact::revision::new -party_id $person_id -package_id $contact_package_id
+	
+	# And insert into the default group for this package.
+	group::add_member -user_id $person_id -group_id $default_group_id
     }
+
     db_foreach get_organizations_without_items {} {
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
@@ -150,7 +159,7 @@ ad_proc -private contacts::sweeper {
 	    }
 	}
 	ns_log notice "contacts::sweeper creating content_item and content_revision for organization_id: $organization_id"
-	contact::revision::new -party_id $organization_id -package_id $package_id
+	contact::revision::new -party_id $organization_id -package_id $contact_package_id
     }
 
     if { ![info exists person_id] && ![info exists organization_id] } {
