@@ -511,7 +511,12 @@ ad_proc -private contact::salutation_not_cached {
 
     if {$type == "salutation"} {
 	# long salutation (though still without the first name)
-	return "$value(salutation) [string trim "$value(person_title) $value(last_name)"]"
+	# Check for informal salutation
+	if {$value(salutation) eq "Hello" || $value(salutation) eq "Hallo"} {
+	    return "$value(salutation) [string trim "$value(first_names)"]"
+	} else {
+	    return "$value(salutation) [string trim "$value(person_title) $value(last_name)"]"
+	}
     } else {
 	# short sticker salutation
 	set name [string trim "$value(first_names) $value(last_name)"]
