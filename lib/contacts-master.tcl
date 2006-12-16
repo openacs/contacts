@@ -16,6 +16,9 @@ lappend link_list "${package_url}"
 lappend link_list "[_ contacts.Contacts]"
 
 if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } {
+    lappend link_list "${package_url}add/employee"
+    lappend link_list "[_ contacts.Add_Employee]"
+
     lappend link_list "${package_url}add/person"
     lappend link_list "[_ contacts.Add_Person]"
 

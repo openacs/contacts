@@ -22,6 +22,7 @@
   <msg key="Add_complaint_to">Add complaint to</msg>
   <msg key="Add_Condition">Add Condition</msg>
   <msg key="Add_Email_Message">Add Email Message</msg>
+  <msg key="Add_Employee">Add</msg>
   <msg key="Add_Group">Add Group</msg>
   <msg key="Add_Letter_Message">Add Letter Message</msg>
   <msg key="Add_List">Add List</msg>
@@ -29,9 +30,9 @@
   <msg key="Add_New">Add New</msg>
   <msg key="Add_new_in_Group">Add new %object_type% selected groups</msg>
   <msg key="Add_new_owner">Add new owner</msg>
-  <msg key="Add_Organization">Add Organization</msg>
+  <msg key="Add_Organization">Organization</msg>
   <msg key="Add_Owner">Add Owner</msg>
-  <msg key="Add_Person">Add Person</msg>
+  <msg key="Add_Person">Person</msg>
   <msg key="Add_Relationship">Add Relationship</msg>
   <msg key="Add_relationship_role_one_count">Amount of relationships to be deleted</msg>
   <msg key="Add_relationship_role_two_count">Amount of relationships to be deleted</msg>
@@ -50,7 +51,7 @@
   <msg key="Address">Address</msg>
   <msg key="Admin">Admin</msg>
   <msg key="Administer_Contacts">Administer Contacts</msg>
-  <msg key="Advanced_Search">Advanced Search</msg>
+  <msg key="Advanced_Search">Search</msg>
   <msg key="Advanced_Searches">Advanced Searches</msg>
   <msg key="Aggregate">Aggregate</msg>
   <msg key="Aggregate_by">Aggregate by</msg>

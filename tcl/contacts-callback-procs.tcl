@@ -1,3 +1,4 @@
+
 # packages/contacts/tcl/contacts-callback-procs.tcl
 
 ad_library {
@@ -215,9 +216,14 @@ ad_proc -public -callback contact::special_attributes::ad_form_values {
 ad_proc -public -callback contact::special_attributes::ad_form_save {
     {-party_id:required}
     {-form:required}
+    {-object_type ""}
 } {
     This callback is executed first in the new_data or edit_data ad_from
     blocks when creating or saving a contacts information
+
+    @party_id Party ID for which the elements are saved
+    @form Name of the form
+    @object_type Object Type of the party
 } -
 
 ad_proc -public -callback contact::special_attributes::ad_form_values -impl contacts {
@@ -1134,7 +1140,7 @@ ad_proc -public -callback contact::contact_form_after_submit -impl spouse_sync {
 # This is an example of how you can extend the entry forms.
 #
 
-ad_proc -public -callback contact::contact_form -impl wieners {
+ad_proc -public -callback contact::contact_form -impl contacts {
     {-package_id:required}
     {-form:required}
     {-object_type:required}
@@ -1166,10 +1172,12 @@ ad_proc -public -callback contact::contact_form -impl wieners {
     if { ![exists_and_not_null locale] } {
 	set locale [lang::system::site_wide_locale]
     }
-    
-    ad_form -extend -name $form -form {
-	{locale:text(select),optional {label "[_ contacts.preferred_locale]"} {options $list_of_locales} {value $locale}}
-    }    
+
+    if {![template::element::exists $form "locale"]} { 
+	ad_form -extend -name $form -form {
+	    {locale:text(select),optional {label "[_ contacts.preferred_locale]"} {options $list_of_locales} {value $locale}}
+	}    
+    }
 }
 
 ad_proc -public -callback contact::special_attributes::ad_form_save -impl contacts {

@@ -93,6 +93,12 @@ if { $party_is_contact_p } {
                }
                rp_internal_redirect contact-add
            }
+           "add/employee" {
+               if { ![ns_queryexists object_type]} {
+                    rp_form_put object_type "employee"
+               }
+               rp_internal_redirect contact-add
+           }
            lists {
                rp_internal_redirect /packages/contacts/lib/lists
            }
