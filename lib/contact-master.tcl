@@ -50,6 +50,8 @@ if { [ad_conn user_id] != 0} {
     lappend link_list "${prefix}message"
     lappend link_list "[_ contacts.Mail]"
 
+    lappend link_list "${prefix}mail-tracking" "[_ mail-tracking.Mail_Tracking]"
+
     lappend link_list "${prefix}changes"
     lappend link_list "[_ contacts.Changes]"
 }
