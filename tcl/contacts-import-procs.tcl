@@ -2,9 +2,10 @@ namespace eval contacts::import:: {}
 
 ad_proc -public contacts::import::csv {
     -filename
-    {-group_name "Leads"}
+    {-group_name ""}
     {-locale "en_US"}
     {-overwrite_customer_p 0}
+    {-contacts_package_id ""}
 } {
     Imports leads information from a file. This procedure still has a couple of things that need to be done to make it generally useful.
 
@@ -13,28 +14,35 @@ ad_proc -public contacts::import::csv {
     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
 
     @param filename name of CSV file containing the clients information to be imported. Note. The delimiter is ";" !!
-    @param group_name Name of the group where the import should take them. Defaults to leads
+    @param group_name Name of the group where the import should take them.
     @param locale Locale of the users who will be imported to the system
     @param overwrite_customer_p Overwrite existing organization data even for customers ?
 
     @creation-date 2006-12-07
 } {
 
+    set person_date_list [list \
+		       [list "GebDat" "birthdate"]
+		   ]
+
+
     set organization_text_list [list \
 				    [list "E-Mail" "email"] \
 				    [list "Firma" "name"] \
 				    [list "Zusatz" "company_name_ext"] \
-				    [list "Bemerkung" "collaboration_notes"] \
 				    [list "Internet" "company_url"]
 			       ]
 
+
     set person_text_list [list \
 			      [list "E-Mail" "email"] \
+			      [list "E-Mail2" "alternative_email"] \
 			      [list "Vorname" "first_names"] \
-			      [list "Name" "last_name"] \
+			      [list "Nachname" "last_name"] \
 			      [list "Position" "jobtitle"] \
 			      [list "Titel" "person_title"] \
 			      [list "Abteilung" "department"] \
+			      [list "Bemerkung" "person_notes"] \
 			 ]
 
     set organization_mc_list [list \
@@ -49,7 +57,10 @@ ad_proc -public contacts::import::csv {
 
     set person_phone_list [list \
 			       [list "Telefon1" "directphoneno"] \
-			       [list "Mobil" "mobile_phone"] \
+			       [list "Mobiltelefon" "mobile_phone"] \
+			       [list "Ptelefon1" "private_phone"] \
+			       [list "Ptelefon2" "telephone_other"] \
+			       [list "Ptelefax" "private_fax"] 
 			  ]
 
     
@@ -64,7 +75,11 @@ ad_proc -public contacts::import::csv {
 
     set person_count 0
     set organization_count 0
-    set contacts_package_id [apm_package_id_from_key "contacts"]
+
+    if {$contacts_package_id eq ""} {
+	set contacts_package_id [apm_package_id_from_key "contacts"]
+    }
+
     set default_group_id [contacts::default_group -package_id $contacts_package_id]
     set group_id [group::get_id -group_name "$group_name"]
     set customer_group_id [group::get_id -group_name "Customers"]
@@ -115,7 +130,28 @@ ad_proc -public contacts::import::csv {
 	} else {
 	    set last_name $values(Name)
 	}
+
+	if {![exists_and_not_null values(Pstrasse)]} {
+	    set values(PStrasse) ""
+	}
 	
+	if {![exists_and_not_null values(Port)]} {
+	    set values(POrt) ""
+	}
+	
+	if {![exists_and_not_null values(PPLZ)]} {
+	    set values(PPLZ) ""
+	}
+	
+	if {![exists_and_not_null values(Pland)]} {
+	    set values(PLand) "DE"
+	}
+	
+	if {![exists_and_not_null values(Pbundesland)]} {
+	    set values(PBundesland) ""
+	}
+	
+	# Company information
 	if {![exists_and_not_null values(Telefon1)]} {
 	    set values(Telefon1) ""
 	}
@@ -433,6 +469,25 @@ ad_proc -public contacts::import::csv {
 			    set publish_date = to_timestamp(:date_string, 'YYYY-MM-DD HH24:MI')
 			    where revision_id = :person_revision_id
 			}
+		    }
+		}
+
+		# Set date attributes
+		foreach pair $person_date_list {
+		    set attribute [lindex $pair 0]
+		    set attribute_name [lindex $pair 1]
+		    if {[exists_and_not_null values($attribute)]} {
+			set value $values($attribute)
+			regexp {^([0-9]+)\.([0-9]+)\.([0-9]+)$} $value match day month year
+			set value_id [ams::util::time_save -time "$month-$day-$year 00:00"]
+			set attribute_id [attribute::id \
+					      -object_type "person" \
+					      -attribute_name $attribute_name
+					 ]
+			ams::attribute::value_save \
+			    -object_id $person_revision_id \
+			    -attribute_id $attribute_id \
+			    -value_id $value_id
 		    }
 		}
 		
