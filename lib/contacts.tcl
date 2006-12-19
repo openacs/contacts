@@ -695,11 +695,3 @@ set extended_columns $extended_columns_preserved
 template::element::set_value add_column_form extended_columns $extended_columns
 template::element::set_value remove_column_form extended_columns $extended_columns
 
-
-
-
-
-
-
-
-

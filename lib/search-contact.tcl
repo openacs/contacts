@@ -25,15 +25,10 @@ if { ![exists_and_not_null return_url] } {
     set return_url [ad_return_url]
 }
 
-set focus_message "if(this.value=='[_ contacts.search_contact]')this.value='';"
-set blur_message "if(this.value=='')this.value='[_ contacts.search_contact]';"
+# Include for an Ajax dropdown smart search widget that filters search results as you type.
+# Requires ajaxhelper
 
-ad_form -name search_contact -form {
-    {keyword:text(text)
-	{html {size 20 onfocus "$focus_message" onblur "$blur_message" class search_contact}}
-	{value "[_ contacts.search_contact]"}
-    }
-    {return_url:text(hidden) {value $return_url}}
-} -on_submit {
-    ad_returnredirect [export_vars -base "$contacts_url" -url {{query $keyword}}]
-} -has_submit {1}
+set js_update_user_select [ah::ajaxupdate \
+			       -container "results_box"  \
+			       -url "${contacts_url}/lookup" \
+			       -pars "Form.serialize('searchform')"]

@@ -78,6 +78,13 @@ db_foreach my_lists {} {
     lappend search_options [list "${my_lists_title}" ${my_lists_list_id} [_ contacts.Lists]]
 }
 
+# Include for an Ajax dropdown smart search widget that filters search results as you type.
+# Requires ajaxhelper
+
+set js_update_user_select [ah::ajaxupdate \
+			       -container "results_box"  \
+			       -url "lookup" \
+			       -pars "Form.serialize('search')"]
 
 if { [exists_and_not_null search_id] } {
     set search_in_list_p 0
@@ -98,7 +105,7 @@ set package_url [ad_conn package_url]
 
 set form_elements {
     {search_id:integer(select_with_optgroup),optional {label ""} {options $search_options} {html {onChange "javascript:acs_FormRefresh('search')"}}}
-    {query:text(text),optional {label ""} {html {size 20 maxlength 255}}}
+    {query:text(text),optional {label ""} {html {size 20 maxlength 255  onKeyUp "$js_update_user_select document.getElementById('results_box').style.visibility='visible';" autocomplete "off" value ""}}}
     {save:text(submit) {label {[_ contacts.Search]}} {value "go"}}
     {results_count:integer(inform),optional {label "&nbsp;&nbsp;<span style=\"font-size: smaller;\">[_ contacts.Results] $contacts_total_count </span>"}}
 }

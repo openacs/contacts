@@ -1,6 +1,14 @@
 <master src="/packages/contacts/lib/contacts-master" />
+<style type="text/css">
+#results_box {
+    overflow: auto;
+ width: 200px;
+ height: 300px; 
+}
+</style>
+<p>
+<formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 
-<p><formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 <if @aggregated_p@>
    <include src="../lib/contacts-aggregated" 
 	base_url="@package_url@" 
