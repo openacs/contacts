@@ -305,7 +305,7 @@ ad_form -extend -name party_ae \
 		}
 		
 		category::map_object -remove_old -object_id $person_party_id $cat_ids
-		callback contact::special_attributes::ad_form_save -party_id $person_party_id -form "party_ae" -object_type $object_type
+		callback contact::special_attributes::ad_form_save -party_id $person_party_id -form "party_ae"
 	    } else {
 		
 		# Initialize Party Entry for organization
@@ -321,7 +321,7 @@ ad_form -extend -name party_ae \
 		    }
 		}
 		
-		callback contact::special_attributes::ad_form_save -party_id $organization_party_id -form "party_ae" -object_type $object_type
+		callback contact::special_attributes::ad_form_save -party_id $organization_party_id -form "party_ae"
 		callback contact::organization_new -package_id $package_id -contact_id $organization_party_id -name $name
 	    }
 	

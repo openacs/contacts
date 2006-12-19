@@ -216,14 +216,9 @@ ad_proc -public -callback contact::special_attributes::ad_form_values {
 ad_proc -public -callback contact::special_attributes::ad_form_save {
     {-party_id:required}
     {-form:required}
-    {-object_type ""}
 } {
     This callback is executed first in the new_data or edit_data ad_from
     blocks when creating or saving a contacts information
-
-    @party_id Party ID for which the elements are saved
-    @form Name of the form
-    @object_type Object Type of the party
 } -
 
 ad_proc -public -callback contact::special_attributes::ad_form_values -impl contacts {
@@ -269,6 +264,7 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
     -form:required
 } {
 } {
+
     set object_type [contact::type -party_id $party_id]
     set element_list [list email url]
     if { [lsearch [list person user] $object_type] >= 0 } {
@@ -1140,7 +1136,7 @@ ad_proc -public -callback contact::contact_form_after_submit -impl spouse_sync {
 # This is an example of how you can extend the entry forms.
 #
 
-ad_proc -public -callback contact::contact_form -impl contacts {
+ad_proc -public -callback contact::contact_form -impl contacts_locale {
     {-package_id:required}
     {-form:required}
     {-object_type:required}
@@ -1180,7 +1176,7 @@ ad_proc -public -callback contact::contact_form -impl contacts {
     }
 }
 
-ad_proc -public -callback contact::special_attributes::ad_form_save -impl contacts {
+ad_proc -public -callback contact::special_attributes::ad_form_save -impl contacts_locale {
     {-form:required}
     {-party:required}
 } {
@@ -1211,3 +1207,95 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
         lang::user::set_locale -user_id $party_id $locale
     }
 }
+
+ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_group_mail {
+    -array:required
+    {-package_id ""}
+} {
+    Implementation of group support for incoming emails
+    
+    If the to address matches an address stored with a group then send out the email to all group members
+
+     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
+     @creation-date 2005-12-18
+
+     @param array        An array with all headers, files and bodies. To access the array you need to use upvar.
+     @return             nothing
+     @error
+} {
+    # get a reference to the email array
+    upvar $array email
+
+    # Now run the simplest mailing list of all
+    set to_party_id [party::get_by_email -email $email(to)]
+    
+    if {[db_string group_p "select 1 from groups where group_id = :to_party_id" -default 0]} {
+	# make the bodies an array
+	template::util::list_of_lists_to_array $email(bodies) email_body
+	
+	if {[exists_and_not_null email_body(text/html)]} {
+	    set body $email_body(text/html)
+	} else {
+	    set body $email_body(text/plain)
+	}
+	
+	acs_mail_lite::complex_send \
+	    -from_addr [lindex $email(from) 0] \
+	    -to_party_ids [group::get_members -group_id $to_party_id] \
+	    -subject $email(subject) \
+	    -body $body \
+	    -single_email \
+	    -send_immediately
+
+    }
+}    
+
+ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_through {
+    -array:required
+    {-package_id ""}
+} {
+    Implementation of mail through support for incoming emails
+    
+    You can send an e-amil through the system by sending it to user#target.com@yoursite.com
+    The email will be send from your system and if mail tracking is installed the e-mail will be tracked.
+
+    This allows you to go in direct communication with a customer using you standard e-mail program instead of having to go to the website.
+
+    @author Malte Sussdorff (malte.sussdorff@cognovis.de)
+    @creation-date 2005-12-18
+    
+    @param array        An array with all headers, files and bodies. To access the array you need to use upvar.
+    @return             nothing
+    @error
+} {
+    # get a reference to the email array
+    upvar $array email
+
+    # Take a look if the email contains an email with a "#"
+    set pot_email [lindex [split $email(to) "@"] 0]
+    if {[string last "#" $pot_email] > -1} {
+	# A match was found, now just forward the email
+	regsub -all {\#} $pot_email {@} to_addr
+	set from_addr [lindex $email(from) 0]
+	regsub -all {@} $from_addr {\#} reply_to
+	set reply_to_addr "${reply_to}@[acs_mail_lite::address_domain]"
+
+	# make the bodies an array
+	template::util::list_of_lists_to_array $email(bodies) email_body
+	
+	if {[exists_and_not_null email_body(text/html)]} {
+	    set body $email_body(text/html)
+	} else {
+	    set body $email_body(text/plain)
+	}
+	
+	acs_mail_lite::complex_send \
+	    -from_addr $from_addr \
+	    -reply_to $reply_to_addr \
+	    -to_addr $to_addr \
+	    -subject $email(subject) \
+	    -body $body \
+	    -single_email \
+	    -send_immediately
+    }
+}    

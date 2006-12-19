@@ -158,7 +158,6 @@ ad_form -extend -name party_ae \
 
     } -new_data {
     } -edit_data {
-
 	callback contact::special_attributes::ad_form_save -party_id $party_id -form "party_ae"
 
         set previous_revision_id [contact::live_revision -party_id $party_id]
