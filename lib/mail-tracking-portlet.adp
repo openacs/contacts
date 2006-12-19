@@ -9,7 +9,7 @@
         <td>
 	    <include
       		src="/packages/mail-tracking/lib/messages"
-      		recipient_id="@party_id@"
+      		party="@party_id@"
 		page="@page@"
 		page_size="@page_size@"
 		show_filter_p="f"
