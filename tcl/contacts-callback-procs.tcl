@@ -1288,14 +1288,48 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 	} else {
 	    set body $email_body(text/plain)
 	}
-	
+
+	# Deal with the files
+	set files ""
+	set import_p 0
+	foreach file $email(files) {
+	    set file_title [lindex $file 2]
+	    set mime_type [lindex $file 0]
+	    set file_path [ns_tmpnam]
+	    set f [open $file_path w+]
+            fconfigure $f -translation binary
+            puts -nonewline $f [lindex $file 3]
+            close $f
+	    
+	    # Shall we import the file into the content repository ?
+	    if {$import_p} {
+	    } else {
+		lappend files [list $file_title $mime_type $file_path]
+		lappend filenames $file_path
+	    }
+	}
+
+	# Figure out the object_id from the subject
+	set email(subject) [lindex $email(subject) 0]
+	regexp {\#(.*?):} $email(subject) match object_id
+	set object_p [db_string object_p "select 1 from acs_objects where object_id = :object_id" -default 0]
+	if {$object_p} {
+	    regexp {:(.*)} $email(subject) match subject
+	    set subject [string trim $subject]
+	} else {
+	    set object_id ""
+	    set subject $email(subject)
+	} 
+
 	acs_mail_lite::complex_send \
 	    -from_addr $from_addr \
 	    -reply_to $reply_to_addr \
 	    -to_addr $to_addr \
-	    -subject $email(subject) \
+	    -subject $subject \
 	    -body $body \
 	    -single_email \
+	    -files $files \
+	    -object_id $object_id \
 	    -send_immediately
     }
 }    
