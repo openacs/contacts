@@ -1291,7 +1291,8 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 
 	# Deal with the files
 	set files ""
-	set import_p 0
+	set file_ids ""
+	set import_p 1
 	foreach file $email(files) {
 	    set file_title [lindex $file 2]
 	    set mime_type [lindex $file 0]
@@ -1302,7 +1303,18 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
             close $f
 	    
 	    # Shall we import the file into the content repository ?
-	    if {$import_p} {
+	    set sender_id [party::get_by_email -email $from_addr]
+	    if {$import_p && $sender_id ne ""} {
+		set revision_id [cr_import_content \
+				     -title $file_title \
+				     -description "File send by e-mail from $email(from) on subject $email(subject)" \
+				     $sender_id \
+				     $file_path \
+				     [file size $file_path] \
+				     $mime_type \
+				     "[clock seconds]-[expr round([ns_rand]*100000)]"]
+
+		lappend file_ids $revision_id
 	    } else {
 		lappend files [list $file_title $mime_type $file_path]
 		lappend filenames $file_path
@@ -1312,7 +1324,12 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 	# Figure out the object_id from the subject
 	set email(subject) [lindex $email(subject) 0]
 	regexp {\#(.*?):} $email(subject) match object_id
-	set object_p [db_string object_p "select 1 from acs_objects where object_id = :object_id" -default 0]
+	if {[exists_and_not_null object_id]} {
+	    set object_p [db_string object_p "select 1 from acs_objects where object_id = :object_id" -default 0]
+	} else {
+	    set object_p 0
+	}
+
 	if {$object_p} {
 	    regexp {:(.*)} $email(subject) match subject
 	    set subject [string trim $subject]
@@ -1329,6 +1346,7 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 	    -body $body \
 	    -single_email \
 	    -files $files \
+	    -file_ids $file_ids \
 	    -object_id $object_id \
 	    -send_immediately
     }
