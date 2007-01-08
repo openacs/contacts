@@ -143,7 +143,7 @@ template::multirow append bulk_acts "[_ contacts.Add_to_List]" "${base_url}list-
 template::multirow append bulk_acts "[_ contacts.Remove_from_List]" "${base_url}list-parties-remove" "[_ contacts.Remove_from_List]"
 template::multirow append bulk_acts "[_ contacts.Add_Relationship]" "${base_url}relationship-bulk-add" "[_ contacts.lt_Add_relationship_to_sel]"
 template::multirow append bulk_acts "[_ contacts.Mail_Merge]" "${base_url}message" "[_ contacts.lt_E-mail_or_Mail_the_se]"
-if { [permission::permission_p -object_id $package_id -privilege "admin"] } {
+if { [permission::permission_p -object_id $package_id -privilege "admin"] || [acs_user::site_wide_admin_p]  } {
     set admin_p 1
     template::multirow append bulk_acts "[_ contacts.Bulk_Update]" "${base_url}bulk-update" "[_ contacts.lt_Bulk_update_the_seclected_C]"
 }

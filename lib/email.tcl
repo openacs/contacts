@@ -93,6 +93,9 @@ if { $recipients_num <= 1 } {
     }
 }
 
+# Set single_email_p in the form
+set single_email_p 0
+
 # Get the list of files from the file storage folder
 set file_folder_id [parameter::get_from_package_key -package_key "acs-mail-lite" -parameter "FolderID"]
 if {![string eq "" $file_folder_id]} {
