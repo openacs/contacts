@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b22" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b26" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -63,6 +63,7 @@
   <msg key="All">All</msg>
   <msg key="All__Edit">All / Edit</msg>
   <msg key="All_Contacts">All Contacts</msg>
+  <msg key="AMSParameters">AMS Parameters</msg>
   <msg key="and">and</msg>
   <msg key="Answer">Answer</msg>
   <msg key="Any">Any</msg>
@@ -682,6 +683,7 @@
   <msg key="Showing">Showing</msg>
   <msg key="Signature">Signature</msg>
   <msg key="signatures">signatures</msg>
+  <msg key="SMSText">SMS Text</msg>
   <msg key="Sort_By">Sort By</msg>
   <msg key="Sort_by">Sort by</msg>
   <msg key="stateprovince_is_-">state/province is -&gt;</msg>

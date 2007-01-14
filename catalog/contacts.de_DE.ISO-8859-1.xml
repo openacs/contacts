@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b22" locale="de_DE" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b26" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- eine Gruppe markieren --</msg>
   <msg key="--add_column--">-- Reihe hinzufügen --</msg>
@@ -22,6 +22,7 @@
   <msg key="Add_complaint_to">Eine Beschwerde hinzufügen für</msg>
   <msg key="Add_Condition">Bedingung hinzufügen</msg>
   <msg key="Add_Email_Message">e-Mail Nachricht hinzufügen</msg>
+  <msg key="Add_Employee">Neuer Mitarbeiter</msg>
   <msg key="Add_Group">Gruppe hinzufügen</msg>
   <msg key="Add_Letter_Message">Brief hinzufügen</msg>
   <msg key="Add_Message">Nachricht hinzufügen</msg>
@@ -57,6 +58,7 @@
   <msg key="All">Alle</msg>
   <msg key="All__Edit">Daten ändern</msg>
   <msg key="All_Contacts">Alle Kontakte</msg>
+  <msg key="AMSParameters">AMS Parameter</msg>
   <msg key="and">und</msg>
   <msg key="Answer">Antwort</msg>
   <msg key="Any">einer</msg>
@@ -322,7 +324,7 @@ Deutsch(DE) 	</msg>
   <msg key="lt_has_not_logged_in_wit">hat sich nicht eingeloggt innerhalb -&gt;</msg>
   <msg key="lt_If_in_a_normal_search">In einer normalen Suche suchen wir nach &quot;D Jane&quot;. Das erste Suchwort (&quot;D&quot;) findet Kontakt 123 (via &quot;Doe&quot;), 234 (via &quot;Doe&quot;) und 345 (via &quot;Alfred&quot;). Das zweite Suchwort (&quot;Jane&quot;) finder nur den Kontakt 123. Daher entspricht nur ein Kontakt beiden Suchkriterien und nur &quot;Jane Doe&quot; (Kontakt 123) wird vom System angezeigt.</msg>
   <msg key="lt_If_multiple_words_are">Wenn mehrere Wörter verwendet werden, dann müssen alle Wörter den o.g. Kriterien entsprechen. Wenn z.B. unsere Kontaktdatenbank die folgenden Einträge enthält:</msg>
-  <msg key="lt_Instance_Permissions_">Instanz Berechtigungen - !NOCH UNFERTIG!</msg>
+  <msg key="lt_Instance_Permissions_">Allgemeine Berechtigungen</msg>
   <msg key="lt_Insufficient_Permissi">Ungenügende Berechtigungen</msg>
   <msg key="lt_interacted_in_the_last_-">letzte Interaktion innerhalb der letzten -&gt;</msg>
   <msg key="lt_Invalid_input_you_spe">Ungültige Eingabe, Sie gaben für die Eingabemaske '%form%'an,  sollten aber nur eingeben: top, bottom, none</msg>
@@ -582,6 +584,7 @@ Deutsch(DE) 	</msg>
   <msg key="Showing">Anzeigen</msg>
   <msg key="Signature">Signatur</msg>
   <msg key="signatures">Signaturen</msg>
+  <msg key="SMSText">SMS Text</msg>
   <msg key="Sort_By">Sortieren nach</msg>
   <msg key="Sort_by">Sortieren nach:</msg>
   <msg key="stateprovince_is_-">Bundesland ist -&gt;</msg>
