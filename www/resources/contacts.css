@@ -215,7 +215,6 @@ span.overdue {
   border-left: 1px solid #333;
   margin: 0px 0px 10px 0px;
   padding: 0px;
-  text-transform: lowercase;
   background: #CCC;
 }
 
