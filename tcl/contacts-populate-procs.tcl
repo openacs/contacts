@@ -284,6 +284,38 @@ ad_proc -public contacts::populate::crm {
 	-required_p "f" \
 	-section_heading ""
 
+    set attribute_id [attribute::new \
+			  -object_type "person" \
+			  -attribute_name "home_address" \
+			  -datatype "string" \
+			  -pretty_name "Home Adress" \
+			  -pretty_plural "Home Addresses" \
+			  -table_name "" \
+			  -column_name "" \
+			  -default_value "" \
+			  -min_n_values "1" \
+			  -max_n_values "1" \
+			  -sort_order "1" \
+			  -storage "generic" \
+			  -static_p "f" \
+			  -if_does_not_exist]
+
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Privatanschrift"
+    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Privatanschrift"
+
+    ams::attribute::new \
+	-attribute_id $attribute_id \
+	-widget "postal_address" \
+	-dynamic_p "t"
+
+    ams::list::attribute::map \
+	-list_id $list_id \
+	-attribute_id $attribute_id \
+	-sort_order "90" \
+	-required_p "f" \
+	-section_heading ""
+
+
     # ORGA - REG
 
     set list_id [ams::list::get_list_id \
@@ -986,37 +1018,6 @@ ams::list::attribute::map \
 	-list_id $list_id \
 	-attribute_id $attribute_id \
 	-sort_order "80" \
-	-required_p "f" \
-	-section_heading ""
-
-    set attribute_id [attribute::new \
-			  -object_type "person" \
-			  -attribute_name "visitaddress" \
-			  -datatype "string" \
-			  -pretty_name "Visit Adress" \
-			  -pretty_plural "Visit Addresses" \
-			  -table_name "" \
-			  -column_name "" \
-			  -default_value "" \
-			  -min_n_values "1" \
-			  -max_n_values "1" \
-			  -sort_order "1" \
-			  -storage "generic" \
-			  -static_p "f" \
-			  -if_does_not_exist]
-
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_name" "Besuchsanschrift"
-    lang::message::register -update_sync de_DE acs-translations "ams_attribute_${attribute_id}_pretty_plural" "Besuchsanschrift"
-
-    ams::attribute::new \
-	-attribute_id $attribute_id \
-	-widget "postal_address" \
-	-dynamic_p "t"
-
-    ams::list::attribute::map \
-	-list_id $list_id \
-	-attribute_id $attribute_id \
-	-sort_order "90" \
 	-required_p "f" \
 	-section_heading ""
 
