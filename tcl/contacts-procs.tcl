@@ -145,10 +145,15 @@ ad_proc -private contacts::sweeper {
 	    }
 	}
 	
-	if {$contact_revision_id eq ""} {
+	if {![exists_and_not_null contact_revision_id]} {
 	    # We did not found a group, so just use the first contacts instance.
 	    ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
-	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id]
+	    if {[ad_conn connected_p]} {
+		set user_id [ad_conn user_id]
+	    } else {
+		set user_id $person_id
+	    }
+	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -user_id $user_id]
 	}
 
 	# Add the default ams attributes
