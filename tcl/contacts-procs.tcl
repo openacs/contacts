@@ -148,18 +148,20 @@ ad_proc -private contacts::sweeper {
 	if {![exists_and_not_null contact_revision_id]} {
 	    # We did not found a group, so just use the first contacts instance.
 	    ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
-	    if {[ad_conn connected_p]} {
+	    if {[ad_conn isconnected]} {
 		set user_id [ad_conn user_id]
 	    } else {
 		set user_id $person_id
 	    }
-	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -user_id $user_id]
+	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id]
 	}
 
 	# Add the default ams attributes
-	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "first_names" -value $first_names
-	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "last_name" -value $last_name
-	ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "email" -value $email
+	foreach attribute {first_names last_name email} {
+	    if {[exists_and_not_null $attribute]} {
+		ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+	    }
+	}
 
 	# And insert into the default group for this package.
 	group::add_member -user_id $person_id -group_id $default_group_id
@@ -169,7 +171,7 @@ ad_proc -private contacts::sweeper {
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
 		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $organization_id"
-		contact::revision::new -party_id $organization_id -package_id $contact_package($group_id)
+		contact::revision::new -party_id $organization_id -package_id $contact_package($group_id) -creation_user 0
 		break
 	    }
 	}
@@ -717,6 +719,7 @@ ad_proc -public contact::revision::new {
     {-party_id:required}
     {-party_revision_id ""}
     {-package_id ""}
+    {-creation_user ""}
 } {
     create a contact revision
 } {
@@ -730,7 +733,7 @@ ad_proc -public contact::revision::new {
 	db_dml insert_item {}
     }
     
-    set party_revision_id [content::revision::new -item_id $party_id -package_id $package_id -is_live "t"]
+    set party_revision_id [content::revision::new -item_id $party_id -package_id $package_id -is_live "t" -creation_user $creation_user]
     if {![db_string item_exists_p "select 1 from contact_party_revisions where party_revision_id = :party_revision_id" -default 0]} {
 	db_dml insert_contact_revision "insert into contact_party_revisions ( party_revision_id ) values ( :party_revision_id )"
     }

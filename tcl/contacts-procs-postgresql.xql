@@ -30,8 +30,9 @@
   <querytext>
     select person_id
       from persons
-     where person_id not in ( select item_id from cr_items )
-  </querytext>
+     where person_id not in ( select item_id from cr_items ) 
+     and person_id > 0
+ </querytext>
 </fullquery>
 
 <fullquery name="contacts::sweeper.get_organizations_without_items">
