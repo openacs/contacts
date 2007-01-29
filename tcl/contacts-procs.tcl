@@ -150,10 +150,12 @@ ad_proc -private contacts::sweeper {
 	    ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
 	    if {[ad_conn isconnected]} {
 		set user_id [ad_conn user_id]
+		set peeraddr [ad_conn peeraddr]
 	    } else {
 		set user_id $person_id
+		set peeraddr 127.0.0.1
 	    }
-	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id]
+	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
 	}
 
 	# Add the default ams attributes
@@ -720,6 +722,7 @@ ad_proc -public contact::revision::new {
     {-party_revision_id ""}
     {-package_id ""}
     {-creation_user ""}
+    {-creation_ip ""}
 } {
     create a contact revision
 } {
@@ -733,7 +736,7 @@ ad_proc -public contact::revision::new {
 	db_dml insert_item {}
     }
     
-    set party_revision_id [content::revision::new -item_id $party_id -package_id $package_id -is_live "t" -creation_user $creation_user]
+    set party_revision_id [content::revision::new -item_id $party_id -package_id $package_id -is_live "t" -creation_user $creation_user -creation_ip $creation_ip ]
     if {![db_string item_exists_p "select 1 from contact_party_revisions where party_revision_id = :party_revision_id" -default 0]} {
 	db_dml insert_contact_revision "insert into contact_party_revisions ( party_revision_id ) values ( :party_revision_id )"
     }
