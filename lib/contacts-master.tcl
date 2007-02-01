@@ -27,7 +27,7 @@ if { ![parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] }
 	-id "basicmenu1" \
 	-menulist $addlist \
 	-arrayname "yuimenu1" \
-	-options "context:new Array(\"menu1\",\"tl\",\"bl\")" \
+	-options "context:new Array(\"menu1\",\"tl\",\"bl\"),hidedelay:1" \
 	-css "/resources/contacts/yuimenu/menu.css"
 
         
@@ -47,7 +47,7 @@ ah::yui::menu_from_list -varname "oMenu2" \
     -id "basicmenu2" \
     -menulist $addlist \
     -arrayname "yuimenu2" \
-    -options "context:new Array(\"menu2\",\"tl\",\"bl\")" \
+    -options "context:new Array(\"menu2\",\"tl\",\"bl\"),hidedelay:1" \
     -css "/resources/contacts/yuimenu/menu.css"
 
 set action_script1 $yuimenu2(show)
