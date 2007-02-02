@@ -53,12 +53,12 @@ if { $recipients_num <= 1 } {
 	}
 	{cc:text(text),optional
 	    {label "[_ contacts.CC]:"} 
-	    {html {size 56}}
+	    {html {size 60}}
 	    {help_text "[_ contacts.cc_help]"}
 	}
 	{bcc:text(text),optional
 	    {label "[_ acs-mail-lite.BCC]:"} 
-	    {html {size 56}}
+	    {html {size 60}}
 	    {help_text "[_ contacts.cc_help]"}
 	}
     }
@@ -82,12 +82,12 @@ if { $recipients_num <= 1 } {
 	}
 	{cc:text(text),optional
 	    {label "[_ contacts.CC]:"} 
-	    {html {size 56}}
+	    {html {size 60}}
 	    {help_text "[_ contacts.cc_help]"}
 	}
 	{bcc:text(text),optional
 	    {label "[_ acs-mail-lite.BCC]:"} 
-	    {html {size 56}}
+	    {html {size 60}}
 	    {help_text "[_ contacts.cc_help]"}
 	}
     }
@@ -171,17 +171,23 @@ set content_list [list $content $mime_type]
 append form_elements {
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
-	{html {size 55}}
+	{html {size 60}}
 	{section "[_ contacts.Message]"}
     }
     {content_body:richtext(richtext),optional
 	{label "[_ contacts.Message]"}
-	{html {cols 55 rows 18}}
+	{html {cols 80 rows 18}}
 	{help_text "[_ contacts.lt_remember_that_you_can]"}
 	{value $content_list}
     }
     {upload_file:file(file),optional
 	{label "[_ contacts.Upload_file]"}
+    }
+    {mail_through_p:integer(radio)
+	{label "[_ contacts.Mail_through_p]"}
+	{options {{"Yes" "1"} {"No" "0"}}}
+	{value "1"}
+	{help_text "[_ contacts.lt_Mail_through_p_help]"}
     }
 }
 
@@ -310,11 +316,22 @@ ad_form -action $action \
 	    
 	    set subject [contact::message::interpolate -text $subject -values $values]
 	    set content_body [contact::message::interpolate -text $content_body -values $values]
+	    
+	    # If we are doing mail through for tracking purposes
+	    # Set the reply_to_addr accordingly
+	    if {$mail_through_p} {
+		regsub -all {@} $from_addr {\#} reply_to
+		set reply_to_addr "${reply_to}@[acs_mail_lite::address_domain]"
+	    } else {
+		set reply_to_addr $from_addr
+	    }
+
 	    acs_mail_lite::complex_send \
 		-to_party_ids $party_id \
 		-cc_addr $cc_list \
 		-bcc_addr $bcc_list \
 		-from_addr "$from_addr" \
+		-reply_to "$reply_to_addr" \
 		-subject "$subject" \
 		-body "$content_body" \
 		-package_id $package_id \

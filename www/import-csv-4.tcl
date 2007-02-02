@@ -18,6 +18,8 @@ ad_page_contract {
     page_title:onevalue
 }
 
+ad_progress_bar_begin -title [_ contacts.Starting_import] -message_1 "[_ contacts.Import_Running]"
+
 # The usual defaults
 set package_id [ad_conn package_id]
 set user_id [ad_conn user_id]
@@ -298,4 +300,6 @@ while {1} {
     }
 
 }
-ad_return_error test $html
+
+ad_progress_bar_end -url "[ad_conn package_url]"
+

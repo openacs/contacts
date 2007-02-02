@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b26" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b27" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -156,6 +156,7 @@
   <msg key="Current">Current</msg>
   <msg key="Customer">Customer:</msg>
   <msg key="Customer_has_no_employees">Customer has no employees.</msg>
+  <msg key="cvs_groups_help">Choose the groups where you want to import the contacts to. This also determines which attributes you can assign.</msg>
   <msg key="Date">Date</msg>
   <msg key="days">days</msg>
   <msg key="Default">Default</msg>
@@ -236,6 +237,7 @@
   <msg key="Header">Header</msg>
   <msg key="Help_Text">Help Text</msg>
   <msg key="History">History</msg>
+  <msg key="import_csv_2_context">CSV Import Matching</msg>
   <msg key="In_Searches">Searches</msg>
   <msg key="in_the_search">in the search</msg>
   <msg key="Include_address_for_windowed_">include name and mailing address for use with windowed envelopes</msg>
@@ -345,6 +347,7 @@
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
   <msg key="lt_created_in_the_last_-">created in the last -&gt;</msg>
+  <msg key="lt_csv_import_instructions">Please choose the file you want to upload. The file should be a CSV file, seperated by &quot;;&quot;. Also it is mandatory that the first line is the header line. If your CSV does not contain a header line, create one, otherwise matching will be really hard.</msg>
   <msg key="lt_Currently_the_group_">Currently, the group is able to handle the following types of relationships:</msg>
   <msg key="lt_dear_ladies_and">Dear ladies and gentlemen</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>
@@ -377,6 +380,7 @@
   <msg key="lt_Last_Name_is_required">Last Name is required</msg>
   <msg key="lt_Last_updated_update_d">Last updated: %update_date%</msg>
   <msg key="lt_li_The_role_you_enter">&lt;li&gt; The role you entered \&quot;%pretty_name%\&quot; or the plural \&quot;%pretty_plural%\&quot; already exists.</msg>
+  <msg key="lt_Mail_through_p_help">Do you want to use mail through sending, changing the reply-to address so the reply is tracked in the system as well?</msg>
   <msg key="lt_Make_sure_you_do_not_">Make sure you do not add the same attribute to multiple groups</msg>
   <msg key="lt_neither_person_nor_or">neither person nor org type is valid, what happened admin?</msg>
   <msg key="lt_No_marrying_yourself">You cannot be married to yourself. Please correct this problem.</msg>
@@ -510,6 +514,7 @@
   <msg key="Mail">Mail</msg>
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
+  <msg key="Mail_through_p">Mail Through</msg>
   <msg key="Mail_to_contact">Mail to contact</msg>
   <msg key="mailing_allowed">mailing allowed</msg>
   <msg key="mailing_not_allowed">mailing not allowed</msg>

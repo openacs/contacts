@@ -1250,6 +1250,7 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_group_mai
     }
 }    
 
+
 ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_through {
     -array:required
     {-package_id ""}
@@ -1260,6 +1261,8 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
     The email will be send from your system and if mail tracking is installed the e-mail will be tracked.
 
     This allows you to go in direct communication with a customer using you standard e-mail program instead of having to go to the website.
+
+    It supports also a subject line like "$object_id: <real_subject>" so you can actually store the e-mail with an object.
 
     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
     @creation-date 2005-12-18
@@ -1331,6 +1334,7 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 	}
 
 	if {$object_p} {
+	    # Trim the subject by the object_id
 	    regexp {:(.*)} $email(subject) match subject
 	    set subject [string trim $subject]
 	} else {
