@@ -279,52 +279,45 @@ ad_form -action $action \
 	    }
 	}
 	
-	set locale [lang::system::site_wide_locale]
-
-	ad_returnredirect $return_url
 	
 	# Send the mail to all parties.
+	ns_log Notice "Recipients: $to"
 	foreach party_id $to {
-	    
 	    # Differentiate between person and organization
 	    if {[person::person_p -party_id $party_id]} {
-		contact::employee::get -employee_id $party_id -array employee
-		set first_names $employee(first_names)
-		set last_name $employee(last_name)
-		set name [string trim "$employee(person_title) $first_names $last_name"]
-		set salutation $employee(salutation)
-		set directphone $employee(directphoneno)
-		set mailing_address $employee(mailing_address)
-		set locale $employee(locale)
+		set salutation [contact::salutation -party_id $party_id]
+		db_1row names "select first_names, last_name from persons where person_id = :party_id"
+		set name "$first_names $last_name"
 	    } else {
 		set name [contact::name -party_id $party_id]
 		set salutation "Dear ladies and gentlemen"
-		set locale [lang::user::site_wide_locale -user_id $party_id]
 		# the following is a hot fix (nfl 2006/10/20)
 		set first_names ""
 		set last_name ""
-		set mailing_address ""
-		set directphone ""
 	    }
+
 	    
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    
 	    set values [list]
-	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
+	    foreach element [list first_names last_name salutation] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    
 	    set subject [contact::message::interpolate -text $subject -values $values]
+
 	    set content_body [contact::message::interpolate -text $content_body -values $values]
 	    
 	    # If we are doing mail through for tracking purposes
 	    # Set the reply_to_addr accordingly
 	    if {$mail_through_p} {
-		regsub -all {@} $from_addr {\#} reply_to
+		regsub -all {@} $from_addr {#} reply_to
 		set reply_to_addr "${reply_to}@[acs_mail_lite::address_domain]"
 	    } else {
 		set reply_to_addr $from_addr
 	    }
+
+	    ns_log Notice "Recipients: $party_id"
 
 	    acs_mail_lite::complex_send \
 		-to_party_ids $party_id \
@@ -378,6 +371,7 @@ ad_form -action $action \
 		-single_email
 	}
 		
+	ad_returnredirect $return_url
 	
 	# Prepare the user message
 	foreach cc_addr [concat $cc_list $bcc_list] {
