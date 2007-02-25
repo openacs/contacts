@@ -6,6 +6,7 @@ ad_page_contract {
     {party_id ""}
     {orderby ""}
     {page "1"}
+    {pkg_id ""}
 }
 
 if {![exists_and_not_null party_id]} {

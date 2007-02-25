@@ -5,4 +5,5 @@
 	party="@party_id@" 
 	page="@page@" 
 	page_size="25"
+	pkg_id="@pkg_id@"
         />
