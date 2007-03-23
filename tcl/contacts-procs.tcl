@@ -166,7 +166,7 @@ ad_proc -private contacts::sweeper {
 	}
 
 	# And insert into the default group for this package.
-	group::add_member -user_id $person_id -group_id $default_group_id
+	group::add_member -user_id $person_id -group_id $default_group_id -no_perm_check
     }
 
     db_foreach get_organizations_without_items {} {
