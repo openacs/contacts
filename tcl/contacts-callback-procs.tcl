@@ -1285,12 +1285,16 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 
 	# make the bodies an array
 	template::util::list_of_lists_to_array $email(bodies) email_body
-	
+	ns_log Notice "Mail through e-mail:: $email(bodies)"
 	if {[exists_and_not_null email_body(text/html)]} {
 	    set body $email_body(text/html)
 	    set mime_type "text/html"
 	} else {
-	    set body $email_body(text/plain)
+	    if {[exists_and_not_null email_body(text/plain)]} {
+		set body $email_body(text/plain)
+	    } else {
+		set body ""
+	    }
 	    set mime_type "text/plain"
 	}
 
