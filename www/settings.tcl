@@ -35,7 +35,7 @@ template::list::create \
 	}
 	signature {
 	    label ""
-	    display_col signature;noquote
+	    display_template {@signatures.signature;noquote@}
 	}
     } -filters {
     } -orderby {
@@ -52,7 +52,7 @@ db_multirow -extend { signature_url } signatures select_signatures {
      order by default_p, upper(title), upper(signature)
 } {
     
-    set signature [ad_convert_to_html -- "$signature"]
+    set signature [template::util::richtext::get_property contents $signature]
     set signature_url [export_vars -base signature -url {signature_id }]
 }
 

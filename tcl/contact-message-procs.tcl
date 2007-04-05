@@ -16,7 +16,7 @@ ad_proc -public contact::signature::get {
 } {
     Get a signature
 } {
-    return [db_string get_signature "select signature from contact_signatures where signature_id = :signature_id" -default {}]
+    return [template::util::richtext::get_property content [db_string get_signature "select signature from contact_signatures where signature_id = :signature_id" -default {}]]
 }
 
 ad_proc -private contact::message::root_folder {

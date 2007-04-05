@@ -31,7 +31,7 @@ set party_id [ad_conn user_id]
 set form_elements {
     signature_id:key
     {title:text(text) {label "[_ contacts.Save_As]"} {html {size 35 maxlength 35}}}
-    {signature:text(textarea) {label "[_ contacts.Signature]"} {html {cols 45 rows 5}}}
+    {signature:richtext(richtext) {label "[_ contacts.Signature]"} {html {cols 45 rows 5}}}
     {default_p:boolean(checkbox),optional {label ""} {options {{{[_ contacts.lt_this_is_my_default_si]} 1}}}}
 }
 
