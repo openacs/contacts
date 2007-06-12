@@ -28,9 +28,10 @@
 
 <fullquery name="contacts::sweeper.get_persons_without_items">
   <querytext>
-     select person_id from persons 
+     select person_id, first_names,last_name,email from persons, parties
      where person_id not in (select item_id from cr_items where content_type = 'contact_party_revision')
      and person_id > 0
+     and person_id = party_id
  </querytext>
 </fullquery>
 
@@ -159,7 +160,7 @@
            CASE WHEN default_p THEN '1' ELSE '0' END as default_p,
            CASE WHEN user_change_p THEN '1' ELSE '0' END as user_change_p
       from (select g.* from groups g left join application_groups ag on (ag.group_id = g.group_id) 
-		where package_id is null and group_name not like 'forumgroup_%') groups2 
+		where (package_id is null or g.group_id = 1231) and group_name not like 'forumgroup_%') groups2 
 		left join ( select * from contact_groups where package_id = :package_id ) as contact_groups on ( groups2.group_id = contact_groups.group_id ), 
 		acs_objects
      where groups2.group_id not in ('-1','[contacts::default_group -package_id $package_id]')

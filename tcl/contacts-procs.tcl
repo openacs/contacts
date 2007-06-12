@@ -139,7 +139,6 @@ ad_proc -private contacts::sweeper {
 	
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
-		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
 		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
 		break
 	    }
@@ -147,7 +146,6 @@ ad_proc -private contacts::sweeper {
 	
 	if {![exists_and_not_null contact_revision_id]} {
 	    # We did not found a group, so just use the first contacts instance.
-	    ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id"
 	    if {[ad_conn isconnected]} {
 		set user_id [ad_conn user_id]
 		set peeraddr [ad_conn peeraddr]
@@ -167,12 +165,12 @@ ad_proc -private contacts::sweeper {
 
 	# And insert into the default group for this package.
 	group::add_member -user_id $person_id -group_id $default_group_id -no_perm_check
+	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id in $default_group_id"
     }
 
     db_foreach get_organizations_without_items {} {
 	foreach group_id $default_groups {
 	    if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
-		ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $organization_id"
 		contact::revision::new -party_id $organization_id -package_id $contact_package($group_id) -creation_user 0
 		break
 	    }
