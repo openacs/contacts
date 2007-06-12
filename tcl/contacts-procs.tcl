@@ -939,7 +939,7 @@ ad_proc -public contact::groups_list_not_cached {
     # set filter_clause ""
     set dotlrn_installed_p [apm_package_installed_p dotlrn]
     if { $dotlrn_installed_p } {
-        set filter_clause "and groups.group_id not in (select community_id from dotlrn_communities_all)"
+        set filter_clause "and groups2.group_id not in (select community_id from dotlrn_communities_all)"
     } else {
         set filter_clause ""
     }
@@ -965,6 +965,7 @@ ad_proc -public contact::groups {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
+
     set user_id [ad_conn user_id]
     set group_list [list]
     foreach one_group [contact::groups_list -package_id $package_id] {
@@ -985,7 +986,6 @@ ad_proc -public contact::groups {
 		continue
 	    }
 	}
-
         if { $mapped_p || $all_p} {
             lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p $user_change_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
