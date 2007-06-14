@@ -33,15 +33,14 @@ lappend form_elements {object_type:text(hidden)}
 
 set default_group_id [contacts::default_group]
 if {![permission::permission_p -object_id $default_group_id -party_id $user_id -privilege "write"]} {
-    if {$user_change_p} {
-	# Check if the user is editing himself
-	# If not, redirect to the return_url
-	if {![string eq $party_id $user_id]} {
-	    ad_return_redirect $return_url
-	}
+    # Check if the user is editing himself
+    # If not, redirect to the return_url
+    if {![string eq $party_id $user_id]} {
+	ad_returnredirect $return_url
     } else {
-	ad_return_redirect $return_url
+	ad_returnredirect $return_url
     }
+    ad_script_abort
 }
 
 
