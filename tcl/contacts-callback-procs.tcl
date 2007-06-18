@@ -103,6 +103,15 @@ ad_proc -public -callback contact::organization_new {
 } {
 }
 
+ad_proc -public -callback contact::employee_new {
+    {-package_id:required}
+    {-person_id:required}
+    {-organization_id:required}
+} {
+    This callback will be executed once an employee has been created. This means we have a person in the system (employee)
+    as well as an organization (where the person is an employee of).
+} -
+
 ad_proc -public -callback contact::person_add {
     {-package_id:required}
     {-person_id:required}
@@ -266,9 +275,9 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
 } {
 
     set object_type [contact::type -party_id $party_id]
-    set element_list [list email url]
+    set element_list [list]
     if { [lsearch [list person user] $object_type] >= 0 } {
-	lappend element_list first_names last_name
+	lappend element_list first_names last_name email
     } elseif {$object_type == "organization" } {
 	lappend element_list name legal_name reg_number notes
     }
@@ -288,10 +297,6 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
 			    acs_user::update -user_id $party_id -username $username
 			}
 		    }
-		    party::update -party_id $party_id -email $value -url [db_string get_url {select url from parties where party_id = :party_id} -default {}]
-		}
-		url {
-		    party::update -party_id $party_id -email [db_string get_email {select email from parties where party_id = :party_id} -default {}] -url $value
 		}
 		default {
 		    set $element $value

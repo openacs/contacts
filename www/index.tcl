@@ -17,6 +17,7 @@ ad_page_contract {
     {aggregate_extend_id:multiple ""}
     {extend_values:optional ""}
     {extended_columns:optional ""}
+    {return_url ""}
 }
 
 if { [exists_and_not_null add_person] } {
@@ -119,7 +120,7 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
     }
 }
 
-ad_form -name "search" -method "GET" -export {orderby page_size format extended_columns} -form $form_elements \
+ad_form -name "search" -method "GET" -export {orderby page_size format extended_columns return_url} -form $form_elements \
     -on_request {
     } -edit_request {
     } -on_refresh {

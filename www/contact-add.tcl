@@ -11,6 +11,7 @@ ad_page_contract {
     {rel_type ""}
     {role_two ""}
     {object_id_two ""}
+    {return_url ""}
 } -validate {
     valid_type -requires {object_type} {
 	if { [lsearch [list organization person employee] $object_type] < 0 } {
@@ -168,13 +169,15 @@ if { $object_type eq "person" } {
 set context [list $title]
 
 if {$object_type eq "employee"} {
+
+    # An employee adding is adding both organization and person in one go
     callback contact::contact_form -package_id $package_id -form party_ae -object_type "organization" -group_ids $group_ids -rel_type $rel_type
     callback contact::contact_form -package_id $package_id -form party_ae -object_type "person" -group_ids $group_ids -rel_type $rel_type
 } else {
     callback contact::contact_form -package_id $package_id -form party_ae -object_type $object_type -group_ids $group_ids -rel_type $rel_type
 }
 
-ad_form -extend -name party_ae \
+ad_form -extend -name party_ae -export {return_url}\
     -on_request {
 	
 	if { $object_type eq "person" }	{
@@ -321,6 +324,9 @@ ad_form -extend -name party_ae \
 		    }
 		}
 		
+		if {$orig_object_type eq "employee"} {
+		    set email ""
+		}
 		callback contact::special_attributes::ad_form_save -party_id $organization_party_id -form "party_ae"
 		callback contact::organization_new -package_id $package_id -contact_id $organization_party_id -name $name
 	    }
@@ -352,6 +358,7 @@ ad_form -extend -name party_ae \
 
 	# For employees we need to correctly save the relationship
 	if {$orig_object_type eq "employee"} {
+	    callback contact::employee_new -person_id $person_party_id -organization_id $organization_party_id -package_id $package_id
 	    set rel_type "contact_rels_employment"
 	    set party_id $person_party_id
 	    set object_id_two $organization_party_id
@@ -429,10 +436,16 @@ ad_form -extend -name party_ae \
 	if {$orig_object_type eq "employee"} {
 	    callback contact::contact_form_after_submit -party_id $organization_party_id -package_id $package_id -object_type organization -form "party_ae"
 	}
-	if {[empty_string_p $object_id_two]} {
-	    ad_returnredirect [contact::url -party_id $party_id]
+
+	# If we passed a return_url go there
+	if {$return_url ne ""} {
+	    ad_returnredirect "$return_url"
 	} else {
-	    ad_returnredirect "${package_url}/$object_id_two"
+	    if {[empty_string_p $object_id_two]} {
+		ad_returnredirect [contact::url -party_id $party_id]
+	    } else {
+		ad_returnredirect "${package_url}/$object_id_two"
+	    }
 	}
 	ad_script_abort
     }
