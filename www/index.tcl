@@ -123,6 +123,7 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
 	}
     }
 }
+
 if { [contact::group::mapped_p -group_id $search_id] && $contacts_total_count > 0 } {
     set group [contact::group::name -group_id $search_id]
     set label [_ contacts.Mail_group]
@@ -130,12 +131,13 @@ if { [contact::group::mapped_p -group_id $search_id] && $contacts_total_count > 
 	{mail_merge_group:text(submit) {label $label} {value "1"}}
     }
 }
+
 ad_form -name "search" -method "GET" -export {orderby page_size format extended_columns return_url} -form $form_elements \
     -on_request {
     } -edit_request {
     } -on_refresh {
     } -on_submit {
-	if { ![empty_string_p $mail_merge_group] } {
+	if { [exists_and_not_null mail_merge_group] } {
 	    ad_returnredirect [export_vars -base "message" -url {{group_id $search_id}}]
 	    ad_script_abort
 	}
