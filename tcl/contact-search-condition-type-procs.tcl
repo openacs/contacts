@@ -873,7 +873,7 @@ ad_proc -private contacts::search::condition_type::group {
                                      [list "[_ contacts.contact_is_not_in_-]" "not_in"] \
                                     ]
 
-            set group_options_old [contact::groups -expand "all" -privilege_required "read" -package_id $package_id]
+            set group_options_old [contact::groups -expand "all" -privilege_required "read" -package_id $package_id -include_dotlrn_p "1"]
 	    set group_options [list]
 	    foreach group $group_options_old {
 		set group_name [lang::util::localize [lindex $group 0]]

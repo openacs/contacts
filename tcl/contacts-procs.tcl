@@ -909,6 +909,31 @@ ad_proc -public contact::group::map {
     db_dml map_group {}
 }
 
+ad_proc -public contact::group::mapped_p {
+    -group_id:required
+    {-package_id ""}
+} {
+    this creates a new group for use with contacts (and the permissions system)
+} {
+    if {[empty_string_p $package_id]} {
+	set package_id [ad_conn package_id]
+    }
+    return [db_0or1row select_mapped_p {}]
+}
+
+ad_proc -public contact::group::name {
+    -group_id:required
+} {
+    Get the group name for contacts (this might be a dotlrn community name or a group title)
+} {
+    set dotlrn_community_name [dotlrn_community::get_community_name $group_id]
+    if { $dotlrn_community_name ne "" } {
+	return $dotlrn_community_name
+    } else {
+	return [lang::util::localize [lang::util::localize [group::title -group_id $group_id]]]
+    }
+}
+
 ad_proc -public contact::group::parent {
     -group_id:required
 } {
@@ -919,27 +944,36 @@ ad_proc -public contact::group::parent {
 
 ad_proc -public contact::groups_list {
     {-package_id ""}
+    {-include_dotlrn_p "0"}
 } {
     Retrieve a list of all groups currently in the system
 } {
     if { $package_id eq "" } {
 	set package_id [ad_conn package_id]
     }
-    return [util_memoize [list contact::groups_list_not_cached -package_id $package_id]]
+    return [util_memoize [list contact::groups_list_not_cached -package_id $package_id -include_dotlrn_p $include_dotlrn_p]]
 }
 
 ad_proc -public contact::groups_list_not_cached {
     -package_id:required
+    -include_dotlrn_p:required
 } {
     Retrieve a list of all groups currently in the system
 } {
-    # Filter clause
-    # set filter_clause ""
-    set dotlrn_installed_p [apm_package_installed_p dotlrn]
-    if { $dotlrn_installed_p } {
-        set filter_clause "and groups2.group_id not in (select community_id from dotlrn_communities_all)"
-    } else {
-        set filter_clause ""
+    set name_field "acs_objects.title"
+    set dotlrn_community_p " '0'::boolean "
+    set additional_from ""
+    set additional_where ""
+    if { [apm_package_installed_p dotlrn] } {
+	set name_field " CASE WHEN dotlrn_communities_all.community_id is not null THEN dotlrn_communities_all.pretty_name ELSE acs_objects.title END "
+        set dotlrn_community_p " CASE WHEN dotlrn_communities_all.community_id is not null THEN '1'::boolean ELSE '0'::boolean END " 
+	set additional_from " left join dotlrn_communities_all on ( acs_objects.object_id = dotlrn_communities_all.community_id )"
+	if { [string is true $include_dotlrn_p] } {
+	    # we hid archived, but not active communities
+	    set additional_where "and CASE WHEN dotlrn_communities_all.archived_p = 'f' OR dotlrn_communities_all.community_id is null THEN '1'::boolean ELSE 'f'::boolean END"
+	} else {
+	    set additional_where  "and dotlrn_communities_all.community_id is null"
+	}
     }
     return [db_list_of_lists get_groups {}]
 }
@@ -953,6 +987,7 @@ ad_proc -public contact::groups {
     {-no_member_count:boolean}
     {-package_id ""}
     {-party_id ""}
+    {-include_dotlrn_p "0"}
 } {
     Return the groups that are mapped in contacts
     @param indent_with What should we indent the group name with
@@ -966,8 +1001,8 @@ ad_proc -public contact::groups {
 
     set user_id [ad_conn user_id]
     set group_list [list]
-    foreach one_group [contact::groups_list -package_id $package_id] {
-	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p
+    foreach one_group [contact::groups_list -package_id $package_id -include_dotlrn_p $include_dotlrn_p] {
+	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p dotlrn_community_p
 	if {$user_change_p eq ""} {
 	    set user_change_p 0
 	}
@@ -985,11 +1020,12 @@ ad_proc -public contact::groups {
 	    }
 	}
         if { $mapped_p || $all_p} {
-            lappend group_list [list [lang::util::localize $group_name] $group_id $member_count "1" $mapped_p $default_p $user_change_p]
+	    # we localize twice because for some reason some localized keys references another localized key
+            lappend group_list [list [lang::util::localize [lang::util::localize $group_name]] $group_id $member_count "1" $mapped_p $default_p $user_change_p $dotlrn_community_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
 		    if { $mapped_p || $all_p} {
-			lappend group_list [list "$indent_with$group_name" $group_id $member_count "2" $mapped_p $default_p $user_change_p]
+			lappend group_list [list "$indent_with[lang::util::localize [lang::util::localize $group_name]]" $group_id $member_count "2" $mapped_p $default_p $user_change_p $dotlrn_community_p]
 		    }
 		}
             }
@@ -998,6 +1034,7 @@ ad_proc -public contact::groups {
 
     switch $output {
         list {
+	    ns_log notice "last $group_list"
             set list_output [list]
             foreach group $group_list {
 		if {$no_member_count_p} {

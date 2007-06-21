@@ -628,14 +628,22 @@ ad_proc -public contact::search::where_clause {
 
     if { $results eq {} } {
 	# we allow for the special case that somebody supplied a
-	# list_id instead of a search_id, if this was the case and
-	# they have permission to read this list
+	# list_id or group_id instead of a search_id
 	if { [contact::list::exists_p -list_id $search_id] } {
 	    if { [contact::owner_read_p -object_id $search_id -owner_id [ad_conn user_id]] } {
+		# they can search for this list
 		if { $and_p } {
 		    append results " and "
 		}
 		append results " $party_id in ( select party_id from contact_list_members where list_id = $search_id ) "
+	    }
+	} elseif { [contact::group::mapped_p -group_id $search_id] } {
+	    if { [permission::permission_p -object_id $search_id -party_id [ad_conn user_id] -privilege "read"] } {
+		  # they can search for this group
+		if { $and_p } {
+		    append results " and "
+		}
+		append results " $party_id in ( select gamm${search_id}.member_id from group_approved_member_map gamm${search_id} where gamm${search_id}.group_id = $search_id ) "
 	    }
 	}
     }

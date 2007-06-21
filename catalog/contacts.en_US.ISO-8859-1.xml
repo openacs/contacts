@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="contacts" package_version="1.2b27" locale="en_US" charset="ISO-8859-1">
+<message_catalog package_key="contacts" package_version="1.2b28" locale="en_US" charset="ISO-8859-1">
 
   <msg key="--_select_a_group_--">-- select a group --</msg>
   <msg key="--add_column--">-- add column --</msg>
@@ -173,6 +173,7 @@
   <msg key="does_not_contain_-">does not contain -&gt;</msg>
   <msg key="does_not_exists">does not exist</msg>
   <msg key="Done">Done</msg>
+  <msg key="dotLRN_Managed">.LRN Managed</msg>
   <msg key="Edit">Edit</msg>
   <msg key="Edit_a_Signature">Edit a Signature</msg>
   <msg key="Edit_complaint">Edit complaint</msg>
@@ -512,6 +513,7 @@
   <msg key="lt_zippostal_does_not_st">zip/postal does not start with -&gt;</msg>
   <msg key="lt_zippostal_starts_with">zip/postal starts with -&gt;</msg>
   <msg key="Mail">Mail</msg>
+  <msg key="Mail_group">Mail %group%</msg>
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
   <msg key="Mail_through_p">Mail Through</msg>

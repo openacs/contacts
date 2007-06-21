@@ -23,7 +23,7 @@ template::list::create \
         edit {
 	    label {}
 	    display_template {
-		<a href="@groups.edit_url@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a>
+		<if @groups.dotlrn_community_p@ false><a href="@groups.edit_url@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a></if>
 	    }
 	}
         group_name {
@@ -48,6 +48,7 @@ template::list::create \
         default {
             label {Default}
             display_template {
+                <if @groups.dotlrn_community_p@ false>
                 <if @groups.default_p@>
                   <img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]">
                 </if>
@@ -58,37 +59,51 @@ template::list::create \
                   <else>
                   </else>
                 </else>
+                </if>
             }
         }
         user_change {
             label {User Change}
             display_template {
+                <if @groups.dotlrn_community_p@ false>
                 <if @groups.user_change_p@>
                   <a href="group-user-change?action=disallow&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
                 </if>
                 <else>
                   <a href="group-user-change?action=allow&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
                 </else>
+                </if>
             }
         }
         person_form {
             display_template {
+                <if @groups.dotlrn_community_p@ false>
                 <a href="@groups.ams_person_url@" class="button">[_ contacts.Person_Form]</a>
+                </if>
             }
         }
         org_form {
             display_template {
+                <if @groups.dotlrn_community_p@ false>
                 <a href="@groups.ams_org_url@" class="button">[_ contacts.Organization_Form]</a>
+                </if>
             }
         }
 	categories {
 	    display_template {
+                <if @groups.dotlrn_community_p@ false>
 		<a href="@groups.categories_url@" class="button">[_ contacts.Manage_group_categories]</a>
+                </if>
 	    }
 	}
 	actions {
 	    display_template {
+                <if @groups.dotlrn_community_p@ false>
 		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">[_ contacts.Permissions]</a></if>
+                </if>
+                <else>
+                #contacts.dotLRN_Managed#
+                </else>
 	    }
         }
     } -filters {
@@ -96,10 +111,10 @@ template::list::create \
     }
 
 
-multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url user_change_p
+multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url user_change_p dotlrn_community_p
 
 set return_url [ad_conn url]
-foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all] {
+foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all -include_dotlrn_p "1"] {
     set group_id [lindex $group 1]
     set group_name [lindex $group 0]
     set member_count [lindex $group 2]
@@ -107,6 +122,7 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
     set mapped_p [lindex $group 4]
     set default_p [lindex $group 5]
     set user_change_p [lindex $group 6]
+    set dotlrn_community_p [lindex $group 7]
     set ams_person_url [ams::list::url \
                           -package_key "contacts" \
                           -object_type "person" \
@@ -126,7 +142,7 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
     set edit_url [export_vars -base "/acs-lang/admin/edit-localized-message" {{package_key acs-translations} {locale "[ad_conn locale]"} {message_key "group_title_${group_id}"} {return_url [ad_return_url]}}]
 
     set categories_url [export_vars -base "/categories/cadmin/object-map" -url {{object_id $group_id}}]
-    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url $user_change_p
+    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url $user_change_p $dotlrn_community_p
 
 
 }

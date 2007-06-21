@@ -8,6 +8,7 @@ ad_page_contract {
     {object_id:integer,multiple,optional}
     {party_id:multiple,optional}
     {party_ids ""}
+    {group_id:integer ""}
     {message_type ""}
     {message:optional}
     {header_id:integer ""}
@@ -40,6 +41,12 @@ if { [exists_and_not_null message] && ![exists_and_not_null message_type] } {
 
 if {[empty_string_p $party_ids]} {
     set party_ids [list]
+}
+
+if { ![empty_string_p $group_id] } {
+    if { [contact::group::mapped_p -group_id $group_id] } {
+	set party_ids [group::get_members -group_id $group_id]
+    }
 }
 
 if { [exists_and_not_null party_id] } {

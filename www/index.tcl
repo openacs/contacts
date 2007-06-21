@@ -72,6 +72,10 @@ if { [exists_and_not_null search_id] } {
 set public_searches [lang::util::localize_list_of_lists -list [db_list_of_lists public_searches {}]]
 set search_options [concat [list [list [_ contacts.All_Contacts] ""]] $public_searches]
 
+foreach group [contact::groups -expand "all" -privilege_required "read" -include_dotlrn_p "1"] {
+    lappend search_options [list [lindex $group 0] [lindex $group 1] [_ contacts.Groups]]
+}
+
 db_foreach my_searches {} {
     lappend search_options [list "${my_searches_title}" ${my_searches_search_id} [_ contacts.My_Searches]]
 }
@@ -119,12 +123,22 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
 	}
     }
 }
-
+if { [contact::group::mapped_p -group_id $search_id] && $contacts_total_count > 0 } {
+    set group [contact::group::name -group_id $search_id]
+    set label [_ contacts.Mail_group]
+    append form_elements {
+	{mail_merge_group:text(submit) {label $label} {value "1"}}
+    }
+}
 ad_form -name "search" -method "GET" -export {orderby page_size format extended_columns return_url} -form $form_elements \
     -on_request {
     } -edit_request {
     } -on_refresh {
     } -on_submit {
+	if { ![empty_string_p $mail_merge_group] } {
+	    ad_returnredirect [export_vars -base "message" -url {{group_id $search_id}}]
+	    ad_script_abort
+	}
     } -after_submit {
     }
 

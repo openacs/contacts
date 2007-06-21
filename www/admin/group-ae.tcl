@@ -102,7 +102,7 @@ ad_form -name group_ae -action group-ae -form $form_elements \
 } -after_submit {
 
     # First flush our cache for the contact::groups as we change something here
-    util_memoize_flush contact::groups_list_not_cached
+    util_memoize_flush_regexp contact::groups_list_not_cached*
     
     ad_returnredirect -message ${message} ${return_url}
     ad_script_abort

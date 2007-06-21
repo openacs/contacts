@@ -29,6 +29,18 @@
       </querytext>
 </fullquery>
 
+<fullquery name="mapped_groups">
+      <querytext>
+    select ao.title as my_lists_title,
+           cl.list_id as my_lists_list_id
+      from contact_lists cl,
+           acs_objects ao
+     where cl.list_id = ao.object_id
+       and ao.object_id in ( select object_id from contact_owners where owner_id in ( :user_id , :package_id ))
+     order by upper(ao.title)
+      </querytext>
+</fullquery>
+
 <fullquery name="my_lists">
       <querytext>
     select ao.title as my_lists_title,
