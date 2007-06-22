@@ -19,6 +19,7 @@
 		base_url="@base_url@" 
 		customer_id="@customer_id@" 
 		status_id="@status_id@" 
+		current_package_f="@package_id@"
 		fmt="@fmt@">
         </td>
       </tr>

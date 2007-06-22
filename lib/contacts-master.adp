@@ -1,5 +1,5 @@
 <if @contacts_master_template@ eq /packages/contacts/lib/contacts-master>
-  <master src=/packages/pi/templates/pi/site-master>
+  <master>
   <property name="title">@title@</property>
   <property name="context">@context@</property>
   <property name="header_stuff">

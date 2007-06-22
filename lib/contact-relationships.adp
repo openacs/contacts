@@ -3,9 +3,6 @@
       <h3 class="contact-title">@rels.relationship@</h3>
       <dl class="attribute-values">
 	<group column="relationship">
-	  <dt class="attribute-name">
-	    <strong>@rels.relationship@:</strong>
-	  </dt>
 	  <dd class="attribute-value">
 	    <strong>
 	      <a href="@rels.contact_url@">@rels.contact@</a>

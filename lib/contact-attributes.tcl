@@ -19,7 +19,7 @@ foreach optional_param {package_id hidden_attributes} {
 }
 
 if {[empty_string_p $package_id]} {
-    set package_id [ad_conn package_id]
+    set package_id [contact::package_id -party_id $party_id]
 }
 
 set object_type [util_memoize [list acs_object_type $party_id]]
@@ -41,8 +41,6 @@ foreach group [contact::groups -expand "all" -privilege_required "read" -package
 if { ![exists_and_not_null revision_id] } {
     set revision_id [contact::live_revision -party_id $party_id]
 }
-
-
 
 # The categories multirow contains all categories for all trees and is
 # prepared for easy access later on.

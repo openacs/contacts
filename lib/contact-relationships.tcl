@@ -19,7 +19,7 @@ foreach optional_param {package_id} {
 }
 
 if {[empty_string_p $package_id]} {
-    set package_id [ad_conn package_id]
+    set package_id [contact::package_id -party_id $party_id]
 }
 
 set contacts_default_group [contacts::default_group -package_id $package_id]
@@ -36,8 +36,16 @@ if {$sort_by_date_p} {
 
 multirow create rels relationship relation_url rel_id contact contact_url attribute value creation_date role
 
+# Get the groups for adding and make sure we have the permisison working.
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id  and group_id > 0}]
 lappend groups_belonging_to [contacts::default_group]
+
+set groups_belonging_to2 [list]
+foreach group_id $groups_belonging_to {
+    if {[permission::permission_p -object_id $group_id -privilege "write"]} {
+	lappend groups_belonging_to2 $group_id
+    }
+}
 
 db_foreach get_relationships {} {
     if {[group::party_member_p -party_id $other_party_id -group_id $contacts_default_group]} {
@@ -48,7 +56,7 @@ db_foreach get_relationships {} {
 	    set other_object_type "person"
 	} 
 	if {[string eq $rel_type "contact_rels_employment"]} {
-	    set relation_url [export_vars -base "[ad_conn package_url]add/$other_object_type" -url {{group_ids $groups_belonging_to} {object_id_two "$party_id"} rel_type}]    
+	    set relation_url [export_vars -base "[apm_package_url_from_id $package_id]add/$other_object_type" -url {{group_ids $groups_belonging_to2} {object_id_two "$party_id"} rel_type return_url}]    
 	} else {
 	    set relation_url ""
 	}
