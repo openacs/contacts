@@ -45,11 +45,11 @@ if { $recipients_num <= 1 } {
 	no_callback_p:text(hidden)
 	title:text(hidden),optional
 	{message_type:text(hidden) {value "email"}}
+	{-section "sec1" {legendtext "[_ contacts.Recipients]"}}
 	{to:text(checkbox),multiple,optional
 	    {label "[_ contacts.Recipients]"} 
 	    {options  $recipients }
 	    {html {checked 1}}
-	    {section "[_ contacts.Recipients]"}
 	}
 	{cc:text(text),optional
 	    {label "[_ contacts.CC]:"} 
@@ -69,10 +69,10 @@ if { $recipients_num <= 1 } {
 	no_callback_p:text(hidden)
 	title:text(hidden),optional
 	{message_type:text(hidden) {value "email"}}
+	{-section "sec1" {legendtext "[_ contacts.Recipients]"}}
 	{check_uncheck:text(checkbox),multiple,optional
 	    {label "[_ contacts.check_uncheck]"}
 	    {options {{"" 1}}}
-	    {section "[_ contacts.Recipients]"}
 	    {html {onclick check_uncheck_boxes(this.checked)}}
 	}
 	{to:text(checkbox),multiple,optional
@@ -169,10 +169,10 @@ if {![exists_and_not_null mime_type]} {
 set content_list [list $content $mime_type]
 
 append form_elements {
+    {-section "sec2" {legendtext "[_ contacts.Message]"}}
     {subject:text(text),optional
 	{label "[_ contacts.Subject]"}
 	{html {size 60}}
-	{section "[_ contacts.Message]"}
     }
     {content_body:richtext(richtext),optional
 	{label "[_ contacts.Message]"}
@@ -300,7 +300,7 @@ ad_form -action $action \
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    
 	    set values [list]
-	    foreach element [list first_names last_name salutation] {
+	    foreach element [list first_names last_name salutation name date] {
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    
