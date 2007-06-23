@@ -43,37 +43,44 @@ if {[empty_string_p $party_ids]} {
     set party_ids [list]
 }
 
-if { ![empty_string_p $group_id] } {
-    if { [contact::group::mapped_p -group_id $group_id] } {
-	set party_ids [group::get_members -group_id $group_id]
-    }
-}
+set invalid_party_ids  [list]
 
-if { [exists_and_not_null party_id] } {
-    foreach p_id $party_id {
-	if {[lsearch $party_ids $party_id] < 0} {
-	    lappend party_ids $p_id
+if { $group_id ne "" } {
+
+    # Make sure the user has write permission on the group
+    permission::require_permission -object_id $group_id -privilege "write"
+
+    # Get the party_ids from the group members
+    if { [contact::group::mapped_p -group_id $group_id] } {
+	set valid_party_ids [group::get_members -group_id $group_id]
+    }
+
+} else {
+
+    if { [exists_and_not_null party_id] } {
+	foreach p_id $party_id {
+	    if {[lsearch $party_ids $party_id] < 0} {
+		lappend party_ids $p_id
+	    }
+	}
+    }
+    
+    if { [exists_and_not_null to] } {
+	foreach party_id $to {
+	    lappend party_ids $party_id
+	}
+    }
+    
+    
+    # Make sure the parties are visible to the user
+    foreach id $party_ids {
+	if {[contact::visible_p -party_id $id -package_id [ad_conn package_id]]} {
+	    lappend valid_party_ids $id
 	}
     }
 }
-	
-if { [exists_and_not_null to] } {
-    foreach party_id $to {
-	lappend party_ids $party_id
-    }
-}
 
-set invalid_party_ids  [list]
-
-foreach id $party_ids {
-    if {[contact::visible_p -party_id $id -package_id [ad_conn package_id]]} {
-	lappend valid_party_ids $id
-    } else {
-	append invalid_party_ids $id
-    }
-}
-
-set party_count [llength $party_ids]
+set party_count [llength $valid_party_ids]
 set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
 set context [list $title]
@@ -85,34 +92,20 @@ if {![exists_and_not_null valid_party_ids]} {
     ad_script_abort
 }
 
-foreach party_id $valid_party_ids {
-    set contact_name   [contact::name -party_id $party_id]
-    set contact_url    [contact::url -party_id $party_id]
-    set contact_link   "<a href=\"${contact_url}\">${contact_name}</a>"
-    set sort_key       [string toupper $contact_name]
-    # Check if the party has a valid e-mail address we can send to
-    lappend recipients [list $contact_name $party_id $contact_link]
-}
-
-set sorted_recipients  [ams::util::sort_list_of_lists -list $recipients]
 set recipients         [list]
 set invalid_recipients [list]
 set party_ids          [list]
 
-
-foreach recipient $sorted_recipients {
-    set party_id       [lindex $recipient 1]
-    set contact_link   [lindex $recipient 2]
+# Make sure that we can actually send the message
+foreach party_id $valid_party_ids {
     if { [lsearch [list "letter" "label" "envelope"] $message_type] >= 0 } {
 
 	# Check if we can send a letter to this party
 	set letter_p  [contact::message::mailing_address_exists_p -party_id $party_id]
         if { $letter_p } {
             lappend party_ids $party_id
-            lappend recipients $contact_link
         } else {
             lappend invalid_party_ids $party_id
-            lappend invalid_recipients $contact_link
         }
 
     } elseif { $message_type == "email" } {
@@ -127,25 +120,41 @@ foreach recipient $sorted_recipients {
 		set emp_addr [contact::email -party_id $employer_id]
 		if { ![empty_string_p $emp_addr] } {
 		    lappend party_ids $employer_id
-		    lappend recipients $contact_link
 		} else {
 		    lappend invalid_party_ids $party_id
-		    lappend invalid_recipients $contact_link
 		}
 	    } else {
 		lappend invalid_party_ids $party_id
-		lappend invalid_recipients $contact_link
 	    }
         } else {
 	    lappend party_ids $party_id
-            lappend recipients $contact_link
         } 
 
     } else {
 	# We are unsure what to send, so just assume for the time being we can send it to them
 	lappend party_ids $party_id
-	lappend recipients $contact_link
     }
+}
+
+# If we are passing in a group, do not show the individual users
+if { [empty_string_p $group_id] } {
+
+    # Prepare the recipients
+    foreach party_id $party_ids {
+	set contact_name   [contact::name -party_id $party_id]
+	set contact_url    [contact::url -party_id $party_id]
+	lappend recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
+    }
+
+} else {
+    lappend recipients "<a href=\"/contacts\">[group::title -group_id $group_id]</a>"
+}
+
+# Deal with the invalid recipients
+foreach party_id $invalid_party_ids {
+    set contact_name   [contact::name -party_id $party_id]
+    set contact_url    [contact::url -party_id $party_id]
+    lappend invalid_recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
 }
 
 set recipients [join $recipients ", "]
@@ -199,6 +208,7 @@ if {[exists_and_not_null file_list]} {
 set form_elements {
     file_ids:text(hidden)
     party_ids:text(hidden)
+    group_id:text(hidden)
     return_url:text(hidden)
     folder_id:text(hidden)
     object_id:text(hidden)
@@ -218,10 +228,8 @@ if { ![exists_and_not_null message_type] } {
 	set message_type [lindex $op 1]
 	if { [lsearch [list "header" "footer"] $message_type] < 0 } {
 	    lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" $message_type]
-	} else {
-	    set ${message_type}_options [list [list [_ contacts.--none--] ""]]
 	}
-	
+
 	# set email_text and letter_text and others in the future
 	set "${message_type}_text" [lindex $op 0]
     }
@@ -274,12 +282,19 @@ if { ![exists_and_not_null message_type] } {
 
 } else {
     set title [_ contacts.create_$message_type]
+
+    if {$group_id ne ""} {
+	# Get the group template
+	set message_src "/packages/contacts/lib/${message_type}_group"
+    } else {
+	set message_src "/packages/contacts/lib/${message_type}"
+    }
 }
 
 set context [list $title]
 
 if { [string is false [exists_and_not_null message]] } {
-    set signature_list [list [list [_ contacts.--none--] ""]]
+    set signature_list [list]
     set reset_title $title
     set reset_signature_id $signature_id
     db_foreach signatures "select title, signature_id, default_p
@@ -293,10 +308,12 @@ if { [string is false [exists_and_not_null message]] } {
      }
     set title $reset_title
     set signature_id $reset_signature_id
-    append form_elements {
-	{signature_id:text(select) 
-	    {label "[_ contacts.Signature]"}
-	    {options {$signature_list}}
+    if {$signature_list ne ""} {
+	append form_elements {
+	    {signature_id:text(select) 
+		{label "[_ contacts.Signature]"}
+		{options {$signature_list}}
+	    }
 	}
     }
 }
@@ -311,7 +328,7 @@ if {[exists_and_not_null footer_options]} {
 
 set edit_buttons [list [list "[_ contacts.Next]" create]]
 
-# the message form will rest party_ids so we need to carry it over
+# the message form will reset party_ids so we need to carry it over
 set new_party_ids $party_ids
 ad_form -action message \
     -name message \

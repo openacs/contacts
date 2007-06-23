@@ -11,7 +11,7 @@
   </if>
   <else>
     	<include 	
-        	src=/packages/contacts/lib/@message_type@
+        	src=@message_src@
         	return_url=@return_url;noquote@ 
 	        party_ids=@party_ids@ 
 	        file_ids=@file_ids@ 
@@ -22,6 +22,7 @@
 	        footer_id=@footer_id@
 	        header_id=@header_id@
 	        folder_id=@folder_id@
+		group_id=@group_id@
 		title=@title@
 		cc=@cc@	
 		bcc=@bcc@
