@@ -64,9 +64,9 @@
   <querytext>
     insert into contact_privacy
            ( party_id, email_p, mail_p, phone_p, gone_p )
-    select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
-      from parties
-     where party_id not in ( select party_id from contact_privacy )
+    select p.party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
+      from parties p left join contact_privacy c on c.party_id = p.party_id
+     where c.party_id is null
   </querytext>
 </fullquery>
 
