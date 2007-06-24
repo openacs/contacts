@@ -11,6 +11,8 @@ ad_library {
 # accounts for themselves) content_items and content_revisions
 # are automatically create. This is needed for contacts
 # searches to work correctly.
+
+nsv_set contacts sweeper_p 0
 ad_schedule_proc -thread t 300 contacts::sweeper
 
 if {[empty_string_p [info procs callback]]} {

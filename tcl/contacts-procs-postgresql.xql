@@ -26,12 +26,29 @@
   </querytext>
 </fullquery>
 
+<fullquery name="contacts::sweeper.get_persons_num">
+  <querytext>
+     select count(*) from persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id
+      where person_id > 0
+      and item_id is null
+ </querytext>
+</fullquery>
+
 <fullquery name="contacts::sweeper.get_persons_without_items">
   <querytext>
-     select person_id, first_names,last_name,email from persons, parties
-     where person_id not in (select item_id from cr_items where content_type = 'contact_party_revision')
-     and person_id > 0
+     select person_id, first_names,last_name,email 
+     from persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id, parties
+     where person_id > 0
      and person_id = party_id
+     and item_id is null
+ </querytext>
+</fullquery>
+
+<fullquery name="contacts::sweeper.member_state">
+  <querytext>
+    select member_state 
+      from cc_users 
+     where user_id = :person_id
  </querytext>
 </fullquery>
 
@@ -52,6 +69,27 @@
      where party_id not in ( select party_id from contact_privacy )
   </querytext>
 </fullquery>
+
+<fullquery name="contacts::sweeper.delete_deleted_users">
+  <querytext>
+    delete 
+      from group_element_index
+     where group_id = :group_id 
+     and element_id in (select member_id  from membership_rels m, group_member_map g where g.rel_id = m.rel_id and member_state = 'deleted' and group_id = -2)
+ </querytext>
+</fullquery>
+
+<fullquery name="contacts::sweeper.deleted_user_items">
+  <querytext>
+  select item_id 
+    from cr_items, membership_rels m, group_member_map g 
+   where g.rel_id = m.rel_id 
+     and member_state = 'deleted' 
+     and group_id = -2 
+     and item_id = member_id
+ </querytext>
+</fullquery>
+
 
 <fullquery name="contacts::spouse_sync_attribute_ids.get_valid_attribute_ids">
   <querytext>

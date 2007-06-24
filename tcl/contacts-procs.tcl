@@ -125,66 +125,94 @@ ad_proc -private contacts::sweeper {
     by contacts (ones created by contacts automatically get
     associated item_id and live_revisions.
 } {
-    if {$contacts_package_ids eq ""} {
-	set contacts_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
-    }
-    foreach contact_package_id $contacts_package_ids {
-	set default_group_id [contacts::default_group -package_id $contact_package_id]
-	set contact_package($default_group_id) $contact_package_id
-	lappend default_groups $default_group_id
+
+    # Make sure that only one thread is processing the queue at a
+    # time.
+    if {[nsv_incr contacts sweeper_p] > 1} {
+	nsv_incr contacts sweeper_p -1
+	return
     }
 
-    # Try to insert the persons into the package_id of the first group found
-    db_foreach get_persons_without_items {} {
-	
-	foreach group_id $default_groups {
-	    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
-		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
-		break
-	    }
+    with_finally -code {
+	if {$contacts_package_ids eq ""} {
+	    set contacts_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
 	}
 	
-	if {![exists_and_not_null contact_revision_id]} {
-	    # We did not found a group, so just use the first contacts instance.
-	    if {[ad_conn isconnected]} {
-		set user_id [ad_conn user_id]
-		set peeraddr [ad_conn peeraddr]
-	    } else {
-		set user_id $person_id
-		set peeraddr 127.0.0.1
-	    }
-	    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
+	foreach contact_package_id $contacts_package_ids {
+	    set default_group_id [contacts::default_group -package_id $contact_package_id]
+	    set contact_package($default_group_id) $contact_package_id
+	    lappend default_groups $default_group_id
 	}
-
-	# Add the default ams attributes
-	foreach attribute {first_names last_name email} {
-	    if {[exists_and_not_null $attribute]} {
-		ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+	
+	# Count number of persons without items
+	set person_num [db_string get_persons_num {}]
+	set counter 0
+	
+	# Try to insert the persons into the package_id of the first group found
+	db_foreach get_persons_without_items {} {
+	    
+	    # Check if the person is a deleted user
+	    set member_state [db_string member_state "select member_state from cc_users where user_id = :person_id" -default ""]
+	    if {$member_state ne "deleted"} {
+	        foreach group_id $default_groups {
+                if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
+		    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
+		    break
+		}
+	        }
+	    
+	        if {![exists_and_not_null contact_revision_id]} {
+		# We did not found a group, so just use the first contacts instance.
+		if {[ad_conn isconnected]} {
+		    set user_id [ad_conn user_id]
+		    set peeraddr [ad_conn peeraddr]
+		} else {
+		    set user_id $person_id
+		    set peeraddr 127.0.0.1
+		}
+		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
+	    }
+	    
+	        # Add the default ams attributes
+	        foreach attribute {first_names last_name email} {
+		if {[exists_and_not_null $attribute]} {
+		    ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+		}
+	    }
+	    
+	        # And insert into the default group for this package.
+	        group::add_member -user_id $person_id -group_id $default_group_id -no_perm_check
+	        incr counter
+	        ns_log notice "contacts::sweeper ($counter / $person_num) creating content_item and content_revision $contact_revision_id for party_id: $person_id in $default_group_id"
 	    }
 	}
-
-	# And insert into the default group for this package.
-	group::add_member -user_id $person_id -group_id $default_group_id -no_perm_check
-	ns_log notice "contacts::sweeper creating content_item and content_revision for party_id: $person_id in $default_group_id"
-    }
-
-    db_foreach get_organizations_without_items {} {
-	foreach group_id $default_groups {
-	    if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
-		contact::revision::new -party_id $organization_id -package_id $contact_package($group_id) -creation_user 0
-		break
+	
+	db_foreach get_organizations_without_items {} {
+	    foreach group_id $default_groups {
+		if {[group::party_member_p -party_id $organization_id -group_id $group_id]} {
+		    contact::revision::new -party_id $organization_id -package_id $contact_package($group_id) -creation_user 0
+		    break
+		}
 	    }
+	    ns_log notice "contacts::sweeper creating content_item and content_revision for organization_id: $organization_id"
+	    contact::revision::new -party_id $organization_id -package_id $contact_package_id
 	}
-	ns_log notice "contacts::sweeper creating content_item and content_revision for organization_id: $organization_id"
-	contact::revision::new -party_id $organization_id -package_id $contact_package_id
+	
+	if { ![info exists person_id] && ![info exists organization_id] } {
+	    ns_log Debug "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
+	}
+	db_dml insert_privacy_records {}
+	# Delete records where the user_id has been deleted. After all, deleted users should not show up in contacts either
+    foreach group_id $default_groups {
+        db_dml delete_deleted_users {}
     }
-
-    if { ![info exists person_id] && ![info exists organization_id] } {
-	ns_log Debug "contacts::create_revisions_sweeper no person or organization objects exist that do not have associated content_items"
+       
+    } -finally {
+	nsv_incr contacts sweeper_p -1
     }
-    db_dml insert_privacy_records {}
+    
 }
-
+    
 ad_proc -public contacts::multirow {
     {-extend ""}
     {-multirow}
@@ -926,7 +954,11 @@ ad_proc -public contact::group::name {
 } {
     Get the group name for contacts (this might be a dotlrn community name or a group title)
 } {
-    set dotlrn_community_name [dotlrn_community::get_community_name $group_id]
+    if {[info procs dotlrn_community::get_community_name] eq ""} {
+	set dotlrn_community_name ""
+    } else {
+	set dotlrn_community_name [dotlrn_community::get_community_name $group_id]
+    }
     if { $dotlrn_community_name ne "" } {
 	return $dotlrn_community_name
     } else {
