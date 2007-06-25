@@ -117,6 +117,80 @@
   </querytext>
 </fullquery>
 
+
+<fullquery name="contact::search::results.select_party_results">
+  <querytext>
+    select distinct parties.party_id
+      from parties, $cr_from group_approved_member_map
+     where parties.party_id = group_approved_member_map.member_id
+	$cr_where
+       and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+	$search_clause
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.get_condition_types">
+  <querytext>
+    select type 
+      from contact_search_conditions
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.select_person_results">
+  <querytext>
+    select distinct person_id
+      from persons, $cr_from group_approved_member_map
+     where persons.person_id = group_approved_member_map.member_id
+       and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+	$cr_where
+	$search_clause
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.select_organization_results">
+  <querytext>
+    select distinct organization_id
+      from organizations, $cr_from
+           group_approved_member_map
+     where organizations.organization_id = group_approved_member_map.member_id
+       and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+	$cr_where
+	$search_clause
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.select_employee_results">
+  <querytext>
+    select distinct person_id
+      from persons, $cr_from
+           group_approved_member_map,
+           acs_rels
+     where persons.person_id = group_approved_member_map.member_id
+       and group_approved_member_map.group_id in ([template::util::tcl_to_sql_list [contacts::default_groups -package_id $package_id]])
+       and persons.person_id = acs_rels.object_id_one
+       and acs_rels.rel_type = 'contact_rels_employment'
+        $cr_where
+        $search_clause
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.get_object_type">
+  <querytext>
+    select object_type
+      from contact_searches
+     where search_id = :search_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::search::results.select_employees_results">
+  <querytext>
+    select object_id_one
+      from acs_rels
+     where rel_type = 'contact_rels_employment'
+  </querytext>
+</fullquery>
+
 <fullquery name="contact::party_id_in_sub_search_clause.get_object_type">
   <querytext>
     select object_type

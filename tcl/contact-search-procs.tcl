@@ -246,6 +246,92 @@ ad_proc -public contact::search::results_count_not_cached {
 } {
 
     if { [exists_and_not_null search_id] } {
+        # Get the results depening on the object_type
+        set object_type [db_string get_object_type {} -default "party"]
+
+        # The party column is the column of the object we look for
+        # The item column is the column of the item which has the
+	# attributes
+	# This allows to search for the attributes of an organization,
+	# but have the party
+        # in a special search (employee search)
+        
+        switch $object_type {
+            party { 
+                set party_column "parties.party_id"
+                set item_column "parties.party_id"
+            }
+            organization {
+                set party_column "organizations.organization_id"
+                set item_column "organizations.organization_id"
+            } 
+            person {
+                set party_column "persons.person_id"
+                set item_column "persons.person_id"
+            } 
+            employee {
+                set party_column "acs_rels.object_id_one"
+                set item_column "acs_rels.object_id_two"
+            }
+        }
+        set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
+        set condition_types [db_list get_condition_types {}]
+        if { [lsearch -exact $condition_types "attribute"] > -1 || [lsearch -exact $condition_types "contact"] > -1 } {
+            set cr_where "and cr_items.item_id = $item_column"
+            set cr_from "cr_items,"
+        } else {
+            # We don't need to search for attributes so we don't need
+	    # to join
+	    # on the cr_items table. This should speed things up. This
+	    # assumes
+            # that packages other than contacts that add search
+	    # condition
+	    # types do not need the revision_id column, and only needs
+	    # the
+            # party_id column. If this is not the case we may want to
+	    # add a
+            # callback here to check if another package needs the
+	    # revisions 
+            # table.
+            #
+            # If this needs to change you should also update the
+            # contacts/lib/contacts.tcl file which behave the same
+	    # way.
+            set cr_where ""
+            set cr_from ""
+        }
+    } else {
+        set object_type "party"
+        set page_query_name "contacts_pagination"
+        set search_clause [contact::search_clause -and -query $query -search_id "" -party_id "parties.party_id" -limit_type_p "0"]
+        set cr_from ""
+        set cr_where ""
+    }
+
+    set results ""
+    if { [catch {
+        set results [db_string select_${object_type}_results_count {}]
+    } errmsg] } {
+        ns_log Error "contact::search::results_count_not_cached contact search $search_id had a problem \n\n$errmsg"
+    }
+
+    return $results
+
+}
+
+
+ad_proc -public contact::search::results {
+    {-search_id}
+    {-query ""}
+    {-package_id}
+} {
+    Get the party_ids returned for a search
+
+    @param search_id ID of the search
+    
+} {
+
+    if { [exists_and_not_null search_id] } {
 	# Get the results depening on the object_type
 	set object_type [db_string get_object_type {} -default "party"]
 
@@ -273,7 +359,7 @@ ad_proc -public contact::search::results_count_not_cached {
 	    }
 	}
 	set search_clause [contact::search_clause -and -search_id $search_id -query $query -party_id $party_column -revision_id "cr_items.live_revision" -limit_type_p "0"]
-	
+
 	set condition_types [db_list get_condition_types {}]
 	if { [lsearch -exact $condition_types "attribute"] > -1 || [lsearch -exact $condition_types "contact"] > -1 } {
 	    set cr_where "and cr_items.item_id = $item_column"
@@ -299,17 +385,18 @@ ad_proc -public contact::search::results_count_not_cached {
 	set cr_from ""
 	set cr_where ""
     }
-
     set results ""
+
     if { [catch {
-	set results [db_string select_${object_type}_results_count {}]
+	set results [db_list select_${object_type}_results {}]
     } errmsg] } {
-	ns_log Error "contact::search::results_count_not_cached contact search $search_id had a problem \n\n$errmsg"
+	ns_log Error "contact::search::results contact search $search_id had a problem \n\n$errmsg"
     }
 
     return $results
 
 }
+
 
 ad_proc -private contact::party_id_in_sub_search_clause {
     {-search_id:required}
