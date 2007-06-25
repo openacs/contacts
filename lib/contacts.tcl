@@ -428,7 +428,7 @@ if { [string is false $report_p] } {
 	-actions $actions \
 	-bulk_actions $bulk_actions \
 	-bulk_action_method post \
-	-bulk_action_export_vars { search_id return_url } \
+	-bulk_action_export_vars { return_url } \
 	-elements $elements \
 	-filters {
 	    search_id {}

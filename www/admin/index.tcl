@@ -32,7 +32,9 @@ template::list::create \
         }
         member_count {
             label {[_ contacts.Contacts]}
-	    display_col member_count
+	    display_template {
+		<a href="../?search_id=@groups.group_id@">@groups.member_count@</a>
+	    }
         }
         mapped {
             label {Mapped}

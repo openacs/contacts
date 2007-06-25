@@ -5,7 +5,7 @@
 # @arch-tag: 48fe00a8-a527-4848-b5de-0f76dfb60291
 # @cvs-id $Id$
 
-foreach required_param {group_id} {
+foreach required_param {search_id} {
     if {![info exists $required_param]} {
 	return -code error "$required_param is a required parameter."
     }
@@ -32,7 +32,7 @@ set form_elements {
     return_url:text(hidden)
     no_callback_p:text(hidden)
     title:text(hidden),optional
-    group_id:text(hidden)
+    search_id:text(hidden)
     {message_type:text(hidden) {value "email"}}
     {-section "sec1" {legendtext "[_ contacts.Recipients]"}}
     {recipients:text(inform)
@@ -141,10 +141,10 @@ append form_elements {
     {upload_file:file(file),optional
 	{label "[_ contacts.Upload_file]"}
     }
-    {mail_through_p:integer(radio)
+    {mail_through_p:text(hidden)
 	{label "[_ contacts.Mail_through_p]"}
 	{options {{"Yes" "1"} {"No" "0"}}}
-	{value "1"}
+	{value "0"}
 	{help_text "[_ contacts.lt_Mail_through_p_help]"}
     }
 }
@@ -197,6 +197,69 @@ ad_form -action $action \
 	}
 	
     } -on_submit {
+
+	set package_id [ad_conn package_id]
+	
+	# Make sure we get the correct users and can send an e-mail to them
+	if {[contact::group::mapped_p -group_id $search_id]} {
+	    
+	    # Make sure the user has write permission on the group
+	    permission::require_permission -object_id $search_id -privilege "write"
+	    
+	    # Get the party_ids from the group members
+	    if { [contact::group::mapped_p -group_id $search_id] } {
+		set valid_party_ids [group::get_members -group_id $search_id]
+	    }
+	} else {
+	    set valid_party_ids [contact::search::results -search_id $search_id -package_id $package_id]
+	}
+	
+	foreach party_id $valid_party_ids {
+	    if { [party::email -party_id $party_id] eq "" } {
+		# We are going to check if there is an employee relationship
+		# if there is we are going to check if the employer has an
+		# email adrres, if it does we are going to use that address
+		set employer_id [lindex [contact::util::get_employee_organization -employee_id $party_id] 0]
+		
+		if { ![empty_string_p $employer_id] } {
+		    set emp_addr [contact::email -party_id $employer_id]
+		    if { ![empty_string_p $emp_addr] } {
+			lappend party_ids $employer_id
+		    } else {
+			lappend invalid_party_ids $party_id
+		    }
+		} else {
+		    lappend invalid_party_ids $party_id
+		}
+	    } else {
+		lappend party_ids $party_id
+	    } 
+	}
+
+	# Deal with the invalid recipients
+	foreach party_id $invalid_party_ids {
+	    set contact_name   [contact::name -party_id $party_id]
+	    set contact_url    [contact::url -party_id $party_id]
+	    lappend invalid_recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
+	}
+	
+	set invalid_recipients [join $invalid_recipients ", "]
+	if { [llength $invalid_recipients] > 0 } {
+	    switch $message_type {
+		letter {
+		    set error_message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
+		}
+		email {
+		    set error_message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
+		}
+		default {
+		    set error_message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
+		}
+	    }
+	    if { $party_ids != "" } {
+		util_user_message -html -message $error_message
+	    }
+	}
 	
 	# We get the attribute_id of the salutation attribute
 	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
@@ -219,13 +282,11 @@ ad_form -action $action \
 
 
 	# Insert the uploaded file linked under the package_id
-	set package_id [ad_conn package_id]
-	
 	if {![empty_string_p $upload_file] } {
 	    set revision_id [content::item::upload_file \
 				 -package_id $package_id \
 				 -upload_file $upload_file \
-				 -parent_id $party_id]
+				 -parent_id $search_id]
 
 	    lappend file_ids $revision_id
 	}
@@ -239,8 +300,9 @@ ad_form -action $action \
 	
 	
 	# Send the mail to all parties.
-	ns_log Notice "Recipients: $group_id"
-	foreach party_id [group::get_members -group_id $group_id] {
+	set member_size [llength $party_ids]
+	set counter 1
+	foreach party_id $party_ids  {
 
 	    # Differentiate between person and organization
 	    if {[person::person_p -party_id $party_id]} {
@@ -263,9 +325,9 @@ ad_form -action $action \
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    
-	    set subject [contact::message::interpolate -text $subject -values $values]
+	    set interpol_subject [contact::message::interpolate -text $subject -values $values]
 
-	    set content_body [contact::message::interpolate -text $content_body -values $values]
+	    set interpol_content_body [contact::message::interpolate -text $content_body -values $values]
 	    
 	    # If we are doing mail through for tracking purposes
 	    # Set the reply_to_addr accordingly
@@ -276,7 +338,8 @@ ad_form -action $action \
 		set reply_to_addr $from_addr
 	    }
 
-	    ns_log Notice "Recipients: $party_id"
+	    ns_log Notice "Recipient: $name $party_id ( $counter / $member_size )"
+	    incr counter
 
 	    acs_mail_lite::complex_send \
 		-to_party_ids $party_id \
@@ -284,8 +347,8 @@ ad_form -action $action \
 		-bcc_addr $bcc_list \
 		-from_addr "$from_addr" \
 		-reply_to "$reply_to_addr" \
-		-subject "$subject" \
-		-body "$content_body" \
+		-subject "$interpol_subject" \
+		-body "$interpol_content_body" \
 		-package_id $package_id \
 		-file_ids $file_ids \
 		-mime_type $mime_type \

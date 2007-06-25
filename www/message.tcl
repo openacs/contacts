@@ -8,7 +8,7 @@ ad_page_contract {
     {object_id:integer,multiple,optional}
     {party_id:multiple,optional}
     {party_ids ""}
-    {group_id:integer ""}
+    {search_id:integer ""}
     {message_type ""}
     {message:optional}
     {header_id:integer ""}
@@ -45,16 +45,23 @@ if {[empty_string_p $party_ids]} {
 
 set invalid_party_ids  [list]
 
-if { $group_id ne "" } {
+set package_id [ad_conn package_id]
+set recipients  [list]
 
-    # Make sure the user has write permission on the group
-    permission::require_permission -object_id $group_id -privilege "write"
+if { $search_id ne "" } {
 
-    # Get the party_ids from the group members
-    if { [contact::group::mapped_p -group_id $group_id] } {
-	set valid_party_ids [group::get_members -group_id $group_id]
+    set return_url [export_vars -base [apm_package_url_from_id $package_id] -url {search_id}]
+    if {[contact::group::mapped_p -group_id $search_id]} {
+
+	# Make sure the user has write permission on the group
+	permission::require_permission -object_id $search_id -privilege "write"
+	lappend recipients "<a href=\"$return_url\">[group::title -group_id $search_id]</a>"
+    } else {
+	lappend recipients "<a href=\"$return_url\">[contact::search::title -search_id $search_id]</a>"
     }
 
+    # We do the check in the search template
+    set valid_party_ids "0"
 } else {
 
     if { [exists_and_not_null party_id] } {
@@ -74,7 +81,7 @@ if { $group_id ne "" } {
     
     # Make sure the parties are visible to the user
     foreach id $party_ids {
-	if {[contact::visible_p -party_id $id -package_id [ad_conn package_id]]} {
+	if {[contact::visible_p -party_id $id -package_id $package_id]} {
 	    lappend valid_party_ids $id
 	}
     }
@@ -85,14 +92,11 @@ set title "[_ contacts.Messages]"
 set user_id [ad_conn user_id]
 set context [list $title]
 
-set recipients  [list]
-
 if {![exists_and_not_null valid_party_ids]} {
     ad_return_error "[_ contacts.No_valid_parties]" "[_ contacts.No_valid_parties_lt]"
     ad_script_abort
 }
 
-set recipients         [list]
 set invalid_recipients [list]
 set party_ids          [list]
 
@@ -137,7 +141,7 @@ foreach party_id $valid_party_ids {
 }
 
 # If we are passing in a group, do not show the individual users
-if { [empty_string_p $group_id] } {
+if { [empty_string_p $search_id] } {
 
     # Prepare the recipients
     foreach party_id $party_ids {
@@ -145,9 +149,9 @@ if { [empty_string_p $group_id] } {
 	set contact_url    [contact::url -party_id $party_id]
 	lappend recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
     }
-
+    set form_elements "party_ids:text(hidden)"
 } else {
-    lappend recipients "<a href=\"/contacts\">[group::title -group_id $group_id]</a>"
+    set form_elements ""
 }
 
 # Deal with the invalid recipients
@@ -179,11 +183,11 @@ if { [llength $invalid_recipients] > 0 } {
 if {[exists_and_not_null object_id]} {
     foreach object $object_id {
 	if {[fs::folder_p -object_id $object]} {
-	    db_foreach files "select r.revision_id
-	    from cr_revisions r, cr_items i
-	    where r.item_id = i.item_id and i.parent_id = :object" {
-		lappend file_list $revision_id
-	    }
+	    db_foreach files {select r.revision_id	
+		from cr_revisions r, cr_items i	
+		where r.item_id = i.item_id and i.parent_id = :object} {
+		    lappend file_list $revision_id
+		}
 	} else {
 	    set revision_id [content::item::get_best_revision -item_id $object]
 	    if {[empty_string_p $revision_id]} {
@@ -205,17 +209,15 @@ if {[exists_and_not_null file_list]} {
     set file_ids [join $file_list " "]
 }
 
-set form_elements {
+append form_elements {
     file_ids:text(hidden)
-    party_ids:text(hidden)
-    group_id:text(hidden)
+    search_id:text(hidden)
     return_url:text(hidden)
     folder_id:text(hidden)
     object_id:text(hidden)
     context_id:text(hidden)
     {to_name:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
 }
-
 
 if { ![exists_and_not_null message_type] } {
 
@@ -283,9 +285,9 @@ if { ![exists_and_not_null message_type] } {
 } else {
     set title [_ contacts.create_$message_type]
 
-    if {$group_id ne ""} {
-	# Get the group template
-	set message_src "/packages/contacts/lib/${message_type}_group"
+    if {$search_id ne ""} {
+	# Get the search template
+	set message_src "/packages/contacts/lib/${message_type}-search"
     } else {
 	set message_src "/packages/contacts/lib/${message_type}"
     }

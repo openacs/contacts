@@ -22,7 +22,7 @@
 	        footer_id=@footer_id@
 	        header_id=@header_id@
 	        folder_id=@folder_id@
-		group_id=@group_id@
+		search_id=@search_id@
 		title=@title@
 		cc=@cc@	
 		bcc=@bcc@

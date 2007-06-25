@@ -304,9 +304,9 @@ ad_form -action $action \
 		lappend values [list "{$element}" [set $element]]
 	    }
 	    
-	    set subject [contact::message::interpolate -text $subject -values $values]
+	    set interpol_subject [contact::message::interpolate -text $subject -values $values]
 
-	    set content_body [contact::message::interpolate -text $content_body -values $values]
+	    set interpol_content_body [contact::message::interpolate -text $content_body -values $values]
 	    
 	    # If we are doing mail through for tracking purposes
 	    # Set the reply_to_addr accordingly
@@ -325,8 +325,8 @@ ad_form -action $action \
 		-bcc_addr $bcc_list \
 		-from_addr "$from_addr" \
 		-reply_to "$reply_to_addr" \
-		-subject "$subject" \
-		-body "$content_body" \
+		-subject "$interpol_subject" \
+		-body "$interpol_content_body" \
 		-package_id $package_id \
 		-file_ids $file_ids \
 		-mime_type $mime_type \
