@@ -291,7 +291,7 @@ ad_form -extend -name party_ae -export {return_url}\
 		set cat_ids [list]
 		
 		foreach group_id $group_ids {
-		    group::add_member \
+		    contact::group::add_member \
 			-group_id $group_id \
 			-user_id $person_party_id \
 			-rel_type "membership_rel"
@@ -316,11 +316,10 @@ ad_form -extend -name party_ae -export {return_url}\
 		
 		foreach group_id $group_ids {
 		    if {![empty_string_p $group_id]} {
-			
-			# relation-add does not work as there is no
-			# special procedure for organizations at the moment.
-			set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,'organization_rel',:group_id,:organization_party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
-			db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
+			contact::group::add_member \
+			    -group_id $group_id \
+			    -user_id $organization_party_id \
+			    -rel_type "organization_rel"
 		    }
 		}
 		

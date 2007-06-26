@@ -441,13 +441,13 @@ ad_proc -public contacts::import::csv {
 	    # todo: set correct locale
 	    callback contact::person_add -package_id $contacts_package_id -person_id $person_id
 	    
-	    group::add_member \
+	    contact::group::add_member \
 		-group_id $default_group_id \
 		-user_id $person_id \
 		-rel_type "membership_rel"
 	    
 	    if {$group_id ne ""} {
-		group::add_member \
+		contact::group::add_member \
 		    -group_id $group_id \
 		    -user_id $person_id \
 		    -rel_type "membership_rel"

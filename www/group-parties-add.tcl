@@ -67,38 +67,7 @@ ad_form -action group-parties-add \
 	db_transaction {
             foreach group_id $group_ids {
                 foreach party_id $party_ids {
-
-                    switch [contact::type -party_id $party_id] {
-                        person - user {
-                            set rel_type "membership_rel"
-                        }
-                        organization {
-			    # Execute the callback for the organization depending on the group they are added to.
-			    # We use this callback to add the organization to .LRN if it is a Customer
-			    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
-                            set rel_type "organization_rel"
-                        }
-                    }
-		    
-		    # relation-add does not work as there is no
-		    # special procedure for organizations at
-		    # the moment.
-		    set existing_rel_id [db_string rel_exists { 
-			select rel_id
-			from   acs_rels 
-			where  rel_type = :rel_type 
-			and    object_id_one = :group_id
-			and    object_id_two = :party_id
-		    } -default {}]
-		    
-		    if { [empty_string_p $existing_rel_id] } {
-			set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,:rel_type,:group_id,:party_id,NULL,:user_id,:peeraddr) as org_rel_id }]
-			db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,'approved') }
-		    } else {
-			# we approve the existing rel which may not be approved
-			db_dml update_state { update membership_rels set member_state = 'approved' where rel_id = :existing_rel_id }
-		    }
-		    
+		    contact::group::add_member -group_id $group_id -user_id $party_id -member_state "approved"
                 }
             }
 	}

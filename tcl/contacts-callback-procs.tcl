@@ -1388,14 +1388,3 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
     }
 }    
 
-ad_proc -public -callback group::add_member -impl contacts {
-    {-group_id:required}
-    {-user_id:required}
-    {-rel_type:required}
-    {-member_state:required}
-} {
-    
-} {
-    ns_log Notice "callback group::add_member -group_id $group_id -user_id $user_id -rel_type $rel_type -member_state $member_state"
-
-}

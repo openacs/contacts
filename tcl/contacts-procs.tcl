@@ -155,35 +155,33 @@ ad_proc -private contacts::sweeper {
 	    set member_state [db_string member_state "select member_state from cc_users where user_id = :person_id" -default ""]
 	    if {$member_state ne "deleted"} {
 	        foreach group_id $default_groups {
-                if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
-		    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
-		    break
-		}
+		    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
+			set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
+			break
+		    }
 	        }
 	    
 	        if {![exists_and_not_null contact_revision_id]} {
-		# We did not found a group, so just use the first contacts instance.
-		if {[ad_conn isconnected]} {
-		    set user_id [ad_conn user_id]
-		    set peeraddr [ad_conn peeraddr]
-		} else {
-		    set user_id $person_id
-		    set peeraddr 127.0.0.1
+		    # We did not found a group, so just use the first contacts instance.
+		    if {[ad_conn isconnected]} {
+			set user_id [ad_conn user_id]
+			set peeraddr [ad_conn peeraddr]
+		    } else {
+			set user_id $person_id
+			set peeraddr 127.0.0.1
+		    }
+		    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
 		}
-		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
-	    }
 	    
 	        # Add the default ams attributes
 	        foreach attribute {first_names last_name email} {
-		if {[exists_and_not_null $attribute]} {
-		    ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+		    if {[exists_and_not_null $attribute]} {
+			ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+		    }
 		}
-	    }
-	    
-	        # And insert into the default group for this package.
-	        group::add_member -user_id $person_id -group_id $default_group_id -no_perm_check
+		
 	        incr counter
-	        ns_log notice "contacts::sweeper ($counter / $person_num) creating content_item and content_revision $contact_revision_id for party_id: $person_id in $default_group_id"
+	        ns_log notice "contacts::sweeper ($counter / $person_num) creating content_item and content_revision $contact_revision_id for party_id: $person_id"
 	    }
 	}
 	
@@ -203,10 +201,10 @@ ad_proc -private contacts::sweeper {
 	}
 	db_dml insert_privacy_records {}
 	# Delete records where the user_id has been deleted. After all, deleted users should not show up in contacts either
-    foreach group_id $default_groups {
-        db_dml delete_deleted_users {}
-    }
-       
+	foreach group_id $default_groups {
+	    db_dml delete_deleted_users {}
+	}
+	
     } -finally {
 	nsv_incr contacts sweeper_p -1
     }
@@ -884,13 +882,13 @@ ad_proc -private contact::person_upgrade_to_user {
 	    # will not automatically be sent.
 	    auth::password::reset -authority_id [auth::authority::local] -username $username -admin
 	    if { [string is true $no_perm_check] } {
-		group::add_member \
+		contact::group::add_member \
 		    -no_perm_check \
 		    -group_id "-2" \
 		    -user_id $person_id \
 		    -rel_type "membership_rel"
 	    } else {
-		group::add_member \
+		contact::group::add_member \
 		    -group_id "-2" \
 		    -user_id $person_id \
 		    -rel_type "membership_rel"
@@ -965,6 +963,101 @@ ad_proc -public contact::group::name {
 	return [lang::util::localize [lang::util::localize [group::title -group_id $group_id]]]
     }
 }
+
+
+ad_proc -public contact::group::add_member {
+    {-no_perm_check:boolean}
+    {-group_id:required}
+    {-user_id:required}
+    {-rel_type ""}
+    {-member_state ""}
+} {
+    Adds a user to a group, checking that the rel_type is permissible given the user's privileges,
+    Can default both the rel_type and the member_state to their relevant values.
+} {
+    set admin_p [permission::permission_p -object_id $group_id -privilege "admin"]
+
+
+    # Only admins can add non-membership_rel members
+    if { $rel_type eq "" || \
+             (!$no_perm_check_p && $rel_type ne "" && $rel_type ne "membership_rel" && \
+                  ![permission::permission_p -object_id $group_id -privilege "admin"]) } {
+	switch [contact::type -party_id $party_id] {
+	    person - user {
+		set rel_type "membership_rel"
+	    }
+	    organization {
+		# Execute the callback for the organization depending on the group they are added to.
+		# We use this callback to add the organization to .LRN if it is a Customer
+		callback contact::organization_new_group -organization_id $party_id -group_id $group_id
+		set rel_type "organization_rel"
+	    }
+	}
+    }
+
+    group::get -group_id $group_id -array group
+
+    if { !$no_perm_check_p } {
+        set create_p [group::permission_p -privilege create $group_id]
+        if { $group(join_policy) eq "closed" && !$create_p } {
+            error "You do not have permission to add members to the group '$group(group_name)'"
+        }
+    } else {
+        set create_p 1
+    }
+
+    if { $member_state eq "" } {
+        set member_state [group::default_member_state \
+                              -join_policy $group(join_policy) \
+                              -create_p $create_p]
+    }
+
+    if { $rel_type eq "organization_rel" } {
+	# They are using the special organization_rel which
+        # needs to be added differently since organizations
+        # can be part of a group which violates the membership_rel
+        # constraint for a group member to be a person see:
+        # http://openacs.org/forums/message-view?message_id=1059049
+        #
+        # The organization_rel behaves exactly like a basic membership_rel
+        # and uses the exact same tables, but it allows an organization
+        # to be a member of a group. If the constraint is dropped/changed
+        # then this code could be cleaned up to act like the other rel
+        # types listed below - and potentially all organization_rels can be
+        # updated and changed into membership_rels
+
+	set existing_rel_id [db_string rel_exists { 
+	    select rel_id
+	    from   acs_rels 
+	    where  rel_type = :rel_type 
+            and    object_id_one = :group_id
+            and    object_id_two = :user_id
+	} -default {}]
+        if { [empty_string_p $existing_rel_id] } {
+	    if { [ad_conn isconnected] } {
+		set peeraddr [ad_conn peeraddr]
+		set creation_user [ad_conn user_id]
+	    } else {
+		set user_id $organization_id
+		set peeraddr 127.0.0.1
+	    }
+	    set rel_id [db_string insert_rels { select acs_rel__new (NULL::integer,:rel_type,:group_id,:user_id,NULL,:creation_user,:peeraddr) as org_rel_id }]
+	    db_dml insert_state { insert into membership_rels (rel_id,member_state) values (:rel_id,:member_state) }
+	} else {
+            # update member state
+            db_dml update_state { update membership_rels set member_state = :member_state where rel_id = :existing_rel_id }
+        }
+    } else {
+	if { $rel_type ne "membership_rel" } {
+	    # add them with a membership_rel first
+	    relation_add -member_state $member_state "membership_rel" $group_id $user_id
+	}
+	relation_add -member_state $member_state $rel_type $group_id $user_id
+    }    
+    flush_members_cache -group_id $group_id
+
+}
+
 
 ad_proc -public contact::group::parent {
     -group_id:required
@@ -1109,7 +1202,7 @@ ad_proc -public contacts::person::new {
 
     # Add to default group
     set default_group_id [contacts::default_group -package_id $contacts_package_id]
-    group::add_member \
+    contact::group::add_member \
 	-group_id $default_group_id \
 	-user_id $person_id \
 	-rel_type "membership_rel"

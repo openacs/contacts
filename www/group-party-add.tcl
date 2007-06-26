@@ -24,23 +24,27 @@ switch $object_type {
 	set rel_type "membership_rel"
     }
 }
+
+
+
+set rel_id [relation::get_id -object_id_one $group_id -object_id_two $party_id -rel_type $rel_type]
+
 if {$rel_type == "organization_rel"} {
-    set user_id [ad_conn user_id]
-    set ip_addr [ad_conn peeraddr]
-    set rel_id [db_exec_plsql add_organization_rel {}]
-    db_dml insert_state {}
-    
-    # Execute the callback for the organization depending on the group they are added to.
-    # We use this callback to add the organization to .LRN if it is a Customer
-    callback contact::organization_new_group -organization_id $party_id -group_id $group_id
-	
-} else {
-    set rel_id [relation::get_id -object_id_one $group_id -object_id_two $party_id -rel_type "membership_rel"]
     if { [exists_and_not_null rel_id] } {
 	# this relationship was previously deleted and needs to be approved
 	db_dml update_state {}
     } else {
-	group::add_member \
+	contact::group::add_member -group_id $group_id -user_id $party_id -rel_type $rel_type
+	# Execute the callback for the organization depending on the group they are added to.
+	# We use this callback to add the organization to .LRN if it is a Customer
+	callback contact::organization_new_group -organization_id $party_id -group_id $group_id
+    }
+} else {
+    if { [exists_and_not_null rel_id] } {
+	# this relationship was previously deleted and needs to be approved
+	db_dml update_state {}
+    } else {
+	contact::group::add_member \
 	    -group_id $group_id \
 	    -user_id $party_id \
 	    -rel_type membership_rel

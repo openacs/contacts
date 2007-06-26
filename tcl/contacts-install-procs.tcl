@@ -582,6 +582,30 @@ ad_proc -public contacts::install::package_upgrade {
 		}
 
 	    }
+	    1.2b29 1.2b30 {
+		# We are changing all contacts application group members
+		# to be members of their subsite group.
+
+		parameter::set_default -package_key "contacts" -parameter "UseSubsiteAsDefaultGroup" -value "1"
+
+		foreach package_id [apm_package_ids_from_key -package_key "contacts"] {
+		    parameter::set_value -package_id $package_id -parameter "UseSubsiteAsDefaultGroup" -value "1"
+		    set contacts_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
+		    if { $contacts_application_group_id eq "" } {
+			continue
+		    }
+		    set contacts_node_id [site_node::get_node_id_from_object_id -object_id ${package_id}]
+		    if { $contacts_node_id eq "" } {
+			continue
+		    }
+		    set subsite_package_id [site_node::closest_ancestor_package -node_id $contacts_node_id -package_key "acs-subsite"]
+		    set subsite_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $subsite_package_id]
+
+		    foreach member_id [group::get_members_not_cached -group_id group_id -type "party"] {
+			contact::group::add_member -no_perm_check -group_id $contacts_application_group_id -user_id $member_id -member_state "approved"
+		    }
+		}
+	    }
 
 	}
 
