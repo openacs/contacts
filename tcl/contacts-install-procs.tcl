@@ -588,7 +588,7 @@ ad_proc -public contacts::install::package_upgrade {
 
 		parameter::set_default -package_key "contacts" -parameter "UseSubsiteAsDefaultGroup" -value "1"
 
-		foreach package_id [apm_package_ids_from_key -package_key "contacts"] {
+		foreach package_id [apm_package_ids_from_key -package_key "contacts" -mounted] {
 		    parameter::set_value -package_id $package_id -parameter "UseSubsiteAsDefaultGroup" -value "1"
 		    set contacts_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $package_id]
 		    if { $contacts_application_group_id eq "" } {
@@ -601,7 +601,7 @@ ad_proc -public contacts::install::package_upgrade {
 		    set subsite_package_id [site_node::closest_ancestor_package -node_id $contacts_node_id -package_key "acs-subsite"]
 		    set subsite_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $subsite_package_id]
 
-		    foreach member_id [group::get_members_not_cached -group_id group_id -type "party"] {
+		    foreach member_id [group::get_members_not_cached -group_id $contacts_application_group_id -type "party"] {
 			contact::group::add_member -no_perm_check -group_id $contacts_application_group_id -user_id $member_id -member_state "approved"
 		    }
 		}

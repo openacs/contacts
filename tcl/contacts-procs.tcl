@@ -982,14 +982,11 @@ ad_proc -public contact::group::add_member {
     if { $rel_type eq "" || \
              (!$no_perm_check_p && $rel_type ne "" && $rel_type ne "membership_rel" && \
                   ![permission::permission_p -object_id $group_id -privilege "admin"]) } {
-	switch [contact::type -party_id $party_id] {
+	switch [contact::type -party_id $user_id] {
 	    person - user {
 		set rel_type "membership_rel"
 	    }
 	    organization {
-		# Execute the callback for the organization depending on the group they are added to.
-		# We use this callback to add the organization to .LRN if it is a Customer
-		callback contact::organization_new_group -organization_id $party_id -group_id $group_id
 		set rel_type "organization_rel"
 	    }
 	}
@@ -1054,7 +1051,7 @@ ad_proc -public contact::group::add_member {
 	}
 	relation_add -member_state $member_state $rel_type $group_id $user_id
     }    
-    flush_members_cache -group_id $group_id
+    group::flush_members_cache -group_id $group_id
 
 }
 
