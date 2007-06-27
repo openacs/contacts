@@ -147,18 +147,10 @@ ad_form -name "rel_type" \
 	} 
 	
     } -on_submit {
-
-	if {![exists_and_not_null banner]} {
-	    set banner ""
-	}
-	if {![exists_and_not_null ps]} {
-	    set ps ""
-	}
-	if {![exists_and_not_null content]} {
-	    set content ""
-	}
-	if {![exists_and_not_null description]} {
-	    set description ""
+	foreach variable [list banner ps content description oo_template] {
+	    if { ![exists_and_not_null $variable] } {
+		set $variable ""
+	    }
 	}
 	if { $message_type != "email" } {
 	    set content_format [template::util::richtext::get_property format $content]
