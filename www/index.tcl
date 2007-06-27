@@ -118,11 +118,11 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
 
 if { $search_id ne "" && $contacts_total_count > 0 } {
     if {[contact::group::mapped_p -group_id $search_id]} {
-	set recipient "[group::title -group_id $search_id]"
+	set recipient [contact::group::name -group_id $search_id]
     } else {
-	set recipient "[contact::search::title -search_id $search_id]"
+	set recipient [contact::search::title -search_id $search_id]
     }
-    set label "[_ contacts.Mail_group]"
+    set label "[_ contacts.Mail_recipient]"
 
     append form_elements {
 	{mail_merge_group:text(submit) {label $label} {value "1"}}
