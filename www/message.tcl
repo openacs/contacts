@@ -52,10 +52,9 @@ if { $search_id ne "" } {
 
     set return_url [export_vars -base [apm_package_url_from_id $package_id] -url {search_id}]
     if {[contact::group::mapped_p -group_id $search_id]} {
-
 	# Make sure the user has write permission on the group
 	permission::require_permission -object_id $search_id -privilege "write"
-	lappend recipients "<a href=\"$return_url\">[group::title -group_id $search_id]</a>"
+	lappend recipients "<a href=\"$return_url\">[contact::group::name -group_id $search_id]</a>"
     } else {
 	lappend recipients "<a href=\"$return_url\">[contact::search::title -search_id $search_id]</a>"
     }
@@ -221,26 +220,17 @@ append form_elements {
 
 if { ![exists_and_not_null message_type] } {
 
+    set public_text [_ contacts.Public]
+    set package_id [ad_conn package_id]
+
     set message_type_options [ams::util::localize_and_sort_list_of_lists \
 				  -list [db_list_of_lists get_message_types { select pretty_name, message_type from contact_message_types }] \
 				 ]
-
-    set message_options [list]
     foreach op $message_type_options {
-	set message_type [lindex $op 1]
-	if { [lsearch [list "header" "footer"] $message_type] < 0 } {
-	    lappend message_options [list "-- [_ contacts.New] [lindex $op 0] --" $message_type]
-	}
-
-	# set email_text and letter_text and others in the future
-	set "${message_type}_text" [lindex $op 0]
+	set [lindex ${op} 1]_options [list]
+	set [lindex ${op} 1]_text [lindex ${op} 0]
     }
 
-    set public_text [_ contacts.Public]
-    set package_id [ad_conn package_id]
-    set letter_options ""
-    set email_options ""
-    set oo_mailing_options ""
     db_foreach get_messages {
 	select CASE WHEN owner_id = :package_id THEN :public_text ELSE contact__name(owner_id) END as public_display,
 	title,
@@ -259,11 +249,17 @@ if { ![exists_and_not_null message_type] } {
 	}
     }
 
-    set message_options [concat \
-			     $message_options \
-			     $letter_options \
-			     $email_options \
-                             $oo_mailing_options]
+
+
+
+    # Only Email can be used without a template
+    set message_options [list [list "-- [_ contacts.New] Email --" email]]
+
+    foreach op $message_type_options {
+	if { [lsearch [list "header" "footer"] [lindex $op 1]] < 0 } {
+	    set message_options [concat $message_options [set [lindex $op 1]_options]]
+	}
+    }
 
     if {[exists_and_not_null header_options]} {
 	lappend form_elements [list \
@@ -273,28 +269,26 @@ if { ![exists_and_not_null message_type] } {
 			      ]
     }
 
-    lappend form_elements [list \
-			       message:text(select) \
-			       [list label "[_ contacts.Message]"] \
-			       [list options $message_options] \
-			      ]
-
-    set message_type ""
-    set title [_ contacts.create_a_message]
-
-} else {
-    set title [_ contacts.create_$message_type]
-
-    if {$search_id ne ""} {
-	# Get the search template
-	set message_src "/packages/contacts/lib/${message_type}-search"
+    if { [llength $message_options] == 1 } {
+	lappend form_elements [list message:text(hidden) [list value "email"]]
+	set message_type "email"
     } else {
-	set message_src "/packages/contacts/lib/${message_type}"
+	lappend form_elements [list \
+				   message:text(select) \
+				   [list label "[_ contacts.Message]"] \
+				   [list options $message_options] \
+				  ]
+	set message_type ""
     }
+    set title [_ contacts.create_a_message]
+    set message_create_p 0
+} else {
+    set message_create_p 1
 }
 
 set context [list $title]
 
+set signature_options_p 0
 if { [string is false [exists_and_not_null message]] } {
     set signature_list [list]
     set reset_title $title
@@ -310,14 +304,29 @@ if { [string is false [exists_and_not_null message]] } {
      }
     set title $reset_title
     set signature_id $reset_signature_id
-    if {$signature_list ne ""} {
+    if { [llength $signature_list] > 1 } {
 	append form_elements {
 	    {signature_id:text(select) 
 		{label "[_ contacts.Signature]"}
 		{options {$signature_list}}
+		
+	    }
+	}
+	set signature_options_p 1
+    } elseif { [llength $signature_list] >= 1 } {
+	set signature_id [lindex [lindex $signature_list 0] 1]
+	set signature_label [lindex [lindex $signature_list 0] 0]
+	append form_elements {
+	    {signature_pretty:text(inform) 
+		{label "[_ contacts.Signature]"}
+		{value {<a href="[export_vars -base "signature" -url {signature_id}]">$signature_label</a>}}
+	    }
+	    {signature_id:text(hidden) 
+		{value {$signature_id}}
 	    }
 	}
     }
+    set signature_id $reset_signature_id
 }
 
 if {[exists_and_not_null footer_options]} {
@@ -327,6 +336,27 @@ if {[exists_and_not_null footer_options]} {
 			       [list options $footer_options] \
 			      ]
 }
+
+
+if { ![exists_and_not_null header_options] && \
+	 ![exists_and_not_null footer_options] && \
+	 [string is false $signature_options_p] && \
+	 $message_type eq "email" } {
+    # there is nothing for them to select so we select next for them
+    set message_create_p 1
+}
+
+if { $message_create_p } {
+    set title [_ contacts.create_$message_type]
+
+    if {$search_id ne ""} {
+	# Get the search template
+	set message_src "/packages/contacts/lib/${message_type}-search"
+    } else {
+	set message_src "/packages/contacts/lib/${message_type}"
+    }
+}
+
 
 set edit_buttons [list [list "[_ contacts.Next]" create]]
 
