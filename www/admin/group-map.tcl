@@ -11,7 +11,7 @@ ad_page_contract {
     {return_url "./"}
 } -validate {
     action_valid -requires {action} {
-        if { [lsearch [list map unmap makedefault] $action] < 0 } {
+        if { [lsearch [list map unmap makedefault notificationson notificationsoff] $action] < 0 } {
             ad_complain "[_ contacts.lt_the_action_supplied_i]"
         }
     }
@@ -81,6 +81,16 @@ switch $action {
         db_dml make_default {
             update contact_groups set default_p = 't' where package_id = :package_id and group_id = :group_id
         }
+    }
+    notificationson {
+	db_dml notificationson {
+	    update contact_groups set notifications_p = 't' where package_id = :package_id and group_id = :group_id
+	}
+    }
+    notificationsoff {
+	db_dml notificationsoff {
+	    update contact_groups set notifications_p = 'f' where package_id = :package_id and group_id = :group_id
+	}
     }
 }
 

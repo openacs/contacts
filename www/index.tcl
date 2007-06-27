@@ -119,11 +119,17 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
 if { $search_id ne "" && $contacts_total_count > 0 } {
     if {[contact::group::mapped_p -group_id $search_id]} {
 	set recipient [contact::group::name -group_id $search_id]
+	set notifications_p [contact::group::notifications_p -group_id $search_id]
     } else {
 	set recipient [contact::search::title -search_id $search_id]
+	set notifications_p 0
     }
-    set label "[_ contacts.Mail_recipient]"
 
+    if { $notifications_p } {
+	set label [_ contacts.Notify_recipient]
+    } else {
+	set label [_ contacts.Mail_recipient]
+    }
     append form_elements {
 	{mail_merge_group:text(submit) {label $label} {value "1"}}
     }

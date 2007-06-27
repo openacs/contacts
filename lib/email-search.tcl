@@ -25,6 +25,18 @@ if {![info exists no_callback_p]} {
     set no_callback_p f
 }
 
+if { [contact::group::notifications_p -group_id $search_id] } {
+    set recipients_label [_ contacts.Notify]
+    # we cannot do interpolation with notifications since
+    # only one notification is generated for all recipients
+    set content_body_help_text ""
+} else {
+    set recipients_label [_ contacts.Recipients]
+    # since each message is dealt with individually we can
+    # do interpolation
+    set content_body_help_text [_ contacts.lt_remember_that_you_can]
+}
+
 # The element check_uncheck only calls a javascript function
 # to check or uncheck all recipients
 set form_elements {
@@ -34,21 +46,36 @@ set form_elements {
     title:text(hidden),optional
     search_id:text(hidden)
     {message_type:text(hidden) {value "email"}}
-    {-section "sec1" {legendtext "[_ contacts.Recipients]"}}
+    {-section "sec1" {legendtext "$recipients_label"}}
     {recipients:text(inform)
-	{label "[_ contacts.Recipients]"} 
+	{label "$recipients_label"} 
 	{value "$recipients"}
     }
-    {cc:text(text),optional
-	{label "[_ contacts.CC]:"} 
-	{html {size 60}}
-	{help_text "[_ contacts.cc_help]"}
+}
+
+if { [contact::group::notifications_p -group_id $search_id] } {
+
+    # CC and BCC are not avalable for notifications
+    append form_elements {
+	{cc:text(hidden),optional}
+	{bcc:text(hidden),optional}
     }
-    {bcc:text(text),optional
-	{label "[_ acs-mail-lite.BCC]:"} 
-	{html {size 60}}
-	{help_text "[_ contacts.cc_help]"}
+
+} else {
+
+    append form_elements {
+	{cc:text(text),optional
+	    {label "[_ contacts.CC]:"} 
+	    {html {size 60}}
+	    {help_text "[_ contacts.cc_help]"}
+	}
+	{bcc:text(text),optional
+	    {label "[_ acs-mail-lite.BCC]:"} 
+	    {html {size 60}}
+	    {help_text "[_ contacts.cc_help]"}
+	}
     }
+
 }
 
 # Set single_email_p in the form
@@ -135,7 +162,7 @@ append form_elements {
     {content_body:richtext(richtext),optional
 	{label "[_ contacts.Message]"}
 	{html {cols 80 rows 18}}
-	{help_text "[_ contacts.lt_remember_that_you_can]"}
+	{help_text "$content_body_help_text"}
 	{value $content_list}
     }
     {upload_file:file(file),optional
@@ -199,83 +226,6 @@ ad_form -action $action \
     } -on_submit {
 
 	set package_id [ad_conn package_id]
-	
-	# Make sure we get the correct users and can send an e-mail to them
-	if {[contact::group::mapped_p -group_id $search_id]} {
-	    
-	    # Make sure the user has write permission on the group
-	    permission::require_permission -object_id $search_id -privilege "write"
-	    
-	    # Get the party_ids from the group members
-	    if { [contact::group::mapped_p -group_id $search_id] } {
-		set valid_party_ids [group::get_members -group_id $search_id]
-	    }
-	} else {
-	    set valid_party_ids [contact::search::results -search_id $search_id -package_id $package_id]
-	}
-	
-	foreach party_id $valid_party_ids {
-	    if { [party::email -party_id $party_id] eq "" } {
-		# We are going to check if there is an employee relationship
-		# if there is we are going to check if the employer has an
-		# email adrres, if it does we are going to use that address
-		set employer_id [lindex [contact::util::get_employee_organization -employee_id $party_id] 0]
-		
-		if { ![empty_string_p $employer_id] } {
-		    set emp_addr [contact::email -party_id $employer_id]
-		    if { ![empty_string_p $emp_addr] } {
-			lappend party_ids $employer_id
-		    } else {
-			lappend invalid_party_ids $party_id
-		    }
-		} else {
-		    lappend invalid_party_ids $party_id
-		}
-	    } else {
-		lappend party_ids $party_id
-	    } 
-	}
-
-	# Deal with the invalid recipients
-	foreach party_id $invalid_party_ids {
-	    set contact_name   [contact::name -party_id $party_id]
-	    set contact_url    [contact::url -party_id $party_id]
-	    lappend invalid_recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
-	}
-	
-	set invalid_recipients [join $invalid_recipients ", "]
-	if { [llength $invalid_recipients] > 0 } {
-	    switch $message_type {
-		letter {
-		    set error_message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
-		}
-		email {
-		    set error_message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
-		}
-		default {
-		    set error_message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
-		}
-	    }
-	    if { $party_ids != "" } {
-		util_user_message -html -message $error_message
-	    }
-	}
-	
-	# We get the attribute_id of the salutation attribute
-	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
-	    
-	# List to store know wich emails recieved the message
-	set recipients_addr [list]
-
-	set from [ad_conn user_id]
-	set from_addr [contact::email -party_id $from]
-
-	# Remove all spaces in cc and bcc
-	regsub -all " " $cc "" cc
-	regsub -all " " $bcc "" bcc
-
-	set cc_list [split $cc ";"]
-	set bcc_list [split $bcc ";"]
 
 	set mime_type [template::util::richtext::get_property format $content_body]
 	set content_body [template::util::richtext::get_property contents $content_body]
@@ -297,100 +247,198 @@ ad_form -action $action \
 		lappend file_ids $file_id
 	    }
 	}
+
+
+
+	
+
+	if { [contact::group::notifications_p -group_id $search_id] } {
+
+	    permission::require_permission -object_id $search_id -privilege "write"		
+
+	    notification::new \
+		-type_id [notification::type::get_type_id -short_name contacts_group_notif] \
+		-object_id $search_id \
+		-notif_subject $subject \
+		-notif_text [ad_html_text_convert -from $mime_type -to text/plain -- $content_body] \
+		-notif_html [ad_html_text_convert -from $mime_type -to text/html -- $content_body] \
+		-file_ids $file_ids
+
+	} else {
 	
 	
-	# Send the mail to all parties.
-	set member_size [llength $party_ids]
-	set counter 1
-	foreach party_id $party_ids  {
-
-	    # Differentiate between person and organization
-	    if {[person::person_p -party_id $party_id]} {
-		set salutation [contact::salutation -party_id $party_id]
-		db_1row names "select first_names, last_name from persons where person_id = :party_id"
-		set name "$first_names $last_name"
+	    # Make sure we get the correct users and can send an e-mail to them
+	    if {[contact::group::mapped_p -group_id $search_id]} {
+		
+		# Make sure the user has write permission on the group
+		permission::require_permission -object_id $search_id -privilege "write"		
+		set valid_party_ids [group::get_members -group_id $search_id]
 	    } else {
-		set name [contact::name -party_id $party_id]
-		set salutation "Dear ladies and gentlemen"
-		# the following is a hot fix (nfl 2006/10/20)
-		set first_names ""
-		set last_name ""
-	    }
-
-	    
-	    set date [lc_time_fmt [dt_sysdate] "%q"]
-	    
-	    set values [list]
-	    foreach element [list first_names last_name salutation name date] {
-		lappend values [list "{$element}" [set $element]]
+		set valid_party_ids [contact::search::results -search_id $search_id -package_id $package_id]
 	    }
 	    
-	    set interpol_subject [contact::message::interpolate -text $subject -values $values]
-
-	    set interpol_content_body [contact::message::interpolate -text $content_body -values $values]
-	    
-	    # If we are doing mail through for tracking purposes
-	    # Set the reply_to_addr accordingly
-	    if {$mail_through_p} {
-		regsub -all {@} $from_addr {#} reply_to
-		set reply_to_addr "${reply_to}@[acs_mail_lite::address_domain]"
-	    } else {
-		set reply_to_addr $from_addr
+	    set party_ids [list]
+	    set invalid_party_ids [list]
+	    set invalid_recipients [list]
+	    foreach party_id $valid_party_ids {
+		if { [party::email -party_id $party_id] eq "" } {
+		    # We are going to check if there is an employee relationship
+		    # if there is we are going to check if the employer has an
+		    # email adrres, if it does we are going to use that address
+		    set employer_id [lindex [contact::util::get_employee_organization -employee_id $party_id] 0]
+		    
+		    if { ![empty_string_p $employer_id] } {
+			set emp_addr [contact::email -party_id $employer_id]
+			if { ![empty_string_p $emp_addr] } {
+			    lappend party_ids $employer_id
+			} else {
+			    lappend invalid_party_ids $party_id
+			}
+		    } else {
+			lappend invalid_party_ids $party_id
+		    }
+		} else {
+		    lappend party_ids $party_id
+		} 
 	    }
-
-	    ns_log Notice "Recipient: $name $party_id ( $counter / $member_size )"
-	    incr counter
-
-	    acs_mail_lite::complex_send \
-		-to_party_ids $party_id \
-		-cc_addr $cc_list \
-		-bcc_addr $bcc_list \
-		-from_addr "$from_addr" \
-		-reply_to "$reply_to_addr" \
-		-subject "$interpol_subject" \
-		-body "$interpol_content_body" \
-		-package_id $package_id \
-		-file_ids $file_ids \
-		-mime_type $mime_type \
-		-object_id $context_id \
-		-no_callback_p $no_callback_p \
-		-single_email
 	    
-	    # Link the files to all parties
-	    if {[exists_and_not_null revision_id]} {
-		application_data_link::new -this_object_id $revision_id -target_object_id $party_id
+	    # Deal with the invalid recipients
+	    foreach party_id $invalid_party_ids {
+		set contact_name   [contact::name -party_id $party_id]
+		set contact_url    [contact::url -party_id $party_id]
+		lappend invalid_recipients   "<a href=\"${contact_url}\">${contact_name}</a>"
+	    }
+	    
+	    set invalid_recipients [join $invalid_recipients ", "]
+	    if { [llength $invalid_recipients] > 0 } {
+		switch $message_type {
+		    letter {
+			set error_message [_ contacts.lt_You_cannot_send_a_letter_to_invalid_recipients]
+		    }
+		    email {
+			set error_message [_ contacts.lt_You_cannot_send_an_email_to_invalid_recipients]
+		    }
+		    default {
+			set error_message [_ contacts.lt_You_cannot_send_a_message_to_invalid_recipients]
+		    }
+		}
+		if { $party_ids != "" } {
+		    util_user_message -html -message $error_message
+		}
+	    }
+	    
+	    # We get the attribute_id of the salutation attribute
+	    set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
+	    
+	    # List to store know wich emails recieved the message
+	    set recipients_addr [list]
+	    
+	    set from [ad_conn user_id]
+	    set from_addr [contact::email -party_id $from]
+	    
+	    # Remove all spaces in cc and bcc
+	    regsub -all " " $cc "" cc
+	    regsub -all " " $bcc "" bcc
+	    
+	    set cc_list [split $cc ";"]
+	    set bcc_list [split $bcc ";"]
+	    
+	    # Send the mail to all parties.
+	    set member_size [llength $party_ids]
+	    set counter 1
+
+	    foreach party_id $party_ids  {
+		
+		# Differentiate between person and organization
+		if {[person::person_p -party_id $party_id]} {
+		    set salutation [contact::salutation -party_id $party_id]
+		    db_1row names "select first_names, last_name from persons where person_id = :party_id"
+		    set name "$first_names $last_name"
+		} else {
+		    set name [contact::name -party_id $party_id]
+		    set salutation "Dear ladies and gentlemen"
+		    # the following is a hot fix (nfl 2006/10/20)
+		    set first_names ""
+		    set last_name ""
+		}
+		
+		
+		set date [lc_time_fmt [dt_sysdate] "%q"]
+		
+		set values [list]
+		foreach element [list first_names last_name salutation name date] {
+		    lappend values [list "{$element}" [set $element]]
+		}
+		
+		set interpol_subject [contact::message::interpolate -text $subject -values $values]
+		
+		set interpol_content_body [contact::message::interpolate -text $content_body -values $values]
+		
+		# If we are doing mail through for tracking purposes
+		# Set the reply_to_addr accordingly
+		if { [string is true $mail_through_p] } {
+		    regsub -all {@} $from_addr {#} reply_to
+		    set reply_to_addr "${reply_to}@[acs_mail_lite::address_domain]"
+		} else {
+		    set reply_to_addr $from_addr
+		}
+		      
+		ns_log Notice "Recipient: $name $party_id ( $counter / $member_size )"
+		incr counter
+		
+		acs_mail_lite::complex_send \
+		    -to_party_ids $party_id \
+		    -cc_addr $cc_list \
+		    -bcc_addr $bcc_list \
+		    -from_addr "$from_addr" \
+		    -reply_to "$reply_to_addr" \
+		    -subject "$interpol_subject" \
+		    -body "$interpol_content_body" \
+		    -package_id $package_id \
+		    -file_ids $file_ids \
+		    -mime_type $mime_type \
+		    -object_id $context_id \
+		    -no_callback_p $no_callback_p \
+		    -single_email
+		
+		# Link the files to all parties
+		if {[exists_and_not_null revision_id]} {
+		    application_data_link::new -this_object_id $revision_id -target_object_id $party_id
+		}
+		
+		# Log the sending of the mail in contacts history
+		if { ![empty_string_p $item_id]} {
+		    
+		    contact::message::log \
+			-message_type "email" \
+			-sender_id $from \
+			-recipient_id $party_id \
+			-title $title \
+			-description $subject \
+			-content $content_body \
+			-content_format "text/plain" \
+			-item_id "$item_id"
+			
+		}
 	    }
 		
-	    # Log the sending of the mail in contacts history
-	    if { ![empty_string_p $item_id]} {
 		
-		contact::message::log \
-		    -message_type "email" \
-		    -sender_id $from \
-		    -recipient_id $party_id \
-		    -title $title \
-		    -description $subject \
-		    -content $content_body \
-		    -content_format "text/plain" \
-		    -item_id "$item_id"
 		
-	    } 
+	
+	    # Prepare the user message
+	    foreach cc_addr [concat $cc_list $bcc_list] {
+		set cc_id [party::get_by_email -email $cc_addr]
+		if {$cc_id eq ""} {
+		    lappend recipients $cc_addr
+		} else {
+		    lappend recipients "<a href=\"[contact::url -party_id $cc_id]\">[contact::name -party_id $cc_id]</a>"
+		}
+	    }
+	    util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
+
 	}
-
-	ad_returnredirect $return_url
-	
-	# Prepare the user message
-	foreach cc_addr [concat $cc_list $bcc_list] {
-	    set cc_id [party::get_by_email -email $cc_addr]
-	    if {$cc_id eq ""} {
-		lappend recipients $cc_addr
-	    } else {
-		lappend recipients "<a href=\"[contact::url -party_id $cc_id]\">[contact::name -party_id $cc_id]</a>"
-	    }
-	}
-        util_user_message -html -message "[_ contacts.Your_message_was_sent_to_-recipients-]"
-
     } -after_submit {
+	ad_returnredirect $return_url
 	ad_script_abort
     }
 

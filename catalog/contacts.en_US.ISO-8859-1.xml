@@ -513,9 +513,10 @@
   <msg key="lt_zippostal_does_not_st">zip/postal does not start with -&gt;</msg>
   <msg key="lt_zippostal_starts_with">zip/postal starts with -&gt;</msg>
   <msg key="Mail">Mail</msg>
-  <msg key="Mail_recipient">Message to %recipient%</msg>
+  <msg key="Mail_group">Mail %recipient%</msg>
   <msg key="Mail_Merge">Mail Merge</msg>
   <msg key="Mail_Merge_Results">Mail Merge Results</msg>
+  <msg key="Mail_recipient">Mail %recipient%</msg>
   <msg key="Mail_through_p">Mail Through</msg>
   <msg key="Mail_to_contact">Mail to contact</msg>
   <msg key="mailing_allowed">mailing allowed</msg>
@@ -551,6 +552,8 @@
   <msg key="Normal_Searches">Normal Searches</msg>
   <msg key="Not_Configured">Not Configured</msg>
   <msg key="not_in_the_search">not in the search</msg>
+  <msg key="Notify">Notify</msg>
+  <msg key="Notify_recipient">Notify %recipient%</msg>
   <msg key="Number_of_Rows">Number of Rows</msg>
   <msg key="Object">Object:</msg>
   <msg key="Object_id">Object_id</msg>
@@ -626,6 +629,7 @@
   <msg key="Query">Query</msg>
   <msg key="READ_THESE">READ THESE</msg>
   <msg key="Recipients">Recipients</msg>
+  <msg key="Recipients_requesting_notification">%recipients% requesting notification</msg>
   <msg key="Refund">Refund</msg>
   <msg key="rel_bulk_add_confirm">Confirm deleting relationships</msg>
   <msg key="Related_contact">Related contact</msg>

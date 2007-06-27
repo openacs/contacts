@@ -48,6 +48,7 @@ set invalid_party_ids  [list]
 set package_id [ad_conn package_id]
 set recipients  [list]
 
+set recipients_label [_ contacts.Recipients]
 if { $search_id ne "" } {
 
     set return_url [export_vars -base [apm_package_url_from_id $package_id] -url {search_id}]
@@ -55,6 +56,9 @@ if { $search_id ne "" } {
 	# Make sure the user has write permission on the group
 	permission::require_permission -object_id $search_id -privilege "write"
 	lappend recipients "<a href=\"$return_url\">[contact::group::name -group_id $search_id]</a>"
+	if { [contact::group::notifications_p -group_id $search_id] } {
+	    set recipients_label [_ contacts.Notify]
+	}
     } else {
 	lappend recipients "<a href=\"$return_url\">[contact::search::title -search_id $search_id]</a>"
     }
@@ -215,7 +219,7 @@ append form_elements {
     folder_id:text(hidden)
     object_id:text(hidden)
     context_id:text(hidden)
-    {to_name:text(inform),optional {label "[_ contacts.Recipients]"} {value $recipients}}
+    {to_name:text(inform),optional {label "$recipients_label"} {value $recipients}}
 }
 
 if { ![exists_and_not_null message_type] } {

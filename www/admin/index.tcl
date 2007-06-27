@@ -64,6 +64,19 @@ template::list::create \
                 </if>
             }
         }
+        notifications {
+            label {Notifications}
+            display_template {
+                <if @groups.dotlrn_community_p@ false and @groups.mapped_p@ and @groups.level@ eq 1>
+                <if @groups.notifications_p@>
+                  <a href="group-map?action=notificationsoff&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
+                </if>
+                <else>
+                  <a href="group-map?action=notificationson&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
+                </else>
+                </if>
+            }
+        }
         user_change {
             label {User Change}
             display_template {
@@ -113,18 +126,12 @@ template::list::create \
     }
 
 
-multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url user_change_p dotlrn_community_p
+multirow create groups group_id group_name group_url ams_person_url ams_org_url member_count level mapped_p default_p categories_url edit_url user_change_p dotlrn_community_p notifications_p
 
 set return_url [ad_conn url]
 foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all -include_dotlrn_p "1"] {
-    set group_id [lindex $group 1]
-    set group_name [lindex $group 0]
-    set member_count [lindex $group 2]
-    set level [lindex $group 3]
-    set mapped_p [lindex $group 4]
-    set default_p [lindex $group 5]
-    set user_change_p [lindex $group 6]
-    set dotlrn_community_p [lindex $group 7]
+    util_unlist $group group_name group_id member_count level mapped_p default_p user_change_p dotlrn_community_p notifications_p
+
     set ams_person_url [ams::list::url \
                           -package_key "contacts" \
                           -object_type "person" \
@@ -144,7 +151,7 @@ foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -p
     set edit_url [export_vars -base "/acs-lang/admin/edit-localized-message" {{package_key acs-translations} {locale "[ad_conn locale]"} {message_key "group_title_${group_id}"} {return_url [ad_return_url]}}]
 
     set categories_url [export_vars -base "/categories/cadmin/object-map" -url {{object_id $group_id}}]
-    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url $user_change_p $dotlrn_community_p
+    multirow append groups [lindex $group 1] [lindex $group 0] "../?group_id=${group_id}" $ams_person_url $ams_org_url $member_count $level $mapped_p $default_p $categories_url $edit_url $user_change_p $dotlrn_community_p $notifications_p
 
 
 }

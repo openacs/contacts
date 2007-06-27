@@ -197,14 +197,16 @@
            CASE WHEN contact_groups.package_id is not null THEN '1' ELSE '0' END as mapped_p,
            CASE WHEN default_p THEN '1' ELSE '0' END as default_p,
            CASE WHEN user_change_p THEN '1' ELSE '0' END as user_change_p,
-           $dotlrn_community_p as dotlrn_community_p
-      from (select g.* from groups g left join application_groups ag on (ag.group_id = g.group_id) 
-		where (package_id is null or g.group_id = 1231) and group_name not like 'forumgroup_%') groups2 
-		left join ( select * from contact_groups where package_id = :package_id ) as contact_groups on ( groups2.group_id = contact_groups.group_id ), 
-		acs_objects
+           $dotlrn_community_p as dotlrn_community_p,
+           CASE WHEN contact_groups.notifications_p THEN '1' ELSE '0' END as notifications_p
+      from ( select g.*
+               from groups g left join application_groups ag on (ag.group_id = g.group_id) 
+              where package_id is null ) groups2 
+           left join ( select * from contact_groups where package_id = :package_id ) as contact_groups on ( groups2.group_id = contact_groups.group_id ), 
+           acs_objects
       $additional_from
      where groups2.group_id not in ('-1','[contacts::default_group -package_id $package_id]')
-	and groups2.group_id = acs_objects.object_id
+       and groups2.group_id = acs_objects.object_id
        and groups2.group_id not in ( select gcm.component_id from group_component_map gcm where gcm.group_id != -1 )
       $additional_where
      order by mapped_p desc, CASE WHEN contact_groups.default_p THEN '000000000' ELSE upper( $name_field ) END
@@ -254,9 +256,9 @@
 <fullquery name="contact::group::map.map_group">
   <querytext>
         insert into contact_groups
-        (group_id,default_p,package_id)
+        (group_id,default_p,notification_p,package_id)
         values
-        (:group_id,:default_p,:package_id)
+        (:group_id,:default_p,:notification_p,:package_id)
   </querytext>
 </fullquery>
 
@@ -265,6 +267,15 @@
 	select 1 from contact_groups
          where group_id = :group_id
            and package_id = :package_id
+  </querytext>
+</fullquery>
+
+<fullquery name="contact::group::notifications_p.select_notifications_p">
+  <querytext>
+	select 1 from contact_groups
+         where group_id = :group_id
+           and notifications_p
+         limit 1
   </querytext>
 </fullquery>
 

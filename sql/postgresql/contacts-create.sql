@@ -65,6 +65,8 @@ create table contact_groups (
                                 constraint contact_groups_default_p_nn not null,
         user_change_p           boolean default 'f'
                                 constraint contact_groups_user_change_p_nn not null,
+        notifications_p         boolean default 'f'
+                                constraint contact_groups_notifications_p_nn not null,
         package_id              integer
                                 constraint contact_groups_package_id_fk references apm_packages(package_id)
                                 constraint contact_groups_package_id_nn not null,
@@ -233,3 +235,4 @@ select party_id, 't'::boolean, 't'::boolean, 't'::boolean, 'f'::boolean
 \i contacts-search-create.sql
 \i contacts-messages-create.sql
 \i contacts-list-create.sql
+\i groups-notifications-init.sql

@@ -15,6 +15,23 @@ namespace eval contact::revision:: {}
 namespace eval contact::rels:: {}
 namespace eval contacts::person:: {}
 namespace eval contact::special_attributes {}
+namespace eval contacts::group::notification {}
+
+ad_proc -public contacts::group::notification::get_url {
+    object_id
+} {    
+    # there is not good page to send users regarding a group
+    # so we don't bring them anywhere
+    return "/notifications/manage"
+}
+
+ad_proc -public contacts::group::notification::process_reply {
+    reply_id
+} {
+
+}
+
+
 
 ad_proc -public contacts::default_group {
     {-package_id ""}
@@ -926,6 +943,7 @@ ad_proc -public contact::group::map {
     -group_id:required
     {-package_id ""}
     {-default_p "f"}
+    {-notifications_p "f"}
 } {
     this creates a new group for use with contacts (and the permissions system)
 } {
@@ -945,6 +963,14 @@ ad_proc -public contact::group::mapped_p {
 	set package_id [ad_conn package_id]
     }
     return [db_0or1row select_mapped_p {}]
+}
+
+ad_proc -public contact::group::notifications_p {
+    -group_id:required
+} {
+    Does this group use notifications (if one contacts instance does then all do, since the group is not bound to the contacts instance)
+} {
+    return [db_0or1row select_notifications_p {}]
 }
 
 ad_proc -public contact::group::name {
@@ -1053,6 +1079,31 @@ ad_proc -public contact::group::add_member {
     }    
     group::flush_members_cache -group_id $group_id
 
+    if { [contact::group::notifications_p -group_id $group_id] && [contact::type -party_id $user_id] ne "organization" } {
+	if { [contact::type -party_id $user_id] ne "user" } {
+	    util_user_message -message "Only users can be notified. The person ($user_id) was added to the group."
+	}
+	# notifications only allows users to receive notifications.
+	# this actually makes sense, since the recipient needs
+	# a way to remove themselves from the notifications
+	# they are getting.
+	#
+	# We could potentially automatically upgrade a person
+	# to a user user if a notification request is made.
+	# to do this uncomment the following
+	# contact::person_upgrade_to_user -person_id $user_id -no_perm_check "t"
+
+	
+
+	notification::request::new \
+	    -type_id [notification::type::get_type_id -short_name contacts_group_notif] \
+	    -user_id $user_id \
+	    -object_id $group_id \
+	    -interval_id [notification::get_interval_id -name instant] \
+	    -delivery_method_id [notification::get_delivery_method_id -name email] \
+	    -format "html"
+    }
+
 }
 
 
@@ -1124,7 +1175,7 @@ ad_proc -public contact::groups {
     set user_id [ad_conn user_id]
     set group_list [list]
     foreach one_group [contact::groups_list -package_id $package_id -include_dotlrn_p $include_dotlrn_p] {
-	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p dotlrn_community_p
+	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p dotlrn_community_p notifications_p
 	if {$user_change_p eq ""} {
 	    set user_change_p 0
 	}
@@ -1143,11 +1194,11 @@ ad_proc -public contact::groups {
 	}
         if { $mapped_p || $all_p} {
 	    # we localize twice because for some reason some localized keys references another localized key
-            lappend group_list [list [lang::util::localize [lang::util::localize $group_name]] $group_id $member_count "1" $mapped_p $default_p $user_change_p $dotlrn_community_p]
+            lappend group_list [list [lang::util::localize [lang::util::localize $group_name]] $group_id $member_count "1" $mapped_p $default_p $user_change_p $dotlrn_community_p $notifications_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
 		    if { $mapped_p || $all_p} {
-			lappend group_list [list "$indent_with[lang::util::localize [lang::util::localize $group_name]]" $group_id $member_count "2" $mapped_p $default_p $user_change_p $dotlrn_community_p]
+			lappend group_list [list "$indent_with[lang::util::localize [lang::util::localize $group_name]]" $group_id $member_count "2" $mapped_p $default_p $user_change_p $dotlrn_community_p $notifications_p]
 		    }
 		}
             }
