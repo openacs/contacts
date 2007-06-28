@@ -130,7 +130,9 @@ multirow create groups group_id group_name group_url ams_person_url ams_org_url 
 
 set return_url [ad_conn url]
 foreach group [contact::groups -indent_with "..." -expand "all" -output "all" -privilege_required "admin" -all -include_dotlrn_p "1"] {
-    util_unlist $group group_name group_id member_count level mapped_p default_p user_change_p dotlrn_community_p notifications_p
+    util_unlist $group group_name group_id member_count level mapped_p default_p user_change_p dotlrn_community_p
+
+    set notifications_p [contact::group::notifications_p -group_id $group_id]
 
     set ams_person_url [ams::list::url \
                           -package_key "contacts" \

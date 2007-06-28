@@ -1175,7 +1175,7 @@ ad_proc -public contact::groups {
     set user_id [ad_conn user_id]
     set group_list [list]
     foreach one_group [contact::groups_list -package_id $package_id -include_dotlrn_p $include_dotlrn_p] {
-	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p dotlrn_community_p notifications_p
+	util_unlist $one_group group_id group_name member_count component_count mapped_p default_p user_change_p dotlrn_community_p
 	if {$user_change_p eq ""} {
 	    set user_change_p 0
 	}
@@ -1194,11 +1194,11 @@ ad_proc -public contact::groups {
 	}
         if { $mapped_p || $all_p} {
 	    # we localize twice because for some reason some localized keys references another localized key
-            lappend group_list [list [lang::util::localize [lang::util::localize $group_name]] $group_id $member_count "1" $mapped_p $default_p $user_change_p $dotlrn_community_p $notifications_p]
+            lappend group_list [list [lang::util::localize [lang::util::localize $group_name]] $group_id $member_count "1" $mapped_p $default_p $user_change_p $dotlrn_community_p]
             if { $component_count > 0 && ( $expand == "all" || $expand == $group_id ) } {
                 db_foreach get_components {} {
 		    if { $mapped_p || $all_p} {
-			lappend group_list [list "$indent_with[lang::util::localize [lang::util::localize $group_name]]" $group_id $member_count "2" $mapped_p $default_p $user_change_p $dotlrn_community_p $notifications_p]
+			lappend group_list [list "$indent_with[lang::util::localize [lang::util::localize $group_name]]" $group_id $member_count "2" $mapped_p $default_p $user_change_p $dotlrn_community_p]
 		    }
 		}
             }
