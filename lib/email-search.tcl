@@ -362,11 +362,12 @@ ad_form -action $action \
 		    set last_name ""
 		}
 		
-		
+	        set username [db_string user "select username from users where user_id = :party_id" -default ""]
+
 		set date [lc_time_fmt [dt_sysdate] "%q"]
 		
 		set values [list]
-		foreach element [list first_names last_name salutation name date] {
+		foreach element [list first_names last_name salutation name date username] {
 		    lappend values [list "{$element}" [set $element]]
 		}
 		
