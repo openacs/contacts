@@ -155,6 +155,12 @@ ad_proc -private contacts::sweeper {
 	    set contacts_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
 	}
 	
+	if {$contacts_package_ids eq ""} {
+	    # there is no contacts package mounted, so do not bother
+	    return
+	}
+
+	set default_groups [list]
 	foreach contact_package_id $contacts_package_ids {
 	    set default_group_id [contacts::default_group -package_id $contact_package_id]
 	    set contact_package($default_group_id) $contact_package_id
