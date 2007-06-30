@@ -28,17 +28,23 @@
 
 <fullquery name="contacts::sweeper.get_persons_num">
   <querytext>
-     select count(*) from persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id
+     select count(distinct person_id) from group_member_map gmm, membership_rels mr, persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id
       where person_id > 0
+      and gmm.rel_id = mr.rel_id
+      and gmm.group_id = -2
+      and gmm.member_id = persons.person_id
       and item_id is null
  </querytext>
 </fullquery>
 
 <fullquery name="contacts::sweeper.get_persons_without_items">
   <querytext>
-     select person_id, first_names,last_name,email 
-     from persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id, parties
+     select distinct person_id, first_names,last_name,email 
+     from group_member_map gmm, membership_rels mr, persons left join (select item_id from cr_items where content_type = 'contact_party_revision') items on item_id = person_id, parties
      where person_id > 0
+      and gmm.rel_id = mr.rel_id
+      and gmm.group_id = -2
+      and gmm.member_id = persons.person_id
      and person_id = party_id
      and item_id is null
  </querytext>

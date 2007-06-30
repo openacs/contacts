@@ -173,39 +173,35 @@ ad_proc -private contacts::sweeper {
 	
 	# Try to insert the persons into the package_id of the first group found
 	db_foreach get_persons_without_items {} {
-	    
-	    # Check if the person is a deleted user
-	    set member_state [db_string member_state "select member_state from cc_users where user_id = :person_id" -default ""]
-	    if {$member_state ne "deleted"} {
-	        foreach group_id $default_groups {
-		    if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
-			set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
-			break
-		    }
-	        }
-	    
-	        if {![exists_and_not_null contact_revision_id]} {
-		    # We did not found a group, so just use the first contacts instance.
-		    if {[ad_conn isconnected]} {
-			set user_id [ad_conn user_id]
-			set peeraddr [ad_conn peeraddr]
-		    } else {
-			set user_id $person_id
-			set peeraddr 127.0.0.1
-		    }
-		    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
+
+	    foreach group_id $default_groups {
+		if {[group::party_member_p -party_id $person_id -group_id $group_id]} {
+		    set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package($group_id)]
+                        break
 		}
-	    
-	        # Add the default ams attributes
-	        foreach attribute {first_names last_name email} {
-		    if {[exists_and_not_null $attribute]} {
-			ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
-		    }
+	    }	    
+
+	    if {![exists_and_not_null contact_revision_id]} {
+		# We did not found a group, so just use the first contacts instance.
+		if {[ad_conn isconnected]} {
+		    set user_id [ad_conn user_id]
+		    set peeraddr [ad_conn peeraddr]
+		} else {
+		    set user_id $person_id
+		    set peeraddr 127.0.0.1
 		}
-		
-	        incr counter
-	        ns_log notice "contacts::sweeper ($counter / $person_num) creating content_item and content_revision $contact_revision_id for party_id: $person_id"
+		set contact_revision_id [contact::revision::new -party_id $person_id -package_id $contact_package_id -creation_user $user_id -creation_ip $peeraddr]
 	    }
+	    
+	    # Add the default ams attributes
+	    foreach attribute {first_names last_name email} {
+		if {[exists_and_not_null $attribute]} {
+		    ams::attribute::save::text -object_type "person" -object_id $contact_revision_id -attribute_name "$attribute" -value [set $attribute]
+		}
+	    }
+	    
+	    incr counter
+	    ns_log notice "contacts::sweeper ($counter / $person_num) creating content_item and content_revision $contact_revision_id for party_id: $person_id"
 	}
 	
 	db_foreach get_organizations_without_items {} {
