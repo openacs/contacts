@@ -199,9 +199,9 @@
            CASE WHEN user_change_p THEN '1' ELSE '0' END as user_change_p,
            $dotlrn_community_p as dotlrn_community_p,
            CASE WHEN contact_groups.notifications_p THEN '1' ELSE '0' END as notifications_p
-      from ( select g.*
-               from groups g left join application_groups ag on (ag.group_id = g.group_id) 
-              where package_id is null ) groups2 
+      from ( select distinct g.*
+               from groups g left join contact_groups cg on (g.group_id = cg.group_id) left join application_groups ag on (ag.group_id = g.group_id)
+              where ag.package_id is null or cg.package_id is not null) groups2 
            left join ( select * from contact_groups where package_id = :package_id ) as contact_groups on ( groups2.group_id = contact_groups.group_id ), 
            acs_objects
       $additional_from
@@ -256,9 +256,9 @@
 <fullquery name="contact::group::map.map_group">
   <querytext>
         insert into contact_groups
-        (group_id,default_p,notification_p,package_id)
+        (group_id,default_p,notifications_p,package_id)
         values
-        (:group_id,:default_p,:notification_p,:package_id)
+        (:group_id,:default_p,:notifications_p,:package_id)
   </querytext>
 </fullquery>
 
