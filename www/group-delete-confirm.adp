@@ -6,4 +6,4 @@
 </property>
 
 <p>#contacts.Are_you_sure_you_want_to_delete#</p>
-<p><a href="@delete_url@">#acs-kernel.common_Yes#</a> - <a href="@cancel_url@">#acs-kernel.common_no#</a></p>
+<p><a href="@delete_url@">#acs-kernel.common_Yes#</a> - <a href="@cancel_url@">#acs-kernel.common_No#</a></p>

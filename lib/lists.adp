@@ -4,7 +4,7 @@
 
 
 <p>#contacts.Are_you_sure_you_want_to_delete_list#</p>
-<p><a href="@yes_url@">#acs-kernel.common_Yes#</a> - <a href="@no_url@">#acs-kernel.common_no#</a></p>
+<p><a href="@yes_url@">#acs-kernel.common_Yes#</a> - <a href="@no_url@">#acs-kernel.common_No#</a></p>
 </if>
 <else>
 
