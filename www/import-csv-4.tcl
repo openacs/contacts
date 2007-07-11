@@ -6,7 +6,7 @@ ad_page_contract {
 } {
     file_name:notnull
     file_path:notnull
-    {organization:array,multiple}
+    {organization:array,multiple,optional}
     {person:array,multiple}
     {contact_rels_employment:array,multiple,optional}
     person_elements
@@ -228,7 +228,7 @@ while {1} {
 		    }
 		    
 		    # Now make the country a country code
-		    if {![exists_and_not_null country_code]} {
+ 		    if {![exists_and_not_null country_code]} {
 			if {[exists_and_not_null country]} {
 			    # We do have the country, so let's figure
 			    # out the code for it.
@@ -240,6 +240,7 @@ while {1} {
 
 		    # Now save it
 		    if {$country_code ne ""} {
+			set country_code [string toupper $country_code]
 			append html "postal:: $country_code $municipality<br />"
 			ams::attribute::save::postal_address -object_id [set ${object_type}_revision_id] \
 			    -attribute_id $attribute_id -object_type $object_type  -delivery_address $delivery_address \

@@ -6,7 +6,7 @@ ad_page_contract {
 } {
     file_name:notnull
     file_path:notnull
-    {organization:array,multiple}
+    {organization:array,multiple,optional}
     {person:array,multiple}
     {contact_rels_employment:array,multiple,optional}
     person_elements
