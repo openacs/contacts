@@ -602,7 +602,7 @@ ad_proc -public contacts::install::package_upgrade {
 		    set subsite_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $subsite_package_id]
 
 		    foreach member_id [group::get_members_not_cached -group_id $contacts_application_group_id -type "party"] {
-			contact::group::add_member -no_perm_check -group_id $contacts_application_group_id -user_id $member_id -member_state "approved"
+			contact::group::add_member -no_perm_check -group_id $subsite_application_group_id -user_id $member_id -member_state "approved"
 		    }
 		}
 	    }
