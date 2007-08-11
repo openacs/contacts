@@ -142,9 +142,12 @@ if { [exists_and_not_null file_ids] } {
 
     append form_elements {
         {file_ids:text(hidden) {value $file_ids}}
-        {context_id:text(hidden) {value $context_id}}
         {files:text(inform),optional {label "[_ acs-mail-lite.Associated_files]"} {value $files}}
     }
+}
+
+append form_elements {
+    {context_id:text(hidden) {value $context_id}}
 }
 
 foreach var $export_vars {
