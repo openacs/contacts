@@ -1255,7 +1255,8 @@ ad_proc -public contacts::person::new {
     contact::group::add_member \
 	-group_id $default_group_id \
 	-user_id $person_id \
-	-rel_type "membership_rel"
+	-rel_type "membership_rel" \
+        -no_perm_check
 
     # Store the AMS attribute
     set object_id [contact::revision::new -party_id $person_id]
