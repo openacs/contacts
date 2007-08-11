@@ -59,6 +59,7 @@ if {[lsearch $group_ids $default_group] == -1} {
     lappend group_ids $default_group
 }
 
+set group_ids [lsort -unique $group_ids]
 lappend form_elements {group_ids:text(hidden)}
 
 # Save Group Information
@@ -251,6 +252,8 @@ ad_form -extend -name party_ae -export {return_url}\
 	if { ![template::form::is_valid party_ae] } {
 	    break
 	}
+
+	set group_ids [lsort -unique $group_ids]
 	
     } -new_data {
 
@@ -364,33 +367,48 @@ ad_form -extend -name party_ae -export {return_url}\
 	    set object_type "person"
 	}
 	    
-	# Insert the relationship
-	if {[exists_and_not_null rel_type] && [exists_and_not_null object_id_two]} {
-	    set rel_id {}
-	    set context_id {}
-	    set creation_user [ad_conn user_id]
-	    set creation_ip [ad_conn peeraddr]
-	    set rel_id [db_exec_plsql create_rel "select acs_rel__new (
+        # Insert the relationship
+        if { [exists_and_not_null rel_type] && [exists_and_not_null object_id_two] } {
+            set rel_id {}
+            set context_id {}
+            set creation_user [ad_conn user_id]
+            set creation_ip [ad_conn peeraddr]
+            db_1row select_object_types "select object_type_one, object_type_two from acs_rel_types where rel_type = :rel_type"
+            if {[contact::type -party_id $party_id] eq $object_type_two && [contact::type -party_id $object_id_two] eq $object_type_one} {
+                # The types are upside down, so turn around party_id and object_id_two
+                set rel_id [db_exec_plsql create_rel "select acs_rel__new (
+                     :rel_id,
+                     :rel_type,
+                     :object_id_two,
+                     :party_id,
+                     :context_id,
+                     :creation_user,
+                     :creation_ip
+                    )"]
+
+            } else {
+                set rel_id [db_exec_plsql create_rel "select acs_rel__new (
                      :rel_id,
                      :rel_type,
                      :party_id,
                      :object_id_two,
                      :context_id,
                      :creation_user,
-                     :creation_ip  
+                     :creation_ip
                     )"]
-		
-	    if {[exists_and_not_null rel_type]} {
-		ams::ad_form::save -package_key "contacts" \
-		    -object_type $rel_type \
-		    -list_name [ad_conn package_id] \
-		    -form_name "party_ae" \
-		    -object_id $rel_id
-	    }
-	    
-	    callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id -package_id $package_id
-	    contact::flush -party_id $object_id_two
-	}
+            }
+
+            if {[exists_and_not_null rel_type]} {
+                ams::ad_form::save -package_key "contacts" \
+                    -object_type $rel_type \
+                    -list_name [ad_conn package_id] \
+                    -form_name "party_ae" \
+                    -object_id $rel_id
+            }
+
+            callback contact::${object_type}_new_rel -object_id_two $object_id_two -rel_type $rel_type -party_id $party_id -package_id $package_id
+            contact::flush -party_id $object_id_two
+        }
 
 	# Add the user to the
 	set contact_link [contact::link -party_id $party_id]
