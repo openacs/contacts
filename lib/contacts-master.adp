@@ -12,7 +12,7 @@
   <div id="section">
     <ul>
     <multiple name="links">
-      <li><a href="@links.url@" title="Go to @links.label@" id="@links.id@" onmouseover="@links.mouseover;noquote@"><if @links.selected_p@><strong></if>@links.label@<if @links.selected_p@></strong></if></a><if @links:rowcount@ eq @links.rownum@><em>&nbsp;</em></if> </li>
+      <li><a href="@links.url@" title="Go to @links.label@" id="@links.id@"><if @links.selected_p@><strong></if>@links.label@<if @links.selected_p@></strong></if></a><if @links:rowcount@ eq @links.rownum@><em>&nbsp;</em></if> </li>
     </multiple>
     </ul>
   </div>
@@ -26,7 +26,6 @@
   </property>
 </else>
 
-@js_script;noquote@
 <slave>
 
 
