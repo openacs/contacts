@@ -335,7 +335,7 @@ ad_proc -public contact::privacy_allows_p {
 } {
     @param party_id the party_id to check permission for
     @param type either 'email', 'mail' or 'phone'
-    @returns 1 or 0 if the specified type of communication is allowed
+    @return 1 or 0 if the specified type of communication is allowed
 } {
     if { [parameter::get -boolean -package_id $package_id -parameter "ContactPrivacyEnabledP" -default "0"] } {
 	if { $package_id eq "" } {
@@ -365,7 +365,7 @@ ad_proc -public contact::privacy_prevents_p {
 } {
     @param party_id the party_id to check permission for
     @param type either 'email', 'mail' or 'phone'
-    @returns 1 or 0 if the specified type of communication is allowed
+    @return 1 or 0 if the specified type of communication is allowed
 } {
     if { [contact::privacy_allows_p -party_id $party_id -type $type -package_id $package_id] } {
 	return 0
