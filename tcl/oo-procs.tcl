@@ -283,7 +283,7 @@ ad_proc -public contact::oo::change_content {
 } {
     # Create a temporary directory
     set dir [ns_tmpnam]
-    ns_mkdir $dir
+    file mkdir $dir
 
     array set content_array $contents
     foreach filename [array names content_array] {
