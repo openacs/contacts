@@ -288,7 +288,7 @@ ad_proc -public contacts::populate::crm {
 			  -object_type "person" \
 			  -attribute_name "home_address" \
 			  -datatype "string" \
-			  -pretty_name "Home Adress" \
+			  -pretty_name "Home Address" \
 			  -pretty_plural "Home Addresses" \
 			  -table_name "" \
 			  -column_name "" \
