@@ -1,6 +1,6 @@
 ad_page_contract {
 
-    list all attributes avaiable, and let the user edit edit permissions, regroup, etc.
+    list all attributes available, and let the user edit edit permissions, regroup, etc.
 
     @author Matthew Geddert openacs@geddert.com
     @creation-date 2004-07-28

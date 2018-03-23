@@ -55,7 +55,7 @@ set form_elements {
 
 if { [contact::group::notifications_p -group_id $search_id] } {
 
-    # CC and BCC are not avalable for notifications
+    # CC and BCC are not available for notifications
     append form_elements {
 	{cc:text(hidden),optional}
 	{bcc:text(hidden),optional}

@@ -160,7 +160,7 @@ while {1} {
 
     append html "PERSON $person_id :: $first_names :: $last_name :: $email<br/>"
 
-    # Create new. This needs ammendment later
+    # Create new. This needs amendment later
     if {$person_id eq "" && ( $first_names ne "" || $last_name ne "")} {
 
 	set person_id [person::new \
