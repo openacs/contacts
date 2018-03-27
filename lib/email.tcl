@@ -154,7 +154,7 @@ foreach var $export_vars {
     upvar $var var_value
 
     # We need to split to construct the element with two lappends
-    # becasue if we put something like this {value $value} the value
+    # because if we put something like this {value $value} the value
     # of the variable is not interpreted
 
     set element [list]
