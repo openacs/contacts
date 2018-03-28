@@ -226,7 +226,7 @@ ad_proc -public -callback contact::special_attributes::ad_form_save {
     {-party_id:required}
     {-form:required}
 } {
-    This callback is executed first in the new_data or edit_data ad_from
+    This callback is executed first in the new_data or edit_data ad_form
     blocks when creating or saving a contacts information
 } -
 
