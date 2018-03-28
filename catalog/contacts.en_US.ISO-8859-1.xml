@@ -371,7 +371,7 @@
   <msg key="lt_has_logged_in_within_">has logged in within -&gt;</msg>
   <msg key="lt_has_not_logged_in_wit">has not logged in within -&gt;</msg>
   <msg key="lt_If_in_a_normal_search">If in a normal search we search for &quot;D Jane&quot;. The first Search_Word (&quot;D&quot;) matches contacts 123 (via &quot;Doe&quot;), 234 (via &quot;Doe&quot;), and 345 (via &quot;Alfred&quot;). And the second Search_Word (&quot;Jane&quot;) matches only contact 123. Thus only one contact meets both requirements and &quot;Jane Doe&quot; (contact 123) is returned.</msg>
-  <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above critera. So, for example if our contacts database contains these entries:</msg>
+  <msg key="lt_If_multiple_words_are">If multiple words are used then all words must match the above criteria. So, for example if our contacts database contains these entries:</msg>
   <msg key="lt_Instance_Permissions_">Package Instance Permissions</msg>
   <msg key="lt_Insufficient_Permissi">Insufficient Permissions</msg>
   <msg key="lt_interacted_in_the_last_-">last interaction in the last -&gt;</msg>

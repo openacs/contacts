@@ -493,7 +493,7 @@ ad_proc -public contacts::install::package_upgrade {
 		
 		# Now we need to copy all information on contact_complaint_tracking table (the one we are taking out)
 		# into the new one called contact_complaint_track with the new fields. This is simple since
-		# all the collumns have the same datatype, just changed some names.
+		# all the columns have the same datatype, just changed some names.
 		
 		db_dml insert_data {
 		    insert into 
