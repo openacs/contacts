@@ -54,7 +54,7 @@ select content_type__create_type (
 -- have write access to at least one contacts instance will be assigned a private calendar)
 --
 -- which calendars can be viewed by which calendar instance is handled via parameters - unlike
--- many packages. This allows for more flexable instance and sharing management - where
+-- many packages. This allows for more flexible instance and sharing management - where
 -- one instances shared calendar can also be accesible to another instance.
 
 create table contact_groups (

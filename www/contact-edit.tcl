@@ -165,7 +165,7 @@ ad_form -extend -name party_ae \
 	# we copy all the attributes from the old id to the new one
         # a user may not have permission to view all attributes
         # for a contact, and this way the values of the attributes
-        # they do not have permission to edit are preserved the follwing
+        # they do not have permission to edit are preserved the following
         # foreach saves the values they have edited
 	ams::object_copy -from $previous_revision_id -to $revision_id
 	
