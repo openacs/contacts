@@ -3,7 +3,7 @@ set optional_param_list [list base_url extend_id]
 set optional_unset_list [list]
 
 foreach required_param $required_param_list {
-    if { ![info exist $required_param] } {
+    if { ![info exists $required_param] } {
 	ad_return_complaint 1 "Parameter $required_param is required"
     }
 }

@@ -8,16 +8,16 @@
 #                          note: the project_id is an item_id
 
 
-if { ![info exist return_url] } {
+if { ![info exists return_url] } {
     set return_url [get_referrer]
 }
 
-if { ![info exist mode] } {
+if { ![info exists mode] } {
     set mode "edit"
 }
 
 if { ![exists_and_not_null complaint_id] } {
-    if { [info exist complaint_id] } {
+    if { [info exists complaint_id] } {
 	unset complaint_id
     }
     set complaint_rev_id ""
@@ -26,7 +26,7 @@ if { ![exists_and_not_null complaint_id] } {
 }
 
 set title_default_value ""
-if { [info exist project_id] } {
+if { [info exists project_id] } {
     set title_default_value [lang::util::localize [content::item::get_title -item_id $project_id]]
 }
 
