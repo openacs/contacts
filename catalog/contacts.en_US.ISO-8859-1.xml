@@ -423,7 +423,7 @@
   <msg key="lt_Person_-_Registered_U">Person - Registered Users</msg>
   <msg key="lt_Person_or_Organizatio">Person or Organization</msg>
   <msg key="lt_pretty_plural_list_na">%pretty_plural_list_name% found in search, please try again or add a new contact</msg>
-  <msg key="lt_Purge_searches_explained">Due to the complexity of the search technology it is sometimes necessary to purge a users searches (because they for example created an infinit loop). If you are unable to go to the users searches page after waiting sufficiently long for it to load you should enter their name here. This will delete all of the users searches and should enable them to recreate their searches without it breaking things.</msg>
+  <msg key="lt_Purge_searches_explained">Due to the complexity of the search technology it is sometimes necessary to purge a users searches (because they for example created an infinite loop). If you are unable to go to the users searches page after waiting sufficiently long for it to load you should enter their name here. This will delete all of the users searches and should enable them to recreate their searches without it breaking things.</msg>
   <msg key="lt_remember_that_you_can">remember that you can use mail merge substitutions. The most common wildcards are {name} {first_names}, {last_name}, {salutation}, {mailing_address}, {directphone} and {date}</msg>
   <msg key="lt_Remove_from_List">Remove from List</msg>
   <msg key="lt_Remove_from_Selected_">Remove from Selected Group(s)</msg>

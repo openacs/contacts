@@ -373,7 +373,7 @@ ad_proc -public contact::oo::convert_to_pdf_using_jooconverter {
     <br>
     If everything runs fine, the function will return a PDF document. You can check this, if the returned value
     will start with %PDF- (e.g. %PDF-1.4 will indicate PDF version 1.4). If you get a different return value,
-    an error is occured. Check this before you go on with further processing, e.g. saving the return value
+    an error is occurred. Check this before you go on with further processing, e.g. saving the return value
     to a file.<br>
     <br>
     A simple example:<br>
@@ -477,7 +477,7 @@ ad_proc -public contact::oo::convert_to_pdf_using_jooconverter {
     #ns_log Notice "*** rfd=$rfd"
     #ns_log Notice "*** wfd=$wfd"
 
-    #headers necesary for a post and the form variables
+    #headers necessary for a post and the form variables
 
     #_ns_http_puts $timeout $wfd "Content-type: text/plain \r"
     _ns_http_puts $timeout $wfd "Content-type: $content_type \r"
@@ -681,7 +681,7 @@ ad_proc -public contact::oo::convert_to_pdf_file_using_jooconverter {
     #ns_log Notice "**** result=$result"
 
     if {[string first "%PDF-" $result]==-1} {
-	# an error occured, return 0 (FALSE)
+	# an error occurred, return 0 (FALSE)
 	return 0 
     } else {
 	# save the result to destination_file

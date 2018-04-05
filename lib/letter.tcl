@@ -170,7 +170,7 @@ ad_form -action message \
 		append letter "\n<div class=\"date\">[lc_time_fmt $date %q $locale]</div>"
 	    }
 	    if { $include_address eq "1" } {
-		# this work differnt from the contact::employee::get mailing address because that is
+		# this work different from the contact::employee::get mailing address because that is
 		# in text format, but we need it as html
 		append letter "\n<div class=\"mailing-address\">$name<br />[contact::message::mailing_address -party_id $party_id -format "text/html"]</div>"
 	    }

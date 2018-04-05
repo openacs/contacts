@@ -147,7 +147,7 @@ namespace eval contacts::postal_address {
 					  -request "value_list_text" \
 					  -value $value \
 					 ]
-            # This sets the address, muncipality, region, postal_code, country_code, country
+            # This sets the address, municipality, region, postal_code, country_code, country
 	    array set row $mailing_address_list
 	    set row(town_line) [template::util::address::town_line -municipality $row(municipality) -region $row(region) -postal_code $row(postal_code) -country_code $row(country_code)]
 	    return 1

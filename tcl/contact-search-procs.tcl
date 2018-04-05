@@ -221,7 +221,7 @@ ad_proc -public contact::search::flush_results_counts {
     Flush everything related to a search
 } {
     util_memoize_flush_regexp "contact::search::results_count_not_cached"
-    # previously we used results_count to figure out if a party was in a seach
+    # previously we used results_count to figure out if a party was in a search
     # as a performance enhancement this was moved to contact::search::party_p
     # we also need to flush all results for this proc now.
     util_memoize_flush_regexp "contact::search::party_p"

@@ -119,7 +119,7 @@ ad_proc -private contact::message::log {
 
     @param message_type  The message_type of this message (e.g email, letter).
     @param sender_id     The party_id of the sender of the message.
-    @recipient_id        The party_id of the reciever of the message.
+    @recipient_id        The party_id of the receiver of the message.
     @sent_date           The date when the message was sent. Default to now.
     @title               The title of the logged message.
     @description         The description of the logged message.

@@ -622,7 +622,7 @@ ad_proc -private contacts::search::condition_type::contact {
                                       ]
 
             # login and not_login do not need special elements
-	    # the limitiation on contact_search_conditions is there to prevent infinit loops of search in another search
+	    # the limitiation on contact_search_conditions is there to prevent infinite loops of search in another search
             if { [lsearch [list in_search not_in_search] ${operand}] >= 0 } {
                 set user_id [ad_conn user_id]
 		set search_options [list [list "" "" ""]]
@@ -1079,7 +1079,7 @@ select acs_rel_type__role_pretty_name(primary_role) as pretty_name,
 		in_search - not_in_search {
 		    set user_id [ad_conn user_id]
 		    set search_options [list [list "" "" ""]]
-		    # the limitiation on contact_search_conditions is there to prevent infinit loops of search in another search
+		    # the limitiation on contact_search_conditions is there to prevent infinite loops of search in another search
 		    db_foreach get_my_searches {
                         select acs_objects.title,
 			       contact_searches.search_id,
