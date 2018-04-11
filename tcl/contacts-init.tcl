@@ -67,7 +67,7 @@ if { [empty_string_p [info procs rel_types::create_role]] } {
 	    # Force internationalisation of Roles
 
 	    # Internationalising of Attributes. This is done by storing the
-	    # attribute with it's acs-lang key
+	    # attribute with its acs-lang key
 
 	    set message_key "role_${role}"
 

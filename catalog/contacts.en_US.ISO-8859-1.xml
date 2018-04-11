@@ -722,7 +722,7 @@
   <msg key="The_selected_relationship_requires_related_org">The selected relationship requires that the related contact be an organization</msg>
   <msg key="The_selected_relationship_requires_related_person">The selected relationship requires that the related contact be a person</msg>
   <msg key="There_must_be_at_least_one_owner">There must be at least one owner</msg>
-  <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use it's employer email (%emp_addr%)</msg>
+  <msg key="This_contact_doesnt"> This contact doesn't have an email, you are going to use its employer email (%emp_addr%)</msg>
   <msg key="This_organization_has_closed_down">This organization has closed down</msg>
   <msg key="This_person_is_deceased">This person is deceased</msg>
   <msg key="this_var_name">This &quot;Variable Name&quot; is already present</msg>

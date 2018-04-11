@@ -25,7 +25,7 @@ set message [contact::search_pretty -search_id $search_id]
 
 # You can aggregate for attributes that have multiple choices
 # or by relationship or country. Each one of this situations
-# has it's own queries to make the multirow and to get the results
+# has its own queries to make the multirow and to get the results
 switch '$attr_id' {
     '-1' {
 	# Search for the country in home_address 
