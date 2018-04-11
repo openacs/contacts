@@ -569,7 +569,7 @@ ad_proc -public contacts::install::package_upgrade {
 
                     # If contacts was not mounted on the root subsite then your
                     # site will likely need to run a custom contact::default_group_not_cached
-                    # proc that returns this packages default group.
+                    # proc that returns this package's default group.
 
 		    set contacts_node_id [site_node::get_node_id_from_object_id -object_id ${package_id}]
 		    set subsite_package_id [site_node::closest_ancestor_package -node_id $contacts_node_id -package_key "acs-subsite"]
