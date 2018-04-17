@@ -246,7 +246,7 @@ ad_form -action $action \
 	# We get the attribute_id of the salutation attribute
 	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
 	    
-	# List to store know wich emails received the message
+	# List to store know which emails received the message
 	set recipients_addr [list]
 
 	set from [ad_conn user_id]

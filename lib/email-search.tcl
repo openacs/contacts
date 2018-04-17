@@ -326,23 +326,23 @@ ad_form -action $action \
 		    util_user_message -html -message $error_message
 		}
 	    }
-	    
+
 	    # We get the attribute_id of the salutation attribute
 	    set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
-	    
-	    # List to store know wich emails received the message
+
+	    # List to store know which emails received the message
 	    set recipients_addr [list]
-	    
+
 	    set from [ad_conn user_id]
 	    set from_addr [contact::email -party_id $from]
-	    
+
 	    # Remove all spaces in cc and bcc
 	    regsub -all " " $cc "" cc
 	    regsub -all " " $bcc "" bcc
-	    
+
 	    set cc_list [split $cc ";"]
 	    set bcc_list [split $bcc ";"]
-	    
+
 	    # Send the mail to all parties.
 	    set member_size [llength $party_ids]
 	    set counter 1

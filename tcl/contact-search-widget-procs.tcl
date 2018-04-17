@@ -225,7 +225,7 @@ ad_proc -public template::util::contact_search::contact_option {
     {-party_id:required}
 } {
     this returns the contact's name to be returned in the contact search widget.
-    this exists in a seperate proc so that it can be customized on a per site
+    this exists in a separate proc so that it can be customized on a per site
     basis if need be.
 } {
     set option "[contact::name -party_id $party_id]"

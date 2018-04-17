@@ -348,7 +348,7 @@
   <msg key="lt_contacts_were_deleted">%contacts@ were deleted</msg>
   <msg key="lt_country_code_is_not_-">country code is not -&gt;</msg>
   <msg key="lt_created_in_the_last_-">created in the last -&gt;</msg>
-  <msg key="lt_csv_import_instructions">Please choose the file you want to upload. The file should be a CSV file, seperated by &quot;;&quot;. Also it is mandatory that the first line is the header line. If your CSV does not contain a header line, create one, otherwise matching will be really hard.</msg>
+  <msg key="lt_csv_import_instructions">Please choose the file you want to upload. The file should be a CSV file, separated by &quot;;&quot;. Also it is mandatory that the first line is the header line. If your CSV does not contain a header line, create one, otherwise matching will be really hard.</msg>
   <msg key="lt_Currently_the_group_">Currently, the group is able to handle the following types of relationships:</msg>
   <msg key="lt_dear_ladies_and">Dear ladies and gentlemen</msg>
   <msg key="lt_Debugging_Code_-_Only">Debugging Code - Only SW Admins See This</msg>

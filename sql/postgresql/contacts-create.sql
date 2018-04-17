@@ -184,7 +184,7 @@ create table organization_rels (
 -- although we store deleted by and deleted date
 -- information there is no need to make this an object
 -- because this info is related to other objects
--- this doesn't warrent permissions or the overhead
+-- this doesn't warrant permissions or the overhead
 -- in the acs_objects table
 
 create table contact_deleted_history (
