@@ -2,7 +2,7 @@ ad_library {
 
     Support procs for the contacts package with regards to OpenOffice
 
-    Before you can make use of these functions, OpenOffice 2.0 needs to be installed in your system. 
+    Before you can make use of these functions, OpenOffice 2.0 needs to be installed in your system.
     Additionally you need ghostscript and the msttftcorefonts (so your users wont complain about wrong verdana fonts)
     Not to forget "vncserver" and "x11fonts".
 
@@ -12,9 +12,9 @@ ad_library {
     Once spadmin has started, choose to create a PDF Konverter and make use of the Adobe Distiller and 
     choose the following command:
     /usr/bin/gs -q -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="(OUTFILE)" -
-    
+
     and the target directory /tmp/. Call the printer "pdfconv". Once done, click on fonts, choose "Add fonts"
-    and search in /usr/share. Add all fonts you find there. 
+    and search in /usr/share. Add all fonts you find there.
 
     Last but not least make sure that you have the "vncserver" running for your user and that ../bin/convert.sh reflects your
     environment
@@ -29,7 +29,7 @@ ad_proc -public contact::oo::convert {
     {-content}
 } {
     Returns a string which we can insert into the content.xml file
-    
+
     This is a replacement procedure which should hopefully deal with at least the breaks
     links and paragraphs. 
 } {
@@ -41,7 +41,7 @@ ad_proc -public contact::oo::convert {
     regsub -all -nocase "/a" $content "/text:a" content
     return [string trim $content]
 }
-    
+
 #----------------------------------------------------------------------
 # ????/??/?? Developed/Created by ...
 # 2006/11/06 Renamed from contact::oo::import_oo_pdf
@@ -754,7 +754,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_jooconverter {
 	if {[exists_and_not_null title]} {
 	    append command_parameter " -title \"$title\""
 	}
-	if {[exists_and_nut_null item_id]} {
+	if {[exists_and_not_null item_id]} {
 	    append command_parameter " -item_id \"$item_id\""
 	}
 	if {[exists_and_not_null parent_id]} {
@@ -1044,7 +1044,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_cognovis_converter {
 	if {[exists_and_not_null title]} {
 	    append command_parameter " -title \"$title\""
 	}
-	if {[exists_and_nut_null item_id]} {
+	if {[exists_and_not_null item_id]} {
 	    append command_parameter " -item_id \"$item_id\""
 	}
 	if {[exists_and_not_null parent_id]} {
