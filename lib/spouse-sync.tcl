@@ -65,7 +65,7 @@ foreach attribute $attributes {
     }
 
 
-    set options [list]
+    set options {}
     if { $party_value ne "" } {
 	set attr${attribute_id}_value $party_value_id
 	lappend options [list "<strong>$party_name:</strong><br>$party_value<br><br>" $party_value_id]

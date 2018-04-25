@@ -98,7 +98,7 @@ if { [parameter::get -boolean -parameter "ForceSearchBeforeAdd" -default "0"] } 
 
 if { ![exists_and_not_null title] } {
     set title [ad_conn instance_name]
-    set context [list]
+    set context {}
 } else {
     set context [list $title]
 }

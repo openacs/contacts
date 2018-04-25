@@ -175,7 +175,7 @@ ad_form -action message \
 		append letter "\n<div class=\"mailing-address\">$name<br />[contact::message::mailing_address -party_id $party_id -format "text/html"]</div>"
 	    }
 	    append letter "\n<div class=\"content\">${content_html}</div>"
-	    set values [list]
+	    set values {}
 	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		lappend values [list "{$element}" [set $element]]
 	    }

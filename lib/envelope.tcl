@@ -53,7 +53,7 @@ if { [template::form::is_valid envelope] || [llength $envelope_options] == "1" }
 	-message_1 [_ contacts.lt_Generating_the_envelopes_] \
 	-message_2 [_ contacts.lt_Once_finished_you_get]
     
-    set envelopes [list]
+    set envelopes {}
     foreach party_id $party_ids {
 	set name [contact::name -party_id $party_id]
 	set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/plain"]

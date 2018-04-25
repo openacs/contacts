@@ -51,7 +51,7 @@ if { [template::form::is_valid label] || [llength $label_options] == "1" } {
 	-message_1 [_ contacts.lt_Generating_the_labels_] \
 	-message_2 [_ contacts.lt_Once_finished_you_get]
     
-    set labels [list]
+    set labels {}
     foreach party_id $party_ids {
 
 	set mailing_address [contact::message::mailing_address -party_id $party_id -format "text/plain" -with_name]

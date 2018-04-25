@@ -490,7 +490,7 @@ ad_proc -public contact::search_clause {
     @param and Set this flag if you want the result to start with an 'and' if the list of where clauses returned is non-empty.
 } {
     set query [string trim $query]
-    set search_clauses [list]
+    set search_clauses {}
     set where_clause [contact::search::where_clause -search_id $search_id -party_id $party_id -revision_id $revision_id -limit_type_p $limit_type_p]
 
     if { [exists_and_not_null where_clause] } {
@@ -549,7 +549,7 @@ ad_proc -public contact::search_pretty_not_cached {
     # query is a condition. We are limited to 3 levels of database access for most
     # openacs installs so this bypasses that problem
     set db_conditions [db_list_of_lists select_conditions {}]
-    set conditions [list]
+    set conditions {}
     foreach condition $db_conditions {
 	lappend conditions [contacts::search::condition_type \
 				-type [lindex $condition 0] \
@@ -596,7 +596,7 @@ ad_proc -public contact::search::query_clause {
     set query [string trim $query]
     regsub -all "'" $query "''" query
 
-    set query_clauses [list]
+    set query_clauses {}
     set callback_query_clauses [callback contact::search::query_clauses -query $query -party_id $party_id]
     if { [llength $callback_query_clauses] > 0 } {
 	# the callback returns a list of the lists from the callbacks
@@ -746,7 +746,7 @@ ad_proc -public contact::search::where_clause_not_cached {
 } {
 } {
     db_0or1row get_search_info {}
-    set where_clauses [list]
+    set where_clauses {}
 
     if { [exists_and_not_null all_or_any] } {
 	set result {}

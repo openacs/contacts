@@ -154,8 +154,8 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
 	    error "You cannot use the contact_search widget without specifying a package_id of a contacts instance in which to search (done the same way you would specifiy html attributes)"
 	}
     }
-    set person_ids [list]
-    set organization_ids [list]
+    set person_ids {}
+    set organization_ids {}
 
     # search in persons
     if { $persons_p } {
@@ -175,7 +175,7 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
     } else {
         # we need to return a select list
 
-        set options [list]
+        set options {}
         if { [llength $person_ids] > 0 } {
 	    if { [llength $person_ids] > 50 } {
 		set options [list [list [_ contacts.lt_Search_again_over_50_people] ":search:"]]

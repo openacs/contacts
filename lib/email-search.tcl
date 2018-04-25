@@ -107,7 +107,7 @@ set contacts_p [apm_package_installed_p "contacts"]
 set tracking_p [apm_package_installed_p "mail-tracking"]
 
 if { [exists_and_not_null file_ids] } {
-    set files [list]
+    set files {}
     foreach file $file_ids {
 	set file_item_id [content::revision::item_id -revision_id $file] 
 	if {$file_item_id eq ""} {
@@ -139,7 +139,7 @@ foreach var $export_vars {
     # because if we put something like this {value $value} the value
     # of the variable is not interpreted
 
-    set element [list]
+    set element {}
     lappend element "${var}:text(hidden)"
     lappend element "value $var_value"
     
@@ -277,9 +277,9 @@ ad_form -action $action \
 		set valid_party_ids [contact::search::results -search_id $search_id -package_id $package_id]
 	    }
 	    
-	    set party_ids [list]
-	    set invalid_party_ids [list]
-	    set invalid_recipients [list]
+	    set party_ids {}
+	    set invalid_party_ids {}
+	    set invalid_recipients {}
 	    foreach party_id $valid_party_ids {
 		if { [party::email -party_id $party_id] eq "" } {
 		    # We are going to check if there is an employee relationship
@@ -331,7 +331,7 @@ ad_form -action $action \
 	    set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
 
 	    # List to store know which emails received the message
-	    set recipients_addr [list]
+	    set recipients_addr {}
 
 	    set from [ad_conn user_id]
 	    set from_addr [contact::email -party_id $from]

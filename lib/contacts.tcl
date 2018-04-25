@@ -110,7 +110,7 @@ if {[exists_and_not_null search_id]} {
 	# We clear the list when no value is submited, otherwise
 	# we acumulate the extend values.
 	if { [empty_string_p $extend_option] } {
-	    set extend_values [list]
+	    set extend_values {}
 	} else {
 	    lappend extend_values [list $extend_option] 
 	}
@@ -546,7 +546,7 @@ if { [string is false $report_p] } {
     }
 
 
-    set party_ids [list]
+    set party_ids {}
     db_multirow contacts report_contacts_select {} {
 	lappend party_ids $party_id
     }
@@ -597,7 +597,7 @@ if { [string is false $report_p] } {
     eval $command
 
     
-    set keys [list]
+    set keys {}
     template::multirow foreach contacts {
 	set key [list]
 	foreach {element details} $report_elements {

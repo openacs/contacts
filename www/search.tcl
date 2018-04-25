@@ -32,7 +32,7 @@ ad_page_contract {
     }
     valid_search_id -requires {search_id} {
         if { [db_0or1row condition_exists_p {}] } {
-	    set valid_owner_ids [list]
+	    set valid_owner_ids {}
 	    lappend valid_owner_ids [ad_conn user_id]
 	    if { [permission::permission_p -object_id [ad_conn package_id] -privilege "admin"] } {
 		lappend valid_owner_ids [ad_conn package_id]
@@ -72,7 +72,7 @@ if { [exists_and_not_null search] } {
 
 
 set search_exists_p 0
-# set query_pretty [list]
+# set query_pretty {}
 if { [exists_and_not_null search_id] } {
     if { [contact::search::exists_p -search_id $search_id] } {
         db_1row get_search_info { }
@@ -100,8 +100,8 @@ if { $search_exists_p } {
 	-package_id [ad_conn package_id] \
 	-object_type $actual_object_type
     
-    set add_columns [list]
-    set remove_columns [list]
+    set add_columns {}
+    set remove_columns {}
     set extended_columns [contact::search::get_extensions -search_id $search_id]
     if { [lsearch $extended_columns $remove_column] >= 0 && $remove_column ne "" } {
 	# remove this extension
@@ -187,7 +187,7 @@ if { ![exists_and_not_null owner_id] } {
 }
 
 if { $search_exists_p } {
-    set conditions [list]
+    set conditions {}
     db_foreach selectqueries {} {
 	set condition_name [contacts::search::condition_type -type $query_type -request pretty -var_list $query_var_list]
 	if { [empty_string_p $condition_name] } {
@@ -219,7 +219,7 @@ if { [exists_and_not_null object_type] } {
         {all_or_any:text(select),optional {label ""} {options {{[_ contacts.All] all} {[_ contacts.Any] any}}} {after_html "[_ contacts.lt_of_the_following_cond]$query_pretty"}}
     }
 } else {
-    set object_type_options [list]
+    set object_type_options {}
     set object_types [list party person organization]
     if { $display_employers_p } {
 	lappend object_types "employee"

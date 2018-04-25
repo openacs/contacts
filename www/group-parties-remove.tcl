@@ -18,7 +18,7 @@ ad_page_contract {
     }
 }
 if { [exists_and_not_null party_id] } {
-    set party_ids [list]
+    set party_ids {}
     foreach party_id $party_id {
 	lappend party_ids $party_id
     }
@@ -31,7 +31,7 @@ if { [exists_and_not_null group_id] } {
 
 	set group_ids $group_id
 	db_transaction {
-	    set message [list]
+	    set message {}
 	    foreach group_id $group_ids {
 		set contacts [list]
 		foreach party_id $party_ids {
