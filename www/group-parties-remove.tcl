@@ -33,7 +33,7 @@ if { [exists_and_not_null group_id] } {
 	db_transaction {
 	    set message {}
 	    foreach group_id $group_ids {
-		set contacts [list]
+		set contacts {}
 		foreach party_id $party_ids {
 		    # relation_add verifies that they aren't already in the group
 		    set contact_name [contact::name -party_id $party_id] 
@@ -80,7 +80,7 @@ set title "[_ contacts.Remove_From_to_Group]"
 set user_id [ad_conn user_id]
 set context [list $title]
 set package_id [ad_conn package_id]
-set recipients [list]
+set recipients {}
 foreach party_id $party_ids {
     lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
 }

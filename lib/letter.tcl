@@ -132,7 +132,7 @@ ad_form -action message \
 	    set content_html "${content_html}\n\n${footer}"
 	}
 
-	set messages [list]
+	set messages {}
 	set date [join [template::util::date::get_property linear_date_no_time $date] "-"]
 
 	if { $include_address eq "1" } {

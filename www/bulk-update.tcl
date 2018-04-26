@@ -22,7 +22,7 @@ set title "[_ contacts.Bulk_Update]"
 set user_id [ad_conn user_id]
 set context [list $title]
 set package_id [ad_conn package_id]
-set recipients [list]
+set recipients {}
 if { [exists_and_not_null party_id] } {
     foreach party_id $party_id {
         contact::require_visiblity -party_id $party_id
@@ -37,13 +37,13 @@ set organization_count [llength $organization_ids]
 set person_count [llength $person_ids]
 
 
-set people [list]
+set people {}
 foreach party_id $person_ids {
     lappend people "<a href=\"[contact::url -party_id $party_id]\">[person::name -person_id $party_id]</a>"
 }
 set people [join $people ", "]
 
-set organizations [list]
+set organizations {}
 foreach party_id $organization_ids {
     lappend organizations "<a href=\"[contact::url -party_id $party_id]\">[organizations::name -organization_id $party_id]</a>"
 }

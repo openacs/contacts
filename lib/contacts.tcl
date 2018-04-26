@@ -1,7 +1,7 @@
-set required_param_list [list]
+set required_param_list {}
 set optional_param_list [list base_url extend_p extend_values attr_val_name]
 set default_param_list  [list orderby format query page page_size package_id search_id group_id]
-set optional_unset_list [list]
+set optional_unset_list {}
 
 # default values for default params
 set _orderby "first_names,asc"
@@ -149,7 +149,7 @@ if { [permission::permission_p -object_id $package_id -privilege "admin"] || [ac
 }
 callback contacts::bulk_actions -multirow "bulk_acts"
 
-set bulk_actions [list]
+set bulk_actions {}
 template::multirow foreach bulk_acts {
     lappend bulk_actions $pretty $link $detailed
 }
@@ -288,7 +288,7 @@ if { [string is true [parameter::get -parameter "DisableCSV" -default "0"]] || !
 }
 
 
-set elements [list]
+set elements {}
 lappend elements contact [list \
 			      label {<span style=\"float: right; font-weight: normal; font-size: smaller\">$name_label</a>} \
 			      display_template { 
@@ -360,7 +360,7 @@ foreach value $extend_values {
 set date_format [lc_get formbuilder_date_format]
 
 
-set actions [list]
+set actions {}
 if { $admin_p && [exists_and_not_null search_id] } {
     set actions [list "[_ contacts.Set_default_extend]" "admin/ext-search-options?search_id=$search_id" "[_ contacts.Set_default_extend]" ]
 }
@@ -379,9 +379,9 @@ callback contacts::extensions \
     -object_type $actual_object_type
 
 
-set add_columns [list]
-set remove_columns [list]
-set db_extend_columns [list]
+set add_columns {}
+set remove_columns {}
+set db_extend_columns {}
 if { $search_id ne "" } {
     # now we get the extensions for this specific search
     set db_extend_columns [contact::search::get_extensions -search_id $search_id]
@@ -389,7 +389,7 @@ if { $search_id ne "" } {
 set combined_extended_columns [lsort -unique [concat $db_extend_columns $extended_columns]]
 
 # we run through the multirow here to determine wether or not the columns are allowed
-set report_elements [list]
+set report_elements {}
 template::multirow foreach ext {
     set selected_p 0
     set immutable_p 0
@@ -599,7 +599,7 @@ if { [string is false $report_p] } {
     
     set keys {}
     template::multirow foreach contacts {
-	set key [list]
+	set key {}
 	foreach {element details} $report_elements {
 	    if { $element ne "party_id" } {
 		lappend key [set $element]

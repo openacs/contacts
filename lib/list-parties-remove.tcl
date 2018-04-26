@@ -23,7 +23,7 @@ ad_page_contract {
 }
 
 if { [exists_and_not_null party_id] } {
-    set party_ids [list]
+    set party_ids {}
     foreach party_id $party_id {
 	lappend party_ids $party_id
     }
@@ -47,7 +47,7 @@ set user_id [ad_conn user_id]
 set peeraddr [ad_conn peeraddr]
 set context [list $title]
 set package_id [ad_conn package_id]
-set recipients [list]
+set recipients {}
 foreach party_id $party_ids {
     lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
 }

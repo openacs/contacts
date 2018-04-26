@@ -366,7 +366,7 @@ ad_form -action $action \
 
 		set date [lc_time_fmt [dt_sysdate] "%q"]
 		
-		set values [list]
+		set values {}
 		foreach element [list first_names last_name salutation name date username] {
 		    lappend values [list "{$element}" [set $element]]
 		}

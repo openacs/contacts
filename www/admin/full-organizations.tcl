@@ -9,7 +9,7 @@ ad_page_contract {
 } {
 }
 
-set party_ids [list]
+set party_ids {}
 db_multirow organizations get_organizations "
     select party_id,
            name,
@@ -49,7 +49,7 @@ callback contacts::extensions \
 
 
 set output {"Organization ID","Name","Email","URL"}
-set extended_columns [list]
+set extended_columns {}
 template::multirow foreach ext {
     if { ( $type eq "organization" || $type eq "party" ) && [lsearch $preset_columns $key] >= 0 } {
 	# we aren't adding the columns that are provided by the parties and organizations tables
@@ -88,7 +88,7 @@ contacts::multirow \
 
 # we create a command here because it more efficient then
 # iterating over all the columns in the multirow foreach
-set command [list]
+set command {}
 foreach column [template::multirow columns organizations] {
     lappend command "\[template::list::csv_quote \$${column}\]"
 }

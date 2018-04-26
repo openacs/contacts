@@ -244,7 +244,7 @@ ad_proc -public contact::employee::direct_phone {
     if {$phone == "" && [person::person_p -party_id $employee_id]} {
 
 	# Get employers, if any
-	set employers [list]
+	set employers {}
 	set employers [contact::util::get_employers -employee_id $employee_id -package_id $package_id]
 	
 	# If employer(s) exist

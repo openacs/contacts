@@ -28,7 +28,7 @@ if {![info exists no_callback_p]} {
 # Somehow when the form is submited the party_ids values became
 # only one element of a list, this avoid that problem
 
-set recipients [list]
+set recipients {}
 foreach party_id $party_ids {
     if {![empty_string_p $party_id]} {
 	lappend recipients [list "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a> ([contact::message::email_address -party_id $party_id])" $party_id]
@@ -247,7 +247,7 @@ ad_form -action $action \
 	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
 	    
 	# List to store know which emails received the message
-	set recipients_addr [list]
+	set recipients_addr {}
 
 	set from [ad_conn user_id]
 	set from_addr [contact::email -party_id $from]

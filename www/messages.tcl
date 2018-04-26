@@ -23,7 +23,7 @@ set message_types [ams::util::localize_and_sort_list_of_lists \
 		       -list [db_list_of_lists get_message_types { select pretty_name, message_type from contact_message_types}] \
 		      ]
 
-set actions [list]
+set actions {}
 foreach type $message_types {
     lappend actions "[_ contacts.Add] [lindex $type 0]" [export_vars -base message-ae -url [list [list message_type [lindex $type 1]]]] "[_ contacts.Add] [lindex $type 0]"
     set type_pretty_name([lindex $type 1]) [lindex $type 0]
