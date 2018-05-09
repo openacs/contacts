@@ -12,7 +12,7 @@ contact::require_visiblity -party_id $party_id
 
 set user_id [ad_conn user_id]
 set package_id [ad_conn package_id]
-set recipients {}
+set recipients [list]
 
 lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"
 

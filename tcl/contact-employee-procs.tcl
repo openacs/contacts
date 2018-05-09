@@ -112,7 +112,7 @@ ad_proc -private contact::employee::get_not_cached {
     set employee_rev_id [content::item::get_best_revision -item_id $employee_id]
 
     # Get employers, if any
-    set employers {}
+    set employers [list]
     set employers [contact::util::get_employers -employee_id $employee_id -package_id $package_id]
 
     # If employer(s) exist
@@ -244,7 +244,7 @@ ad_proc -public contact::employee::direct_phone {
     if {$phone == "" && [person::person_p -party_id $employee_id]} {
 
 	# Get employers, if any
-	set employers {}
+	set employers [list]
 	set employers [contact::util::get_employers -employee_id $employee_id -package_id $package_id]
 	
 	# If employer(s) exist
@@ -336,7 +336,7 @@ ad_proc -private contact::util::get_employees_list_of_lists_not_cached {
     get employees of an organization in a list of list suitable for inclusion in options
     the list is made up of employee_name and employee_id
 } {
-    set contact_list {}
+    set contact_list [list]
     db_foreach select_employee_ids {
 	select CASE WHEN object_id_one = :organization_id
                     THEN object_id_two
@@ -379,7 +379,7 @@ ad_proc -private contact::util::get_employers_not_cached {
     @creation-date 2005-10-17
     @return List of lists, each containing the ID and name of an employer, or an empty list if no employers exist.
 } {
-    set contact_list {}
+    set contact_list [list]
     db_foreach select_employer_ids {
 	select CASE WHEN object_id_one = :employee_id
                     THEN object_id_two

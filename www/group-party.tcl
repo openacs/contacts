@@ -11,7 +11,7 @@ ad_page_contract {
 } -validate {
 }
 if { [exists_and_not_null party_id] } {
-    set party_ids {}
+    set party_ids [list]
     foreach party_id $party_id {
 	lappend party_ids $party_id
     }
@@ -23,7 +23,7 @@ set title "Add to Group"
 set user_id [ad_conn user_id]
 set context [list $title]
 set package_id [ad_conn package_id]
-set recipients {}
+set recipients [list]
 foreach party_id $party_ids {
     contact::require_visiblity -party_id $party_id
     lappend recipients "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a>"

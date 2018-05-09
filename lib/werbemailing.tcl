@@ -79,7 +79,7 @@ ad_form -action message \
 
 	template::multirow create messages revision_id to_addr to_party_id subject content_body
 
-	set file_revisions {}
+	set file_revisions [list]
 	
 	# We need to set the original date here
 	set orig_date $date
@@ -162,7 +162,7 @@ ad_form -action message \
 		    set locale [lang::user::site_wide_locale -user_id $party_id]
 		}
 		
-		set values {}
+		set values [list]
 		foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		    lappend values [list "{$element}" [set $element]]
 		}

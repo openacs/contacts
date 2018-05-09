@@ -132,7 +132,7 @@ ad_form -action message \
 	    set content_html "${content_html}\n\n${footer}"
 	}
 
-	set messages {}
+	set messages [list]
 	set date [join [template::util::date::get_property linear_date_no_time $date] "-"]
 
 	if { $include_address eq "1" } {
@@ -175,7 +175,7 @@ ad_form -action message \
 		append letter "\n<div class=\"mailing-address\">$name<br />[contact::message::mailing_address -party_id $party_id -format "text/html"]</div>"
 	    }
 	    append letter "\n<div class=\"content\">${content_html}</div>"
-	    set values {}
+	    set values [list]
 	    foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		lappend values [list "{$element}" [set $element]]
 	    }

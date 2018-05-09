@@ -275,7 +275,7 @@ ad_proc -public -callback contact::special_attributes::ad_form_save -impl contac
 } {
 
     set object_type [contact::type -party_id $party_id]
-    set element_list {}
+    set element_list [list]
     if { [lsearch [list person user] $object_type] >= 0 } {
 	lappend element_list first_names last_name email
     } elseif {$object_type == "organization" } {
@@ -731,7 +731,7 @@ ad_proc -public -callback contacts::multirow::extend -impl attributes {
     }
 
     set object_type $type
-    set results {}
+    set results [list]
     if { $object_type eq "party" && [lsearch [list email url] $key] >= 0 } {
 	db_foreach get_party_info " select $key as value, party_id from parties where party_id in ( $select_query ) " {
 	    if { $format eq "html" && $value ne "" } {
@@ -906,7 +906,7 @@ ad_proc -public -callback contacts::multirow::extend -impl relationships {
 	if { ![array exists roles_list] } {
 	    return [list]
 	} else {
-	    set results {}
+	    set results [list]
 	    foreach {party_id related_parties} [array get roles_list] {
 		lappend results $party_id [join [lsort -dictionary $related_parties] ", "]
 	    }
@@ -967,7 +967,7 @@ ad_proc -public -callback contacts::multirow::extend -impl groups {
     {-format "html"}
 } {
 } {
-    set results {}
+    set results [list]
     if { $type eq "groups" && [string is integer $key] && $key ne ""} {
 	set true [_ contacts.True]
 	set false [_ contacts.False]
@@ -996,7 +996,7 @@ ad_proc -public -callback contacts::extensions -impl groups {
     {-object_type}
 } {
 } {
-    set groups_list {}
+    set groups_list [list]
     foreach group [contact::groups_list -package_id $package_id] {
 	util_unlist $group group_id group_name member_count component_count mapped_p default_p
 	if { [string is true $mapped_p] } {
@@ -1021,7 +1021,7 @@ ad_proc -public -callback contacts::multirow::extend -impl privacy {
     {-format "html"}
 } {
 } {
-    set results {}
+    set results [list]
     if { $type eq "privacy" } {
 	set true [_ contacts.True]
 	set false [_ contacts.False]
@@ -1153,7 +1153,7 @@ ad_proc -public -callback contact::contact_form -impl contacts_locale {
 } {
 
     # Allow for organizations and persons to set the locale
-    set list_of_locales {}
+    set list_of_locales [list]
     db_foreach locale_loop {
         select label, locale
         from enabled_locales

@@ -15,15 +15,15 @@ ad_page_contract {
 
 set title [_ contacts.Add_Relationship]
 set context [list $title]
-set names {}
-set contact_type {}
+set names [list]
+set contact_type [list]
 if { ![exists_and_not_null party_ids] } {
     set party_ids $party_id
 }
-set organizations {}
-set organization_ids {}
-set people {}
-set person_ids {}
+set organizations [list]
+set organization_ids [list]
+set people [list]
+set person_ids [list]
 foreach party $party_ids {
     contact::require_visiblity -party_id $party
     if { [contact::type -party_id $party] eq "organization" } {

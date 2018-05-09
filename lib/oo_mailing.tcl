@@ -196,7 +196,7 @@ ad_form -action message \
 	set num_of_users [llength $party_ids]
 	set seconds_to_finish [expr $num_of_users * $seconds_per_user]
 	set package_id [ad_conn package_id]
-	set pdf_filenames {}
+	set pdf_filenames [list]
 	
 	set from [ad_conn user_id]
 	set from_addr [contact::email -party_id $from]
@@ -297,7 +297,7 @@ ad_form -action message \
 		}
 
 		set to_addr [contact::message::email_address -party_id $party_id]		
-		set values {}
+		set values [list]
 		foreach element [list first_names last_name name date salutation mailing_address directphone] {
 		    lappend values [list "{$element}" [set $element]]
 		}

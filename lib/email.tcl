@@ -28,7 +28,7 @@ if {![info exists no_callback_p]} {
 # Somehow when the form is submited the party_ids values became
 # only one element of a list, this avoid that problem
 
-set recipients {}
+set recipients [list]
 foreach party_id $party_ids {
     if {![empty_string_p $party_id]} {
 	lappend recipients [list "<a href=\"[contact::url -party_id $party_id]\">[contact::name -party_id $party_id]</a> ([contact::message::email_address -party_id $party_id])" $party_id]
@@ -122,7 +122,7 @@ set contacts_p [apm_package_installed_p "contacts"]
 set tracking_p [apm_package_installed_p "mail-tracking"]
 
 if { [exists_and_not_null file_ids] } {
-    set files {}
+    set files [list]
     foreach file $file_ids {
 	set file_item_id [content::revision::item_id -revision_id $file] 
 	if {$file_item_id eq ""} {
@@ -157,7 +157,7 @@ foreach var $export_vars {
     # because if we put something like this {value $value} the value
     # of the variable is not interpreted
 
-    set element {}
+    set element [list]
     lappend element "${var}:text(hidden)"
     lappend element "value $var_value"
     
@@ -247,7 +247,7 @@ ad_form -action $action \
 	set attribute_id [attribute::id -object_type "person" -attribute_name "salutation"]
 	    
 	# List to store know which emails received the message
-	set recipients_addr {}
+	set recipients_addr [list]
 
 	set from [ad_conn user_id]
 	set from_addr [contact::email -party_id $from]
@@ -302,7 +302,7 @@ ad_form -action $action \
 	    set username [db_string user "select username from users where user_id = :party_id" -default ""]
 	    set date [lc_time_fmt [dt_sysdate] "%q"]
 	    
-	    set values {}
+	    set values [list]
 	    foreach element [list first_names last_name salutation name date username] {
 		lappend values [list "{$element}" [set $element]]
 	    }
