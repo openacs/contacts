@@ -263,7 +263,7 @@ ad_proc -public contacts::import::csv {
 		}
 
 		# set creation_date if "DatumErfassst" contains it
-		# THis allows for import from other sources
+		# This allows for import from other sources
 		if {[exists_and_not_null values(DatumErfasst)]} {
 		    set value $values(DatumErfasst)
 		    ns_log notice $value
