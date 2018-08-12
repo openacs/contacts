@@ -503,7 +503,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 				    #
 				    set value_pretty [lc_time_fmt $value "%q"]
                                     set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
-				    # We need to evalute the date_part since the i18N message doesn't
+				    # We need to evaluate the date_part since the i18N message doesn't
 				    # execute the tcl code.
 #				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part
 #				    set date_result [eval $date_part]
@@ -516,7 +516,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 				    # its a lot cleaner to not try and do a hack as below to get the date formatted in a lang key, instead change the key to use value_pretty
 				    #
 				    set value_pretty [lc_time_fmt $value "%q"]
-				    # We need to evalute the date_part since the i18N message doesn't
+				    # We need to evaluate the date_part since the i18N message doesn't
 				    # execute the tcl code.
                                     set output_pretty "[_ contacts.lt_attribute_pretty_is_a]"
 #				    regexp -nocase {lc_time_fmt [0-9]*-[0-9]*-[0-9]* %[a-z]*} $output_pretty date_part

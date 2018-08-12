@@ -28,7 +28,7 @@ db_multirow people get_people "
 }
 
 if { [llength $party_ids] < 10000 } {
-    # postgresql cannot deal with lists larger than 10000
+    # PostgreSQL cannot deal with lists larger than 10000
     set select_query [template::util::tcl_to_sql_list $party_ids]
 } else {
     set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
@@ -55,7 +55,7 @@ template::multirow foreach ext {
     if { ( $type eq "person" || $type eq "party" ) && [lsearch $preset_columns $key] >= 0 } {
 	# we aren't adding the columns that are provided by the parties and persons tables
     } elseif { $type eq "person" || $type eq "party" } {
-	# if you want other extend columsn they should be added here
+	# if you want other extend columns they should be added here
         # you would add the type you want to show up in this list
         # by default as of the time of writing the only standard
         # extensions (i.e. not site specific) are attributes with

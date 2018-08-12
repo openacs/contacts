@@ -2,7 +2,7 @@
 ad_page_contract {
 
     Display a list of the available attributes to map to an specific
-    search_id and also the default attributes set in the paramaters
+    search_id and also the default attributes set in the parameters
     for each specific search_type.
     
     @author Miguel Marin (miguelmarin@viaro.net)

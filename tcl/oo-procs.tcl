@@ -3,7 +3,7 @@ ad_library {
     Support procs for the contacts package with regards to OpenOffice
 
     Before you can make use of these functions, OpenOffice 2.0 needs to be installed in your system.
-    Additionally you need ghostscript and the msttftcorefonts (so your users wont complain about wrong verdana fonts)
+    Additionally you need ghostscript and the msttftcorefonts (so your users won't complain about wrong verdana fonts)
     Not to forget "vncserver" and "x11fonts".
 
     Once this is done, call "spadmin" as the user running the AOLserver and configure a printer for PDF

@@ -1,6 +1,6 @@
 # /packages/project-manager/lib/search-jobid.tcl
 #
-# Include that searchs for the name of a contact
+# Include that searches for the name of a contact
 # and redirects to the found project if it's just one or to
 # first one if there are various.
 # 

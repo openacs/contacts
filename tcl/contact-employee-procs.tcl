@@ -118,7 +118,7 @@ ad_proc -private contact::employee::get_not_cached {
     # If employer(s) exist
     if {[llength $employers] > 0} {
 	if {[exists_and_not_null organization_id]} {
-	    # If user sepcified to get information for a certain employer, check if the specified employer exists. If employer specified is not an employer, no organization info will be returned.
+	    # If user specified to get information for a certain employer, check if the specified employer exists. If employer specified is not an employer, no organization info will be returned.
 	    foreach single_employer $employers {
 		if {$organization_id == [lindex $single_employer 0]} {
 		    set employer $single_employer
@@ -250,7 +250,7 @@ ad_proc -public contact::employee::direct_phone {
 	# If employer(s) exist
 	if {[llength $employers] > 0} {
 	    if {[exists_and_not_null organization_id]} {
-		# If user sepcified to get information for a certain employer, check if the specified employer exists. 
+		# If user specified to get information for a certain employer, check if the specified employer exists. 
 		# If employer specified is not an employer, no organization info will be returned.
 		foreach single_employer $employers {
 		    if {$organization_id == [lindex $single_employer 0]} {

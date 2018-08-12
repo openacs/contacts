@@ -24,7 +24,7 @@ ad_proc -public template::widget::contact_search { element_reference tag_attribu
 
     <p>
 
-    By default it searchs only for persons unless the type is specified as organization or party (in which case both are looked for).
+    By default it searches only for persons unless the type is specified as organization or party (in which case both are looked for).
 
     @author Matthew Geddert
 } {

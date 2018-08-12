@@ -642,7 +642,7 @@ ad_proc -public contact::email_not_cached {
     # we need to wait for the new version of
     # acs-subsite to be release to remove
     # the dependence on contacts which
-    # would cause an infinit loop
+    # would cause an infinite loop
     set email [cc_email_from_party $party_id]
     if { ![exists_and_not_null email] } {
 	# we check if there is an ams_attribute_valued email address for this party

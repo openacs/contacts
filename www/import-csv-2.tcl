@@ -113,7 +113,7 @@ foreach list_id $list_ids {
 		    set form_element [list ${object_type}.${attribute_id}_delivery_address:text(multiselect)$opt_string \
 					  [list label "[_ ams.delivery_address] ($pretty_name)"] \
 					  [list options "$header_options"]]
-		    # Append the secion
+		    # Append the section
 		    if { $element_counter eq 0} {
 			lappend form_element [list section $object_type]
 		    }
@@ -155,7 +155,7 @@ foreach list_id $list_ids {
 					  [list label "$pretty_name"] \
 					  [list options "$header_options"] \
 					  [list value "$attribute_name"]]
-		    # Append the secion
+		    # Append the section
 		    if { $element_counter eq 0} {
 			lappend form_element [list section $object_type]
 		    }

@@ -113,7 +113,7 @@ if { $search_exists_p } {
 	lappend extended_columns $add_column
     }
 
-    # we run through the multirow here to determine wether or not the columns are allowed
+    # we run through the multirow here to determine whether or not the columns are allowed
     template::multirow foreach ext {
 	set selected_p 0
 	if { [lsearch $extended_columns "${type_key}__${key}"] >= 0 } {
