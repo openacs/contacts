@@ -1,6 +1,6 @@
 <table cellpadding="3" cellspacing="3" width="100%">
   <tr>
-    <if @filter_p@ eq 1>
+    <if @filter_p;literal@ true>
       <td class="list-filter-pane-big" valign="top" width="20%">
           <listfilters name="complaint"></listfilters>
       </td>            

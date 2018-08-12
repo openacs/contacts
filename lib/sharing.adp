@@ -5,9 +5,9 @@
 
 
 
-<h2>#contacts.Sharing#: <if @public_p@>#contacts.Public#</if><else>#contacts.Owners_Only#</else></h2>
+<h2>#contacts.Sharing#: <if @public_p;literal@ true>#contacts.Public#</if><else>#contacts.Owners_Only#</else></h2>
 
-<if @admin_p@>
+<if @admin_p;literal@ true>
 <ul>
 <li><a href="@public_url@">#contacts.Change_Sharing#</a></li>
 </ul>

@@ -11,7 +11,7 @@
   <div id="section">
     <ul>
     <multiple name="links">
-      <li><a href="@links.url@" title="Go to @links.label@"><if @links.selected_p@><strong></if>@links.label@<if @links.selected_p@></strong></if></a><if @links:rowcount@ eq @links.rownum@ and @public_url@ nil><em>&nbsp;</em></if> </li>
+      <li><a href="@links.url@" title="Go to @links.label@"><if @links.selected_p;literal@ true><strong></if>@links.label@<if @links.selected_p;literal@ true></strong></if></a><if @links:rowcount@ eq @links.rownum@ and @public_url@ nil><em>&nbsp;</em></if> </li>
     </multiple>
     <if @public_url@ not nil>
       <li><a href="@public_url@" title="Go to this community member's public page">#contacts.Public_Page#</a><em>&nbsp;</em> </li>

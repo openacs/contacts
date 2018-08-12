@@ -312,7 +312,7 @@ ad_proc -private contacts::search::condition_type::attribute {
 
                 if { $operand != "set" && $operand != "not_set" } {
                     # there could be variable elements so we add them here
-                    set form_elements [concat $form_elements $var_elements]
+                    lappend form_elements {*}$var_elements
                 }
             }
             return $form_elements

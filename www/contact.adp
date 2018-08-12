@@ -7,7 +7,7 @@
     <include src="/packages/contacts/lib/contact-relationships-portlet" party_id="@party_id@" sort_by_date_p="1"/>
   </div>
   <div class="secondary">
-    <if @dotlrn_club_enabled_p@>
+    <if @dotlrn_club_enabled_p;literal@ true>
       <h3 class="contact-title"><a href="@club_url@">#contacts.Visit_Club#</a></h3>
       </if>
     <include
@@ -15,7 +15,7 @@
       party_id="@party_id@"
       hide_form_p="t" />
       <br />
-    <if @tasks_enabled_p@>
+    <if @tasks_enabled_p;literal@ true>
       <include
 	src="/packages/contacts/lib/tasks-tasks-portlet"
 	object_id="@party_id@"
@@ -48,8 +48,8 @@
 	fmt="%x %r">
 	<br />
     </if>
-    <if @projects_enabled_p@>
-	<if @freelancer_p@>
+    <if @projects_enabled_p;literal@ true>
+	<if @freelancer_p;literal@ true>
 		<include src="/packages/contacts/lib/ap-tasks-portlet"
 		    from_party_id="@party_id@"
 		    page="@page@"
@@ -60,7 +60,7 @@
 		/>
         </if>
     </if>
-    <if @projects_enabled_p@>
+    <if @projects_enabled_p;literal@ true>
       <if @project_url@ ne "">
 	  <include
 	    src="/packages/contacts/lib/subprojects-portlet"
@@ -70,7 +70,7 @@
       </if>
     </if>
     <if @object_type@ eq "organization">
-      <if @invoices_enabled_p@>
+      <if @invoices_enabled_p;literal@ true>
 	<include src="/packages/contacts/lib/offers-portlet" 
 		organization_id="@party_id@" 
 		elements="offer_nr title amount_total" 
@@ -92,7 +92,7 @@
 		format=table />
 	<br />
       </if>
-      <if @projects_enabled_p@>
+      <if @projects_enabled_p;literal@ true>
 	<include src="/packages/contacts/lib/contact-complaint-list-portlet" 
 	    customer_id=@party_id@
 	    elements="title supplier state description"

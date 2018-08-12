@@ -63,7 +63,7 @@ if {$banner_options eq ""} {
 	{banner:text(hidden) {value ""}}
     }
 } else {
-    set banner_options [concat [list ""] $banner_options]
+    set banner_options [linsert $banner_options 0 [list ""]]
     append form_elements {
 	{banner:text(select),optional
 	    {label "[_ contacts.Banner]"} 

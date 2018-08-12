@@ -6,7 +6,7 @@
 </property>
 <property name="focus">comment_add.comment</property>
 
-  <if @message_create_p@ false>
+  <if @message_create_p;literal@ false>
     <formtemplate id="message"></formtemplate>
   </if>
   <else>

@@ -150,7 +150,7 @@ ad_proc -private contacts::sweeper {
 	return
     }
 
-    with_finally -code {
+    ad_try {
 	if {$contacts_package_ids eq ""} {
 	    set contacts_package_ids [apm_package_ids_from_key -package_key "contacts" -mounted]
 	}
@@ -224,7 +224,7 @@ ad_proc -private contacts::sweeper {
 	    db_dml delete_deleted_users {}
 	}
 	
-    } -finally {
+    } finally {
 	nsv_incr contacts sweeper_p -1
     }
     

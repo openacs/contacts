@@ -80,7 +80,7 @@ switch $message_type {
     oo_mailing {
 	set banner_options [util::find_all_files -extension jpg -path "[acs_root_dir][parameter::get_from_package_key -package_key contacts -parameter OOMailingPath]/banner"]
 	if {![string eq $banner_options ""]} {
-	    set banner_options [concat [list ""] $banner_options]
+	    set banner_options [linsert $banner_options 0 [list ""]]
 	    append form_elements {
 		{banner:text(select),optional
 		    {label "[_ contacts.Banner]"} 
@@ -99,7 +99,7 @@ switch $message_type {
 	}
 
 	if {![string eq $oo_template_options ""]} {
-	    set oo_template_options [concat [list ""] $oo_template_options]
+	    set oo_template_options [linsert $oo_template_options 0 [list ""]]
 	    append form_elements {
 		{oo_template:text(select),optional
 		    {label "[_ contacts.OOTemplate]"} 

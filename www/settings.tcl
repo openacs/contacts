@@ -23,7 +23,7 @@ template::list::create \
 	default_p {
 	    label ""
 	    display_template {
-		<if @signatures.default_p@>
+		<if @signatures.default_p;literal@ true>
 		Default Signature
 		</if>
 	    }

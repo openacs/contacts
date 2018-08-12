@@ -9,7 +9,7 @@
 <p>
 <formtemplate id="search" style="../../../contacts/resources/forms/inline"></formtemplate></p>
 
-<if @aggregated_p@>
+<if @aggregated_p;literal@ true>
    <include src="../lib/contacts-aggregated" 
 	base_url="@package_url@" 
 	attr_id=@aggregate_attribute_id@ 

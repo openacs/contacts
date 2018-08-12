@@ -23,7 +23,7 @@ template::list::create \
         edit {
 	    label {}
 	    display_template {
-		<if @groups.dotlrn_community_p@ false><a href="@groups.edit_url@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a></if>
+		<if @groups.dotlrn_community_p;literal@ false><a href="@groups.edit_url@"><img src="/resources/acs-subsite/Edit16.gif" height="16" width="16" border= "0" alt="[_ acs-kernel.common_Edit]"></a></if>
 	    }
 	}
         group_name {
@@ -39,7 +39,7 @@ template::list::create \
         mapped {
             label {Mapped}
             display_template {
-                <if @groups.mapped_p@>
+                <if @groups.mapped_p;literal@ true>
                   <a href="group-map?action=unmap&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
                 </if>
                 <else>
@@ -50,12 +50,12 @@ template::list::create \
         default {
             label {Default}
             display_template {
-                <if @groups.dotlrn_community_p@ false>
-                <if @groups.default_p@>
+                <if @groups.dotlrn_community_p;literal@ false>
+                <if @groups.default_p;literal@ true>
                   <img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]">
                 </if>
                 <else>
-                  <if @groups.mapped_p@ and @groups.level@ eq 1>
+                  <if @groups.mapped_p;literal@ true and @groups.level@ eq 1>
                   <a href="group-map?action=makedefault&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkbox.gif" border="0" height="13" width="13" alt="[_ contacts.False]"></a>
                   </if>
                   <else>
@@ -68,7 +68,7 @@ template::list::create \
             label {Notifications}
             display_template {
                 <if @groups.dotlrn_community_p@ false and @groups.mapped_p@ and @groups.level@ eq 1>
-                <if @groups.notifications_p@>
+                <if @groups.notifications_p;literal@ true>
                   <a href="group-map?action=notificationsoff&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
                 </if>
                 <else>
@@ -80,8 +80,8 @@ template::list::create \
         user_change {
             label {User Change}
             display_template {
-                <if @groups.dotlrn_community_p@ false>
-                <if @groups.user_change_p@>
+                <if @groups.dotlrn_community_p;literal@ false>
+                <if @groups.user_change_p;literal@ true>
                   <a href="group-user-change?action=disallow&group_id=@groups.group_id@"><img src="/resources/acs-subsite/checkboxchecked.gif" border="0" height="13" width="13" alt="[_ contacts.True]"></a>
                 </if>
                 <else>
@@ -92,28 +92,28 @@ template::list::create \
         }
         person_form {
             display_template {
-                <if @groups.dotlrn_community_p@ false>
+                <if @groups.dotlrn_community_p;literal@ false>
                 <a href="@groups.ams_person_url@" class="button">[_ contacts.Person_Form]</a>
                 </if>
             }
         }
         org_form {
             display_template {
-                <if @groups.dotlrn_community_p@ false>
+                <if @groups.dotlrn_community_p;literal@ false>
                 <a href="@groups.ams_org_url@" class="button">[_ contacts.Organization_Form]</a>
                 </if>
             }
         }
 	categories {
 	    display_template {
-                <if @groups.dotlrn_community_p@ false>
+                <if @groups.dotlrn_community_p;literal@ false>
 		<a href="@groups.categories_url@" class="button">[_ contacts.Manage_group_categories]</a>
                 </if>
 	    }
 	}
 	actions {
 	    display_template {
-                <if @groups.dotlrn_community_p@ false>
+                <if @groups.dotlrn_community_p;literal@ false>
 		<if @groups.level@ eq 1><a href="permissions?group_id=@groups.group_id@" class="button">[_ contacts.Permissions]</a></if>
                 </if>
                 <else>

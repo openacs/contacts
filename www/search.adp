@@ -2,7 +2,7 @@
 
 <formtemplate id="advanced_search" style="../../../contacts/resources/forms/inline"></formtemplate>
 
-<if @search_exists_p@>
+<if @search_exists_p;literal@ true>
 <br />
 <br />
 <if @add_columns@ not nil or @remove_columns@ not nil>

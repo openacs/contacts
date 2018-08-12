@@ -1,4 +1,4 @@
-<if @report_p@>
+<if @report_p;literal@ true>
 <p>
   <a href="@contacts_mode_url;noquote@" class="button">#contacts.View_Contacts#</a>
   <a href="@report_csv_url;noquote@" class="button">#contacts.CSV#</a>
@@ -37,7 +37,7 @@
   </if>
   <if @extended_columns@ not nil>
     <td>
-      <if @report_p@ true>
+      <if @report_p;literal@ true>
         <a href="@contacts_mode_url;noquote@" class="button">#contacts.View_Contacts#</a>
       </if>
       <else>

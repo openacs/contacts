@@ -337,7 +337,7 @@ if { $format == "csv" } {
 		 ] 
 }
 
-set row_list [concat $row_list $last_modified_rows]
+lappend row_list {*}$last_modified_rows
 
 if { [exists_and_not_null search_id] } {
     # We get all the default values for that are mapped to this search_id

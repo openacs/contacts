@@ -12,7 +12,7 @@
 </if>
 
 <br>
-<if @edit_p@ eq "f"> 
+<if @edit_p;literal@ false> 
     <if @search_id@ nil>
        <h3>#contacts.Stored_extended#:</h3>
     <listtemplate name="ext_options"></listtemplate>
