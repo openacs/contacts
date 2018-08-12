@@ -169,7 +169,7 @@ ad_proc -public -callback contacts::redirect {
     {-party_id ""}
     {-action ""}
 } {
-    This callback is executed by /package/contacts/index.vuh. If you want contact urls to map
+    This callback is executed by /package/contacts/index.vuh. If you want contact URLs to map
     to or override standard files/links this is where you can customize the rp_internal_redirect
     or add your own ad_returnredirect
 } -

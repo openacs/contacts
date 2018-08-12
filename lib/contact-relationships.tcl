@@ -36,7 +36,7 @@ if {$sort_by_date_p} {
 
 multirow create rels relationship relation_url rel_id contact contact_url attribute value creation_date role
 
-# Get the groups for adding and make sure we have the permisison working.
+# Get the groups for adding and make sure we have the permissions working.
 set groups_belonging_to [db_list get_party_groups { select group_id from group_distinct_member_map where member_id = :party_id  and group_id > 0}]
 lappend groups_belonging_to [contacts::default_group]
 

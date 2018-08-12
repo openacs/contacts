@@ -350,7 +350,7 @@ ad_proc -public contacts::import::csv {
 		}
 	    
 		# set organization address attributes
-		set Adresse $values(Strasse)
+		set Address $values(Strasse)
 		set Ort $values(Ort)
 		set Postleitzahl $values(PLZ)
 		set Land $values(Land)
@@ -371,9 +371,9 @@ ad_proc -public contacts::import::csv {
 		    set locale "en_US"
 		}
 
-		if {![string eq "" $Adresse] && ![string eq "" $Land]} {
+		if {![string eq "" $Address] && ![string eq "" $Land]} {
 		    set value_id [ams::util::postal_address_save \
-				      -delivery_address $Adresse \
+				      -delivery_address $Address \
 				      -municipality $Ort \
 				      -postal_code $Postleitzahl \
 				      -country_code $Land \
@@ -541,7 +541,7 @@ ad_proc -public contacts::import::csv {
 	    }
 	    
 	    # set person address attributes
-	    set Adresse $values(Pstrasse)
+	    set Address $values(Pstrasse)
 	    set Ort $values(Port)
 	    set Postleitzahl $values(PPLZ)
 	    set Land $values(Pland)
@@ -563,9 +563,9 @@ ad_proc -public contacts::import::csv {
 	    }
 	    
 	    
-	    if {![string eq "" $Adresse] && ![string eq "" $Land]} {
+	    if {![string eq "" $Address] && ![string eq "" $Land]} {
 		set value_id [ams::util::postal_address_save \
-				  -delivery_address $Adresse \
+				  -delivery_address $Address \
 				  -municipality $Ort \
 				  -postal_code $Postleitzahl \
 				  -country_code $Land \

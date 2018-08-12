@@ -888,7 +888,7 @@ ad_proc -private contact::person_upgrade_to_user {
 		
 	    }
 
-	    # Make sure that we we did not store user preferences before
+	    # Make sure that we did not store user preferences before
 	    if {![db_string user_prefs_p "select 1 from user_preferences where user_id = :user_id" -default "0"]} {
 		db_dml update_user_prefs {insert into user_preferences
 		    (user_id)

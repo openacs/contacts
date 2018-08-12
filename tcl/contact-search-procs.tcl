@@ -88,7 +88,7 @@ ad_proc -public contact::search::get_extensions {
     -search_id:required
 } {
 } {
-    return [db_list get_search_exensions {
+    return [db_list get_search_extensions {
 	    select extend_column
 	      from contact_search_extend_map
 	     where search_id = :search_id
@@ -252,7 +252,7 @@ ad_proc -public contact::search::results_count_not_cached {
         # The party column is the column of the object we look for
         # The item column is the column of the item which has the
 	# attributes
-	# This allows to search for the attributes of an organization,
+	# This allows one to search for the attributes of an organization,
 	# but have the party
         # in a special search (employee search)
         
@@ -337,7 +337,7 @@ ad_proc -public contact::search::results {
 
 	# The party column is the column of the object we look for
 	# The item column is the column of the item which has the attributes
-	# This allows to search for the attributes of an organization, but have the party
+	# This allows one to search for the attributes of an organization, but have the party
 	# in a special search (employee search)
 	
 	switch $object_type {
@@ -415,7 +415,7 @@ ad_proc -private contact::party_id_in_sub_search_clause {
     
     # The party column is the column of the object we look for
     # The item column is the column of the item which has the attributes
-    # This allows to search for the attributes of an organization, but have the party
+    # This allows one to search for the attributes of an organization, but have the party
     # in a special search (employee search)
     
     switch $object_type {

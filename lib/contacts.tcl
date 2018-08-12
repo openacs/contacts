@@ -388,7 +388,7 @@ if { $search_id ne "" } {
 }
 set combined_extended_columns [lsort -unique [concat $db_extend_columns $extended_columns]]
 
-# we run through the multirow here to determine wether or not the columns are allowed
+# we run through the multirow here to determine whether or not the columns are allowed
 set report_elements [list]
 template::multirow foreach ext {
     set selected_p 0
@@ -519,7 +519,7 @@ if { [string is false $report_p] } {
     if { [empty_string_p $list_properties(page_size)] || $list_properties(page_size) == 0 } {
 	# we give an alias that won't likely be used in the contacts::multirow extend callbacks
 	# because those callbacks may have references to a parties table and we don't want 
-	# postgresql to think that this query belongs to that table.
+	# PostgreSQL to think that this query belongs to that table.
 	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"
     } else {
 	set select_query [template::list::page_get_ids -name "contacts"]
@@ -552,7 +552,7 @@ if { [string is false $report_p] } {
     }
 
     if { [llength $party_ids] < 10000 } {
-	# postgresql cannot deal with lists larger than 10000
+	# PostgreSQL cannot deal with lists larger than 10000
 	set select_query [template::util::tcl_to_sql_list $party_ids]
     } else {
 	set select_query "select p[ad_conn user_id].party_id from parties p[ad_conn user_id]"

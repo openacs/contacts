@@ -182,7 +182,7 @@ ad_proc -public contacts::install::package_instantiate {
 
 #    set node_id [db_string get_it { select node_id from site_nodes where object_id = :package_id }]
 
-    # getting the the context_id of the parent package might be a cleaner way of doing this? if yes we should change it.
+    # getting the context_id of the parent package might be a cleaner way of doing this? if yes we should change it.
     set node_id [db_string get_it { select node_id from site_nodes where object_id is null order by node_id desc limit 1 }]
     set subsite_id [site_node::closest_ancestor_package -node_id $node_id -package_key "acs-subsite"]
     set subsite_default_group [application_group::group_id_from_package_id -no_complain -package_id $subsite_id]
@@ -552,7 +552,7 @@ ad_proc -public contacts::install::package_upgrade {
 			ns_log notice "An application group (${contacts_application_group_id}) already exists for contacts instance ${package_id}."
 		    } else {
 			# We are not going to copy all the attributes to this
-			# application groups list. Since we we do not want to
+			# application groups list. Since we do not want to
 			# make assumptions about how a site should be configured
 			set contacts_application_group_id [application_group::new -package_id $package_id -group_name "\#contacts.All_Contacts\#"]
 			ns_log notice "An application group (${contacts_application_group_id}) was created for contacts instance ${package_id}."
@@ -576,7 +576,7 @@ ad_proc -public contacts::install::package_upgrade {
 		    set subsite_application_group_id [application_group::group_id_from_package_id -no_complain -package_id $subsite_package_id]
 
 		    if { $subsite_application_group_id ne "-2" } {
-			error "The upgrade from contacts 1.2b3 to 1.2b4 removes contacts dependence on the registered users group '-2'. It is set to automatically use the nearest subsites application group. Unfortunately since your contacts instance is not mounted directly on the root subsite (i.e. its not mounted at a url similar to /contacts/) this application group is '$subsite_application_group_id'. You either need to manually move all of your contacts and ams::lists associated with the '-2' group to this application group (note the ams::list::copy will come in hand for this) or you may run a custom contacts::default_group_not_cached proc that will return the appropriate_id for your install and keep its functionality for any new contacts instance you create. This proc that corrects your setup should not be part of the official contacts release since its a hack that is now site specific. Sorry for the significant inconvenience. This was what happens when you live on the bleeding edge of developmental versions of software :("
+			error "The upgrade from contacts 1.2b3 to 1.2b4 removes contacts dependence on the registered users group '-2'. It is set to automatically use the nearest subsites application group. Unfortunately since your contacts instance is not mounted directly on the root subsite (i.e. its not mounted at a URL similar to /contacts/) this application group is '$subsite_application_group_id'. You either need to manually move all of your contacts and ams::lists associated with the '-2' group to this application group (note the ams::list::copy will come in hand for this) or you may run a custom contacts::default_group_not_cached proc that will return the appropriate_id for your install and keep its functionality for any new contacts instance you create. This proc that corrects your setup should not be part of the official contacts release since its a hack that is now site specific. Sorry for the significant inconvenience. This was what happens when you live on the bleeding edge of developmental versions of software :("
 		    }
 
 		}

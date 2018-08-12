@@ -3,7 +3,7 @@
 # object_id        - to filter mails for a object_id
 # page             - to filter the pagination
 # page_size        - to know how many rows show (optional default to 10)
-# show_filter_p    - to show or not the filters in the inlcude, default to "t"
+# show_filter_p    - to show or not the filters in the include, default to "t"
 # from_package_id  - to watch mails of this package instance  
 # elements         - a list of elements to show in the list template. If not provided will show all elements.
 

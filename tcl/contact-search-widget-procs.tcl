@@ -151,7 +151,7 @@ ad_proc -public template::data::transform::contact_search { element_ref } {
 	    # we use the package_id from this contacts instance
 	    set package_id [ad_conn package_id]
 	} else {
-	    error "You cannot use the contact_search widget without specifying a package_id of a contacts instance in which to search (done the same way you would specifiy html attributes)"
+	    error "You cannot use the contact_search widget without specifying a package_id of a contacts instance in which to search (done the same way you would specify html attributes)"
 	}
     }
     set person_ids [list]
