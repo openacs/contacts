@@ -23,7 +23,7 @@ set search_for_clause ""
 set var_list [db_string get_var_list { } -default ""]
 
 # We get the default attributes of persons, organizations or both and of the group
-# if there is a condition for the gorup in the search (when var_list not null)
+# if there is a condition for the group in the search (when var_list not null)
 switch $search_for {
     person {
 	if { ![empty_string_p $var_list] } {
