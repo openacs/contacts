@@ -1,28 +1,20 @@
 <?xml version="1.0"?>
 <queryset>
 
-<fullquery name="contacts::default_group_not_cached.get_parent_subsite_id">
-  <querytext>
-    select object_id
-      from site_nodes
-     where tree_level(tree_sortkey) < ( select tree_level(n2.tree_sortkey) from site_nodes n2 where n2.node_id = :node_id )
-       and object_id in ( select package_id
-                            from apm_packages
-                           where package_key = 'acs-subsite' )
-     order by tree_sortkey desc
-     limit 1
-  </querytext>
-</fullquery>
-
 <fullquery name="contacts::default_groups_not_cached.get_child_contacts_instances">
   <querytext>
-    select p.package_id
-      from site_nodes n, site_nodes n2, apm_packages p
-     where n2.node_id = (select coalesce(:parent_node_id, site_node__node_id('/', null)))
-       and n.tree_sortkey between n2.tree_sortkey and tree_right(n2.tree_sortkey)
-       and n.object_id = p.package_id
-       and p.package_key = 'contacts'
-       and (tree_level(n.tree_sortkey) - (select tree_level(n2.tree_sortkey) from site_nodes n2 where n2.node_id = (select coalesce(:parent_node_id, site_node__node_id('/', null))))) > 1;
+        select p.package_id
+        from apm_packages p right outer join
+           ( WITH RECURSIVE site_node_tree AS (
+                select node_id, parent_id, object_id from site_nodes where node_id = :root_id
+             UNION ALL
+                select c.node_id, c.parent_id, c.object_id from site_node_tree tree, site_nodes as c
+                where  c.parent_id = tree.node_id
+             )
+             select * from site_node_tree n) site_map
+        on site_map.object_id = p.package_id
+        where package_key = 'contacts'
+	and (site_map.object_id is null or acs_permission__permission_p(site_map.object_id, :user_id, 'read') = 't')
   </querytext>
 </fullquery>
 
