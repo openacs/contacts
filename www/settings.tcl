@@ -12,7 +12,7 @@ set title "[_ contacts.Settings]"
 set context [list $title]
 set package_id [ad_conn package_id]
 set party_id [ad_conn user_id]
-set admin_p [ad_permission_p [ad_conn package_id] admin]
+set admin_p [permission::permission_p -party_id [ad_conn user_id] -object_id [ad_conn package_id] -privilege admin]
 
 template::list::create \
     -name "signatures" \

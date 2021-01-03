@@ -83,7 +83,7 @@ set member_state "approved"
 set format "normal"
 
 set bulk_actions [list "[_ contacts.contact_rel_change]" "../relationship-bulk-move" "[_ contacts.contact_rel_change]"]
-set admin_p [ad_permission_p [ad_conn package_id] admin]
+set admin_p [permission::permission_p -party_id [ad_conn user_id] -object_id [ad_conn package_id] -privilege admin]
 #set default_group_id [contacts::default_group_id]
 set title "Contacts"
 set context {}

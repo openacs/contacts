@@ -7,7 +7,7 @@ ad_page_contract {
 } {
 } -validate {
 }
-set admin_p [ad_permission_p [ad_conn package_id] admin]
+set admin_p [permission::permission_p -party_id [ad_conn user_id] -object_id [ad_conn package_id] -privilege admin]
 #set default_group_id [contacts::default_group_id]
 set title "[_ contacts.Search_Help]"
 set context [list $title]

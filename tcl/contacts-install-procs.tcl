@@ -94,7 +94,7 @@ ad_proc -public contacts::install::package_install {
     content::type::attribute::new \
 	-content_type "contact_complaint" \
 	-attribute_name "turnover" \
-	-datatype "money" \
+	-datatype "currency" \
 	-pretty_name "Turnover" \
 	-sort_order 2 \
 	-column_spec "float"
@@ -118,7 +118,7 @@ ad_proc -public contacts::install::package_install {
     content::type::attribute::new \
 	-content_type "contact_complaint" \
 	-attribute_name "paid" \
-	-datatype "money" \
+	-datatype "currency" \
 	-pretty_name "Paid" \
 	-sort_order 5 \
 	-column_spec "float"
@@ -153,7 +153,7 @@ ad_proc -public contacts::install::package_install {
     content::type::attribute::new \
 	-content_type "contact_complaint" \
 	-attribute_name "refund_amount" \
-	-datatype "money" \
+	-datatype "currency" \
 	-pretty_name "Refund Amount" \
 	-sort_order 9 \
 	-column_spec "float"
@@ -444,7 +444,7 @@ ad_proc -public contacts::install::package_upgrade {
 		content::type::attribute::new \
 		    -content_type "contact_complaint" \
 		    -attribute_name "turnover" \
-		    -datatype "money" \
+		    -datatype "currency" \
 		    -pretty_name "Turnover" \
 		    -sort_order 2 \
 		    -column_spec "float"
@@ -468,7 +468,7 @@ ad_proc -public contacts::install::package_upgrade {
 		content::type::attribute::new \
 		    -content_type "contact_complaint" \
 		    -attribute_name "paid" \
-		    -datatype "money" \
+		    -datatype "currency" \
 		    -pretty_name "Paid" \
 		    -sort_order 5 \
 		    -column_spec "float"
@@ -520,7 +520,7 @@ ad_proc -public contacts::install::package_upgrade {
 		content::type::attribute::new \
 		    -content_type "contact_complaint" \
 		    -attribute_name "refund_amount" \
-		    -datatype "money" \
+		    -datatype "currency" \
 		    -pretty_name "Refund" \
 		    -sort_order 9 \
 		    -column_spec "float"
