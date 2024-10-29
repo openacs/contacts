@@ -62,7 +62,7 @@ ad_proc -public contact::search::permitted {
 		set user_id [ad_conn user_id]
 	    }
 	    if { ![acs_user::site_wide_admin_p -user_id $user_id] && $owner_id ne $user_id && $owner_id ne $package_id } {
-		# the user is not site wide admin
+		# the user is not site-wide admin
 		# the user does not own the search
 		if { ![parameter::get -boolean -parameter "ViewOthersSearchesP" -default "0" -package_id $package_id] } {
 		    ns_log notice "contact::search::permitted: user $user_id does not have permission to search_id $search_id (package $package_id owner $owner_id)"
