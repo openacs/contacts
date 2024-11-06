@@ -48,7 +48,9 @@ callback contacts::extensions \
     -object_type organization
 
 
-set output {"Organization ID","Name","Email","URL"}
+set output [list]
+
+set headers {"Organization ID" "Name" "Email" "URL"}
 set extended_columns [list]
 template::multirow foreach ext {
     if { ( $type eq "organization" || $type eq "party" ) && [lsearch $preset_columns $key] >= 0 } {
@@ -67,8 +69,7 @@ template::multirow foreach ext {
         # - when there are many related organizations the size of the column
         #   could be too big for programs like excel (which is one of 
         #   the primary programs this export will be looked at in)
-        append output ",\"[template::list::csv_quote "$type_pretty: $key_pretty"]\""
-
+        lappend headers "$type_pretty: $key_pretty"
 
 	# for testing if you want to limit the number of columns you should do it here
         # you can simply say that if the count of extend columns > n then do not append
@@ -77,7 +78,7 @@ template::multirow foreach ext {
     }
 }
 
-set output "$output\n"
+lappend output $headers
 
 contacts::multirow \
     -extend $extended_columns \
@@ -85,17 +86,13 @@ contacts::multirow \
     -select_query $select_query \
     -format "text"
 
-
-# we create a command here because it more efficient then
-# iterating over all the columns in the multirow foreach
-set command [list]
-foreach column [template::multirow columns organizations] {
-    lappend command "\[template::list::csv_quote \$${column}\]"
-}
-set command "append output \"\\\"[join $command {\",\"}]\\\"\\n\""
-
+set __columns [template::multirow columns organizations]
 template::multirow foreach organizations {
-    eval $command
+    set __row [list]
+    foreach __column $__columns {
+        lappend __row [set $__column]
+    }
+    lappend output $__row
 }
 
 # we save the file to /tmp/full-export.csv
@@ -106,7 +103,8 @@ template::multirow foreach organizations {
 # there is a report storage and queueing mechanism
 
 set output_file [open /tmp/full-organizations.csv "w+"]
-puts $output_file $output
+package require csv
+puts $output_file [::csv::joinlist $output ,]
 close $output_file
 
 # now we return the file - just in case it didn't time out for the user

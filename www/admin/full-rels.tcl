@@ -10,8 +10,10 @@ ad_page_contract {
 }
 
 
-set output {"Relation ID","Relation Type","Role One","Contact ID One","Role Two","Contact ID Two"}
-append output "\n"
+set output [list]
+
+lappend output {"Relation ID" "Relation Type" "Role One" "Contact ID One" "Role Two" "Contact ID Two"}
+
 db_foreach get_rels "
 select acs_rels.rel_id,
        acs_rels.rel_type,
@@ -32,19 +34,15 @@ select acs_rels.rel_id,
    and acs_rels.object_id_two in ( select member_id from group_approved_member_map where group_id in ([template::util::tcl_to_sql_list [contacts::default_groups]]))
  order by acs_rels.rel_type, acs_rels.rel_id
 " {
-    set rel_type [template::list::csv_quote $rel_type]
-    set role_one [template::list::csv_quote [lang::util::localize $role_one]]
-    set role_two [template::list::csv_quote [lang::util::localize $role_two]]
-    append output "\"${rel_id}\",\"${rel_type}\",\"${role_one}\",\"${object_id_one}\",\"${role_two}\",\"${object_id_two}\"\n"
+    set role_one [lang::util::localize $role_one]
+    set role_two [lang::util::localize $role_two]
 
+    lappend output $rel_id $rel_type $role_one $object_id_one $role_two $object_id_two
 }
 
-
-set output "$output\n"
-
-
 set output_file [open /tmp/full-rels.csv "w+"]
-puts $output_file $output
+package require csv
+puts $output_file [::csv::joinlist $output ,]
 close $output_file
 
 # now we return the file - just in case it didn't time out for the user
