@@ -978,9 +978,11 @@ ad_proc -public contact::oo::convert_to_pdf_file_using_remote_cognovis_converter
     @param timeout Timeout in seconds for the JooC-Server
 
     @return 0 on error, 1 on success
-} {           
-    set response [ns_httpget [export_vars -base "http://192.168.1.19:8080/convert-pdf" -url {{oo_file $source_file} {pdf_file $destination_file}}]]
-    if {$response=="success"} {
+} {
+    set URL [export_vars -base "http://192.168.1.19:8080/convert-pdf" -url {{oo_file $source_file} {pdf_file $destination_file}}]
+    set reply [ns_http run $URL]
+    set response [dict get $reply body]
+    if {$response eq "success"} {
 	return 1
     } else {
 	return 0
