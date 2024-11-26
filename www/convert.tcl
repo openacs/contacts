@@ -7,7 +7,7 @@ ad_page_contract {
 } 
 
 set page [lindex [ad_httpget -url "$url"] 1]
-set oo_file [ns_tmpnam]
+set oo_file [ns_mktemp]
 set file [open "$oo_file" w]
 puts $file $page
 flush $file
@@ -86,5 +86,5 @@ if {![file exists $pdf_filename]} {
 
 ns_returnfile 200 $mime_type $pdf_filename
 
-ns_unlink $oo_file
-ns_unlink $pdf_filename
+file delete $oo_file
+file delete $pdf_filename

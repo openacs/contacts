@@ -146,7 +146,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_soffice {
 	set pdf_filename $oo_file
 	set mime_type "application/odt"
     } else {
-	ns_unlink $oo_file
+	file delete $oo_file
     }
 
     if {$no_import_p} {
@@ -189,7 +189,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_soffice {
     } elseif {$return_pdf_with_id_p} {
 	return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
     } else  {
-	ns_unlink $pdf_filename
+	file delete $pdf_filename
 	return [content::revision::item_id -revision_id $revision_id]
     }
 }
@@ -216,7 +216,7 @@ ad_proc -public contact::oo::join_pdf {
     # This exec command is missing all the good things about openacs
     # Add the parameter to whatever package you put this procedure in.
     set pdfjoin_bin [parameter::get -parameter "PdfJoinBin" -default "/usr/bin/pdfjoin"]
-    set pdf_filename "[ns_tmpnam].pdf"
+    set pdf_filename "[ns_mktemp].pdf"
 
     catch {eval exec $pdfjoin_bin --outfile $pdf_filename [join $filenames " "]} result
     set mime_type "application/pdf"
@@ -262,7 +262,7 @@ ad_proc -public contact::oo::join_pdf {
     if {$return_pdf_p} {
 	return [list $mime_type $pdf_filename]
     } else {
-	ns_unlink $pdf_filename
+	file delete $pdf_filename
 	return [content::revision::item_id -revision_id $revision_id]
     }
 }
@@ -282,7 +282,7 @@ ad_proc -public contact::oo::change_content {
     @return The path to the new file.
 } {
     # Create a temporary directory
-    set dir [ns_tmpnam]
+    set dir [ns_mktemp]
     file mkdir $dir
 
     array set content_array $contents
@@ -296,7 +296,7 @@ ad_proc -public contact::oo::change_content {
     }
 
     # copy the document
-    ns_cp "${path}/$document_filename" "${dir}/$document_filename"
+    file copy "${path}/$document_filename" "${dir}/$document_filename"
 
     # Replace old content in document with new content
     # The zip command should replace the content.xml in the zipfile which
@@ -306,15 +306,15 @@ ad_proc -public contact::oo::change_content {
     }
 
     # copy odt file
-    set new_file "[ns_tmpnam].odt"
-    ns_cp "${dir}/$document_filename" $new_file
+    set new_file "[ns_mktemp].odt"
+    file copy "${dir}/$document_filename" $new_file
 
     # delete other tmpfiles
-    ns_unlink "${dir}/$document_filename"
+    file delete "${dir}/$document_filename"
     foreach filename [array names content_array] {
-	ns_unlink "${dir}/$filename"
+	file delete "${dir}/$filename"
     }
-    ns_rmdir $dir
+    file delete $dir
 
     return $new_file
 }
@@ -496,7 +496,7 @@ ad_proc -public contact::oo::convert_to_pdf_using_jooconverter {
     flush $wfd
     close $wfd
 
-    set rpset [ns_set new [_ns_http_gets $timeout $rfd]]
+    set rpset [ns_set create [_ns_http_gets $timeout $rfd]]
     #ns_log Notice "*** rpset=$rpset"
     while 1 {
 	set line [_ns_http_gets $timeout $rfd]
@@ -800,7 +800,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_jooconverter {
 	    set pdf_filename $oo_file
 	    set mime_type "application/odt"
 	} else {
-	    ns_unlink $oo_file
+	    file delete $oo_file
 	}
 	
 	if {$no_import_p} {
@@ -842,7 +842,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_jooconverter {
 	} elseif {$return_pdf_with_id_p} {
 	    return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
 	} else  {
-	    ns_unlink $pdf_filename
+	    file delete $pdf_filename
 	    return [content::revision::item_id -revision_id $revision_id]
 	}
     }
@@ -1092,7 +1092,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_cognovis_converter {
 	    set pdf_filename $oo_file
 	    set mime_type "application/odt"
 	} else {
-	    ns_unlink $oo_file
+	    file delete $oo_file
 	}
 	
 	if {$no_import_p} {
@@ -1132,7 +1132,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_cognovis_converter {
 	} elseif {$return_pdf_with_id_p} {
 	    return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
 	} else  {
-	    ns_unlink $pdf_filename                   
+	    file delete $pdf_filename                   
 	    return [content::revision::item_id -revision_id $revision_id]
 	}
     }
@@ -1196,7 +1196,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_converter {
 	set pdf_filename $oo_file
 	set mime_type "application/odt"
     } else {
-	ns_unlink $oo_file
+	file delete $oo_file
     }
     
     if {$no_import_p} {
@@ -1236,7 +1236,7 @@ ad_proc -public contact::oo::import_oo_pdf_using_remote_converter {
     } elseif {$return_pdf_with_id_p} {
 	return [list [content::revision::item_id -revision_id $revision_id] $mime_type $pdf_filename]
     } else  {
-	ns_unlink $pdf_filename                   
+	file delete $pdf_filename                   
 	return [content::revision::item_id -revision_id $revision_id]
     }
 }

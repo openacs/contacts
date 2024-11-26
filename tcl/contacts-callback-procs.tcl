@@ -1313,7 +1313,7 @@ ad_proc -public -callback acs_mail_lite::incoming_email -impl contacts_mail_thro
 	foreach file $email(files) {
 	    set file_title [lindex $file 2]
 	    set mime_type [lindex $file 0]
-	    set file_path [ns_tmpnam]
+	    set file_path [ns_mktemp]
 	    set f [open $file_path w+]
             fconfigure $f -translation binary
             puts -nonewline $f [lindex $file 3]

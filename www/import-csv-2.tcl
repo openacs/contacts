@@ -34,8 +34,8 @@ if {![info exists group_ids]} {
 }
 
 # Get the CSV File
-set new_file_path [ns_tmpnam] 
-ns_cp $file_path $new_file_path
+set new_file_path [ns_mktemp] 
+file copy $file_path $new_file_path
 set csv_stream [open $file_path r]
 fconfigure $csv_stream -encoding utf-8
 ns_getcsv $csv_stream headers
